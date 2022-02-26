@@ -1,25 +1,25 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "porting_lib",
   "version": "${version}",
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Porting Lib",
+  "description": "A collection of utilities for porting mods from Forge to Fabric.",
   "authors": [
-    "Tropheus Jay"
+    "The Create Fabric Team"
   ],
   "contact": {
-    "sources": "https://github.com/TropheusJ/fabric-example-mod"
+    "sources": "https://github.com/Fabricators-of-Create/Porting-Lib"
   },
-  "license": "MIT",
-  "icon": "assets/modid/icon.png",
+  "license": "LGPL",
+  "icon": "assets/porting_lib/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "io.github.tropheusj.modid.ExampleMod"
+      "io.github.fabricators_of_create.porting_lib.PortingLib"
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "porting_lib.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",
