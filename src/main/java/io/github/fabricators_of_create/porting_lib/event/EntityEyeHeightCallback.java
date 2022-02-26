@@ -1,0 +1,17 @@
+package io.github.fabricators_of_create.porting_lib.event;
+
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.world.entity.Entity;
+
+public interface EntityEyeHeightCallback {
+	Event<EntityEyeHeightCallback> EVENT = EventFactory.createArrayBacked(EntityEyeHeightCallback.class, callbacks -> (entity) -> {
+		for (EntityEyeHeightCallback callback : callbacks) {
+			return callback.onEntitySize(entity);
+		}
+
+		return -1;
+	});
+
+	int onEntitySize(Entity entity);
+}

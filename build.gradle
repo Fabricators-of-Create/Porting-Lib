@@ -26,6 +26,8 @@ repositories {
 	maven { url = "https://maven.bai.lol" }
 	maven { url = "https://maven.terraformersmc.com/releases/" }
 	maven { url = "https://maven.parchmentmc.org" }
+	maven { url = "https://maven.devos.community/releases/" }
+	maven { url = "https://maven.devos.community/snapshots/" }
 }
 
 dependencies {
@@ -50,6 +52,11 @@ dependencies {
 
 	// dependencies
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
+	modImplementation(include("me.alphamode:ForgeTags:${project.forge_tags_version}"))
+}
+
+loom {
+	accessWidenerPath = file("src/main/resources/porting_lib.accesswidener")
 }
 
 task buildOrPublish {

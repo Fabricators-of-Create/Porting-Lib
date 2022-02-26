@@ -19,8 +19,11 @@
     ]
   },
   "mixins": [
-    "porting_lib.mixins.json"
+    "porting_lib.mixins.client.json",
+    "porting_lib.mixins.common.json",
+    "porting_lib.mixins.compat.json"
   ],
+  "accessWidener": "porting_lib.accesswidener",
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": ">=${fabric_version}",
