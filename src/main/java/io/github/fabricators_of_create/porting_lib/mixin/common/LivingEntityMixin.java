@@ -3,6 +3,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,6 +12,8 @@ import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomFrictionBlock;
@@ -53,8 +56,9 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@ModifyArgs(method = "dropAllDeathLoot", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;dropCustomDeathLoot(Lnet/minecraft/world/damagesource/DamageSource;IZ)V"))
 	private void port_lib$modifyLootingLevel(Args args, DamageSource source) {
-		int modifiedLevel = LivingEntityEvents.LOOTING_LEVEL.invoker().modifyLootingLevel(source);
-		if (modifiedLevel != 0) {
+		int currentLevel = args.get(1);
+		int modifiedLevel = LivingEntityEvents.LOOTING_LEVEL.invoker().modifyLootingLevel(source, (LivingEntity) (Object) this, currentLevel);
+		if (modifiedLevel != currentLevel) {
 			args.set(1, modifiedLevel);
 		}
 	}
@@ -98,7 +102,16 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@ModifyVariable(method = "hurt", at = @At("HEAD"), argsOnly = true)
 	private float port_lib$onHurt(float amount, DamageSource source, float amount2) {
-		return LivingEntityEvents.HURT.invoker().onHurt(source, amount);
+		return LivingEntityEvents.HURT.invoker().onHurt(source, (LivingEntity) (Object) this, amount);
+	}
+
+	@ModifyArgs(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getDamageAfterArmorAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"))
+	private void port_lib$onHurt(Args args) {
+		DamageSource source = args.get(0);
+		float currentAmount = args.get(1);
+		float newAmount = LivingEntityEvents.ACTUALLY_HURT.invoker().onHurt(source, (LivingEntity) (Object) this, currentAmount);
+		if (newAmount != currentAmount)
+			args.set(1, newAmount);
 	}
 
 	@ModifyArgs(
@@ -123,6 +136,7 @@ public abstract class LivingEntityMixin extends Entity {
 			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getBlockPosBelowThatAffectsMyMovement()Lnet/minecraft/core/BlockPos;")),
 			at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/block/Block;getFriction()F"), ordinal = 0
 	)
+	@SuppressWarnings("InvalidInjectorMethodSignature")
 	private float port_lib$setFriction(float original) { // shut, MCDev
 		BlockPos pos = new BlockPos(getX(), getY() - 1, getZ());
 		BlockState state = level.getBlockState(pos);
@@ -130,5 +144,14 @@ public abstract class LivingEntityMixin extends Entity {
 			return custom.getFriction(state, level, pos, this);
 		}
 		return original;
+	}
+
+	@Inject(method = "getVisibilityPercent", at = @At(value = "TAIL"), cancellable = true)
+	private void port_lib$modifyVisibility(@Nullable Entity lookingEntity, CallbackInfoReturnable<Double> cir) {
+		double current = cir.getReturnValue();
+		double newVis = LivingEntityEvents.VISIBILITY.invoker().modifyVisibility((LivingEntity) (Object) this, lookingEntity, current);
+		if (current != newVis) {
+			cir.setReturnValue(newVis);
+		}
 	}
 }

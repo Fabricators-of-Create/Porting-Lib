@@ -4,14 +4,12 @@ import io.github.fabricators_of_create.porting_lib.event.MinecartEvents;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import io.github.fabricators_of_create.porting_lib.block.MinecartPassHandlerBlock;
 import io.github.fabricators_of_create.porting_lib.extensions.AbstractMinecartExtensions;
-import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
 
 import net.minecraft.core.BlockPos;
@@ -28,9 +26,6 @@ import net.minecraft.world.phys.Vec3;
 
 @Mixin(AbstractMinecart.class)
 public abstract class AbstractMinecartMixin extends Entity implements AbstractMinecartExtensions, NBTSerializable {
-	@Unique
-	public boolean port_lib$canUseRail = true;
-
 	private AbstractMinecartMixin(EntityType<?> entityType, Level world) {
 		super(entityType, world);
 	}
@@ -46,18 +41,18 @@ public abstract class AbstractMinecartMixin extends Entity implements AbstractMi
 	@Inject(method = "moveAlongTrack", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;floor(D)I", ordinal = 4))
 	protected void port_lib$moveAlongTrack(BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
 		if (blockState.getBlock() instanceof MinecartPassHandlerBlock handler) {
-			handler.onMinecartPass(blockState, level, blockPos, MixinHelper.cast(this));
+			handler.onMinecartPass(blockState, level, blockPos, (AbstractMinecart) (Object) this);
 		}
 	}
 
 	@Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
 	private void port_lib$addAdditionalSaveData(CompoundTag compound, CallbackInfo ci) {
-		compound.put("Controller", port_lib$controllerCap.port_lib$serializeNBT());
+		MinecartEvents.READ.invoker().minecartRead((AbstractMinecart) (Object) this, compound);
 	}
 
 	@Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
 	private void port_lib$readAdditionalSaveData(CompoundTag compound, CallbackInfo ci) {
-		port_lib$controllerCap.port_lib$deserializeNBT(compound.getCompound("Controller"));
+		MinecartEvents.WRITE.invoker().minecartWrite((AbstractMinecart) (Object) this, compound);
 	}
 
 	@Override
@@ -66,11 +61,6 @@ public abstract class AbstractMinecartMixin extends Entity implements AbstractMi
 		double d25 = getMaxSpeed(); // getMaxSpeed instead of getMaxSpeedWithRail *should* be fine after intense pain looking at Forge patches
 		Vec3 vec3d1 = getDeltaMovement();
 		move(MoverType.SELF, new Vec3(Mth.clamp(d24 * vec3d1.x, -d25, d25), 0.0D, Mth.clamp(d24 * vec3d1.z, -d25, d25)));
-	}
-
-	@Override
-	public boolean port_lib$canUseRail() {
-		return port_lib$canUseRail;
 	}
 
 	@Override

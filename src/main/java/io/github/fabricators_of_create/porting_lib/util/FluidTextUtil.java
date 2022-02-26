@@ -2,11 +2,46 @@ package io.github.fabricators_of_create.porting_lib.util;
 
 import com.google.common.math.LongMath;
 
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+
+import java.text.NumberFormat;
+import java.util.Locale;
+
 /**
  * A few helpers to display fluids.
  * Stolen from Modern-Industrialization
  */
 public class FluidTextUtil {
+
+	public static final Format NUMBER_FORMAT = new Format();
+
+	public static class Format implements ResourceManagerReloadListener {
+		private NumberFormat format = NumberFormat.getNumberInstance(Locale.ROOT);
+
+		private Format() {}
+
+		public NumberFormat get() {
+			return format;
+		}
+
+		public void update() {
+			format = NumberFormat.getInstance(MinecraftClientUtil.getLocale());
+			format.setMaximumFractionDigits(2);
+			format.setMinimumFractionDigits(0);
+			format.setGroupingUsed(true);
+		}
+
+		@Override
+		public void onResourceManagerReload(ResourceManager resourceManager) {
+			update();
+		}
+	}
+
+	static String format(double d) {
+		return NUMBER_FORMAT.get()
+				.format(d).replace("\u00A0", " ");
+	}
 
 	/**
 	 * Return a unicode string representing a fraction, like ¹⁄₈₁.
@@ -49,14 +84,14 @@ public class FluidTextUtil {
 	 *
 	 * .
 	 */
-	public static String getUnicodeMillibuckets(long droplets) {
-		FluidUnit fluidUnit = AllConfigs.CLIENT.fluidUnitType.get();
-		if(fluidUnit == FluidUnit.DROPLETS)
-			return IHaveGoggleInformation.format(droplets);
-		String result = IHaveGoggleInformation.format(droplets / fluidUnit.getOneBucketAmount());
+	public static String getUnicodeMillibuckets(long droplets, FluidUnit unit, boolean simplify) {
+		if (unit == FluidUnit.DROPLETS)
+			return format(droplets);
+		@SuppressWarnings("IntegerDivisionInFloatingPointContext")
+		String result = format(droplets / unit.getOneBucketAmount());
 
-		if (droplets % 81 != 0 && !AllConfigs.CLIENT.simplifyFluidUnit.get()) {
-			result += " " + getUnicodeFraction(droplets % fluidUnit.getOneBucketAmount(), fluidUnit.getOneBucketAmount(), true);
+		if (droplets % 81 != 0 && !simplify) {
+			result += " " + getUnicodeFraction(droplets % unit.getOneBucketAmount(), unit.getOneBucketAmount(), true);
 		}
 
 		return result;

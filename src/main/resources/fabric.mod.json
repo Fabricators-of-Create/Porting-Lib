@@ -16,12 +16,14 @@
   "entrypoints": {
     "main": [
       "io.github.fabricators_of_create.porting_lib.PortingLib"
+    ],
+    "client": [
+      "io.github.fabricators_of_create.porting_lib.PortingLib"
     ]
   },
   "mixins": [
     "porting_lib.mixins.client.json",
-    "porting_lib.mixins.common.json",
-    "porting_lib.mixins.compat.json"
+    "porting_lib.mixins.common.json"
   ],
   "accessWidener": "porting_lib.accesswidener",
   "depends": {

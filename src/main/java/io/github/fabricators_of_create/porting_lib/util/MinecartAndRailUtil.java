@@ -42,10 +42,6 @@ public class MinecartAndRailUtil {
 		return ((AbstractMinecartAccessor) cart).port_lib$getMaxSpeed();
 	}
 
-	public static boolean canCartUseRail(AbstractMinecart cart) {
-		return ((AbstractMinecartExtensions) cart).port_lib$canUseRail();
-	}
-
 	public static BlockPos getExpectedRailPos(AbstractMinecart cart) {
 		return ((AbstractMinecartExtensions) cart).port_lib$getCurrentRailPos();
 	}

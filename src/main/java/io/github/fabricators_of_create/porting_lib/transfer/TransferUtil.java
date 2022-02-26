@@ -17,7 +17,6 @@ import io.github.fabricators_of_create.porting_lib.transfer.item.IItemHandler;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStorageHandler;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemTransferable;
 import io.github.fabricators_of_create.porting_lib.transfer.item.StorageItemHandler;
-import io.github.fabricators_of_create.porting_lib.util.FluidTileDataHandler;
 import io.github.fabricators_of_create.porting_lib.util.LazyOptional;
 
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
@@ -103,10 +102,10 @@ public class TransferUtil {
 		// Create handling
 		if (be instanceof FluidTransferable transferable) return LazyOptional.ofObject(transferable.getFluidHandler(side));
 		// client handling
-		if (Objects.requireNonNull(be.getLevel()).isClientSide()) {
-			IFluidHandler cached = FluidTileDataHandler.getCachedHandler(be);
-			return LazyOptional.ofObject(cached);
-		}
+//		if (Objects.requireNonNull(be.getLevel()).isClientSide()) { FIXME
+//			IFluidHandler cached = FluidTileDataHandler.getCachedHandler(be);
+//			return LazyOptional.ofObject(cached);
+//		}
 		// external handling
 		List<Storage<FluidVariant>> fluidStorages = new ArrayList<>();
 		Level l = be.getLevel();

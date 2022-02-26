@@ -5,8 +5,6 @@ import net.minecraft.core.BlockPos;
 public interface AbstractMinecartExtensions {
 	void port_lib$moveMinecartOnRail(BlockPos pos);
 
-	boolean port_lib$canUseRail();
-
 	BlockPos port_lib$getCurrentRailPos();
 
 	default float port_lib$getMaxSpeedOnRail() {
