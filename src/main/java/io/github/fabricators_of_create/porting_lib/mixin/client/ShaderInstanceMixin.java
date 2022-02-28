@@ -17,7 +17,7 @@ import net.minecraft.server.packs.resources.ResourceProvider;
 
 @Environment(EnvType.CLIENT)
 @Mixin(value = ShaderInstance.class, priority = 500)
-public class ShaderInstanceMixin {
+public abstract class ShaderInstanceMixin {
 	@Shadow
 	@Final
 	private String name;

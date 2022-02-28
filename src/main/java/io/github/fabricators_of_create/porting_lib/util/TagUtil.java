@@ -19,51 +19,19 @@ import static me.alphamode.forgetags.Tags.Items.DYES_YELLOW;
 
 import javax.annotation.Nullable;
 
-import net.fabricmc.fabric.impl.tag.extension.TagDelegate;
-import net.minecraft.resources.ResourceLocation;
+import io.github.fabricators_of_create.porting_lib.mixin.client.accessor.TierExtensions;
+import me.alphamode.forgetags.Tags;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.Block;
 
 public class TagUtil {
-	private static final String CREATE = "create";
-	private static final String TIC = "tconstruct";
-
-	// blocks
-	public static final Tag.Named<Block> WINDMILL_SAILS = new TagDelegate<>(new ResourceLocation(CREATE, "windmill_sails"), BlockTags::getAllTags);
-	public static final Tag.Named<Block> FAN_HEATERS = new TagDelegate<>(new ResourceLocation(CREATE, "fan_heaters"), BlockTags::getAllTags);
-	public static final Tag.Named<Block> WINDOWABLE = new TagDelegate<>(new ResourceLocation(CREATE, "windowable"), BlockTags::getAllTags);
-	public static final Tag.Named<Block> NON_MOVABLE = new TagDelegate<>(new ResourceLocation(CREATE, "non_movable"), BlockTags::getAllTags);
-	public static final Tag.Named<Block> BRITTLE = new TagDelegate<>(new ResourceLocation(CREATE, "brittle"), BlockTags::getAllTags);
-	public static final Tag.Named<Block> BLOCKS$SEATS = new TagDelegate<>(new ResourceLocation(CREATE, "seats"), BlockTags::getAllTags);
-	public static final Tag.Named<Block> SAILS = new TagDelegate<>(new ResourceLocation(CREATE, "sails"), BlockTags::getAllTags);
-	public static final Tag.Named<Block> BLOCKS$VALVE_HANDLES = new TagDelegate<>(new ResourceLocation(CREATE, "valve_handles"), BlockTags::getAllTags);
-	public static final Tag.Named<Block> FAN_TRANSPARENT = new TagDelegate<>(new ResourceLocation(CREATE, "fan_transparent"), BlockTags::getAllTags);
-	public static final Tag.Named<Block> SAFE_NBT = new TagDelegate<>(new ResourceLocation(CREATE, "safe_nbt"), BlockTags::getAllTags);
-
-	// items
-	public static final Tag.Named<Item> CRUSHED_ORES = new TagDelegate<>(new ResourceLocation(CREATE, "crushed_ores"), ItemTags::getAllTags);
-	public static final Tag.Named<Item> ITEMS$SEATS = new TagDelegate<>(new ResourceLocation(CREATE, "seats"), ItemTags::getAllTags);
-	public static final Tag.Named<Item> ITEMS$VALVE_HANDLES = new TagDelegate<>(new ResourceLocation(CREATE, "valve_handles"), ItemTags::getAllTags);
-	public static final Tag.Named<Item> UPRIGHT_ON_BELT = new TagDelegate<>(new ResourceLocation(CREATE, "upright_on_belt"), ItemTags::getAllTags);
-	public static final Tag.Named<Item> CREATE_INGOTS = new TagDelegate<>(new ResourceLocation(CREATE, "create_ingots"), ItemTags::getAllTags);
-
-	// Don't use these tags as they are here since more than one of common tags exists for them
-//	public static final Tag.Named<Item> STICK_OTHER = TagFactory.ITEM.create(new ResourceLocation("c:wooden_rods"));
-//	public static final Tag.Named<Item> STONE_OTHER = TagFactory.ITEM.create(new ResourceLocation("c:stones"));
-
-	// TIC compat
-	public static final Tag.Named<Block> SLIMY_LOGS = new TagDelegate<>(new ResourceLocation(TIC, "slimy_logs"), BlockTags::getAllTags);
-	public static final Tag.Named<Item> SLIMEBALLS = new TagDelegate<>(new ResourceLocation(TIC, "slime_balls"), ItemTags::getAllTags);
-
-
-	// misc
-
 	@Nullable
 	public static DyeColor getColorFromStack(ItemStack stack) {
 		Item item = stack.getItem();
@@ -89,5 +57,20 @@ public class TagUtil {
 		if (DYES_YELLOW.contains(item)) return DyeColor.YELLOW;
 
 		return null;
+	}
+
+	public static Tag.Named<Block> getTagFromVanillaTier(Tiers tier) {
+		return switch (tier) {
+			case WOOD -> Tags.Blocks.NEEDS_WOOD_TOOL;
+			case GOLD -> Tags.Blocks.NEEDS_GOLD_TOOL;
+			case STONE -> BlockTags.NEEDS_STONE_TOOL;
+			case IRON -> BlockTags.NEEDS_IRON_TOOL;
+			case DIAMOND -> BlockTags.NEEDS_DIAMOND_TOOL;
+			case NETHERITE -> Tags.Blocks.NEEDS_NETHERITE_TOOL;
+		};
+	}
+
+	public static Tag<Block> getTagFromTier(Tier tier) {
+		return ((TierExtensions) tier).getTag();
 	}
 }

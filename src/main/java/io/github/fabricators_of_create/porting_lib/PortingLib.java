@@ -1,6 +1,8 @@
 package io.github.fabricators_of_create.porting_lib;
 
 import io.github.fabricators_of_create.porting_lib.util.FluidTextUtil;
+import io.github.fabricators_of_create.porting_lib.util.ServerLifecycleHooks;
+import io.github.fabricators_of_create.porting_lib.util.TierSortingRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 
@@ -19,6 +21,8 @@ public class PortingLib implements ModInitializer, ClientModInitializer {
 
 	@Override
 	public void onInitialize() {
+		TierSortingRegistry.init();
+		ServerLifecycleHooks.init();
 	}
 
 	@Override

@@ -5,7 +5,6 @@ import javax.annotation.Nullable;
 import io.github.fabricators_of_create.porting_lib.extensions.AbstractMinecartExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.BaseRailBlockExtensions;
 import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.AbstractMinecartAccessor;
-
 import net.fabricmc.fabric.api.tag.TagFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +13,6 @@ import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
 
@@ -22,7 +20,7 @@ public class MinecartAndRailUtil {
 
 	// rails
 
-	public static final Tag.Named<Block> ACTIVATOR_RAILS = TagFactory.BLOCK.create(new ResourceLocation("c", "activator_rails"));
+	public static final Tag.Named<Block> ACTIVATOR_RAILS = TagFactory.BLOCK.create(new ResourceLocation("c", "rails/activator"));
 
 	public static boolean isActivatorRail(Block rail) {
 		return ACTIVATOR_RAILS.contains(rail);

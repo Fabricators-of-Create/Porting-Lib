@@ -7,6 +7,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import com.mojang.math.Matrix4f;
 import io.github.fabricators_of_create.porting_lib.extensions.Matrix4fExtensions;
 
+import org.spongepowered.asm.mixin.Unique;
+
 @Mixin(Matrix4f.class)
 public abstract class Matrix4fMixin implements Matrix4fExtensions {
 	@Shadow
@@ -42,6 +44,9 @@ public abstract class Matrix4fMixin implements Matrix4fExtensions {
 	@Shadow
 	protected float m33;
 
+	@Shadow
+	public abstract void load(Matrix4f other);
+
 	@Override
 	@Contract(mutates = "this")
 	public void port_lib$fromFloatArray(float[] floats) {
@@ -64,5 +69,25 @@ public abstract class Matrix4fMixin implements Matrix4fExtensions {
 		m31 = floats[13];
 		m32 = floats[14];
 		m33 = floats[15];
+	}
+
+	@Unique
+	@Override
+	public void port_lib$setTranslation(float x, float y, float z) {
+		m00 = 1.0F;
+		m11 = 1.0F;
+		m22 = 1.0F;
+		m33 = 1.0F;
+		m03 = x;
+		m13 = y;
+		m23 = z;
+	}
+
+	@Unique
+	@Override
+	public void port_lib$multiplyBackward(Matrix4f other) {
+		Matrix4f copy = other.copy();
+		copy.multiply((Matrix4f) (Object) this);
+		this.load(copy);
 	}
 }

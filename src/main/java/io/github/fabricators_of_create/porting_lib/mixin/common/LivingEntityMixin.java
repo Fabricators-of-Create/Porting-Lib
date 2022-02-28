@@ -3,9 +3,13 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
@@ -13,7 +17,6 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomFrictionBlock;
@@ -44,6 +47,9 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@Shadow
 	public abstract ItemStack getItemInHand(InteractionHand interactionHand);
+
+	@Unique
+	private InteractionResultHolder<Float> port_lib$hurtResult = null;
 
 	public LivingEntityMixin(EntityType<?> entityType, Level world) {
 		super(entityType, world);
@@ -101,8 +107,20 @@ public abstract class LivingEntityMixin extends Entity {
 	}
 
 	@ModifyVariable(method = "hurt", at = @At("HEAD"), argsOnly = true)
-	private float port_lib$onHurt(float amount, DamageSource source, float amount2) {
-		return LivingEntityEvents.HURT.invoker().onHurt(source, (LivingEntity) (Object) this, amount);
+	private float port_lib$onHurt(float amount, DamageSource source, float amountAgainBecauseWeNeedItTwiceSomeReason) {
+		port_lib$hurtResult = LivingEntityEvents.ATTACK.invoker().onAttack(source, (LivingEntity) (Object) this, amount);
+		if (port_lib$hurtResult == null)
+			return amount;
+		return port_lib$hurtResult.getObject();
+	}
+
+	@Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
+	private void port_lib$cancelOnHurt(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+		if (port_lib$hurtResult != null) {
+			if (port_lib$hurtResult.getResult() == InteractionResult.FAIL) {
+				cir.setReturnValue(false);
+			}
+		}
 	}
 
 	@ModifyArgs(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getDamageAfterArmorAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"))

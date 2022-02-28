@@ -1,14 +1,19 @@
-accessWidener v1 named
+accessWidener v2 named
 
-#accessible class net/minecraft/client/particle/ParticleEngine$SpriteParticleRegistration
+#transitive-accessible class net/minecraft/client/particle/ParticleEngine$SpriteParticleRegistration
 
-#accessible class net/minecraft/world/level/chunk/PaletteResize
+#transitive-accessible class net/minecraft/world/level/chunk/PaletteResize
 
-#extendable method net/minecraft/world/entity/Entity positionRider (Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/Entity$MoveFunction;)V
+#transitive-extendable method net/minecraft/world/entity/Entity positionRider (Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/Entity$MoveFunction;)V
 
-accessible class net/minecraft/world/item/crafting/Ingredient$Value
-accessible class net/minecraft/world/item/crafting/Ingredient$ItemValue
-accessible class net/minecraft/world/item/crafting/Ingredient$TagValue
+transitive-extendable class net/minecraft/world/item/crafting/Ingredient
+transitive-accessible method net/minecraft/world/item/crafting/Ingredient <init> (Ljava/util/stream/Stream;)V
+transitive-accessible class net/minecraft/world/item/crafting/Ingredient$Value
+transitive-accessible class net/minecraft/world/item/crafting/Ingredient$ItemValue
+transitive-accessible method net/minecraft/world/item/crafting/Ingredient$ItemValue <init> (Lnet/minecraft/world/item/ItemStack;)V
+transitive-accessible class net/minecraft/world/item/crafting/Ingredient$TagValue
 
-accessible class net/minecraft/client/renderer/RenderType$CompositeState
-accessible class net/minecraft/client/renderer/RenderType$CompositeRenderType
+transitive-accessible class net/minecraft/client/renderer/texture/TextureAtlasSprite$AnimatedTexture
+
+transitive-accessible class net/minecraft/client/renderer/RenderType$CompositeState
+transitive-accessible class net/minecraft/client/renderer/RenderType$CompositeRenderType

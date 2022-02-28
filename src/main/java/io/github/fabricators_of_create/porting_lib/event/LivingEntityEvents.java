@@ -4,6 +4,8 @@ import java.util.Collection;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -47,7 +49,7 @@ public class LivingEntityEvents {
 			}
 		}
 
-		return 0;
+		return level;
 	});
 
 	public static final Event<Tick> TICK = EventFactory.createArrayBacked(Tick.class, callbacks -> (entity) -> {
@@ -56,16 +58,25 @@ public class LivingEntityEvents {
 		}
 	});
 
-	public static final Event<Hurt> HURT = EventFactory.createArrayBacked(Hurt.class, callbacks -> (source, damaged, amount) -> {
-		for (Hurt callback : callbacks) {
-			float newAmount = callback.onHurt(source, damaged, amount);
-			if (newAmount != amount) return newAmount;
+	/**
+	 * Return PASS - ignore
+	 * Return SUCCESS - update value
+	 * Return FAIL - cancel attack
+	 */
+	public static final Event<Attack> ATTACK = EventFactory.createArrayBacked(Attack.class, callbacks -> (source, damaged, amount) -> {
+		for (Attack callback : callbacks) {
+			InteractionResultHolder<Float> result = callback.onAttack(source, damaged, amount);
+			if (result != null) {
+				if (result.getResult() != InteractionResult.PASS) {
+					return result;
+				}
+			}
 		}
-		return amount;
+		return null;
 	});
 
-	public static final Event<Hurt> ACTUALLY_HURT = EventFactory.createArrayBacked(Hurt.class, callbacks -> (source, damaged, amount) -> {
-		for (Hurt callback : callbacks) {
+	public static final Event<ActuallyHurt> ACTUALLY_HURT = EventFactory.createArrayBacked(ActuallyHurt.class, callbacks -> (source, damaged, amount) -> {
+		for (ActuallyHurt callback : callbacks) {
 			float newAmount = callback.onHurt(source, damaged, amount);
 			if (newAmount != amount) return newAmount;
 		}
@@ -86,7 +97,13 @@ public class LivingEntityEvents {
 	}
 
 	@FunctionalInterface
-	public interface Hurt {
+	public interface Attack {
+		@Nullable
+		InteractionResultHolder<Float> onAttack(DamageSource source, LivingEntity damaged, float amount);
+	}
+
+	@FunctionalInterface
+	public interface ActuallyHurt {
 		float onHurt(DamageSource source, LivingEntity damaged, float amount);
 	}
 
