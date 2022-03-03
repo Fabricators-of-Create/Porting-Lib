@@ -15,6 +15,8 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class PortingLib implements ModInitializer, ClientModInitializer {
 	public static final String ID = "porting_lib";
 	public static final Logger LOGGER = LoggerFactory.getLogger(ID);
