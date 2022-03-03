@@ -4,10 +4,10 @@ import net.minecraft.nbt.CompoundTag;
 
 public class NBTSerializer {
 	public static void deserializeNBT(Object o, CompoundTag nbt) {
-		((NBTSerializable) o).port_lib$deserializeNBT(nbt);
+		((NBTSerializable) o).deserializeNBT(nbt);
 	}
 
 	public static CompoundTag serializeNBT(Object o) {
-		return ((NBTSerializable) o).port_lib$serializeNBT();
+		return ((NBTSerializable) o).serializeNBT();
 	}
 }

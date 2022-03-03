@@ -50,11 +50,17 @@
       "net/minecraft/class_1472": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
       "net/minecraft/class_1473": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
       "net/minecraft/class_1735": ["io/github/fabricators_of_create/porting_lib/extensions/SlotExtensions"],
-      "net/minecraft/class_1792": ["io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"],
+      "net/minecraft/class_1792": [
+        "io/github/fabricators_of_create/porting_lib/extensions/ItemExtensions",
+        "io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"
+      ],
       "net/minecraft/class_1799": ["io/github/fabricators_of_create/porting_lib/extensions/ItemStackExtensions"],
       "net/minecraft/class_1832": ["io/github/fabricators_of_create/porting_lib/extensions/TierExtensions"],
       "net/minecraft/class_1856": ["io/github/fabricators_of_create/porting_lib/extensions/IngredientExtensions"],
-      "net/minecraft/class_2248": ["io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"],
+      "net/minecraft/class_2248": [
+        "io/github/fabricators_of_create/porting_lib/extensions/BlockExtensions",
+        "io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"
+      ],
       "net/minecraft/class_2311": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
       "net/minecraft/class_2396": ["io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"],
       "net/minecraft/class_2397": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
@@ -64,6 +70,7 @@
       "net/minecraft/class_2560": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
       "net/minecraft/class_2586": ["io/github/fabricators_of_create/porting_lib/extensions/BlockEntityExtensions"],
       "net/minecraft/class_2604": ["io/github/fabricators_of_create/porting_lib/extensions/ClientboundAddEntityPacketExtensions"],
+      "net/minecraft/class_2680": ["io/github/fabricators_of_create/porting_lib/extensions/BlockStateExtensions"],
       "net/minecraft/class_2960": ["io/github/fabricators_of_create/porting_lib/extensions/ResourceLocationExtensions"],
       "net/minecraft/class_3611": [
         "io/github/fabricators_of_create/porting_lib/extensions/FluidExtensions",

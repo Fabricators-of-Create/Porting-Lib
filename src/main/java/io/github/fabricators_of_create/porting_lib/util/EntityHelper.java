@@ -12,7 +12,7 @@ public final class EntityHelper {
 	public static final String EXTRA_DATA_KEY = "create_ExtraEntityData";
 
 	public static CompoundTag getExtraCustomData(Entity entity) {
-		return entity.port_lib$getExtraCustomData();
+		return entity.getExtraCustomData();
 	}
 
 	public static String getEntityString(Entity entity) {

@@ -42,14 +42,14 @@ public abstract class ItemStackMixin implements NBTSerializable, ItemStackExtens
 	}
 
 	@Override
-	public CompoundTag port_lib$serializeNBT() {
+	public CompoundTag serializeNBT() {
 		CompoundTag nbt = new CompoundTag();
 		this.save(nbt);
 		return nbt;
 	}
 
 	@Override
-	public void port_lib$deserializeNBT(CompoundTag nbt) {
+	public void deserializeNBT(CompoundTag nbt) {
 		this.setTag(ItemStack.of(nbt).getTag());
 	}
 

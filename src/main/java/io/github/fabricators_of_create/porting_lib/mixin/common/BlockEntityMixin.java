@@ -37,14 +37,14 @@ public abstract class BlockEntityMixin implements BlockEntityExtensions, NBTSeri
 	}
 
 	@Override
-	public CompoundTag port_lib$serializeNBT() {
+	public CompoundTag serializeNBT() {
 		CompoundTag nbt = new CompoundTag();
 		this.load(nbt);
 		return nbt;
 	}
 
 	@Override
-	public void port_lib$deserializeNBT(CompoundTag nbt) {
+	public void deserializeNBT(CompoundTag nbt) {
 		deserializeNBT(null, nbt);
 	}
 

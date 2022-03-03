@@ -11,6 +11,7 @@
     "BlockEntityMixin",
     "BlockItemMixin",
     "BlockMixin",
+    "BlockStateMixin",
     "BoatMixin",
     "ChunkStatusMixin",
     "ClientboundAddEntityPacketMixin",

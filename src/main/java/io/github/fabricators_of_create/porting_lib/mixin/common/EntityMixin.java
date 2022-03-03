@@ -1,7 +1,21 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import java.util.Collection;
-
+import io.github.fabricators_of_create.porting_lib.event.EntityEvents;
+import io.github.fabricators_of_create.porting_lib.event.StartRidingCallback;
+import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.RegistryNameProvider;
+import io.github.fabricators_of_create.porting_lib.util.EntityHelper;
+import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
+import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import slimeknights.mantle.lib.event.EntityEvents;
+import slimeknights.mantle.lib.event.StartRidingCallback;
+import slimeknights.mantle.lib.extensions.EntityExtensions;
+import slimeknights.mantle.lib.extensions.RegistryNameProvider;
+import slimeknights.mantle.lib.util.EntityHelper;
+import slimeknights.mantle.lib.util.MixinHelper;
+import slimeknights.mantle.lib.util.NBTSerializable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -10,31 +24,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import java.util.Collection;
 
-import io.github.fabricators_of_create.porting_lib.PortingLib;
-import io.github.fabricators_of_create.porting_lib.block.CustomRunningEffectsBlock;
-import io.github.fabricators_of_create.porting_lib.event.EntityEyeHeightCallback;
-import io.github.fabricators_of_create.porting_lib.event.EntityReadExtraDataCallback;
-import io.github.fabricators_of_create.porting_lib.event.MinecartEvents;
-import io.github.fabricators_of_create.porting_lib.event.StartRidingCallback;
-import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.RegistryNameProvider;
-import io.github.fabricators_of_create.porting_lib.util.EntityHelper;
-import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
-import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin implements EntityExtensions, NBTSerializable, RegistryNameProvider {
@@ -43,11 +42,9 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 	@Shadow
 	private float eyeHeight;
 	@Unique
-	private CompoundTag port_lib$extraCustomData;
+	private CompoundTag extraCustomData;
 	@Unique
-	private Collection<ItemEntity> port_lib$captureDrops = null;
-	@Unique
-	private ResourceLocation port_lib$registryName = null;
+	private Collection<ItemEntity> captureDrops = null;
 
 	@Shadow
 	protected abstract void readAdditionalSaveData(CompoundTag compoundTag);
@@ -56,8 +53,8 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 	public abstract EntityType<?> getType();
 
 	@Inject(at = @At("TAIL"), method = "<init>")
-	public void port_lib$entityInit(EntityType<?> entityType, Level world, CallbackInfo ci) {
-		int newEyeHeight = EntityEyeHeightCallback.EVENT.invoker().onEntitySize((Entity) (Object) this);
+	public void entityInit(EntityType<?> entityType, Level world, CallbackInfo ci) {
+		int newEyeHeight = EntityEvents.EYE_HEIGHT.invoker().onEntitySize((Entity) (Object) this);
 		if (newEyeHeight != -1)
 			eyeHeight = newEyeHeight;
 	}
@@ -74,43 +71,39 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 			),
 			cancellable = true
 	)
-	public void port_lib$spawnAtLocation(ItemStack stack, float f, CallbackInfoReturnable<ItemEntity> cir, ItemEntity itemEntity) {
-		if (port_lib$captureDrops != null) {
-			port_lib$captureDrops.add(itemEntity);
-			cir.setReturnValue(itemEntity);
-		}
+	public void spawnAtLocation(ItemStack stack, float f, CallbackInfoReturnable<ItemEntity> cir, ItemEntity itemEntity) {
+		if (captureDrops != null) captureDrops.add(itemEntity);
+		else cir.cancel();
 	}
 
 	@Unique
 	@Override
-	public Collection<ItemEntity> port_lib$captureDrops() {
-		return port_lib$captureDrops;
+	public Collection<ItemEntity> captureDrops() {
+		return captureDrops;
 	}
 
 	@Unique
 	@Override
-	public Collection<ItemEntity> port_lib$captureDrops(Collection<ItemEntity> value) {
-		Collection<ItemEntity> ret = port_lib$captureDrops;
-		port_lib$captureDrops = value;
+	public Collection<ItemEntity> captureDrops(Collection<ItemEntity> value) {
+		Collection<ItemEntity> ret = captureDrops;
+		captureDrops = value;
 		return ret;
 	}
 
 	// EXTRA CUSTOM DATA
 
 	@Inject(method = "saveWithoutId", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;addAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))
-	public void port_lib$beforeWriteCustomData(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
-		if (port_lib$extraCustomData != null && !port_lib$extraCustomData.isEmpty()) {
-			PortingLib.LOGGER.debug("writing custom data to entity [{}]", this);
-			tag.put(EntityHelper.EXTRA_DATA_KEY, port_lib$extraCustomData);
+	public void beforeWriteCustomData(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
+		if (extraCustomData != null && !extraCustomData.isEmpty()) {
+			tag.put(EntityHelper.EXTRA_DATA_KEY, extraCustomData);
 		}
 	}
 
 	@Inject(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;readAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))
-	public void port_lib$beforeReadCustomData(CompoundTag tag, CallbackInfo ci) {
+	public void beforeReadCustomData(CompoundTag tag, CallbackInfo ci) {
 		if (tag.contains(EntityHelper.EXTRA_DATA_KEY)) {
-			port_lib$extraCustomData = tag.getCompound(EntityHelper.EXTRA_DATA_KEY);
+			extraCustomData = tag.getCompound(EntityHelper.EXTRA_DATA_KEY);
 		}
-		EntityReadExtraDataCallback.EVENT.invoker().onLoad((Entity) (Object) this, port_lib$extraCustomData);
 	}
 
 	// RUNNING EFFECTS
@@ -125,12 +118,14 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
-	public void port_lib$spawnSprintParticle(CallbackInfo ci, int i, int j, int k, BlockPos blockPos) {
-		BlockState state = level.getBlockState(blockPos);
-		if (state.getBlock() instanceof CustomRunningEffectsBlock custom) {
-			if (custom.addRunningEffects(state, level, blockPos, (Entity) (Object) this)) ci.cancel();
+	public void spawnSprintParticle(CallbackInfo ci, int i, int j, int k, BlockPos blockPos) {
+		if (level.getBlockState(blockPos).addRunningEffects(level, blockPos, MixinHelper.cast(this))) {
+			ci.cancel();
 		}
 	}
+
+	// (did someone intend to write something here?)
+
 
 	@Inject(
 			method = "startRiding(Lnet/minecraft/world/entity/Entity;Z)Z",
@@ -141,31 +136,29 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 			),
 			cancellable = true
 	)
-	public void port_lib$startRiding(Entity mounted, boolean bl, CallbackInfoReturnable<Boolean> cir) {
-		if (StartRidingCallback.EVENT.invoker().onStartRiding(mounted, (Entity) (Object) this) == InteractionResult.FAIL) {
+	public void startRiding(Entity entity, boolean bl, CallbackInfoReturnable<Boolean> cir) {
+		if (StartRidingCallback.EVENT.invoker().onStartRiding(MixinHelper.cast(this), entity) == InteractionResult.FAIL) {
 			cir.setReturnValue(false);
 		}
 	}
 
-	@Inject(method = "setRemoved", at = @At("RETURN"))
-	private void port_lib$setRemoved(RemovalReason reason, CallbackInfo ci) {
-		if ((Object) this instanceof AbstractMinecart cart) {
-			MinecartEvents.REMOVE.invoker().minecartRemove(cart, level);
-		}
+	@Inject(method = "remove", at = @At("TAIL"))
+	public void onEntityRemove(Entity.RemovalReason reason, CallbackInfo ci) {
+		EntityEvents.ON_REMOVE.invoker().onRemove((Entity) (Object) this, reason);
 	}
 
 	@Unique
 	@Override
-	public CompoundTag port_lib$getExtraCustomData() {
-		if (port_lib$extraCustomData == null) {
-			port_lib$extraCustomData = new CompoundTag();
+	public CompoundTag getExtraCustomData() {
+		if (extraCustomData == null) {
+			extraCustomData = new CompoundTag();
 		}
-		return port_lib$extraCustomData;
+		return extraCustomData;
 	}
 
 	@Unique
 	@Override
-	public CompoundTag port_lib$serializeNBT() {
+	public CompoundTag serializeNBT() {
 		CompoundTag nbt = new CompoundTag();
 		String id = EntityHelper.getEntityString(MixinHelper.cast(this));
 
@@ -178,15 +171,13 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 
 	@Unique
 	@Override
-	public void port_lib$deserializeNBT(CompoundTag nbt) {
+	public void deserializeNBT(CompoundTag nbt) {
 		readAdditionalSaveData(nbt);
 	}
 
+	@Unique
 	@Override
 	public ResourceLocation getRegistryName() {
-		if (port_lib$registryName == null) {
-			port_lib$registryName = Registry.ENTITY_TYPE.getKey(getType());
-		}
-		return port_lib$registryName;
+		return Registry.ENTITY_TYPE.getKey(getType());
 	}
 }

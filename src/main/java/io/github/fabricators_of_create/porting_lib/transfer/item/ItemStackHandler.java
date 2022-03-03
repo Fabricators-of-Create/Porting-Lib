@@ -115,7 +115,7 @@ public class ItemStackHandler implements IItemHandlerModifiable, NBTSerializable
 	// NBTSerializable
 
 	@Override
-	public CompoundTag port_lib$serializeNBT() {
+	public CompoundTag serializeNBT() {
 		return serializeNBT();
 	}
 
@@ -136,7 +136,7 @@ public class ItemStackHandler implements IItemHandlerModifiable, NBTSerializable
 	}
 
 	@Override
-	public void port_lib$deserializeNBT(CompoundTag nbt) {
+	public void deserializeNBT(CompoundTag nbt) {
 		deserializeNBT(nbt);
 	}
 

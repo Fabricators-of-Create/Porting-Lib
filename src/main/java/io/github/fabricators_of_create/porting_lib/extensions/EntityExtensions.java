@@ -6,9 +6,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.item.ItemEntity;
 
 public interface EntityExtensions {
-	CompoundTag port_lib$getExtraCustomData();
+	CompoundTag getExtraCustomData();
 
-	Collection<ItemEntity> port_lib$captureDrops();
+	Collection<ItemEntity> captureDrops();
 
-	Collection<ItemEntity> port_lib$captureDrops(Collection<ItemEntity> value);
+	Collection<ItemEntity> captureDrops(Collection<ItemEntity> value);
 }

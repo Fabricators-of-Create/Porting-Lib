@@ -32,7 +32,9 @@ repositories {
 }
 
 dependencies {
-	// dev environment
+    implementation 'org.projectlombok:lombok:1.18.20'
+
+    // dev environment
 	minecraft("com.mojang:minecraft:${project.minecraft_version}")
 	mappings loom.layered {
 		it.addLayer(quiltMappings.mappings("org.quiltmc:quilt-mappings:${project.minecraft_version}+build.${project.qm_version}:v2"))

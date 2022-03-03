@@ -3,10 +3,16 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+
 import org.jetbrains.annotations.Nullable;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -17,12 +23,12 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomFrictionBlock;
 import io.github.fabricators_of_create.porting_lib.block.CustomLandingEffectsBlock;
 import io.github.fabricators_of_create.porting_lib.event.LivingEntityEvents;
-import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.item.EntitySwingListenerItem;
 
 import net.fabricmc.api.EnvType;
@@ -49,82 +55,49 @@ public abstract class LivingEntityMixin extends Entity {
 	public abstract ItemStack getItemInHand(InteractionHand interactionHand);
 
 	@Unique
-	private InteractionResultHolder<Float> port_lib$hurtResult = null;
+	private DamageSource mantle$currentDamageSource;
 
 	public LivingEntityMixin(EntityType<?> entityType, Level world) {
 		super(entityType, world);
 	}
 
 	@Inject(method = "dropAllDeathLoot", at = @At("HEAD"))
-	private void port_lib$spawnDropsHEAD(DamageSource source, CallbackInfo ci) {
-		this.port_lib$captureDrops(new ArrayList<>());
+	private void mantle$spawnDropsHEAD(DamageSource source, CallbackInfo ci) {
+		mantle$currentDamageSource = source;
+		this.captureDrops(new ArrayList<>());
 	}
 
-	@ModifyArgs(method = "dropAllDeathLoot", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;dropCustomDeathLoot(Lnet/minecraft/world/damagesource/DamageSource;IZ)V"))
-	private void port_lib$modifyLootingLevel(Args args, DamageSource source) {
-		int currentLevel = args.get(1);
-		int modifiedLevel = LivingEntityEvents.LOOTING_LEVEL.invoker().modifyLootingLevel(source, (LivingEntity) (Object) this, currentLevel);
-		if (modifiedLevel != currentLevel) {
-			args.set(1, modifiedLevel);
+	@ModifyVariable(method = "dropAllDeathLoot",
+			at = @At(value = "STORE", ordinal = 0))
+	private int mantle$spawnDropsBODY1(int j) {
+		int modifiedLevel = LivingEntityEvents.LOOTING_LEVEL.invoker().modifyLootingLevel(mantle$currentDamageSource, (LivingEntity) (Object) this, j);
+		if (modifiedLevel != 0) {
+			return modifiedLevel;
+		} else {
+			return EnchantmentHelper.getMobLooting((LivingEntity) mantle$currentDamageSource.getEntity());
 		}
 	}
 
-	@Inject(method = "dropAllDeathLoot", at = @At("TAIL"))
-	private void port_lib$spawnDrops(DamageSource source, CallbackInfo ci) {
-		Collection<ItemEntity> drops = this.port_lib$captureDrops(null);
-		if (!LivingEntityEvents.DROPS.invoker().onLivingEntityDrops(source, drops))
-			drops.forEach(e -> level.addFreshEntity(e));
+	@Inject(method = "causeFallDamage", at = @At("HEAD"), cancellable = true)
+	public void onFall(float fallDistance, float multiplier, DamageSource source, CallbackInfoReturnable<Boolean> cir) {
+		LivingEntityEvents.LivingFallEvent event = new LivingEntityEvents.LivingFallEvent((LivingEntity) (Object) this, fallDistance, multiplier);
+		event.sendEvent();
+		if(event.isCanceled())
+			cir.setReturnValue(false);
+		if(fallDistance != event.getDistance())
+			fallDistance = event.getDistance();
+		if(multiplier != event.getDamageMultiplier())
+			multiplier = event.getDamageMultiplier();
 	}
 
-	@Environment(EnvType.CLIENT)
-	@Inject(method = "swing(Lnet/minecraft/world/InteractionHand;Z)V", at = @At("HEAD"), cancellable = true)
-	private void port_lib$swingHand(InteractionHand hand, boolean bl, CallbackInfo ci) {
-		ItemStack stack = getItemInHand(hand);
-		if (!stack.isEmpty() && stack.getItem() instanceof EntitySwingListenerItem listener &&
-				listener.onEntitySwing(stack, (LivingEntity) (Object) this)) {
-			ci.cancel();
-		}
-	}
-
-	@ModifyArgs(method = "dropExperience", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ExperienceOrb;award(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/phys/Vec3;I)V"))
-	private void port_lib$dropExperience(Args args) {
-		int amount = args.get(2);
-		int newAmount = LivingEntityEvents.EXPERIENCE_DROP.invoker().onLivingEntityExperienceDrop(amount, lastHurtByPlayer);
-		if (amount != newAmount) args.set(2, newAmount);
-	}
-
-	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"))
-	private void port_lib$tick(CallbackInfo ci) {
-		LivingEntityEvents.TICK.invoker().onLivingEntityTick((LivingEntity) (Object) this);
-	}
-
-	@ModifyVariable(method = "knockback", at = @At("STORE"), ordinal = 0, argsOnly = true)
-	private double port_lib$takeKnockback(double f) {
-		if (lastHurtByPlayer != null)
-			return LivingEntityEvents.KNOCKBACK_STRENGTH.invoker().onLivingEntityTakeKnockback(f, lastHurtByPlayer);
-
-		return f;
-	}
-
-	@ModifyVariable(method = "hurt", at = @At("HEAD"), argsOnly = true)
-	private float port_lib$onHurt(float amount, DamageSource source, float amountAgainBecauseWeNeedItTwiceSomeReason) {
-		port_lib$hurtResult = LivingEntityEvents.ATTACK.invoker().onAttack(source, (LivingEntity) (Object) this, amount);
-		if (port_lib$hurtResult == null)
-			return amount;
-		return port_lib$hurtResult.getObject();
-	}
-
-	@Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
-	private void port_lib$cancelOnHurt(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-		if (port_lib$hurtResult != null) {
-			if (port_lib$hurtResult.getResult() == InteractionResult.FAIL) {
-				cir.setReturnValue(false);
-			}
-		}
+	@ModifyVariable(method = "dropAllDeathLoot",
+			at = @At(value = "STORE", ordinal = 1))
+	private int mantle$spawnDropsBODY2(int j) {
+		return LivingEntityEvents.LOOTING_LEVEL.invoker().modifyLootingLevel(mantle$currentDamageSource, (LivingEntity) (Object) this, j);
 	}
 
 	@ModifyArgs(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getDamageAfterArmorAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"))
-	private void port_lib$onHurt(Args args) {
+	private void mantle$onHurt(Args args) {
 		DamageSource source = args.get(0);
 		float currentAmount = args.get(1);
 		float newAmount = LivingEntityEvents.ACTUALLY_HURT.invoker().onHurt(source, (LivingEntity) (Object) this, currentAmount);
@@ -132,44 +105,87 @@ public abstract class LivingEntityMixin extends Entity {
 			args.set(1, newAmount);
 	}
 
-	@ModifyArgs(
+	@Inject(method = "dropAllDeathLoot", at = @At("TAIL"))
+	private void mantle$spawnDropsTAIL(DamageSource source, CallbackInfo ci) {
+		Collection<ItemEntity> drops = this.captureDrops(null);
+		if (!LivingEntityEvents.DROPS.invoker().onLivingEntityDrops((LivingEntity) (Object) this, source, drops))
+			drops.forEach(e -> level.addFreshEntity(e));
+	}
+
+	@Environment(EnvType.CLIENT)
+	@Inject(method = "swing(Lnet/minecraft/world/InteractionHand;Z)V", at = @At("HEAD"), cancellable = true)
+	private void mantle$swingHand(InteractionHand hand, boolean bl, CallbackInfo ci) {
+		ItemStack stack = getItemInHand(hand);
+		if (!stack.isEmpty() && stack.getItem() instanceof EntitySwingListenerItem && ((EntitySwingListenerItem) stack.getItem())
+				.onEntitySwing(stack, (LivingEntity) (Object) this)) { ci.cancel();	}
+	}
+
+	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"))
+	private void mantle$tick(CallbackInfo ci) {
+		LivingEntityEvents.TICK.invoker().onLivingEntityTick((LivingEntity) (Object) this);
+	}
+
+	@ModifyVariable(method = "knockback", at = @At("STORE"), ordinal = 0)
+	private double mantle$takeKnockback(double f) {
+		if (lastHurtByPlayer != null)
+			return LivingEntityEvents.KNOCKBACK_STRENGTH.invoker().onLivingEntityTakeKnockback(f, lastHurtByPlayer);
+
+		return f;
+	}
+
+	@ModifyVariable(method = "hurt", at = @At("HEAD"), argsOnly = true)
+	private float mantle$onHurt(float amount, DamageSource source, float amount2) {
+		return LivingEntityEvents.HURT.invoker().onHurt(source, amount);
+	}
+
+	@Inject(method = "jumpFromGround", at = @At("TAIL"))
+	public void mantle$onJump(CallbackInfo ci) {
+		LivingEntityEvents.JUMP.invoker().onLivingEntityJump((LivingEntity) (Object) this);
+	}
+
+	@Inject(
 			method = "checkFallDamage",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/server/level/ServerLevel;sendParticles(Lnet/minecraft/core/particles/ParticleOptions;DDDIDDDD)I"
-			)
+					target = "Lnet/minecraft/server/level/ServerLevel;sendParticles(Lnet/minecraft/core/particles/ParticleOptions;DDDIDDDD)I",
+					shift = At.Shift.BEFORE
+			),
+			locals = LocalCapture.CAPTURE_FAILHARD,
+			cancellable = true
 	)
-	protected void port_lib$updateFallState(Args args, double y, boolean onGround, BlockState state, BlockPos pos) {
-		int count = args.get(4);
-		if (state.getBlock() instanceof CustomLandingEffectsBlock custom) {
-			if (custom.addLandingEffects(state, (ServerLevel) level, pos, state, (LivingEntity) (Object) this, count)) {
-				super.checkFallDamage(y, onGround, state, pos);
-				args.set(4, 0); // spawn 0 particles
-			}
+	protected void mantle$updateFallState(double d, boolean bl, BlockState blockState, BlockPos blockPos,
+										  CallbackInfo ci, float f, double e, int i) {
+		if (blockState.addLandingEffects((ServerLevel) level, blockPos, blockState, MixinHelper.cast(this), i)) {
+			super.checkFallDamage(d, bl, blockState, blockPos);
+			ci.cancel();
 		}
 	}
 
-	@ModifyVariable(
-			method = "travel",
-			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getBlockPosBelowThatAffectsMyMovement()Lnet/minecraft/core/BlockPos;")),
-			at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/block/Block;getFriction()F"), ordinal = 0
-	)
-	@SuppressWarnings("InvalidInjectorMethodSignature")
-	private float port_lib$setFriction(float original) { // shut, MCDev
-		BlockPos pos = new BlockPos(getX(), getY() - 1, getZ());
-		BlockState state = level.getBlockState(pos);
-		if (state.getBlock() instanceof CustomFrictionBlock custom) {
-			return custom.getFriction(state, level, pos, this);
-		}
-		return original;
+	// TODO Make this less :concern: when fabric's mixin fork updates
+	@ModifyVariable(method = "travel", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/block/Block;getFriction()F"), index = 7)
+	public float mantle$setSlipperiness(float t) {
+		return MixinHelper.<LivingEntity>cast(this).level.getBlockState(getBlockPosBelowThatAffectsMyMovement())
+				.getSlipperiness(MixinHelper.<LivingEntity>cast(this).level, getBlockPosBelowThatAffectsMyMovement(), MixinHelper.<LivingEntity>cast(this));
 	}
 
-	@Inject(method = "getVisibilityPercent", at = @At(value = "TAIL"), cancellable = true)
-	private void port_lib$modifyVisibility(@Nullable Entity lookingEntity, CallbackInfoReturnable<Double> cir) {
-		double current = cir.getReturnValue();
-		double newVis = LivingEntityEvents.VISIBILITY.invoker().modifyVisibility((LivingEntity) (Object) this, lookingEntity, current);
-		if (current != newVis) {
-			cir.setReturnValue(newVis);
+	//Moved from MobMixin
+	@Inject(method = "getEquipmentSlotForItem", at = @At("HEAD"), cancellable = true)
+	private static void mantle$getSlotForItemStack(ItemStack itemStack, CallbackInfoReturnable<EquipmentSlot> cir) {
+		if (itemStack.getItem() instanceof EquipmentItem equipment) {
+			cir.setReturnValue(equipment.getEquipmentSlot(itemStack));
 		}
+	}
+
+	@Inject(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", at = @At(value = "JUMP", opcode = Opcodes.IFNONNULL), locals = LocalCapture.CAPTURE_FAILHARD)
+	public void mantle$onPotionEffectAdded(MobEffectInstance oldEffectInstance, Entity source, CallbackInfoReturnable<Boolean> cir, MobEffectInstance newEffectInstance) {
+		PotionEvents.POTION_ADDED.invoker().onPotionAdded(new PotionEvents.PotionAddedEvent(MixinHelper.cast(this), oldEffectInstance, newEffectInstance, source));
+	}
+
+	@Inject(method = "canBeAffected", at = @At("HEAD"), cancellable = true)
+	public void mantle$potionApplicable(MobEffectInstance potioneffect, CallbackInfoReturnable<Boolean> cir) {
+		PotionEvents.PotionApplicableEvent event = new PotionEvents.PotionApplicableEvent(MixinHelper.cast(this), potioneffect);
+		event.sendEvent();
+		if(event.getResult() != InteractionResult.PASS)
+			cir.setReturnValue(event.getResult() == InteractionResult.SUCCESS);
 	}
 }
