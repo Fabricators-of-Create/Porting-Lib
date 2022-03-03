@@ -17,3 +17,6 @@ transitive-accessible class net/minecraft/client/renderer/texture/TextureAtlasSp
 
 transitive-accessible class net/minecraft/client/renderer/RenderType$CompositeState
 transitive-accessible class net/minecraft/client/renderer/RenderType$CompositeRenderType
+
+transitive-accessible field net/minecraft/client/renderer/block/model/BlockModel parent Lnet/minecraft/client/renderer/block/model/BlockModel;
+transitive-accessible field net/minecraft/client/renderer/block/model/BlockModel parentLocation Lnet/minecraft/resources/ResourceLocation;

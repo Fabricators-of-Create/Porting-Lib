@@ -2,7 +2,6 @@ package io.github.fabricators_of_create.porting_lib.util;
 
 import javax.annotation.Nullable;
 
-import io.github.fabricators_of_create.porting_lib.extensions.TierExtensions;
 import me.alphamode.forgetags.DyeUtil;
 import me.alphamode.forgetags.Tags;
 import net.minecraft.tags.BlockTags;
@@ -44,6 +43,6 @@ public class TagUtil {
 	}
 
 	public static Tag<Block> getTagFromTier(Tier tier) {
-		return ((TierExtensions) tier).getTag();
+		return tier.getTag();
 	}
 }

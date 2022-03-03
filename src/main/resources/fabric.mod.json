@@ -19,6 +19,9 @@
     ],
     "client": [
       "io.github.fabricators_of_create.porting_lib.PortingLib"
+    ],
+    "mm:early_risers": [
+      "io.github.fabricators_of_create.porting_lib.PortingLibER"
     ]
   },
   "mixins": [
@@ -36,6 +39,7 @@
     "loom:injected_interfaces": {
       "net/minecraft/class_293": ["io/github/fabricators_of_create/porting_lib/extensions/VertexFormatExtensions"],
       "net/minecraft/class_276": ["io/github/fabricators_of_create/porting_lib/extensions/RenderTargetExtensions"],
+      "net/minecraft/class_793": ["io/github/fabricators_of_create/porting_lib/extensions/BlockModelExtensions"],
       "net/minecraft/class_1077": ["io/github/fabricators_of_create/porting_lib/extensions/LanguageInfoExtensions"],
       "net/minecraft/class_1159": ["io/github/fabricators_of_create/porting_lib/extensions/Matrix4fExtensions"],
       "net/minecraft/class_1297": [

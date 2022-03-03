@@ -57,6 +57,8 @@
     "defaultRequire": 1
   },
   "mixins": [
+    "BlockModelDeserializerMixin",
+    "BlockModelMixin",
     "accessor.BlockModel$DeserializerAccessor",
     "accessor.SheetsAccessor"
   ]

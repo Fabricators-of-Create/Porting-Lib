@@ -28,6 +28,7 @@ repositories {
 	maven { url = "https://maven.parchmentmc.org" }
 	maven { url = "https://maven.devos.community/releases/" }
 	maven { url = "https://maven.devos.community/snapshots/" }
+	maven { url = "https://jitpack.io" }
 }
 
 dependencies {
@@ -44,7 +45,7 @@ dependencies {
 	modRuntimeOnly("maven.modrinth:lazydfu:0.1.2")
 	modRuntimeOnly("maven.modrinth:suggestionproviderfabric:1.0.1")
 	modRuntimeOnly("mcp.mobius.waila:wthit:fabric-${project.wthit_version}")
-	modRuntimeOnly("maven.modrinth:sodium:${project.sodium_version}") // rendering beware
+//	modRuntimeOnly("maven.modrinth:sodium:${project.sodium_version}") // rendering beware
     runtimeOnly("org.joml:joml:1.10.2")
 	modRuntimeOnly("maven.modrinth:lithium:${project.lithium_version}")
 	modRuntimeOnly("maven.modrinth:iris:${project.iris_version}")
@@ -53,6 +54,8 @@ dependencies {
 	// dependencies
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
 	modImplementation(include("me.alphamode:ForgeTags:${project.forge_tags_version}"))
+
+	modImplementation(include("com.github.Chocohead:Fabric-ASM:v2.3"))
 }
 
 loom {
