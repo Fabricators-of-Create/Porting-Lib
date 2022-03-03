@@ -52,7 +52,7 @@ public class TransferUtil {
 
 	public static LazyOptional<IItemHandler> getItemHandler(BlockEntity be, @Nullable Direction side) {
 		// Create handling
-		if (be instanceof ItemTransferable transferable) return LazyOptional.ofObject(transferable.getItemHandler(side));
+		if (be instanceof ItemTransferable transferable) return transferable.getItemHandler(side);
 		// client handling
 		if (Objects.requireNonNull(be.getLevel()).isClientSide()) {
 			return LazyOptional.empty();
@@ -100,7 +100,7 @@ public class TransferUtil {
 
 	public static LazyOptional<IFluidHandler> getFluidHandler(BlockEntity be, @Nullable Direction side) {
 		// Create handling
-		if (be instanceof FluidTransferable transferable) return LazyOptional.ofObject(transferable.getFluidHandler(side));
+		if (be instanceof FluidTransferable transferable) return transferable.getFluidHandler(side);
 		// client handling
 //		if (Objects.requireNonNull(be.getLevel()).isClientSide()) { FIXME
 //			IFluidHandler cached = FluidTileDataHandler.getCachedHandler(be);
@@ -169,8 +169,8 @@ public class TransferUtil {
 	@Nullable
 	public static Storage<FluidVariant> getFluidStorageForBE(BlockEntity be, Direction side) {
 		if (be instanceof FluidTransferable transferable) {
-			IFluidHandler handler = transferable.getFluidHandler(side);
-			return handler == null ? null : new StorageFluidHandler(handler);
+			LazyOptional<IFluidHandler> handler = transferable.getFluidHandler(side);
+			return handler == null || !handler.isPresent() ? null : new StorageFluidHandler(handler.getValueUnsafer());
 		}
 		return null;
 	}
@@ -178,9 +178,9 @@ public class TransferUtil {
 	@Nullable
 	public static Storage<ItemVariant> getItemStorageForBE(BlockEntity be, Direction side) {
 		if (be instanceof ItemTransferable transferable) {
-			IItemHandler handler = transferable.getItemHandler(side);
+			LazyOptional<IItemHandler> handler = transferable.getItemHandler(side);
 			if (handler instanceof CustomStorageHandler custom) return custom.getStorage();
-			return handler == null ? null : new StorageItemHandler(handler);
+			return handler == null || !handler.isPresent() ? null : new StorageItemHandler(handler.getValueUnsafer());
 		}
 		return null;
 	}

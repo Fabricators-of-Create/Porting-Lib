@@ -9,15 +9,18 @@ import net.fabricmc.fabric.api.event.EventFactory;
 public interface OverlayRenderCallback {
 	Event<OverlayRenderCallback> EVENT = EventFactory.createArrayBacked(OverlayRenderCallback.class, callbacks -> (stack, partialTicks, window, type) -> {
 		for (OverlayRenderCallback callback : callbacks) {
-			callback.onOverlayRender(stack, partialTicks, window, type);
+			if (callback.onOverlayRender(stack, partialTicks, window, type)) {
+				return true;
+			}
 		}
+		return false;
 	});
 
-	void onOverlayRender(PoseStack stack, float partialTicks, Window window, Types type);
+	boolean onOverlayRender(PoseStack stack, float partialTicks, Window window, Types type);
 
 	enum Types {
 		AIR,
-		CROSSHAIRS
-		;
+		CROSSHAIRS,
+		PLAYER_HEALTH
 	}
 }

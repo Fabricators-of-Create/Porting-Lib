@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import static net.minecraft.client.gui.GuiComponent.GUI_ICONS_LOCATION;
 
+import net.minecraft.world.entity.player.Player;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -41,15 +43,33 @@ public abstract class GuiMixin {
 					value = "INVOKE",
 					shift = At.Shift.AFTER,
 					target = "Lnet/minecraft/util/profiling/ProfilerFiller;pop()V"
-			)
-	)
+			),
+			cancellable = true)
 	private void port_lib$renderStatusBars(PoseStack matrixStack, CallbackInfo ci) {
-		OverlayRenderCallback.EVENT.invoker().onOverlayRender(matrixStack, port_lib$partialTicks, minecraft.getWindow(), OverlayRenderCallback.Types.AIR);
+		if (OverlayRenderCallback.EVENT.invoker().onOverlayRender(matrixStack, port_lib$partialTicks, minecraft.getWindow(), OverlayRenderCallback.Types.AIR)) {
+			ci.cancel();
+		}
 	}
 
-	@Inject(method = "renderCrosshair", at = @At("HEAD"))
+	@Inject(
+			method = "renderHearts",
+			at = @At(
+					value = "HEAD"
+			),
+			cancellable = true
+	)
+	private void port_lib$renderHealth(PoseStack matrixStack, Player player, int i, int j, int k, int l, float f, int m, int n, int o, boolean bl, CallbackInfo ci) {
+		if (OverlayRenderCallback.EVENT.invoker().onOverlayRender(matrixStack, port_lib$partialTicks, minecraft.getWindow(), OverlayRenderCallback.Types.PLAYER_HEALTH)) {
+			ci.cancel();
+		}
+	}
+
+	@Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
 	private void port_lib$renderCrosshair(PoseStack matrixStack, CallbackInfo ci) {
-		OverlayRenderCallback.EVENT.invoker().onOverlayRender(matrixStack, port_lib$partialTicks, minecraft.getWindow(), OverlayRenderCallback.Types.CROSSHAIRS);
+		if (OverlayRenderCallback.EVENT.invoker().onOverlayRender(matrixStack, port_lib$partialTicks, minecraft.getWindow(), OverlayRenderCallback.Types.CROSSHAIRS)) {
+			ci.cancel();
+			return;
+		}
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderTexture(0, GUI_ICONS_LOCATION);

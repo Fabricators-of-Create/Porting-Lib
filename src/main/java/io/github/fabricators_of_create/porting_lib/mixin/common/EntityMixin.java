@@ -2,13 +2,6 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.Collection;
 
-import io.github.fabricators_of_create.porting_lib.PortingLib;
-
-import io.github.fabricators_of_create.porting_lib.event.MinecartEvents;
-import net.minecraft.world.entity.Entity.RemovalReason;
-
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -18,27 +11,33 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import io.github.fabricators_of_create.porting_lib.PortingLib;
 import io.github.fabricators_of_create.porting_lib.block.CustomRunningEffectsBlock;
 import io.github.fabricators_of_create.porting_lib.event.EntityEyeHeightCallback;
 import io.github.fabricators_of_create.porting_lib.event.EntityReadExtraDataCallback;
+import io.github.fabricators_of_create.porting_lib.event.MinecartEvents;
 import io.github.fabricators_of_create.porting_lib.event.StartRidingCallback;
 import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.RegistryNameProvider;
 import io.github.fabricators_of_create.porting_lib.util.EntityHelper;
 import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
-
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 @Mixin(Entity.class)
-public abstract class EntityMixin implements EntityExtensions, NBTSerializable {
+public abstract class EntityMixin implements EntityExtensions, NBTSerializable, RegistryNameProvider {
 	@Shadow
 	public Level level;
 	@Shadow
@@ -47,9 +46,14 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable {
 	private CompoundTag port_lib$extraCustomData;
 	@Unique
 	private Collection<ItemEntity> port_lib$captureDrops = null;
+	@Unique
+	private ResourceLocation port_lib$registryName = null;
 
 	@Shadow
 	protected abstract void readAdditionalSaveData(CompoundTag compoundTag);
+
+	@Shadow
+	public abstract EntityType<?> getType();
 
 	@Inject(at = @At("TAIL"), method = "<init>")
 	public void port_lib$entityInit(EntityType<?> entityType, Level world, CallbackInfo ci) {
@@ -176,5 +180,13 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable {
 	@Override
 	public void port_lib$deserializeNBT(CompoundTag nbt) {
 		readAdditionalSaveData(nbt);
+	}
+
+	@Override
+	public ResourceLocation getRegistryName() {
+		if (port_lib$registryName == null) {
+			port_lib$registryName = Registry.ENTITY_TYPE.getKey(getType());
+		}
+		return port_lib$registryName;
 	}
 }

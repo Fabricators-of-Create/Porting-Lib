@@ -4,5 +4,5 @@ import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.resources.model.BakedModel;
 
 public interface TransformTypeDependentItemBakedModel {
-	BakedModel port_lib$handlePerspective(TransformType cameraTransformType);
+	BakedModel handlePerspective(TransformType cameraTransformType);
 }

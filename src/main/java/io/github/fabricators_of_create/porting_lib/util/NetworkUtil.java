@@ -3,6 +3,7 @@ package io.github.fabricators_of_create.porting_lib.util;
 import java.util.function.Consumer;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,6 +29,25 @@ public class NetworkUtil {
 			@Override
 			public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
 				extraDataWriter.accept(buf);
+			}
+		});
+	}
+
+	public static void openGui(ServerPlayer player, MenuProvider containerProvider, BlockPos pos) {
+		player.openMenu(new ExtendedScreenHandlerFactory() {
+			@Override
+			public Component getDisplayName() {
+				return containerProvider.getDisplayName();
+			}
+
+			@Override
+			public AbstractContainerMenu createMenu(int arg0, Inventory arg1, Player arg2) {
+				return containerProvider.createMenu(arg0, arg1, arg2);
+			}
+
+			@Override
+			public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
+				buf.writeBlockPos(pos);
 			}
 		});
 	}
