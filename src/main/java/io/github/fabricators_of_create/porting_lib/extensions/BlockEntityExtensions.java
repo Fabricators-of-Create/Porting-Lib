@@ -4,7 +4,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 
 public interface BlockEntityExtensions {
-	CompoundTag getExtraCustomData();
+	default CompoundTag getExtraCustomData() {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 
 	void deserializeNBT(BlockState state, CompoundTag nbt);
 }

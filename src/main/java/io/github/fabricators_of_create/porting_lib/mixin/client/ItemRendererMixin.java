@@ -22,7 +22,7 @@ public abstract class ItemRendererMixin {
 	@ModifyVariable(method = "render", at = @At("HEAD"), argsOnly = true)
 	private BakedModel port_lib$handleModel(BakedModel model, ItemStack itemStack, ItemTransforms.TransformType transformType, boolean leftHand, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, BakedModel model1) {
 		if (model instanceof TransformTypeDependentItemBakedModel handler) {
-			return handler.handlePerspective(transformType);
+			return handler.handlePerspective(transformType, matrixStack);
 		}
 		return model;
 	}
