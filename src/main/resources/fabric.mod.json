@@ -31,5 +31,40 @@
     "fabric": ">=${fabric_version}",
     "minecraft": ">=${minecraft_version}",
     "java": ">=${java_version}"
+  },
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_293": ["io/github/fabricators_of_create/porting_lib/extensions/VertexFormatExtensions"],
+      "net/minecraft/class_276": ["io/github/fabricators_of_create/porting_lib/extensions/RenderTargetExtensions"],
+      "net/minecraft/class_1077": ["io/github/fabricators_of_create/porting_lib/extensions/LanguageInfoExtensions"],
+      "net/minecraft/class_1159": ["io/github/fabricators_of_create/porting_lib/extensions/Matrix4fExtensions"],
+      "net/minecraft/class_1297": [
+        "io/github/fabricators_of_create/porting_lib/extensions/EntityExtensions",
+        "io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"
+      ],
+      "net/minecraft/class_1438": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
+      "net/minecraft/class_1472": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
+      "net/minecraft/class_1473": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
+      "net/minecraft/class_1735": ["io/github/fabricators_of_create/porting_lib/extensions/SlotExtensions"],
+      "net/minecraft/class_1792": ["io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"],
+      "net/minecraft/class_1799": ["io/github/fabricators_of_create/porting_lib/extensions/ItemStackExtensions"],
+      "net/minecraft/class_1832": ["io/github/fabricators_of_create/porting_lib/extensions/TierExtensions"],
+      "net/minecraft/class_1856": ["io/github/fabricators_of_create/porting_lib/extensions/IngredientExtensions"],
+      "net/minecraft/class_2248": ["io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"],
+      "net/minecraft/class_2311": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
+      "net/minecraft/class_2396": ["io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"],
+      "net/minecraft/class_2397": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
+      "net/minecraft/class_2476": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
+      "net/minecraft/class_2526": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
+      "net/minecraft/class_2541": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
+      "net/minecraft/class_2560": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
+      "net/minecraft/class_2604": ["io/github/fabricators_of_create/porting_lib/extensions/ClientboundAddEntityPacketExtensions"],
+      "net/minecraft/class_2960": ["io/github/fabricators_of_create/porting_lib/extensions/ResourceLocationExtensions"],
+      "net/minecraft/class_3611": [
+        "io/github/fabricators_of_create/porting_lib/extensions/FluidExtensions",
+        "io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"
+      ],
+      "net/minecraft/class_4581": ["io/github/fabricators_of_create/porting_lib/extensions/Matrix3fExtensions"]
+    }
   }
 }

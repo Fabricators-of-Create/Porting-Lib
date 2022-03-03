@@ -72,7 +72,6 @@ public class TierSortingRegistry {
 	private static final ResourceLocation CHANNEL_NAME = new ResourceLocation("mantle:tier_sorting");
 	private static final String PROTOCOL_VERSION = "1.0";
 
-	// ===================== PRIVATE INTERNAL STUFFS BELOW THIS LINE =====================
 	private static boolean hasCustomTiers = false;
 
 	static {

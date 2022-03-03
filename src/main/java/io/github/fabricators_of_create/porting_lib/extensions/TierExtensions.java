@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.mixin.client.accessor;
+package io.github.fabricators_of_create.porting_lib.extensions;
 
 import net.minecraft.tags.Tag;
 

@@ -57,7 +57,7 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@Inject(method = "dropAllDeathLoot", at = @At("HEAD"))
 	private void port_lib$spawnDropsHEAD(DamageSource source, CallbackInfo ci) {
-		((EntityExtensions) this).port_lib$captureDrops(new ArrayList<>());
+		this.port_lib$captureDrops(new ArrayList<>());
 	}
 
 	@ModifyArgs(method = "dropAllDeathLoot", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;dropCustomDeathLoot(Lnet/minecraft/world/damagesource/DamageSource;IZ)V"))
@@ -71,7 +71,7 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@Inject(method = "dropAllDeathLoot", at = @At("TAIL"))
 	private void port_lib$spawnDrops(DamageSource source, CallbackInfo ci) {
-		Collection<ItemEntity> drops = ((EntityExtensions) this).port_lib$captureDrops(null);
+		Collection<ItemEntity> drops = this.port_lib$captureDrops(null);
 		if (!LivingEntityEvents.DROPS.invoker().onLivingEntityDrops(source, drops))
 			drops.forEach(e -> level.addFreshEntity(e));
 	}

@@ -8,6 +8,8 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.nbt.CompoundTag;
@@ -21,7 +23,6 @@ import net.minecraft.world.level.gameevent.GameEvent;
 
 public class LazySpawnEggItem extends SpawnEggItem {
 
-	public static final List<LazySpawnEggItem> INSTANCES = new ArrayList<>();
 	private static final Map<EntityType<? extends Mob>, LazySpawnEggItem> TYPE_MAP = new IdentityHashMap<>();
 	private static final DispenseItemBehavior DEFAULT_DISPENSE_BEHAVIOR = (source, stack) -> {
 		Direction face = source.getBlockState().getValue(DispenserBlock.FACING);
@@ -44,13 +45,14 @@ public class LazySpawnEggItem extends SpawnEggItem {
 		super(null, backgroundColor, highlightColor, props);
 		this.typeSupplier = type;
 
-		INSTANCES.add(this);
 		DispenseItemBehavior dispenseBehavior = this.createDispenseBehavior();
 		if (dispenseBehavior != null) {
 			DispenserBlock.registerBehavior(this, dispenseBehavior);
 		}
 
 		TYPE_MAP.put(this.typeSupplier.get(), this);
+
+		EnvExecutor.runWhenOn(EnvType.CLIENT, () -> () -> ColorProviderRegistry.ITEM.register((stack, layer) -> getColor(layer), this));
 	}
 
 	@Nullable

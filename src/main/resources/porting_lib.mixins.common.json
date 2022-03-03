@@ -75,6 +75,7 @@
     "accessor.PlayerAccessor",
     "accessor.PotionBrewingAccessor",
     "accessor.RailStateAccessor",
+    "accessor.RecipeManagerAccessor",
     "accessor.ServerGamePacketListenerImplAccessor",
     "accessor.SlotAccessor",
     "accessor.StairBlockAccessor",
