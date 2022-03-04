@@ -8,5 +8,7 @@ public interface BlockEntityExtensions {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 
-	default void deserializeNBT(BlockState state, CompoundTag nbt) {}
+	default void deserializeNBT(BlockState state, CompoundTag nbt) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 }

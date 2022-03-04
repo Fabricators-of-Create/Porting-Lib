@@ -6,9 +6,15 @@ import org.jetbrains.annotations.Contract;
 
 public interface Matrix4fExtensions {
 	@Contract(mutates = "this")
-	void port_lib$fromFloatArray(float[] floats);
+	default void fromFloatArray(float[] floats) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 
-	void port_lib$setTranslation(float x, float y, float z);
+	default void setTranslation(float x, float y, float z) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 
-	void port_lib$multiplyBackward(Matrix4f other);
+	default void multiplyBackward(Matrix4f other) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 }

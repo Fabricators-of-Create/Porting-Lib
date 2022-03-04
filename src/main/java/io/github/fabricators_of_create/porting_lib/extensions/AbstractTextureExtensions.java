@@ -1,7 +1,15 @@
 package io.github.fabricators_of_create.porting_lib.extensions;
 
-public interface AbstractTextureExtensions {
-	void port_lib$setBlurMipmap(boolean blur, boolean mipmap);
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-	void port_lib$restoreLastBlurMipmap();
+@Environment(EnvType.CLIENT)
+public interface AbstractTextureExtensions {
+	default void setBlurMipmap(boolean blur, boolean mipmap) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
+
+	default void restoreLastBlurMipmap() {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 }

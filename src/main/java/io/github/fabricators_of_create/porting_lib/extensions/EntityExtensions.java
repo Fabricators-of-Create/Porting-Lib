@@ -6,9 +6,15 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.item.ItemEntity;
 
 public interface EntityExtensions {
-	CompoundTag getExtraCustomData();
+	default CompoundTag getExtraCustomData() {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 
-	Collection<ItemEntity> captureDrops();
+	default Collection<ItemEntity> captureDrops() {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 
-	Collection<ItemEntity> captureDrops(Collection<ItemEntity> value);
+	default Collection<ItemEntity> captureDrops(Collection<ItemEntity> value) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 }

@@ -23,7 +23,7 @@ public abstract class EntityCollisionContextMixin implements EntityCollisionCont
 	}
 
 	@Override
-	public @Nullable Entity port_lib$getCachedEntity() {
+	public @Nullable Entity getCachedEntity() {
 		return port_lib$cachedEntity;
 	}
 }

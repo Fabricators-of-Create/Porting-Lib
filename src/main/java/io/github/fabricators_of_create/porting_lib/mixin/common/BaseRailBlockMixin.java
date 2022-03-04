@@ -21,7 +21,7 @@ public abstract class BaseRailBlockMixin implements BaseRailBlockExtensions {
 
 	@Unique
 	@Override
-	public RailShape port_lib$getRailDirection(BlockState state, BlockGetter world, BlockPos pos, @Nullable BaseRailBlock cart) {
+	public RailShape getRailDirection(BlockState state, BlockGetter world, BlockPos pos, @Nullable BaseRailBlock cart) {
 		return state.getValue(getShapeProperty());
 	}
 }

@@ -15,15 +15,25 @@ public interface TransformationExtensions {
 	 * Can be used for switching between coordinate systems.
 	 * Parameter is relative to the current origin.
 	 */
-	Transformation applyOrigin(Vector3f origin);
+	default Transformation applyOrigin(Vector3f origin) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 
-	Matrix3f getNormalMatrix();
+	default Matrix3f getNormalMatrix() {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 
-	void push(PoseStack stack);
+	default void push(PoseStack stack) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 
-	void transformPosition(Vector4f position);
+	default void transformPosition(Vector4f position) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 
-	Direction rotateTransform(Direction facing);
+	default Direction rotateTransform(Direction facing) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 
 	default boolean isIdentity() {
 		return this.equals(Transformation.identity());

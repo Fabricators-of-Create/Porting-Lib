@@ -49,7 +49,7 @@ public abstract class Matrix4fMixin implements Matrix4fExtensions {
 
 	@Override
 	@Contract(mutates = "this")
-	public void port_lib$fromFloatArray(float[] floats) {
+	public void fromFloatArray(float[] floats) {
 		m00 = floats[0];
 		m01 = floats[1];
 		m02 = floats[2];
@@ -73,7 +73,7 @@ public abstract class Matrix4fMixin implements Matrix4fExtensions {
 
 	@Unique
 	@Override
-	public void port_lib$setTranslation(float x, float y, float z) {
+	public void setTranslation(float x, float y, float z) {
 		m00 = 1.0F;
 		m11 = 1.0F;
 		m22 = 1.0F;
@@ -85,7 +85,7 @@ public abstract class Matrix4fMixin implements Matrix4fExtensions {
 
 	@Unique
 	@Override
-	public void port_lib$multiplyBackward(Matrix4f other) {
+	public void multiplyBackward(Matrix4f other) {
 		Matrix4f copy = other.copy();
 		copy.multiply((Matrix4f) (Object) this);
 		this.load(copy);

@@ -27,13 +27,13 @@ public class MinecartAndRailUtil {
 	}
 
 	public static RailShape getDirectionOfRail(BlockState state, BlockGetter world, BlockPos pos, @Nullable BaseRailBlock block) {
-		return ((BaseRailBlockExtensions) state.getBlock()).port_lib$getRailDirection(state, world, pos, block);
+		return ((BaseRailBlockExtensions) state.getBlock()).getRailDirection(state, world, pos, block);
 	}
 
 	// carts
 
 	public static void moveMinecartOnRail(AbstractMinecart cart, BlockPos pos) {
-		((AbstractMinecartExtensions) cart).port_lib$moveMinecartOnRail(pos);
+		((AbstractMinecartExtensions) cart).moveMinecartOnRail(pos);
 	}
 
 	public static double getMaximumSpeed(AbstractMinecart cart) {
@@ -41,7 +41,7 @@ public class MinecartAndRailUtil {
 	}
 
 	public static BlockPos getExpectedRailPos(AbstractMinecart cart) {
-		return ((AbstractMinecartExtensions) cart).port_lib$getCurrentRailPos();
+		return ((AbstractMinecartExtensions) cart).getCurrentRailPos();
 	}
 
 	public static double getSlopeAdjustment() {

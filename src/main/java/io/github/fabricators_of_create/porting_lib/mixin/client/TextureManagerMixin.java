@@ -31,7 +31,7 @@ public abstract class TextureManagerMixin {
 					remap = false
 			)
 	)
-	public void mantle$fixRelease(ResourceLocation path, CallbackInfo ci) {
+	public void port_lib$fixRelease(ResourceLocation path, CallbackInfo ci) {
 		this.byPath.remove(path);
 	}
 }

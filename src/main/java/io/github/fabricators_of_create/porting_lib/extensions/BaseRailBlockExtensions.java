@@ -9,5 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
 
 public interface BaseRailBlockExtensions {
-	RailShape port_lib$getRailDirection(BlockState state, BlockGetter world, BlockPos pos, @Nullable BaseRailBlock block);
+	default RailShape getRailDirection(BlockState state, BlockGetter world, BlockPos pos, @Nullable BaseRailBlock block) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 }

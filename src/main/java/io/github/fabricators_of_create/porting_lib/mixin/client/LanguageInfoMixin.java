@@ -36,7 +36,7 @@ public abstract class LanguageInfoMixin implements LanguageInfoExtensions {
 	}
 
 	@Override
-	public Locale port_lib$getJavaLocale() {
+	public Locale getJavaLocale() {
 		return port_lib$javaLocale;
 	}
 }

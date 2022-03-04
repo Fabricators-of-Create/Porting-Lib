@@ -5,7 +5,11 @@ import org.jetbrains.annotations.NotNull;
 import com.mojang.math.Matrix3f;
 
 public interface Matrix3fExtensions {
-	float[] port_lib$writeMatrix();
+	default float[] writeMatrix() {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 
-	void port_lib$set(@NotNull Matrix3f other);
+	default void set(@NotNull Matrix3f other) {
+
+	}
 }

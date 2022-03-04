@@ -28,7 +28,7 @@ public abstract class ServerLevelMixin {
 			cancellable = true
 	)
 	@SuppressWarnings("InvalidInjectorMethodSignature")
-	public void mantle$onStartExplosion(Entity exploder, DamageSource damageSource,
+	public void port_lib$onStartExplosion(Entity exploder, DamageSource damageSource,
 										ExplosionDamageCalculator context, double x,
 										double y, double z, float size, boolean causesFire,
 										Explosion.BlockInteraction mode, CallbackInfoReturnable<Explosion> cir,

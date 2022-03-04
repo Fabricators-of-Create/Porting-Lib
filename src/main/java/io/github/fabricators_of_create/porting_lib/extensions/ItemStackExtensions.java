@@ -5,5 +5,7 @@ import net.fabricmc.fabric.impl.item.ItemExtensions;
 import net.minecraft.world.item.ItemStack;
 
 public interface ItemStackExtensions {
-	boolean canPerformAction(ToolAction toolAction);
+	default boolean canPerformAction(ToolAction toolAction) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 }

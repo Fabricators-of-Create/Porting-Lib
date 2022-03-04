@@ -16,7 +16,7 @@ public final class MinecraftClientUtil {
 	}
 
 	public static Locale getLocale() {
-		return ((LanguageInfoExtensions) Minecraft.getInstance().getLanguageManager().getSelected()).port_lib$getJavaLocale();
+		return ((LanguageInfoExtensions) Minecraft.getInstance().getLanguageManager().getSelected()).getJavaLocale();
 	}
 
 	private static MinecraftAccessor get(Minecraft minecraft) {

@@ -74,7 +74,7 @@ public abstract class RenderTargetMixin implements RenderTargetExtensions {
 
 	@Unique
 	@Override
-	public void port_lib$enableStencil() {
+	public void enableStencil() {
 		if(port_lib$stencilEnabled) return;
 		port_lib$stencilEnabled = true;
 		this.resize(viewWidth, viewHeight, Minecraft.ON_OSX);
@@ -82,7 +82,7 @@ public abstract class RenderTargetMixin implements RenderTargetExtensions {
 
 	@Unique
 	@Override
-	public boolean port_lib$isStencilEnabled() {
+	public boolean isStencilEnabled() {
 		return this.port_lib$stencilEnabled;
 	}
 }

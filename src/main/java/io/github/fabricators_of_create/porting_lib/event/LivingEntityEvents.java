@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.event;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import lombok.Setter;
 import net.fabricmc.fabric.api.event.Event;
@@ -57,14 +58,20 @@ public class LivingEntityEvents {
 		return false;
 	});
 
-	public static final Event<Fall> FALL = EventFactory.createArrayBacked(Fall.class, callbacks -> fallEvent -> {
-		for(Fall e : callbacks)
-			e.onFall(fallEvent);
+	public static final Event<Fall> FALL = EventFactory.createArrayBacked(Fall.class, callbacks -> (info) -> {
+		float originalDistance = info.distance;
+		float originalMult = info.damageMultiplier;
+		for(Fall e : callbacks) {
+			e.onFall(info);
+			if (info.canceled || info.distance != originalDistance || info.damageMultiplier != originalMult) {
+				return;
+			}
+		}
 	});
 
-	public static final Event<LootingLevel> LOOTING_LEVEL = EventFactory.createArrayBacked(LootingLevel.class, callbacks -> (source, target, level) -> {
+	public static final Event<LootingLevel> LOOTING_LEVEL = EventFactory.createArrayBacked(LootingLevel.class, callbacks -> (source, target, level, recent) -> {
 		for (LootingLevel callback : callbacks) {
-			int lootingLevel = callback.modifyLootingLevel(source, target, level);
+			int lootingLevel = callback.modifyLootingLevel(source, target, level, recent);
 			if (lootingLevel != level) {
 				return lootingLevel;
 			}
@@ -113,22 +120,21 @@ public class LivingEntityEvents {
 
 	@FunctionalInterface
 	public interface Fall {
-		void onFall(LivingFallEvent event);
-	}
+		void onFall(FallInfo info);
 
-	@Getter @Setter
-	public static class LivingFallEvent extends MantleEvent.EntityEvent {
-		private float distance, damageMultiplier;
+		final class FallInfo {
+			public final LivingEntity entity;
+			public final DamageSource source;
+			public float distance;
+			public float damageMultiplier;
+			public boolean canceled = false;
 
-		public LivingFallEvent(LivingEntity entity, float distance, float damageMultiplier) {
-			super(entity);
-			this.distance = distance;
-			this.damageMultiplier = damageMultiplier;
-		}
-
-		@Override
-		public void sendEvent() {
-			FALL.invoker().onFall(this);
+			public FallInfo(LivingEntity entity, DamageSource source, float distance, float damageMultiplier) {
+				this.entity = entity;
+				this.source = source;
+				this.distance = distance;
+				this.damageMultiplier = damageMultiplier;
+			}
 		}
 	}
 
@@ -155,7 +161,7 @@ public class LivingEntityEvents {
 
 	@FunctionalInterface
 	public interface LootingLevel {
-		int modifyLootingLevel(DamageSource source, LivingEntity target, int currentLevel);
+		int modifyLootingLevel(DamageSource source, LivingEntity target, int currentLevel, boolean recentlyHit);
 	}
 
 	@FunctionalInterface

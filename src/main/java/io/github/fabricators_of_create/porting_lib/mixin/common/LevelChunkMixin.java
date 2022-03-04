@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomUpdateTagHandlingBlockEntity;
-import io.github.fabricators_of_create.porting_lib.extensions.ChunkUnloadListeningBlockEntity;
+import io.github.fabricators_of_create.porting_lib.block.ChunkUnloadListeningBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;

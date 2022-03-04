@@ -9,7 +9,7 @@ public final class Matrix4fHelper {
 		Matrix4f matrix = new Matrix4f();
 		Matrix4fExtensions ext = get(matrix);
 
-		ext.port_lib$fromFloatArray(values);
+		ext.fromFloatArray(values);
 
 		return matrix;
 	}

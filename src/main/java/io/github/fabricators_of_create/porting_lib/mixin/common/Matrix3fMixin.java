@@ -31,7 +31,7 @@ public abstract class Matrix3fMixin implements Matrix3fExtensions {
 	protected float m22;
 
 	@Override
-	public float[] port_lib$writeMatrix() {
+	public float[] writeMatrix() {
 		return new float[]{
 				m00,
 				m10,
@@ -46,7 +46,7 @@ public abstract class Matrix3fMixin implements Matrix3fExtensions {
 	}
 
 	@Override
-	public void port_lib$set(@Nonnull Matrix3f other) {
+	public void set(@Nonnull Matrix3f other) {
 		Matrix3fMixin o = MixinHelper.cast(other); // This will look weird in the merged class
 
 		m00 = o.m00;

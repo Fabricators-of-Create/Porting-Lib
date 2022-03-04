@@ -13,9 +13,9 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 @Mixin(StructureProcessor.class)
 public abstract class StructureProcessorMixin implements StructureProcessorExtensions {
 	@Override
-	public StructureTemplate.StructureEntityInfo port_lib$processEntity(LevelReader world, BlockPos seedPos, StructureTemplate.StructureEntityInfo rawEntityInfo,
-																	  StructureTemplate.StructureEntityInfo entityInfo, StructurePlaceSettings placementSettings,
-																	  StructureTemplate template) {
+	public StructureTemplate.StructureEntityInfo processEntity(LevelReader world, BlockPos seedPos, StructureTemplate.StructureEntityInfo rawEntityInfo,
+															   StructureTemplate.StructureEntityInfo entityInfo, StructurePlaceSettings placementSettings,
+															   StructureTemplate template) {
 		return entityInfo;
 	}
 }

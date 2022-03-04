@@ -64,7 +64,7 @@ public abstract class ClientboundAddEntityPacketMixin implements ClientboundAddE
 
 	@Unique
 	@Override
-	public FriendlyByteBuf port_lib$getExtraDataBuf() {
+	public FriendlyByteBuf getExtraDataBuf() {
 		return port_lib$extraDataBuf;
 	}
 }

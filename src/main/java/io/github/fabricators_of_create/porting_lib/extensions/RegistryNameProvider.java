@@ -4,6 +4,6 @@ import net.minecraft.resources.ResourceLocation;
 
 public interface RegistryNameProvider {
   default ResourceLocation getRegistryName() {
-    return new ResourceLocation("empty");
+	  throw new RuntimeException("this should be overridden via mixin. what?");
   }
 }

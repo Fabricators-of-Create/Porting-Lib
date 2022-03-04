@@ -3,11 +3,15 @@ package io.github.fabricators_of_create.porting_lib.extensions;
 import net.minecraft.core.BlockPos;
 
 public interface AbstractMinecartExtensions {
-	void port_lib$moveMinecartOnRail(BlockPos pos);
+	default void moveMinecartOnRail(BlockPos pos) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 
-	BlockPos port_lib$getCurrentRailPos();
+	default BlockPos getCurrentRailPos() {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 
-	default float port_lib$getMaxSpeedOnRail() {
+	default float getMaxSpeedOnRail() {
 		return 1.2f; // default in Forge
 	}
 }

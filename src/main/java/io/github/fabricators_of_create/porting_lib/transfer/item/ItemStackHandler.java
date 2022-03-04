@@ -114,11 +114,6 @@ public class ItemStackHandler implements IItemHandlerModifiable, NBTSerializable
 
 	// NBTSerializable
 
-	@Override
-	public CompoundTag serializeNBT() {
-		return serializeNBT();
-	}
-
 	public CompoundTag serializeNBT() {
 		ListTag nbtTagList = new ListTag();
 		for (int i = 0; i < stacks.length; i++) {
@@ -133,11 +128,6 @@ public class ItemStackHandler implements IItemHandlerModifiable, NBTSerializable
 		nbt.put("Items", nbtTagList);
 		nbt.putInt("Size", stacks.length);
 		return nbt;
-	}
-
-	@Override
-	public void deserializeNBT(CompoundTag nbt) {
-		deserializeNBT(nbt);
 	}
 
 	public void deserializeNBT(CompoundTag tag) {

@@ -89,9 +89,9 @@ public abstract class TransformationMixin implements TransformationExtensions {
 
 		Matrix4f ret = this.getMatrix();
 		Matrix4f tmp = Matrix4f.createTranslateMatrix(origin.x(), origin.y(), origin.z());
-		((Matrix4fExtensions) (Object) ret).port_lib$multiplyBackward(tmp);
+		((Matrix4fExtensions) (Object) ret).multiplyBackward(tmp);
 		tmp.setIdentity();
-		((Matrix4fExtensions) (Object) tmp).port_lib$setTranslation(-origin.x(), -origin.y(), -origin.z());
+		((Matrix4fExtensions) (Object) tmp).setTranslation(-origin.x(), -origin.y(), -origin.z());
 		ret.multiply(tmp);
 		return new Transformation(ret);
 	}

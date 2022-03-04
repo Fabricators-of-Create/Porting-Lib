@@ -12,11 +12,19 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import net.minecraft.world.phys.Vec3;
 
 public interface StructureTemplateExtensions {
-	List<StructureTemplate.StructureEntityInfo> port_lib$getEntities();
+	default List<StructureTemplate.StructureEntityInfo> getEntities() {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 
-	Vec3 port_lib$transformedVec3d(StructurePlaceSettings placementIn, Vec3 pos);
+	default Vec3 transformedVec3d(StructurePlaceSettings placementIn, Vec3 pos) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 
-	List<StructureTemplate.StructureEntityInfo> port_lib$processEntityInfos(@Nullable StructureTemplate template, LevelAccessor world, BlockPos blockPos, StructurePlaceSettings settings, List<StructureTemplate.StructureEntityInfo> infos);
+	default List<StructureTemplate.StructureEntityInfo> processEntityInfos(@Nullable StructureTemplate template, LevelAccessor world, BlockPos blockPos, StructurePlaceSettings settings, List<StructureTemplate.StructureEntityInfo> infos) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 
-	void port_lib$addEntitiesToWorld(ServerLevelAccessor world, BlockPos blockPos, StructurePlaceSettings settings);
+	default void addEntitiesToWorld(ServerLevelAccessor world, BlockPos blockPos, StructurePlaceSettings settings) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 }

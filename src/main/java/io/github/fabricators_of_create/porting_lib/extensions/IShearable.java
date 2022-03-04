@@ -12,9 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public interface IShearable {
-
 	default boolean isShearable(@Nonnull ItemStack item, Level world, BlockPos pos) {
-		return true;
+		return false;
 	}
 
 	@Nonnull

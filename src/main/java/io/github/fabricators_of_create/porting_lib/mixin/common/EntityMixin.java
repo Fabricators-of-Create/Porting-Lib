@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import io.github.fabricators_of_create.porting_lib.block.CustomRunningEffectsBlock;
 import io.github.fabricators_of_create.porting_lib.event.EntityEvents;
 import io.github.fabricators_of_create.porting_lib.event.StartRidingCallback;
 import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
@@ -9,13 +10,8 @@ import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import slimeknights.mantle.lib.event.EntityEvents;
-import slimeknights.mantle.lib.event.StartRidingCallback;
-import slimeknights.mantle.lib.extensions.EntityExtensions;
-import slimeknights.mantle.lib.extensions.RegistryNameProvider;
-import slimeknights.mantle.lib.util.EntityHelper;
-import slimeknights.mantle.lib.util.MixinHelper;
-import slimeknights.mantle.lib.util.NBTSerializable;
+import net.minecraft.world.level.block.state.BlockState;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -118,14 +114,12 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
-	public void spawnSprintParticle(CallbackInfo ci, int i, int j, int k, BlockPos blockPos) {
-		if (level.getBlockState(blockPos).addRunningEffects(level, blockPos, MixinHelper.cast(this))) {
+	public void spawnSprintParticle(CallbackInfo ci, int i, int j, int k, BlockPos pos, BlockState state) {
+		if (state.getBlock() instanceof CustomRunningEffectsBlock custom &&
+				custom.addRunningEffects(state, level, pos, (Entity) (Object) this)) {
 			ci.cancel();
 		}
 	}
-
-	// (did someone intend to write something here?)
-
 
 	@Inject(
 			method = "startRiding(Lnet/minecraft/world/entity/Entity;Z)Z",

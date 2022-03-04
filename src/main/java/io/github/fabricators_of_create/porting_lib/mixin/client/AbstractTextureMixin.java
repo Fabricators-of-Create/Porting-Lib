@@ -27,7 +27,7 @@ public abstract class AbstractTextureMixin implements AbstractTextureExtensions 
 
 	@Unique
 	@Override
-	public void port_lib$setBlurMipmap(boolean blur, boolean mipmap) {
+	public void setBlurMipmap(boolean blur, boolean mipmap) {
 		this.port_lib$lastBlur = this.blur;
 		this.port_lib$lastMipmap = this.mipmap;
 		setFilter(blur, mipmap);
@@ -35,7 +35,7 @@ public abstract class AbstractTextureMixin implements AbstractTextureExtensions 
 
 	@Unique
 	@Override
-	public void port_lib$restoreLastBlurMipmap() {
+	public void restoreLastBlurMipmap() {
 		setFilter(this.port_lib$lastBlur, this.port_lib$lastMipmap);
 	}
 }

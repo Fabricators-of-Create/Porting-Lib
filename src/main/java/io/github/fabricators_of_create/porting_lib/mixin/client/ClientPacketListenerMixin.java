@@ -42,7 +42,7 @@ public abstract class ClientPacketListenerMixin {
 	)
 	public void port_lib$afterRecreateEntity(ClientboundAddEntityPacket packet, CallbackInfo ci, EntityType<?> entityType, Entity entity) {
 		if (entity instanceof ExtraSpawnDataEntity extra) {
-			FriendlyByteBuf extraData = ((ClientboundAddEntityPacketExtensions) packet).port_lib$getExtraDataBuf();
+			FriendlyByteBuf extraData = ((ClientboundAddEntityPacketExtensions) packet).getExtraDataBuf();
 			if (extraData != null) {
 				extra.readSpawnData(extraData);
 				extraData.release();

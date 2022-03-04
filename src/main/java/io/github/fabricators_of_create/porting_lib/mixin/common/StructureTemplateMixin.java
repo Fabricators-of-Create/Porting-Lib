@@ -39,7 +39,7 @@ public abstract class StructureTemplateMixin implements StructureTemplateExtensi
 
 	@Unique
 	@Override
-	public List<StructureTemplate.StructureEntityInfo> port_lib$getEntities() {
+	public List<StructureTemplate.StructureEntityInfo> getEntities() {
 		return entityInfoList;
 	}
 
@@ -53,24 +53,24 @@ public abstract class StructureTemplateMixin implements StructureTemplateExtensi
 			cancellable = true
 	)
 	public void port_lib$place(ServerLevelAccessor iServerWorld, BlockPos blockPos, BlockPos blockPos2, StructurePlaceSettings placementSettings, Random random, int i, CallbackInfoReturnable<Boolean> cir) {
-		port_lib$addEntitiesToWorld(iServerWorld, blockPos, placementSettings);
+		addEntitiesToWorld(iServerWorld, blockPos, placementSettings);
 		cir.setReturnValue(true);
 	}
 
 	@Override
-	public Vec3 port_lib$transformedVec3d(StructurePlaceSettings placementIn, Vec3 pos) {
+	public Vec3 transformedVec3d(StructurePlaceSettings placementIn, Vec3 pos) {
 		return StructureTemplate.transform(pos, placementIn.getMirror(), placementIn.getRotation(), placementIn.getRotationPivot());
 	}
 
 	@Override
-	public List<StructureTemplate.StructureEntityInfo> port_lib$processEntityInfos(@Nullable StructureTemplate template, LevelAccessor world, BlockPos blockPos, StructurePlaceSettings settings, List<StructureTemplate.StructureEntityInfo> infos) {
+	public List<StructureTemplate.StructureEntityInfo> processEntityInfos(@Nullable StructureTemplate template, LevelAccessor world, BlockPos blockPos, StructurePlaceSettings settings, List<StructureTemplate.StructureEntityInfo> infos) {
 		List<StructureTemplate.StructureEntityInfo> list = Lists.newArrayList();
 		for(StructureTemplate.StructureEntityInfo entityInfo : infos) {
-			Vec3 pos = port_lib$transformedVec3d(settings, entityInfo.pos).add(Vec3.atLowerCornerOf(blockPos));
+			Vec3 pos = transformedVec3d(settings, entityInfo.pos).add(Vec3.atLowerCornerOf(blockPos));
 			BlockPos blockpos = StructureTemplate.calculateRelativePosition(settings, entityInfo.blockPos).offset(blockPos);
 			StructureTemplate.StructureEntityInfo info = new StructureTemplate.StructureEntityInfo(pos, blockpos, entityInfo.nbt);
 			for (StructureProcessor proc : settings.getProcessors()) {
-				info = ((StructureProcessorExtensions) proc).port_lib$processEntity(world, blockPos, entityInfo, info, settings, template);
+				info = ((StructureProcessorExtensions) proc).processEntity(world, blockPos, entityInfo, info, settings, template);
 				if (info == null)
 					break;
 			}
@@ -81,8 +81,8 @@ public abstract class StructureTemplateMixin implements StructureTemplateExtensi
 	}
 
 	@Override
-	public void port_lib$addEntitiesToWorld(ServerLevelAccessor world, BlockPos blockPos, StructurePlaceSettings settings) {
-		for(StructureTemplate.StructureEntityInfo template$entityinfo : port_lib$processEntityInfos((StructureTemplate) (Object) this, world, blockPos, settings, this.port_lib$getEntities())) {
+	public void addEntitiesToWorld(ServerLevelAccessor world, BlockPos blockPos, StructurePlaceSettings settings) {
+		for(StructureTemplate.StructureEntityInfo template$entityinfo : processEntityInfos((StructureTemplate) (Object) this, world, blockPos, settings, this.getEntities())) {
 			BlockPos blockpos = StructureTemplate.transform(template$entityinfo.blockPos, settings.getMirror(), settings.getRotation(), settings.getRotationPivot()).offset(blockPos);
 			blockpos = template$entityinfo.blockPos;
 			if (settings.getBoundingBox() == null || settings.getBoundingBox().isInside(blockpos)) {

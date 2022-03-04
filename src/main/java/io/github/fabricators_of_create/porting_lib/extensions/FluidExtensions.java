@@ -39,6 +39,6 @@ public interface FluidExtensions {
 	}
 
 	default FluidAttributes getAttributes() {
-		return null;
+		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 }

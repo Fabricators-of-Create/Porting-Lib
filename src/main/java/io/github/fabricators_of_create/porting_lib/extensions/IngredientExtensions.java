@@ -5,13 +5,14 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 public interface IngredientExtensions {
 	default IIngredientSerializer<? extends Ingredient> getSerializer() {
-		return null;
+		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 
 	default boolean isSimple() {
-		return true;
+		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 
 	default void invalidate() {
+		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 }

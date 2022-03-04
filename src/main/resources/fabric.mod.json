@@ -40,6 +40,8 @@
       "net/minecraft/class_293": ["io/github/fabricators_of_create/porting_lib/extensions/VertexFormatExtensions"],
       "net/minecraft/class_276": ["io/github/fabricators_of_create/porting_lib/extensions/RenderTargetExtensions"],
       "net/minecraft/class_793": ["io/github/fabricators_of_create/porting_lib/extensions/BlockModelExtensions"],
+      "net/minecraft/class_1044": ["io/github/fabricators_of_create/porting_lib/extensions/AbstractTextureExtensions"],
+      "net/minecraft/class_1058": ["io/github/fabricators_of_create/porting_lib/extensions/TextureAtlasSpriteExtensions"],
       "net/minecraft/class_1077": ["io/github/fabricators_of_create/porting_lib/extensions/LanguageInfoExtensions"],
       "net/minecraft/class_1159": ["io/github/fabricators_of_create/porting_lib/extensions/Matrix4fExtensions"],
       "net/minecraft/class_1297": [
@@ -49,6 +51,7 @@
       "net/minecraft/class_1438": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
       "net/minecraft/class_1472": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
       "net/minecraft/class_1473": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
+      "net/minecraft/class_1688": ["io/github/fabricators_of_create/porting_lib/extensions/AbstractMinecartExtensions"],
       "net/minecraft/class_1735": ["io/github/fabricators_of_create/porting_lib/extensions/SlotExtensions"],
       "net/minecraft/class_1792": [
         "io/github/fabricators_of_create/porting_lib/extensions/ItemExtensions",
@@ -57,10 +60,8 @@
       "net/minecraft/class_1799": ["io/github/fabricators_of_create/porting_lib/extensions/ItemStackExtensions"],
       "net/minecraft/class_1832": ["io/github/fabricators_of_create/porting_lib/extensions/TierExtensions"],
       "net/minecraft/class_1856": ["io/github/fabricators_of_create/porting_lib/extensions/IngredientExtensions"],
-      "net/minecraft/class_2248": [
-        "io/github/fabricators_of_create/porting_lib/extensions/BlockExtensions",
-        "io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"
-      ],
+      "net/minecraft/class_2241": ["io/github/fabricators_of_create/porting_lib/extensions/BaseRailBlockExtensions"],
+      "net/minecraft/class_2248": ["io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"],
       "net/minecraft/class_2311": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
       "net/minecraft/class_2396": ["io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"],
       "net/minecraft/class_2397": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
@@ -70,12 +71,15 @@
       "net/minecraft/class_2560": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
       "net/minecraft/class_2586": ["io/github/fabricators_of_create/porting_lib/extensions/BlockEntityExtensions"],
       "net/minecraft/class_2604": ["io/github/fabricators_of_create/porting_lib/extensions/ClientboundAddEntityPacketExtensions"],
-      "net/minecraft/class_2680": ["io/github/fabricators_of_create/porting_lib/extensions/BlockStateExtensions"],
       "net/minecraft/class_2960": ["io/github/fabricators_of_create/porting_lib/extensions/ResourceLocationExtensions"],
+      "net/minecraft/class_3491": ["io/github/fabricators_of_create/porting_lib/extensions/StructureProcessorExtensions"],
+      "net/minecraft/class_3499": ["io/github/fabricators_of_create/porting_lib/extensions/StructureTemplateExtensions"],
       "net/minecraft/class_3611": [
         "io/github/fabricators_of_create/porting_lib/extensions/FluidExtensions",
         "io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"
       ],
+      "net/minecraft/class_3727": ["io/github/fabricators_of_create/porting_lib/extensions/EntityCollectionContextExtensions"],
+      "net/minecraft/class_4590": ["io/github/fabricators_of_create/porting_lib/extensions/TransformationExtensions"],
       "net/minecraft/class_4581": ["io/github/fabricators_of_create/porting_lib/extensions/Matrix3fExtensions"]
     }
   }
