@@ -55,9 +55,9 @@ dependencies {
 
 	// dependencies
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
-	modImplementation(include("me.alphamode:ForgeTags:${project.forge_tags_version}"))
+	modApi(include("me.alphamode:ForgeTags:${project.forge_tags_version}"))
 
-	modImplementation(include("com.github.Chocohead:Fabric-ASM:v2.3"))
+	modApi(include("com.github.Chocohead:Fabric-ASM:v2.3"))
 }
 
 loom {
