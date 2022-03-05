@@ -44,6 +44,10 @@ import net.minecraft.util.GsonHelper;
 public class ModelLoaderRegistry {
 	private static final Map<ResourceLocation, IModelLoader<?>> loaders = Maps.newHashMap();
 
+	public static void init() {
+		registerLoader(new ResourceLocation("minecraft","elements"), VanillaProxy.Loader.INSTANCE);
+	}
+
 	public static void registerLoader(ResourceLocation id, IModelLoader<?> loader) {
 		synchronized (loaders) {
 			loaders.put(id, loader);

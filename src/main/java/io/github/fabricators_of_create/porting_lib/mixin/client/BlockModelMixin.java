@@ -82,6 +82,7 @@ public abstract class BlockModelMixin implements BlockModelExtensions {
 
 	/**
 	 * @author AlphaMode
+	 * @reason custom model loading
 	 * TODO: Replace with ASM PortingLibER
 	 */
 	@Overwrite

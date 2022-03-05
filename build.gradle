@@ -12,13 +12,17 @@ sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
-version = project.mod_version
 group = project.maven_group
 
+ext.buildNumber = System.getenv("GITHUB_RUN_NUMBER")
+
+version = project.mod_version + (buildNumber != null ? ".${buildNumber}" : "+local")
+
+char add = buildNumber != null ? '+' : '.'
 if (grgit != null) {
-	version += "+${grgit.getBranch().current().name}.${grgit.head().abbreviatedId}"
+	version += "${add}${grgit.getBranch().current().name}.${grgit.head().abbreviatedId}"
 } else {
-	version += "+custom_unknown"
+	version += "${add}unknown_commit"
 }
 
 repositories {

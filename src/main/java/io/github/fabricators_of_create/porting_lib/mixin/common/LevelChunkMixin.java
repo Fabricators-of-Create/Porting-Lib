@@ -39,7 +39,10 @@ public abstract class LevelChunkMixin extends ChunkAccess {
 		});
 	}
 
-	@Inject(method = "method_31716(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntityType;Lnet/minecraft/nbt/CompoundTag;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;load(Lnet/minecraft/nbt/CompoundTag;)V"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
+	@Inject(method = "method_31716",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;load(Lnet/minecraft/nbt/CompoundTag;)V"),
+			locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true
+	)
 	private void port_lib$handleBlockEntityUpdateTag(BlockPos pos, BlockEntityType<?> type, CompoundTag tag, CallbackInfo ci, BlockEntity blockEntity) {
 		if (blockEntity instanceof CustomUpdateTagHandlingBlockEntity handler) {
 			handler.handleUpdateTag(tag);

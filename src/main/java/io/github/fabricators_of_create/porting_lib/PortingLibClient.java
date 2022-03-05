@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib;
 
+import io.github.fabricators_of_create.porting_lib.model.ModelLoaderRegistry;
 import io.github.fabricators_of_create.porting_lib.util.FluidHandlerData;
 import io.github.fabricators_of_create.porting_lib.util.FluidTextUtil;
 import io.github.fabricators_of_create.porting_lib.util.FluidTileDataHandler;
@@ -13,5 +14,6 @@ public class PortingLibClient implements ClientModInitializer {
 		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(FluidTextUtil.NUMBER_FORMAT);
 		FluidHandlerData.initClient();
 		FluidTileDataHandler.initClient();
+		ModelLoaderRegistry.init();
 	}
 }
