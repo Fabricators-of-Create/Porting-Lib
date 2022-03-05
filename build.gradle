@@ -18,13 +18,6 @@ ext.buildNumber = System.getenv("GITHUB_RUN_NUMBER")
 
 version = project.mod_version + (buildNumber != null ? ".${buildNumber}" : "+local")
 
-char add = buildNumber != null ? '+' : '.'
-if (grgit != null) {
-	version += "${add}${grgit.getBranch().current().name}.${grgit.head().abbreviatedId}"
-} else {
-	version += "${add}unknown_commit"
-}
-
 repositories {
 	maven { url = "https://api.modrinth.com/maven" }
 	maven { url = "https://maven.bai.lol" }
