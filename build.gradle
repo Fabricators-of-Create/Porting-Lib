@@ -44,14 +44,14 @@ dependencies {
 		}
 	}
 	modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
-	modRuntimeOnly("maven.modrinth:lazydfu:0.1.2")
-	modRuntimeOnly("maven.modrinth:suggestionproviderfabric:1.0.1")
-	modRuntimeOnly("mcp.mobius.waila:wthit:fabric-${project.wthit_version}")
+	modLocalRuntime("maven.modrinth:lazydfu:0.1.2")
+	modLocalRuntime("maven.modrinth:suggestionproviderfabric:1.0.1")
+	modLocalRuntime("mcp.mobius.waila:wthit:fabric-${project.wthit_version}")
 //	modRuntimeOnly("maven.modrinth:sodium:${project.sodium_version}") // rendering beware
-    runtimeOnly("org.joml:joml:1.10.2")
-	modRuntimeOnly("maven.modrinth:lithium:${project.lithium_version}")
-	modRuntimeOnly("maven.modrinth:iris:${project.iris_version}")
-	modRuntimeOnly("com.terraformersmc:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
+    localRuntime("org.joml:joml:1.10.2")
+	modLocalRuntime("maven.modrinth:lithium:${project.lithium_version}")
+	modLocalRuntime("maven.modrinth:iris:${project.iris_version}")
+	modLocalRuntime("com.terraformersmc:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
 
 	// dependencies
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
