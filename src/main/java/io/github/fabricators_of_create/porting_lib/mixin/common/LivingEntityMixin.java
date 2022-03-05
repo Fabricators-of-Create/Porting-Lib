@@ -97,7 +97,7 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@ModifyVariable(method = "causeFallDamage", at = @At("HEAD"), argsOnly = true, ordinal = 0)
 	public float port_lib$modifyDistance(float fallDistance) {
-		if (port_lib$currentFallInfo != null && port_lib$currentFallInfo.distance != fallDistance) {
+		if (port_lib$currentFallInfo != null) {
 			return port_lib$currentFallInfo.distance;
 		}
 		return fallDistance;
@@ -105,16 +105,15 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@ModifyVariable(method = "causeFallDamage", at = @At("HEAD"), argsOnly = true, ordinal = 1)
 	public float port_lib$modifyMultiplier(float multiplier) {
-		if (port_lib$currentFallInfo != null && port_lib$currentFallInfo.damageMultiplier != multiplier) {
+		if (port_lib$currentFallInfo != null) {
 			return port_lib$currentFallInfo.damageMultiplier;
 		}
 		return multiplier;
 	}
 
-	@ModifyVariable(method = "actuallyHurt", at = @At("HEAD"), argsOnly = true, ordinal = 1)
+	@ModifyVariable(method = "actuallyHurt", at = @At("HEAD"), ordinal = 0, argsOnly = true)
 	private float port_lib$modifyDamage(float damageAmount, DamageSource source, float damageAmountButAgainBecauseYes) {
-		float newAmount = LivingEntityEvents.ACTUALLY_HURT.invoker().onHurt(source, (LivingEntity) (Object) this, damageAmount);
-		return damageAmount != newAmount ? newAmount : damageAmount;
+		return LivingEntityEvents.ACTUALLY_HURT.invoker().onHurt(source, (LivingEntity) (Object) this, damageAmount);
 	}
 
 	@Inject(method = "swing(Lnet/minecraft/world/InteractionHand;Z)V", at = @At("HEAD"), cancellable = true)
@@ -188,14 +187,15 @@ public abstract class LivingEntityMixin extends Entity {
 			at = @At(
 					value = "INVOKE",
 					target = "Ljava/util/Map;get(Ljava/lang/Object;)Ljava/lang/Object;",
-					shift = Shift.AFTER,
+					shift = Shift.BY,
+					by = 3,
 					remap = false
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	public void port_lib$addEffect(MobEffectInstance oldEffect, @Nullable Entity source, CallbackInfoReturnable<Boolean> cir,
-								   MobEffectInstance newEffect) {
-		PotionEvents.POTION_ADDED.invoker().onPotionAdded((LivingEntity) (Object) this, oldEffect, newEffect, source);
+	public void port_lib$addEffect(MobEffectInstance newEffect, @Nullable Entity source, CallbackInfoReturnable<Boolean> cir,
+								   MobEffectInstance oldEffect) {
+		PotionEvents.POTION_ADDED.invoker().onPotionAdded((LivingEntity) (Object) this, newEffect, oldEffect, source);
 	}
 
 	@Inject(method = "canBeAffected", at = @At("HEAD"), cancellable = true)

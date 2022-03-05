@@ -6,6 +6,8 @@
   "client": [
     "AbstractTextureMixin",
     "BufferBuilderMixin",
+    "BlockModelDeserializerMixin",
+    "BlockModelMixin",
     "ClientLevel$EntityCallbacksMixin",
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
@@ -20,7 +22,9 @@
     "LanguageInfoMixin",
     "LevelRendererMixin",
     "MinecraftMixin",
+    "ModelBakeryMixin",
     "ModelManagerMixin",
+    "ModelStateMixin",
     "MouseHandlerMixin",
     "MultiPlayerGameModeMixin",
     "ParticleEngineMixin",
@@ -36,6 +40,7 @@
     "accessor.AbstractSelectionListAccessor",
     "accessor.AbstractWidgetAccessor",
     "accessor.BlockModelAccessor",
+    "accessor.BlockModel$DeserializerAccessor",
     "accessor.BlockRenderDispatcherAccessor",
     "accessor.ClientPacketListenerAccessor",
     "accessor.FontAccessor",
@@ -49,19 +54,12 @@
     "accessor.ParticleEngineAccessor",
     "accessor.RenderTypeAccessor",
     "accessor.ScreenAccessor",
+    "accessor.SheetsAccessor",
     "accessor.SimpleBakedModel$BuilderAccessor",
     "accessor.TextureAtlasSprite$AnimatedTextureAccessor",
     "accessor.TitleScreenAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "mixins": [
-    "BlockModelDeserializerMixin",
-    "BlockModelMixin",
-    "ModelBakeryMixin",
-    "ModelStateMixin",
-    "accessor.BlockModel$DeserializerAccessor",
-    "accessor.SheetsAccessor"
-  ]
+  }
 }
