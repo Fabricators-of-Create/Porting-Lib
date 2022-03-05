@@ -123,6 +123,13 @@ public abstract class LivingEntityMixin extends Entity {
 			ci.cancel();
 	}
 
+	@ModifyArgs(method = "dropExperience", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ExperienceOrb;award(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/phys/Vec3;I)V"))
+	private void create$dropExperience(Args args) {
+		int amount = args.get(2);
+		int newAmount = LivingEntityEvents.EXPERIENCE_DROP.invoker().onLivingEntityExperienceDrop(amount, lastHurtByPlayer);
+		if (amount != newAmount) args.set(2, newAmount);
+	}
+
 	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"))
 	private void port_lib$tick(CallbackInfo ci) {
 		LivingEntityEvents.TICK.invoker().onLivingEntityTick((LivingEntity) (Object) this);

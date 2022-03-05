@@ -33,26 +33,11 @@ public class LivingEntityEvents {
 		return strength;
 	});
 
-	/**
-	 * Return PASS - ignore
-	 * Return SUCCESS - update value
-	 * Return FAIL - cancel attack
-	 */
-	public static final Event<Attack> ATTACK = EventFactory.createArrayBacked(Attack.class, callbacks -> (source, damaged, amount) -> {
-		for (Attack callback : callbacks) {
-			InteractionResultHolder<Float> result = callback.onAttack(source, damaged, amount);
-			if (result != null) {
-				if (result.getResult() != InteractionResult.PASS) {
-					return result;
-				}
-			}
-		}
-		return null;
-	});
-
 	public static final Event<Drops> DROPS = EventFactory.createArrayBacked(Drops.class, callbacks -> (target, source, drops) -> {
 		for (Drops callback : callbacks) {
-			return callback.onLivingEntityDrops(target, source, drops);
+			if (callback.onLivingEntityDrops(target, source, drops)) {
+				return true;
+			}
 		}
 
 		return false;

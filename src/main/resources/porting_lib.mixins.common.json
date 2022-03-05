@@ -65,6 +65,7 @@
     "WalkNodeEvaluatorMixin",
     "WebBlockMixin",
     "accessor.AbstractMinecartAccessor",
+    "accessor.AbstractProjectileDispenseBehaviorAccessor",
     "accessor.ArrayVoxelShapeAccessor",
     "accessor.BaseSpawnerAccessor",
     "accessor.BeaconBlockEntityAccessor",
