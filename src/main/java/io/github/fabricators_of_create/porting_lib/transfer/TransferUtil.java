@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import io.github.fabricators_of_create.porting_lib.util.FluidTileDataHandler;
+
 import org.jetbrains.annotations.Nullable;
 
 import io.github.fabricators_of_create.porting_lib.transfer.fluid.FluidStorageHandler;
@@ -99,13 +101,19 @@ public class TransferUtil {
 	}
 
 	public static LazyOptional<IFluidHandler> getFluidHandler(BlockEntity be, @Nullable Direction side) {
+		boolean client = Objects.requireNonNull(be.getLevel()).isClientSide();
 		// Create handling
-		if (be instanceof FluidTransferable transferable) return transferable.getFluidHandler(side);
+		if (be instanceof FluidTransferable transferable) {
+			if (client && !transferable.shouldRunClientSide()) {
+				return LazyOptional.empty();
+			}
+			return transferable.getFluidHandler(side);
+		}
 		// client handling
-//		if (Objects.requireNonNull(be.getLevel()).isClientSide()) { FIXME
-//			IFluidHandler cached = FluidTileDataHandler.getCachedHandler(be);
-//			return LazyOptional.ofObject(cached);
-//		}
+		if (client) {
+			IFluidHandler cached = FluidTileDataHandler.getCachedHandler(be);
+			return LazyOptional.ofObject(cached);
+		}
 		// external handling
 		List<Storage<FluidVariant>> fluidStorages = new ArrayList<>();
 		Level l = be.getLevel();

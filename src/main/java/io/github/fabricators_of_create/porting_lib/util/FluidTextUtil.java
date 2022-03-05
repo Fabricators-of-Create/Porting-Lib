@@ -2,11 +2,19 @@ package io.github.fabricators_of_create.porting_lib.util;
 
 import com.google.common.math.LongMath;
 
+import io.github.fabricators_of_create.porting_lib.PortingLib;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
+import net.minecraft.util.Unit;
+import net.minecraft.util.profiling.ProfilerFiller;
 
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 /**
  * A few helpers to display fluids.
@@ -16,7 +24,8 @@ public class FluidTextUtil {
 
 	public static final Format NUMBER_FORMAT = new Format();
 
-	public static class Format implements ResourceManagerReloadListener {
+	public static class Format extends SimplePreparableReloadListener<Unit> implements IdentifiableResourceReloadListener {
+		public static final ResourceLocation ID = PortingLib.id("format_reload_listener");
 		private NumberFormat format = NumberFormat.getNumberInstance(Locale.ROOT);
 
 		private Format() {}
@@ -33,8 +42,18 @@ public class FluidTextUtil {
 		}
 
 		@Override
-		public void onResourceManagerReload(ResourceManager resourceManager) {
+		protected Unit prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
+			return Unit.INSTANCE;
+		}
+
+		@Override
+		protected void apply(Unit object, ResourceManager resourceManager, ProfilerFiller profiler) {
 			update();
+		}
+
+		@Override
+		public ResourceLocation getFabricId() {
+			return ID;
 		}
 	}
 
