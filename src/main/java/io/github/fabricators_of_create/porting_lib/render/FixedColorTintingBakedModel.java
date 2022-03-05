@@ -16,14 +16,14 @@ public class FixedColorTintingBakedModel extends ForwardingBakedModel {
 
 	protected int color;
 
+	protected FixedColorTintingBakedModel() {
+	}
+
 	public static BakedModel wrap(BakedModel model, int color) {
 		FixedColorTintingBakedModel wrapper = THREAD_LOCAL.get();
 		wrapper.wrapped = model;
 		wrapper.color = color;
 		return wrapper;
-	}
-
-	protected FixedColorTintingBakedModel() {
 	}
 
 	@Override

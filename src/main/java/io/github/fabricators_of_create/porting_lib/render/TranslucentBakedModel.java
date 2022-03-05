@@ -15,14 +15,14 @@ public class TranslucentBakedModel extends ForwardingBakedModel {
 
 	protected Supplier<Float> alphaSupplier;
 
+	protected TranslucentBakedModel() {
+	}
+
 	public static BakedModel wrap(BakedModel model, Supplier<Float> alphaSupplier) {
 		TranslucentBakedModel wrapper = THREAD_LOCAL.get();
 		wrapper.wrapped = model;
 		wrapper.alphaSupplier = alphaSupplier;
 		return wrapper;
-	}
-
-	protected TranslucentBakedModel() {
 	}
 
 	@Override

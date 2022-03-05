@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(Tiers.class)
-public class TiersMixin implements TierExtensions {
+public abstract class TiersMixin implements TierExtensions {
 	@Nullable
 	@Override
 	public Tag.Named<Block> getTag() {

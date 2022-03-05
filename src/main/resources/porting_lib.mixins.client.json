@@ -59,6 +59,8 @@
   "mixins": [
     "BlockModelDeserializerMixin",
     "BlockModelMixin",
+    "ModelBakeryMixin",
+    "ModelStateMixin",
     "accessor.BlockModel$DeserializerAccessor",
     "accessor.SheetsAccessor"
   ]

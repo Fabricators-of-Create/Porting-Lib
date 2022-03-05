@@ -16,14 +16,14 @@ public class FixedLightBakedModel extends ForwardingBakedModel {
 
 	protected int light;
 
+	protected FixedLightBakedModel() {
+	}
+
 	public static BakedModel wrap(BakedModel model, int light) {
 		FixedLightBakedModel wrapper = THREAD_LOCAL.get();
 		wrapper.wrapped = model;
 		wrapper.light = light;
 		return wrapper;
-	}
-
-	protected FixedLightBakedModel() {
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -13,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import com.mojang.blaze3d.shaders.Program;
 import com.mojang.datafixers.util.Pair;
-import io.github.fabricators_of_create.porting_lib.event.RegisterShadersCallback;
 
+import io.github.fabricators_of_create.porting_lib.event.RegisterShadersCallback;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.GameRenderer;
@@ -23,7 +22,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 
 @Environment(EnvType.CLIENT)
 @Mixin(GameRenderer.class)
-public class GameRendererMixin {
+public abstract class GameRendererMixin {
 	@Inject(method = "reloadShaders", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;shutdownShaders()V"), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void registerShaders(ResourceManager manager, CallbackInfo ci, List<Program> list, List<Pair<ShaderInstance, Consumer<ShaderInstance>>> shaderRegistry) {
 		try {

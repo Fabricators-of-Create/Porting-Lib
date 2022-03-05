@@ -1,20 +1,11 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
-import com.google.common.collect.Sets;
-import com.mojang.datafixers.util.Pair;
-
-import io.github.fabricators_of_create.porting_lib.extensions.BlockModelExtensions;
-import io.github.fabricators_of_create.porting_lib.model.BlockModelConfiguration;
-
-import net.minecraft.client.renderer.block.model.BlockElement;
-import net.minecraft.client.renderer.block.model.BlockElementFace;
-import net.minecraft.client.renderer.block.model.ItemModelGenerator;
-import net.minecraft.client.renderer.block.model.ItemOverride;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.resources.ResourceLocation;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -23,18 +14,47 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.google.common.collect.Sets;
+import com.mojang.datafixers.util.Pair;
+
+import io.github.fabricators_of_create.porting_lib.extensions.BlockModelExtensions;
+import io.github.fabricators_of_create.porting_lib.model.BlockModelConfiguration;
+import io.github.fabricators_of_create.porting_lib.model.IModelGeometry;
+import net.minecraft.client.renderer.block.model.BlockElement;
+import net.minecraft.client.renderer.block.model.BlockElementFace;
 import net.minecraft.client.renderer.block.model.BlockModel;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import net.minecraft.client.renderer.block.model.ItemModelGenerator;
+import net.minecraft.client.renderer.block.model.ItemOverride;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.resources.ResourceLocation;
 
 @Mixin(BlockModel.class)
 public abstract class BlockModelMixin implements BlockModelExtensions {
+	@Shadow
+	@Final
+	private static Logger LOGGER;
+
+	@Unique
+	private final BlockModelConfiguration data = new BlockModelConfiguration((BlockModel) (Object) this);
+
+	@Shadow
+	public String name;
+
+	@Shadow
+	@Nullable
+	public ResourceLocation parentLocation;
+
 	@Shadow
 	@Final
 	private List<ItemOverride> overrides;
@@ -48,30 +68,26 @@ public abstract class BlockModelMixin implements BlockModelExtensions {
 	@Shadow
 	public abstract List<BlockElement> getElements();
 
-	@Shadow
-	public String name;
-	@Shadow
-	@Nullable
-	public ResourceLocation parentLocation;
-	@Shadow
-	@Final
-	private static Logger LOGGER;
 	@Unique
-  private BlockModelConfiguration data = new BlockModelConfiguration((BlockModel) (Object) this);
+	@Override
+	public BlockModelConfiguration getGeometry() {
+		return data;
+	}
 
-  @Override
-  public BlockModelConfiguration getGeometry() {
-    return data;
-  }
+	@Unique
+	@Override
+	public ItemOverrides getOverrides(ModelBakery pModelBakery, BlockModel pModel, Function<Material, TextureAtlasSprite> textureGetter) {
+		return this.overrides.isEmpty() ? ItemOverrides.EMPTY : new ItemOverrides(pModelBakery, pModel, pModelBakery::getModel/*, textureGetter*/, this.overrides);
+	}
 
-	  /**
-	   * @author AlphaMode
-	   * TODO: Replace with ASM PortingLibER
-	   */
-  	@Overwrite
+	/**
+	 * @author AlphaMode
+	 * TODO: Replace with ASM PortingLibER
+	 */
+	@Overwrite
 	public Collection<Material> getMaterials(Function<ResourceLocation, UnbakedModel> pModelGetter, Set<Pair<String, String>> pMissingTextureErrors) {
 		Set<UnbakedModel> set = Sets.newLinkedHashSet();
-		for(BlockModel blockmodel = (BlockModel) (Object) this; blockmodel.parentLocation != null && blockmodel.parent == null; blockmodel = blockmodel.parent) {
+		for (BlockModel blockmodel = (BlockModel) (Object) this; blockmodel.parentLocation != null && blockmodel.parent == null; blockmodel = blockmodel.parent) {
 			set.add(blockmodel);
 			UnbakedModel unbakedmodel = pModelGetter.apply(blockmodel.parentLocation);
 			if (unbakedmodel == null) {
@@ -92,7 +108,7 @@ public abstract class BlockModelMixin implements BlockModelExtensions {
 				throw new IllegalStateException("BlockModel parent has to be a block model.");
 			}
 
-			blockmodel.parent = (BlockModel)unbakedmodel;
+			blockmodel.parent = (BlockModel) unbakedmodel;
 		}
 
 		Set<Material> set1 = Sets.newHashSet(this.getMaterial("particle"));
@@ -100,8 +116,8 @@ public abstract class BlockModelMixin implements BlockModelExtensions {
 		if (data.hasCustomGeometry())
 			set1.addAll(data.getTextureDependencies(pModelGetter, pMissingTextureErrors));
 		else
-			for(BlockElement blockelement : this.getElements()) {
-				for(BlockElementFace blockelementface : blockelement.faces.values()) {
+			for (BlockElement blockelement : this.getElements()) {
+				for (BlockElementFace blockelementface : blockelement.faces.values()) {
 					Material material = this.getMaterial(blockelementface.texture);
 					if (Objects.equals(material.texture(), MissingTextureAtlasSprite.getLocation())) {
 						pMissingTextureErrors.add(Pair.of(blockelementface.texture, this.name));
@@ -125,4 +141,20 @@ public abstract class BlockModelMixin implements BlockModelExtensions {
 
 		return set1;
 	}
+
+	@Inject(method = "bake(Lnet/minecraft/client/resources/model/ModelBakery;Lnet/minecraft/client/renderer/block/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/resources/model/BakedModel;", at = @At("HEAD"), cancellable = true)
+	public void handleCustomModels(ModelBakery modelBakery, BlockModel otherModel, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation, boolean guiLight3d, CallbackInfoReturnable<BakedModel> cir) {
+		BlockModel blockModel = (BlockModel) (Object) this;
+		IModelGeometry<?> customModel = data.getCustomGeometry();
+
+		if (customModel != null)
+			cir.setReturnValue(customModel.bake(blockModel.getGeometry(), modelBakery, spriteGetter, modelTransform, blockModel.getOverrides(modelBakery, otherModel, spriteGetter), modelLocation));
+	}
+
+	@Inject(method = "getElements", at = @At("HEAD"), cancellable = true)
+	public void fixElements(CallbackInfoReturnable<List<BlockElement>> cir) {
+		if (data.hasCustomGeometry()) cir.setReturnValue(java.util.Collections.emptyList());
+	}
+
+
 }
