@@ -3,6 +3,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 import static net.minecraft.world.InteractionResult.PASS;
 import static net.minecraft.world.InteractionResult.SUCCESS;
 
+import io.github.fabricators_of_create.porting_lib.event.MinecraftTailCallback;
+
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -61,6 +63,11 @@ public abstract class MinecraftMixin {
 	)
 	public void port_lib$instanceRegistration(GameConfig args, CallbackInfo ci) {
 		InstanceRegistrationCallback.EVENT.invoker().registerInstance();
+	}
+
+	@Inject(method = "<init>", at = @At("TAIL"))
+	public void port_lib$mcTail(GameConfig gameConfiguration, CallbackInfo ci) {
+		MinecraftTailCallback.EVENT.invoker().onMinecraftTail((Minecraft) (Object) this);
 	}
 
 	@Inject(method = "setLevel", at = @At("HEAD"))

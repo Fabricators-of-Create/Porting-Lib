@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib;
 
 import com.chocohead.mm.api.ClassTinkerers;
 
+import com.llamalad7.mixinextras.MixinExtrasBootstrap;
+
 import io.github.fabricators_of_create.porting_lib.model.IModelGeometry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
@@ -20,6 +22,8 @@ import org.objectweb.asm.tree.VarInsnNode;
 public class PortingLibER implements Runnable {
 	@Override
 	public void run() {
+		MixinExtrasBootstrap.init();
+
 		MappingResolver remapper = FabricLoader.getInstance().getMappingResolver();
 		ClassTinkerers.addTransformation(remapper.mapClassName("intermediary", "net.minecraft.class_793"), classNode -> {
 			classNode.methods.forEach(methodNode -> {

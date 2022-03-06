@@ -12,11 +12,14 @@ sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
+version = project.mod_version
 group = project.maven_group
 
-ext.buildNumber = System.getenv("GITHUB_RUN_NUMBER")
-
-version = project.mod_version + (buildNumber != null ? ".${buildNumber}" : "+local")
+if (grgit != null) {
+	version += "+${grgit.getBranch().current().name}.${grgit.head().abbreviatedId}"
+} else {
+	version += "+custom_unknown"
+}
 
 repositories {
 	maven { url = "https://api.modrinth.com/maven" }
@@ -29,8 +32,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.projectlombok:lombok:1.18.20'
-
     // dev environment
 	minecraft("com.mojang:minecraft:${project.minecraft_version}")
 	mappings loom.layered {
@@ -44,8 +45,6 @@ dependencies {
 	modLocalRuntime("maven.modrinth:lazydfu:0.1.2")
 	modLocalRuntime("maven.modrinth:suggestionproviderfabric:1.0.1")
 	modLocalRuntime("mcp.mobius.waila:wthit:fabric-${project.wthit_version}")
-//	modRuntimeOnly("maven.modrinth:sodium:${project.sodium_version}") // rendering beware
-    localRuntime("org.joml:joml:1.10.2")
 	modLocalRuntime("maven.modrinth:lithium:${project.lithium_version}")
 	modLocalRuntime("maven.modrinth:iris:${project.iris_version}")
 	modLocalRuntime("com.terraformersmc:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
@@ -53,6 +52,8 @@ dependencies {
 	// dependencies
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
 	modApi(include("me.alphamode:ForgeTags:${project.forge_tags_version}"))
+	api(include("com.github.LlamaLad7:MixinExtras:0.0.6"))
+	annotationProcessor(include("com.github.LlamaLad7:MixinExtras:0.0.6"))
 
 	modApi(include("com.github.Chocohead:Fabric-ASM:v2.3"))
 }

@@ -7,5 +7,5 @@ import org.spongepowered.asm.mixin.Mixin;
 import net.minecraft.world.level.block.DeadBushBlock;
 
 @Mixin(DeadBushBlock.class)
-public class DeadBushBlockMixin implements IShearable {
+public abstract class DeadBushBlockMixin implements IShearable {
 }
