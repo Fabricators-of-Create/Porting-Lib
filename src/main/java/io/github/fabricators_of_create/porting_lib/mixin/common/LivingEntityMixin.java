@@ -76,6 +76,11 @@ public abstract class LivingEntityMixin extends Entity {
 			args.set(1, modifiedLevel);
 	}
 
+	@Inject(method = "dropAllDeathLoot", at = @At(value = "JUMP", opcode = Opcodes.IFLE, ordinal = 0))
+	public void port_lib$fixNullDrops(DamageSource damageSource, CallbackInfo ci) {
+		captureDrops(new ArrayList<>());
+	}
+
 	@Inject(method = "dropAllDeathLoot", at = @At("TAIL"))
 	private void port_lib$spawnDropsTAIL(DamageSource source, CallbackInfo ci) {
 		Collection<ItemEntity> drops = this.captureDrops(null);
