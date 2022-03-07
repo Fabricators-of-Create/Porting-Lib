@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.event.EntityTeleportCallback.EntityTeleportEvent;
+import io.github.fabricators_of_create.porting_lib.event.EntityEvents.Teleport.EntityTeleportEvent;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket.RelativeArgument;
 import net.minecraft.server.commands.TeleportCommand;

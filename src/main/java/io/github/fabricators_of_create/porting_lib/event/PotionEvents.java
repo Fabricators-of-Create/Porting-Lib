@@ -10,7 +10,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 public class PotionEvents {
-
 	public static Event<PotionAdded> POTION_ADDED = EventFactory.createArrayBacked(PotionAdded.class, callbacks -> (entity, newEffect, oldEffect, source) -> {
 		for (PotionAdded e : callbacks)
 			e.onPotionAdded(entity, newEffect, oldEffect, source);

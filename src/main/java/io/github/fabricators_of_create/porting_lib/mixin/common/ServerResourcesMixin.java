@@ -24,7 +24,7 @@ public abstract class ServerResourcesMixin {
 
 	@Inject(method = "<init>",at = @At("TAIL"))
 	public void port_lib$DataPackRegistries(RegistryAccess registryAccess, Commands.CommandSelection commandSelection, int i, CallbackInfo ci) {
-		for (PreparableReloadListener listener : DataPackReloadCallback.EVENT.invoker().onDataPackReload(MixinHelper.cast(this))) {
+		for (PreparableReloadListener listener : DataPackReloadCallback.EVENT.invoker().onDataPackReload((ServerResources) (Object) this)) {
 			resources.registerReloadListener(listener);
 		}
 	}

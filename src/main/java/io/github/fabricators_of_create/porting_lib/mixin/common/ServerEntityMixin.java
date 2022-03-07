@@ -1,7 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.event.EntityStartTrackingTailCallback;
-import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
+import io.github.fabricators_of_create.porting_lib.event.EntityEvents;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,6 +21,6 @@ public abstract class ServerEntityMixin {
 
 	@Inject(method = "addPairing", at = @At("TAIL"))
 	private void port_lib$addPairing(ServerPlayer player, CallbackInfo ci) {
-		EntityStartTrackingTailCallback.EVENT.invoker().onTrackingStart(entity, player);
+		EntityEvents.START_TRACKING_TAIL.invoker().onTrackingStart(entity, player);
 	}
 }

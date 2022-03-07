@@ -10,7 +10,8 @@ public interface FluidPlaceBlockCallback {
 	Event<FluidPlaceBlockCallback> EVENT = EventFactory.createArrayBacked(FluidPlaceBlockCallback.class, callbacks -> (world, pos, state) -> {
 		for (FluidPlaceBlockCallback callback : callbacks) {
 			BlockState newState = callback.onFluidPlaceBlock(world, pos, state);
-			if (newState != null) return newState;
+			if (newState != null)
+				return newState;
 		}
 
 		return null;

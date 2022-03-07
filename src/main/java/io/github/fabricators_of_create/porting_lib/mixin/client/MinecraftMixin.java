@@ -92,7 +92,7 @@ public abstract class MinecraftMixin {
 
 	@Inject(method = "startAttack", at = @At(value = "FIELD", ordinal = 2, target = "Lnet/minecraft/client/Minecraft;player:Lnet/minecraft/client/player/LocalPlayer;"))
 	private void port_lib$onClickMouse(CallbackInfo ci) {
-		AttackAirCallback.EVENT.invoker().onLeftClickAir(player);
+		AttackAirCallback.EVENT.invoker().attackAir(player);
 	}
 
 	@Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/toasts/ToastComponent;render(Lcom/mojang/blaze3d/vertex/PoseStack;)V", shift = Shift.BEFORE))
