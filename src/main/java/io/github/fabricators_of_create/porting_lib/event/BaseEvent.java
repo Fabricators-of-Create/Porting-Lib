@@ -2,8 +2,9 @@ package io.github.fabricators_of_create.porting_lib.event;
 
 import net.minecraft.world.InteractionResult;
 
-public abstract class ResultingEvent extends CancellableEvent {
+public abstract class BaseEvent {
 	private InteractionResult result = InteractionResult.PASS;
+	private boolean canceled;
 
 	/**
 	 * Returns the value set as the result of this event
@@ -23,4 +24,14 @@ public abstract class ResultingEvent extends CancellableEvent {
 	public void setResult(InteractionResult value) {
 		result = value;
 	}
+
+	public void setCanceled(boolean cancelled) {
+		this.canceled = cancelled;
+	}
+
+	public boolean isCanceled() {
+		return canceled;
+	}
+
+	public abstract void sendEvent();
 }

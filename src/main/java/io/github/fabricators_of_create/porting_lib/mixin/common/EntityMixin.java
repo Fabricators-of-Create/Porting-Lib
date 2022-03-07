@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomRunningEffectsBlock;
 import io.github.fabricators_of_create.porting_lib.event.EntityEvents;
+import io.github.fabricators_of_create.porting_lib.event.MinecartEvents;
 import io.github.fabricators_of_create.porting_lib.event.StartRidingCallback;
 import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.RegistryNameProvider;
@@ -10,6 +11,7 @@ import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.block.state.BlockState;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,9 +40,11 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 	@Shadow
 	private float eyeHeight;
 	@Unique
-	private CompoundTag extraCustomData;
+	private CompoundTag port_lib$extraCustomData;
 	@Unique
-	private Collection<ItemEntity> captureDrops = null;
+	private Collection<ItemEntity> port_lib$captureDrops = null;
+	@Unique
+	private ResourceLocation port_lib$registryName = null;
 
 	@Shadow
 	protected abstract void readAdditionalSaveData(CompoundTag compoundTag);
@@ -50,9 +54,7 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 
 	@Inject(at = @At("TAIL"), method = "<init>")
 	public void port_lib$entityInit(EntityType<?> entityType, Level world, CallbackInfo ci) {
-		int newEyeHeight = EntityEvents.EYE_HEIGHT.invoker().onEntitySize((Entity) (Object) this);
-		if (newEyeHeight != -1)
-			eyeHeight = newEyeHeight;
+		eyeHeight = EntityEvents.EYE_HEIGHT.invoker().onEntitySize((Entity) (Object) this, eyeHeight);
 	}
 
 	// CAPTURE DROPS
@@ -68,21 +70,21 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 			cancellable = true
 	)
 	public void port_lib$spawnAtLocation(ItemStack stack, float f, CallbackInfoReturnable<ItemEntity> cir, ItemEntity itemEntity) {
-		if (captureDrops != null) captureDrops.add(itemEntity);
-		else cir.cancel();
+		if (port_lib$captureDrops != null) port_lib$captureDrops.add(itemEntity);
+		else cir.setReturnValue(itemEntity);
 	}
 
 	@Unique
 	@Override
 	public Collection<ItemEntity> captureDrops() {
-		return captureDrops;
+		return port_lib$captureDrops;
 	}
 
 	@Unique
 	@Override
 	public Collection<ItemEntity> captureDrops(Collection<ItemEntity> value) {
-		Collection<ItemEntity> ret = captureDrops;
-		captureDrops = value;
+		Collection<ItemEntity> ret = port_lib$captureDrops;
+		port_lib$captureDrops = value;
 		return ret;
 	}
 
@@ -90,15 +92,15 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 
 	@Inject(method = "saveWithoutId", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;addAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))
 	public void port_lib$beforeWriteCustomData(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
-		if (extraCustomData != null && !extraCustomData.isEmpty()) {
-			tag.put(EntityHelper.EXTRA_DATA_KEY, extraCustomData);
+		if (port_lib$extraCustomData != null && !port_lib$extraCustomData.isEmpty()) {
+			tag.put(EntityHelper.EXTRA_DATA_KEY, port_lib$extraCustomData);
 		}
 	}
 
 	@Inject(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;readAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))
 	public void port_lib$beforeReadCustomData(CompoundTag tag, CallbackInfo ci) {
 		if (tag.contains(EntityHelper.EXTRA_DATA_KEY)) {
-			extraCustomData = tag.getCompound(EntityHelper.EXTRA_DATA_KEY);
+			port_lib$extraCustomData = tag.getCompound(EntityHelper.EXTRA_DATA_KEY);
 		}
 	}
 
@@ -132,7 +134,7 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 			cancellable = true
 	)
 	public void port_lib$startRiding(Entity entity, boolean bl, CallbackInfoReturnable<Boolean> cir) {
-		if (StartRidingCallback.EVENT.invoker().onStartRiding(MixinHelper.cast(this), entity) == InteractionResult.FAIL) {
+		if (StartRidingCallback.EVENT.invoker().onStartRiding((Entity) (Object) this, entity) == InteractionResult.FAIL) {
 			cir.setReturnValue(false);
 		}
 	}
@@ -140,22 +142,25 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 	@Inject(method = "remove", at = @At("TAIL"))
 	public void port_lib$onEntityRemove(Entity.RemovalReason reason, CallbackInfo ci) {
 		EntityEvents.ON_REMOVE.invoker().onRemove((Entity) (Object) this, reason);
+		if ((Object) this instanceof AbstractMinecart cart) {
+			MinecartEvents.REMOVE.invoker().minecartRemove(cart, level);
+		}
 	}
 
 	@Unique
 	@Override
 	public CompoundTag getExtraCustomData() {
-		if (extraCustomData == null) {
-			extraCustomData = new CompoundTag();
+		if (port_lib$extraCustomData == null) {
+			port_lib$extraCustomData = new CompoundTag();
 		}
-		return extraCustomData;
+		return port_lib$extraCustomData;
 	}
 
 	@Unique
 	@Override
 	public CompoundTag serializeNBT() {
 		CompoundTag nbt = new CompoundTag();
-		String id = EntityHelper.getEntityString(MixinHelper.cast(this));
+		String id = EntityHelper.getEntityString((Entity) (Object) this);
 
 		if (id != null) {
 			nbt.putString("id", id);
@@ -173,6 +178,9 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 	@Unique
 	@Override
 	public ResourceLocation getRegistryName() {
-		return Registry.ENTITY_TYPE.getKey(getType());
+		if (port_lib$registryName == null) {
+			port_lib$registryName = Registry.ENTITY_TYPE.getKey(getType());
+		}
+		return port_lib$registryName;
 	}
 }

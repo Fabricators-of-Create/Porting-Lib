@@ -40,11 +40,9 @@ public class LivingEntityEvents {
 	});
 
 	public static final Event<Fall> FALL = EventFactory.createArrayBacked(Fall.class, callbacks -> (info) -> {
-		float originalDistance = info.distance;
-		float originalMult = info.damageMultiplier;
 		for(Fall e : callbacks) {
 			e.onFall(info);
-			if (info.canceled || info.distance != originalDistance || info.damageMultiplier != originalMult) {
+			if (info.canceled) {
 				return;
 			}
 		}
@@ -101,21 +99,29 @@ public class LivingEntityEvents {
 
 	@FunctionalInterface
 	public interface Fall {
-		void onFall(FallInfo info);
+		void onFall(FallEvent event);
 
-		final class FallInfo {
-			public final LivingEntity entity;
-			public final DamageSource source;
-			public float distance;
-			public float damageMultiplier;
-			public boolean canceled = false;
+		final class FallEvent extends EntityEvent {
+			private final DamageSource source;
+			private float distance, damageMultiplier;
 
-			public FallInfo(LivingEntity entity, DamageSource source, float distance, float damageMultiplier) {
-				this.entity = entity;
+			public FallEvent(LivingEntity entity, DamageSource source, float distance, float damageMultiplier) {
+				super(entity);
 				this.source = source;
 				this.distance = distance;
 				this.damageMultiplier = damageMultiplier;
 			}
+
+			@Override
+			public void sendEvent() {
+				FALL.invoker().onFall(this);
+			}
+
+			public DamageSource getSource() { return source; }
+			public float getDistance() { return distance; }
+			public float getDamageMultiplier() { return damageMultiplier; }
+			public void setDamageMultiplier(float damageMultiplier) { this.damageMultiplier = damageMultiplier; }
+			public void setDistance(float distance) { this.distance = distance; }
 		}
 	}
 
@@ -127,12 +133,6 @@ public class LivingEntityEvents {
 	@FunctionalInterface
 	public interface KnockBackStrength {
 		double onLivingEntityTakeKnockback(double strength, Player player);
-	}
-
-	@FunctionalInterface
-	public interface Attack {
-		@Nullable
-		InteractionResultHolder<Float> onAttack(DamageSource source, LivingEntity damaged, float amount);
 	}
 
 	@FunctionalInterface

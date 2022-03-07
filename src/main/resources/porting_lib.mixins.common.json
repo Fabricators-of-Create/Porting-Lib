@@ -1,6 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
+  "priority": 900,
   "package": "io.github.fabricators_of_create.porting_lib.mixin.common",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
@@ -39,6 +40,7 @@
     "MobMixin",
     "MushroomCowMixin",
     "ParticleTypeMixin",
+    "PlayerListMixin",
     "PlayerMixin",
     "ProjectileMixin",
     "RailStateMixin",

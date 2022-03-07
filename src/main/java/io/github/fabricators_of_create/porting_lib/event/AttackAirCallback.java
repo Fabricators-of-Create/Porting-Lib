@@ -10,9 +10,9 @@ import net.minecraft.client.player.LocalPlayer;
 public interface AttackAirCallback {
 	Event<AttackAirCallback> EVENT = EventFactory.createArrayBacked(AttackAirCallback.class, callbacks -> (player) -> {
 		for (AttackAirCallback callback : callbacks) {
-			callback.onLeftClickAir(player);
+			callback.attackAir(player);
 		}
 	});
 
-	void onLeftClickAir(LocalPlayer player);
+	void attackAir(LocalPlayer player);
 }

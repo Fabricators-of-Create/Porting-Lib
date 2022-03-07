@@ -5,15 +5,13 @@ import java.util.Collection;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomFrictionBlock;
 import io.github.fabricators_of_create.porting_lib.block.CustomLandingEffectsBlock;
-import io.github.fabricators_of_create.porting_lib.event.LivingEntityEvents.Fall.FallInfo;
+import io.github.fabricators_of_create.porting_lib.event.LivingEntityEvents.Fall.FallEvent;
 import io.github.fabricators_of_create.porting_lib.event.PotionEvents;
 import io.github.fabricators_of_create.porting_lib.item.EquipmentItem;
-import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
 import net.minecraft.world.InteractionResult;
 
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
@@ -25,6 +23,7 @@ import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
@@ -33,8 +32,6 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import io.github.fabricators_of_create.porting_lib.event.LivingEntityEvents;
 import io.github.fabricators_of_create.porting_lib.item.EntitySwingListenerItem;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -72,8 +69,7 @@ public abstract class LivingEntityMixin extends Entity {
 		int originalLevel = args.get(1);
 		boolean recentlyHit = args.get(2);
 		int modifiedLevel = LivingEntityEvents.LOOTING_LEVEL.invoker().modifyLootingLevel(source, (LivingEntity) (Object) this, originalLevel, recentlyHit);
-		if (modifiedLevel != originalLevel)
-			args.set(1, modifiedLevel);
+		args.set(1, modifiedLevel);
 	}
 
 	@Inject(method = "dropAllDeathLoot", at = @At(value = "JUMP", opcode = Opcodes.IFLE, ordinal = 0))
@@ -89,29 +85,29 @@ public abstract class LivingEntityMixin extends Entity {
 	}
 
 	@Unique
-	private FallInfo port_lib$currentFallInfo = null;
+	private FallEvent port_lib$currentFallEvent = null;
 
 	@Inject(method = "causeFallDamage", at = @At("HEAD"), cancellable = true)
 	public void port_lib$cancelFall(float fallDistance, float multiplier, DamageSource source, CallbackInfoReturnable<Boolean> cir) {
-		port_lib$currentFallInfo = new FallInfo((LivingEntity) (Object) this, source, fallDistance, multiplier);
-		LivingEntityEvents.FALL.invoker().onFall(port_lib$currentFallInfo);
-		if (port_lib$currentFallInfo.canceled) {
+		port_lib$currentFallEvent = new FallEvent((LivingEntity) (Object) this, source, fallDistance, multiplier);
+		port_lib$currentFallEvent.sendEvent();
+		if (port_lib$currentFallEvent.isCanceled()) {
 			cir.setReturnValue(true);
 		}
 	}
 
 	@ModifyVariable(method = "causeFallDamage", at = @At("HEAD"), argsOnly = true, ordinal = 0)
 	public float port_lib$modifyDistance(float fallDistance) {
-		if (port_lib$currentFallInfo != null) {
-			return port_lib$currentFallInfo.distance;
+		if (port_lib$currentFallEvent != null) {
+			return port_lib$currentFallEvent.getDistance();
 		}
 		return fallDistance;
 	}
 
 	@ModifyVariable(method = "causeFallDamage", at = @At("HEAD"), argsOnly = true, ordinal = 1)
 	public float port_lib$modifyMultiplier(float multiplier) {
-		if (port_lib$currentFallInfo != null) {
-			return port_lib$currentFallInfo.damageMultiplier;
+		if (port_lib$currentFallEvent != null) {
+			return port_lib$currentFallEvent.getDamageMultiplier();
 		}
 		return multiplier;
 	}
@@ -177,7 +173,11 @@ public abstract class LivingEntityMixin extends Entity {
 		}
 	}
 
-	@ModifyVariable(method = "travel", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/block/Block;getFriction()F"), index = 7)
+	@ModifyVariable(
+			method = "travel",
+			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getBlockPosBelowThatAffectsMyMovement()Lnet/minecraft/core/BlockPos;")),
+			at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/block/Block;getFriction()F")
+	)
 	public float port_lib$setSlipperiness(float p) {
 		BlockPos pos = getBlockPosBelowThatAffectsMyMovement();
 		BlockState state = level.getBlockState(pos);
