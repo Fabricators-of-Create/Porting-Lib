@@ -13,6 +13,8 @@ public interface RenderHandCallback {
 	Event<RenderHandCallback> EVENT = EventFactory.createArrayBacked(RenderHandCallback.class, callbacks -> (handEvent) -> {
 		for (RenderHandCallback callback : callbacks) {
 			callback.onRenderHand(handEvent);
+			if (handEvent.isCanceled())
+				return;
 		}
 	});
 

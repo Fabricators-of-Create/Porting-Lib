@@ -18,12 +18,12 @@ public class PlayerTickEvents {
 	});
 
 	@FunctionalInterface
-	interface End {
+	public interface End {
 		void onEndOfPlayerTick(Player player);
 	}
 
 	@FunctionalInterface
-	interface Start {
+	public interface Start {
 		void onStartOfPlayerTick(Player player);
 	}
 }

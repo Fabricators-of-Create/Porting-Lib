@@ -2,7 +2,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
 
-import io.github.fabricators_of_create.porting_lib.event.EntityTeleportEvent;
+import io.github.fabricators_of_create.porting_lib.event.EntityEvents.Teleport.EntityTeleportEvent;
 import net.minecraft.server.commands.SpreadPlayersCommand;
 
 import net.minecraft.world.entity.Entity;

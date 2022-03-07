@@ -26,6 +26,8 @@ public class EntityEvents {
 	public static final Event<Teleport> TELEPORT = EventFactory.createArrayBacked(Teleport.class, callbacks -> (event) -> {
 		for (Teleport callback : callbacks) {
 			callback.onTeleport(event);
+			if (event.isCanceled())
+				return;
 		}
 	});
 

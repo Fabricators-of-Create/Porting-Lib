@@ -42,7 +42,7 @@ public class LivingEntityEvents {
 	public static final Event<Fall> FALL = EventFactory.createArrayBacked(Fall.class, callbacks -> (info) -> {
 		for(Fall e : callbacks) {
 			e.onFall(info);
-			if (info.canceled) {
+			if (info.isCanceled()) {
 				return;
 			}
 		}
