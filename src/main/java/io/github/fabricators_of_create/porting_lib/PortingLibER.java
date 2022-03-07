@@ -22,23 +22,21 @@ import org.objectweb.asm.tree.VarInsnNode;
 public class PortingLibER implements Runnable {
 	@Override
 	public void run() {
-		MixinExtrasBootstrap.init();
-
 		MappingResolver remapper = FabricLoader.getInstance().getMappingResolver();
 		ClassTinkerers.addTransformation(remapper.mapClassName("intermediary", "net.minecraft.class_793"), classNode -> {
 			classNode.methods.forEach(methodNode -> {
 				if(methodNode.name.equals("getMaterials")) { // TODO: FIX I have no fucking clue how to debug this
 					methodNode.instructions.insertBefore(findFirstInstructionAfter(methodNode, Opcodes.INVOKESTATIC, 2), listOf(
-//							new VarInsnNode(Opcodes.ALOAD, 0),
-//							new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/block/model/BlockModel", "data", "io/github/fabricators_of_create/porting_lib.model/BlockModelConfiguration"),
-//							new JumpInsnNode(Opcodes.IFNULL, new LabelNode()),
-//							new VarInsnNode(Opcodes.ALOAD, 4),
-//							new VarInsnNode(Opcodes.ALOAD, 0),
-//							new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/block/model/BlockModel", "data", "io/github/fabricators_of_create/porting_lib.model/BlockModelConfiguration"),
-//							new VarInsnNode(Opcodes.ALOAD, 1),
-//							new VarInsnNode(Opcodes.ALOAD, 2),
-//							new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "io/github/fabricators_of_create/porting_lib.model/BlockModelConfiguration", "getTextureDependencies", "(Ljava/util/function/Function;Ljava/util/Set;)Ljava/util/Collection;"),
-//							new MethodInsnNode(Opcodes.INVOKEINTERFACE, "java/util/Set", "addAll", "(Ljava/util/Collection;)Z", true)
+							new VarInsnNode(Opcodes.ALOAD, 0),
+							new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/block/model/BlockModel", "data", "io/github/fabricators_of_create/porting_lib.model/BlockModelConfiguration"),
+							new JumpInsnNode(Opcodes.IFNULL, new LabelNode()),
+							new VarInsnNode(Opcodes.ALOAD, 4),
+							new VarInsnNode(Opcodes.ALOAD, 0),
+							new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/block/model/BlockModel", "data", "io/github/fabricators_of_create/porting_lib.model/BlockModelConfiguration"),
+							new VarInsnNode(Opcodes.ALOAD, 1),
+							new VarInsnNode(Opcodes.ALOAD, 2),
+							new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "io/github/fabricators_of_create/porting_lib.model/BlockModelConfiguration", "getTextureDependencies", "(Ljava/util/function/Function;Ljava/util/Set;)Ljava/util/Collection;"),
+							new MethodInsnNode(Opcodes.INVOKEINTERFACE, "java/util/Set", "addAll", "(Ljava/util/Collection;)Z", true)
 					));
 					System.out.println(methodNode.instructions);
 				}
