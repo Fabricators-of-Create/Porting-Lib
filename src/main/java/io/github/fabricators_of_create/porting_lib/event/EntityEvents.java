@@ -84,4 +84,6 @@ public class EntityEvents {
 	public interface Tracking {
 		void onTrackingStart(Entity tracking, ServerPlayer player);
 	}
+
+
 }
