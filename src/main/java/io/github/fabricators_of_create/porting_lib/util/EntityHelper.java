@@ -9,7 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 public final class EntityHelper {
-	public static final String EXTRA_DATA_KEY = "create_ExtraEntityData";
+	public static final String EXTRA_DATA_KEY = "ForgeData";
 
 	public static CompoundTag getExtraCustomData(Entity entity) {
 		return entity.getExtraCustomData();

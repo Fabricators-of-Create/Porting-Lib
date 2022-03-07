@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomRunningEffectsBlock;
 import io.github.fabricators_of_create.porting_lib.event.EntityEvents;
+import io.github.fabricators_of_create.porting_lib.event.EntityReadExtraDataCallback;
 import io.github.fabricators_of_create.porting_lib.event.MinecartEvents;
 import io.github.fabricators_of_create.porting_lib.event.StartRidingCallback;
 import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
@@ -102,6 +103,7 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 		if (tag.contains(EntityHelper.EXTRA_DATA_KEY)) {
 			port_lib$extraCustomData = tag.getCompound(EntityHelper.EXTRA_DATA_KEY);
 		}
+		EntityReadExtraDataCallback.EVENT.invoker().onLoad((Entity) (Object) this, port_lib$extraCustomData);
 	}
 
 	// RUNNING EFFECTS
