@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.transfer.item;
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.world.item.ItemStack;
@@ -17,10 +18,13 @@ public class ItemStorageHandler implements IItemHandlerModifiable {
 
 	public ItemStorageHandler(Storage<ItemVariant> storage) {
 		this.storage = storage;
+		getSlots();
 	}
-
+	private int slotCount = 0;
 	@Override
 	public int getSlots() {
+		if(this.slotCount>0) return slotCount;
+		//Do we have chance to change Slot count in storage? I doubt it.
 		int slots = 0;
 		try (Transaction t = Transaction.openOuter()) {
 			for (StorageView<ItemVariant> view : storage.iterable(t)) {
@@ -28,6 +32,7 @@ public class ItemStorageHandler implements IItemHandlerModifiable {
 			}
 			t.abort();
 		}
+		this.slotCount = slots;
 		return slots;
 	}
 
@@ -50,18 +55,17 @@ public class ItemStorageHandler implements IItemHandlerModifiable {
 	public ItemStack insertItem(int slot, ItemStack stack, boolean sim) {
 		if(stack.isEmpty())
 			return stack;
-		ItemStack finalVal = ItemStack.EMPTY;
-		try (Transaction t = Transaction.openOuter()) {
-			long remainder = stack.getCount() - storage.insert(ItemVariant.of(stack), stack.getCount(), t);
-			if (remainder != 0) {
-				finalVal = new ItemStack(stack.getItem(), (int) remainder);
-			}
-
-			if (!sim) {
+		try (Transaction t = Transaction.openOuter()){
+			long inserted = this.storage.insert(ItemVariant.of(stack), stack.getCount(), t);
+			if (sim)
+				t.abort();
+			else{
 				t.commit();
 			}
+			ItemStack remainder = stack.copy();
+			remainder.setCount((int) (stack.getCount() - inserted));
+			return remainder;
 		}
-		return finalVal;
 	}
 
 	@Override
@@ -82,6 +86,9 @@ public class ItemStorageHandler implements IItemHandlerModifiable {
 			}
 			if (!sim) {
 				t.commit();
+			}
+			else {
+				t.abort();
 			}
 		}
 		return finalVal;
