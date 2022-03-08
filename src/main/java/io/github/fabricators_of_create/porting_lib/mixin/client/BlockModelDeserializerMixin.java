@@ -4,6 +4,8 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
+import io.github.fabricators_of_create.porting_lib.extensions.BlockModelExtensions;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -32,19 +34,19 @@ public abstract class BlockModelDeserializerMixin {
 		List<BlockElement> elements = model.getElements();
 		if (geometry != null) {
 			elements.clear();
-			model.getGeometry().setCustomGeometry(geometry);
+			((BlockModelExtensions) model).getGeometry().setCustomGeometry(geometry);
 			System.out.println(model.name);
 		}
 
 		ModelState modelState = ModelLoaderRegistry.deserializeModelTransforms(deserializationContext, jsonobject);
 		if (modelState != null) {
-			model.getGeometry().setCustomModelState(modelState);
+			((BlockModelExtensions) model).getGeometry().setCustomModelState(modelState);
 		}
 
 		if (jsonobject.has("visibility")) {
 			JsonObject visibility = GsonHelper.getAsJsonObject(jsonobject, "visibility");
 			for (Map.Entry<String, JsonElement> part : visibility.entrySet()) {
-				model.getGeometry().visibilityData.setVisibilityState(part.getKey(), part.getValue().getAsBoolean());
+				((BlockModelExtensions) model).getGeometry().visibilityData.setVisibilityState(part.getKey(), part.getValue().getAsBoolean());
 			}
 		}
 	}

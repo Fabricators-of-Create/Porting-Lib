@@ -3,12 +3,14 @@ package io.github.fabricators_of_create.porting_lib.model;
 import com.google.common.base.Objects;
 import com.mojang.math.Transformation;
 
+import io.github.fabricators_of_create.porting_lib.extensions.ModelStateExtensions;
+import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.client.resources.model.ModelState;
 
 /**
  * An {@link ModelState} that combines the transforms from two child {@link ModelState}.
  */
-public class CompositeModelState implements ModelState {
+public class CompositeModelState implements ModelState, ModelStateExtensions {
 	private final ModelState first;
 	private final ModelState second;
 	private final boolean uvLock;
@@ -35,7 +37,7 @@ public class CompositeModelState implements ModelState {
 
 	@Override
 	public Transformation getPartTransformation(Object part) {
-		return first.getPartTransformation(part).compose(second.getPartTransformation(part));
+		return ((ModelStateExtensions) first).getPartTransformation(part).compose(((ModelStateExtensions) second).getPartTransformation(part));
 	}
 
 	@Override

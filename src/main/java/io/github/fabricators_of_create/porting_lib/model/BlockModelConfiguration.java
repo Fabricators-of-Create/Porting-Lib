@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 
 import com.mojang.datafixers.util.Pair;
 
+import io.github.fabricators_of_create.porting_lib.extensions.BlockModelExtensions;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -51,7 +52,7 @@ public class BlockModelConfiguration implements IModelConfiguration {
 
 	@Nullable
 	public IModelGeometry<?> getCustomGeometry() {
-		return owner.parent != null && customGeometry == null ? owner.parent.getGeometry().getCustomGeometry() : customGeometry;
+		return owner.parent != null && customGeometry == null ? ((BlockModelExtensions) owner.parent).getGeometry().getCustomGeometry() : customGeometry;
 	}
 
 	public void setCustomGeometry(IModelGeometry<?> geometry) {
@@ -60,7 +61,7 @@ public class BlockModelConfiguration implements IModelConfiguration {
 
 	@Nullable
 	public ModelState getCustomModelState() {
-		return owner.parent != null && customModelState == null ? owner.parent.getGeometry().getCustomModelState() : customModelState;
+		return owner.parent != null && customModelState == null ? ((BlockModelExtensions) owner.parent).getGeometry().getCustomModelState() : customModelState;
 	}
 
 	public void setCustomModelState(ModelState modelState) {
@@ -70,7 +71,7 @@ public class BlockModelConfiguration implements IModelConfiguration {
 	@Override
 	public boolean getPartVisibility(IModelGeometryPart part, boolean fallback) {
 		return owner.parent != null && !visibilityData.hasCustomVisibility(part) ?
-				owner.parent.getGeometry().getPartVisibility(part, fallback) :
+				((BlockModelExtensions) owner.parent).getGeometry().getPartVisibility(part, fallback) :
 				visibilityData.isVisible(part, fallback);
 	}
 

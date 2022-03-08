@@ -149,7 +149,7 @@ public abstract class BlockModelMixin implements BlockModelExtensions {
 		IModelGeometry<?> customModel = data.getCustomGeometry();
 
 		if (customModel != null)
-			cir.setReturnValue(customModel.bake(blockModel.getGeometry(), modelBakery, spriteGetter, modelTransform, blockModel.getOverrides(modelBakery, otherModel, spriteGetter), modelLocation));
+			cir.setReturnValue(customModel.bake(((BlockModelExtensions) blockModel).getGeometry(), modelBakery, spriteGetter, modelTransform, ((BlockModelExtensions) blockModel).getOverrides(modelBakery, otherModel, spriteGetter), modelLocation));
 	}
 
 	@Inject(method = "getElements", at = @At("HEAD"), cancellable = true)

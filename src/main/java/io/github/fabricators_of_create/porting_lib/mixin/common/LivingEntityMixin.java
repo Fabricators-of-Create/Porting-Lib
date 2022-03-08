@@ -7,6 +7,7 @@ import io.github.fabricators_of_create.porting_lib.block.CustomFrictionBlock;
 import io.github.fabricators_of_create.porting_lib.block.CustomLandingEffectsBlock;
 import io.github.fabricators_of_create.porting_lib.event.LivingEntityEvents.Fall.FallEvent;
 import io.github.fabricators_of_create.porting_lib.event.PotionEvents;
+import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.item.EquipmentItem;
 import net.minecraft.world.InteractionResult;
 
@@ -46,7 +47,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 @Mixin(LivingEntity.class)
-public abstract class LivingEntityMixin extends Entity {
+public abstract class LivingEntityMixin extends Entity implements EntityExtensions {
 	@Shadow
 	protected Player lastHurtByPlayer;
 
