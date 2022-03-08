@@ -57,9 +57,8 @@ public class ItemStorageHandler implements IItemHandlerModifiable {
 				finalVal = new ItemStack(stack.getItem(), (int) remainder);
 			}
 
-			if (!sim) {
-				t.commit();
-			}
+			if (sim) t.abort();
+			else t.commit();
 		}
 		return finalVal;
 	}
@@ -80,9 +79,8 @@ public class ItemStorageHandler implements IItemHandlerModifiable {
 				}
 				index++;
 			}
-			if (!sim) {
-				t.commit();
-			}
+			if (sim) t.abort();
+			else t.commit();
 		}
 		return finalVal;
 	}
