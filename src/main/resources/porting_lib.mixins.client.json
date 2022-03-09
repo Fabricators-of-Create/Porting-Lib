@@ -64,6 +64,7 @@
     "defaultRequire": 1
   },
   "mixins": [
+    "AbstractClientPlayerMixin",
     "LivingEntityRendererMixin"
   ]
 }

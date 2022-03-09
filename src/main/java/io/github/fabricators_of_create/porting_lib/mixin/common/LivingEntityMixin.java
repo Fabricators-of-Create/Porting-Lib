@@ -12,6 +12,7 @@ import io.github.fabricators_of_create.porting_lib.block.CustomFrictionBlock;
 import io.github.fabricators_of_create.porting_lib.block.CustomLandingEffectsBlock;
 import io.github.fabricators_of_create.porting_lib.event.LivingEntityEvents.Fall.FallEvent;
 import io.github.fabricators_of_create.porting_lib.event.PotionEvents;
+import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityUseItemEvents;
 import io.github.fabricators_of_create.porting_lib.item.EquipmentItem;
 import net.minecraft.world.InteractionResult;
 
@@ -77,6 +78,12 @@ public abstract class LivingEntityMixin extends Entity {
 	@Shadow
 	@Nullable
 	public abstract AttributeInstance getAttribute(Attribute attribute);
+
+	@Shadow
+	public abstract ItemStack getUseItem();
+
+	@Shadow
+	public abstract int getUseItemRemainingTicks();
 
 	public LivingEntityMixin(EntityType<?> entityType, Level world) {
 		super(entityType, world);
@@ -248,6 +255,10 @@ public abstract class LivingEntityMixin extends Entity {
 		return this.getAttribute(PortingLibAttributes.ENTITY_GRAVITY).getValue();
 	}
 
+	@Inject(method = "completeUsingItem", at = @At(value = "JUMP", opcode = Opcodes.IF_ACMPEQ), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
+	public void port_lib$onFinishUsing(CallbackInfo ci, InteractionHand hand, ItemStack result) {
+		LivingEntityUseItemEvents.LIVING_USE_ITEM_FINISH.invoker().onUseItem((LivingEntity) (Object) this, this.getUseItem().copy(), getUseItemRemainingTicks(), result);
+	}
 
 	@Inject(method = "getEquipmentSlotForItem", at = @At("HEAD"), cancellable = true)
 	private static void port_lib$getSlotForItemStack(ItemStack itemStack, CallbackInfoReturnable<EquipmentSlot> cir) {
