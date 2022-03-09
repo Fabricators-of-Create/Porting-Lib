@@ -6,9 +6,9 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "AbstractTextureMixin",
-    "BufferBuilderMixin",
     "BlockModelDeserializerMixin",
     "BlockModelMixin",
+    "BufferBuilderMixin",
     "ClientLevel$EntityCallbacksMixin",
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
@@ -40,8 +40,8 @@
     "accessor.AbstractSelectionList$EntryAccessor",
     "accessor.AbstractSelectionListAccessor",
     "accessor.AbstractWidgetAccessor",
-    "accessor.BlockModelAccessor",
     "accessor.BlockModel$DeserializerAccessor",
+    "accessor.BlockModelAccessor",
     "accessor.BlockRenderDispatcherAccessor",
     "accessor.ClientPacketListenerAccessor",
     "accessor.FontAccessor",
@@ -62,5 +62,8 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+    "LivingEntityRendererMixin"
+  ]
 }

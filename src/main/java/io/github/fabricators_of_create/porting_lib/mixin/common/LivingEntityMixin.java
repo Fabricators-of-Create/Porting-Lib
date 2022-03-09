@@ -2,7 +2,12 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.UUID;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
+
+import io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes;
 import io.github.fabricators_of_create.porting_lib.block.CustomFrictionBlock;
 import io.github.fabricators_of_create.porting_lib.block.CustomLandingEffectsBlock;
 import io.github.fabricators_of_create.porting_lib.event.LivingEntityEvents.Fall.FallEvent;
@@ -10,8 +15,17 @@ import io.github.fabricators_of_create.porting_lib.event.PotionEvents;
 import io.github.fabricators_of_create.porting_lib.item.EquipmentItem;
 import net.minecraft.world.InteractionResult;
 
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
+
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+
+import net.minecraft.world.phys.Vec3;
 
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
@@ -20,8 +34,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -45,6 +61,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
+import static net.minecraft.world.effect.MobEffects.SLOW_FALLING;
+
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
 	@Shadow
@@ -53,8 +71,20 @@ public abstract class LivingEntityMixin extends Entity {
 	@Shadow
 	public abstract ItemStack getItemInHand(InteractionHand interactionHand);
 
+	@Shadow
+	public abstract boolean hasEffect(MobEffect potion);
+
+	@Shadow
+	@Nullable
+	public abstract AttributeInstance getAttribute(Attribute attribute);
+
 	public LivingEntityMixin(EntityType<?> entityType, Level world) {
 		super(entityType, world);
+	}
+
+	@Inject(method = "createLivingAttributes", at = @At("RETURN"))
+	private static void port_lib$addModdedAttributes(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
+		cir.getReturnValue().add(PortingLibAttributes.ENTITY_GRAVITY).add(PortingLibAttributes.SWIM_SPEED);
 	}
 
 	@ModifyArgs(
@@ -186,6 +216,38 @@ public abstract class LivingEntityMixin extends Entity {
 		}
 		return p;
 	}
+
+	@ModifyExpressionValue(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;hasEffect(Lnet/minecraft/world/effect/MobEffect;)Z", ordinal = 0))
+	private boolean port_lib$disableOldLogicFallingLogic(boolean original) {
+		return false;
+	}
+
+	private static final AttributeModifier SLOW_FALLING = new AttributeModifier(UUID.fromString("A5B6CF2A-2F7C-31EF-9022-7C3E7D5E6ABA"), "Slow falling acceleration reduction", -0.07, AttributeModifier.Operation.ADDITION); // Add -0.07 to 0.08 so we get the vanilla default of 0.01
+
+	@Inject(
+			method = "travel",
+			at = @At(
+					value = "CONSTANT",args = {
+						"doubleValue=0.08D"
+				}
+			)
+	)
+	public void port_lib$entityGravity(Vec3 travelVector, CallbackInfo ci) {
+		AttributeInstance gravity = this.getAttribute(PortingLibAttributes.ENTITY_GRAVITY);
+		boolean flag = this.getDeltaMovement().y <= 0.0D;
+		if (flag && this.hasEffect(MobEffects.SLOW_FALLING)) {
+			if (!gravity.hasModifier(SLOW_FALLING)) gravity.addTransientModifier(SLOW_FALLING);
+			this.resetFallDistance();
+		} else if (gravity.hasModifier(SLOW_FALLING)) {
+			gravity.removeModifier(SLOW_FALLING);
+		}
+	}
+
+	@ModifyConstant(method = "travel", constant = @Constant(doubleValue = 0.08D))
+	public double modifyGravity(double originalGrav) {
+		return this.getAttribute(PortingLibAttributes.ENTITY_GRAVITY).getValue();
+	}
+
 
 	@Inject(method = "getEquipmentSlotForItem", at = @At("HEAD"), cancellable = true)
 	private static void port_lib$getSlotForItemStack(ItemStack itemStack, CallbackInfoReturnable<EquipmentSlot> cir) {
