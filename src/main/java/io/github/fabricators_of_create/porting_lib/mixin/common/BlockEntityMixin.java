@@ -22,6 +22,9 @@ public abstract class BlockEntityMixin implements BlockEntityExtensions, NBTSeri
 	@Shadow
 	public abstract void load(CompoundTag tag);
 
+	@Shadow
+	public abstract CompoundTag saveWithFullMetadata();
+
 	@Inject(at = @At("RETURN"), method = "saveMetadata")
 	private void port_lib$saveMetadata(CompoundTag nbt, CallbackInfo ci) {
 		if (port_lib$extraData != null && !port_lib$extraData.isEmpty()) {
@@ -40,9 +43,7 @@ public abstract class BlockEntityMixin implements BlockEntityExtensions, NBTSeri
 
 	@Override
 	public CompoundTag serializeNBT() {
-		CompoundTag nbt = new CompoundTag();
-		this.load(nbt);
-		return nbt;
+		return this.saveWithFullMetadata();
 	}
 
 	@Override
