@@ -36,7 +36,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-@SuppressWarnings({"UnstableApiUsage"})
+@SuppressWarnings("UnstableApiUsage")
 public class TransferUtil {
 	public static LazyOptional<IItemHandler> getItemHandler(BlockEntity be) {
 		return getItemHandler(be, null);
@@ -53,7 +53,7 @@ public class TransferUtil {
 	}
 
 	public static LazyOptional<IItemHandler> getItemHandler(BlockEntity be, @Nullable Direction side) {
-		// Create handling
+		// lib handling
 		if (be instanceof ItemTransferable transferable) return transferable.getItemHandler(side);
 		// client handling
 		if (Objects.requireNonNull(be.getLevel()).isClientSide()) {
@@ -75,7 +75,7 @@ public class TransferUtil {
 				}
 
 				for (Storage<ItemVariant> storage : itemStorages) {
-					if (!storage.equals(itemStorage)) {
+					if (!Objects.equals(itemStorage, storage)) {
 						itemStorages.add(itemStorage);
 						break;
 					}
@@ -84,8 +84,8 @@ public class TransferUtil {
 		}
 
 		if (itemStorages.isEmpty()) return LazyOptional.empty();
-		if (itemStorages.size() == 1) return simplifyItem(itemStorages.get(0)).cast();
-		return simplifyItem(new CombinedStorage<>(itemStorages)).cast();
+		if (itemStorages.size() == 1) return simplifyItem(itemStorages.get(0));
+		return simplifyItem(new CombinedStorage<>(itemStorages));
 	}
 
 	// Fluids
@@ -102,7 +102,7 @@ public class TransferUtil {
 
 	public static LazyOptional<IFluidHandler> getFluidHandler(BlockEntity be, @Nullable Direction side) {
 		boolean client = Objects.requireNonNull(be.getLevel()).isClientSide();
-		// Create handling
+		// lib handling
 		if (be instanceof FluidTransferable transferable) {
 			if (client && !transferable.shouldRunClientSide()) {
 				return LazyOptional.empty();
@@ -130,7 +130,7 @@ public class TransferUtil {
 				}
 
 				for (Storage<FluidVariant> storage : fluidStorages) {
-					if (!storage.equals(fluidStorage)) {
+					if (!Objects.equals(fluidStorage, storage)) {
 						fluidStorages.add(fluidStorage);
 						break;
 					}
@@ -139,8 +139,8 @@ public class TransferUtil {
 		}
 
 		if (fluidStorages.isEmpty()) return LazyOptional.empty();
-		if (fluidStorages.size() == 1) return simplifyFluid(fluidStorages.get(0)).cast();
-		return simplifyFluid(new CombinedStorage<>(fluidStorages)).cast();
+		if (fluidStorages.size() == 1) return simplifyFluid(fluidStorages.get(0));
+		return simplifyFluid(new CombinedStorage<>(fluidStorages));
 	}
 
 	// Fluid-containing items
