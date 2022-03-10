@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import io.github.fabricators_of_create.porting_lib.util.ArmorTextureRegistry;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,14 +17,11 @@ import net.minecraft.world.item.ArmorItem;
 @Environment(EnvType.CLIENT)
 @Mixin(HumanoidArmorLayer.class)
 public abstract class HumanoidArmorLayerMixin {
-
-	@Unique
-	private static final ResourceLocation port_lib$copperArmorLocation = new ResourceLocation("create", "textures/models/armor/copper.png");
-
 	@Inject(method = "getArmorLocation", at = @At("HEAD"), cancellable = true)
 	private void port_lib$getArmorLocation(ArmorItem armorItem, boolean bl, String string, CallbackInfoReturnable<ResourceLocation> cir) {
-		if (armorItem.getMaterial().getName().equals("copper")) {
-			cir.setReturnValue(port_lib$copperArmorLocation);
+		ResourceLocation id = ArmorTextureRegistry.get(armorItem.getMaterial());
+		if (id != null) {
+			cir.setReturnValue(id);
 		}
 	}
 }

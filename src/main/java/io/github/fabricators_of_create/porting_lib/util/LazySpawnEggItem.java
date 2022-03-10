@@ -1,8 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
-import java.util.ArrayList;
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
