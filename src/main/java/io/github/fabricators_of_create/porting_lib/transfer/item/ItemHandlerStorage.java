@@ -18,11 +18,11 @@ import net.minecraft.world.item.ItemStack;
  * Wraps an IItemHandler in a Storage, for use outside Create
  */
 @SuppressWarnings("UnstableApiUsage")
-public class StorageItemHandler implements Storage<ItemVariant> {
+public class ItemHandlerStorage implements Storage<ItemVariant> {
 	@Nonnull
 	protected IItemHandler handler;
 
-	public StorageItemHandler(@Nullable IItemHandler handler) {
+	public ItemHandlerStorage(@Nullable IItemHandler handler) {
 		if (handler == null) {
 			this.handler = EmptyHandler.INSTANCE;
 		} else {

@@ -4,67 +4,103 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-// this class is awful, but we don't have many options
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Wraps a Storage in an IItemHandler, for use in Create
  */
-@SuppressWarnings({"UnstableApiUsage"})
+@SuppressWarnings("UnstableApiUsage")
 public class ItemStorageHandler implements IItemHandlerModifiable {
 	protected final Storage<ItemVariant> storage;
+	protected long version;
+	protected int slots;
+	protected ItemStack[] stacks;
 
 	public ItemStorageHandler(Storage<ItemVariant> storage) {
 		this.storage = storage;
+		this.version = storage.getVersion();
+	}
+
+	public boolean shouldUpdate() {
+		return storage.getVersion() != version;
+	}
+
+	private void updateContents() {
+		List<ItemStack> stacks = new ArrayList<>();
+		try (Transaction t = Transaction.openOuter()) {
+			for (StorageView<ItemVariant> view : storage.iterable(t)) {
+				stacks.add(view.getResource().toStack((int) view.getAmount()));
+			}
+			t.abort();
+		}
+		this.stacks = stacks.toArray(ItemStack[]::new);
+		this.slots = stacks.size();
+		this.version = storage.getVersion();
+	}
+
+	private boolean validIndex(int slot) {
+		return slot >= 0 && slot < slots;
 	}
 
 	@Override
 	public int getSlots() {
-		int slots = 0;
-		try (Transaction t = Transaction.openOuter()) {
-			for (StorageView<ItemVariant> view : storage.iterable(t)) {
-				slots++;
-			}
-			t.abort();
-		}
+		if (shouldUpdate())
+			updateContents();
 		return slots;
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int slot) {
-		try (Transaction t = Transaction.openOuter()) {
-			int index = 0;
-			for (StorageView<ItemVariant> view : storage.iterable(t)) {
-				if (index == slot) {
-					return view.getResource().toStack((int) view.getAmount());
-				}
-				index++;
-			}
-			t.abort();
+		if (validIndex(slot)) {
+			if (shouldUpdate())
+				updateContents();
+			return stacks[slot].copy();
 		}
 		return ItemStack.EMPTY;
 	}
 
 	@Override
 	public ItemStack insertItem(int slot, ItemStack stack, boolean sim) {
-		if(stack.isEmpty())
+		if (!validIndex(slot)) // first check valid slot index
 			return stack;
+		if (stack.isEmpty()) // check stack is not empty
+			return stack;
+		if (!isItemValid(slot, stack)) // make sure this stack can be stored
+			return stack;
+		if (!storage.supportsInsertion()) // make sure insertion is supported
+			return stack;
+		ItemStack current = getStackInSlot(slot);
+		int limit = Math.min(getSlotLimit(slot), current.getMaxStackSize());
+		if (limit <= 0 || !ItemHandlerHelper.canItemStacksStack(current, stack)) // make sure there's room
+			return stack;
+		// finally insert
 		ItemStack finalVal = ItemStack.EMPTY;
 		try (Transaction t = Transaction.openOuter()) {
+			// this technically breaks spec and ignores 'slot' but thanks FAPI, we literally have no choice!
 			long remainder = stack.getCount() - storage.insert(ItemVariant.of(stack), stack.getCount(), t);
 			if (remainder != 0) {
 				finalVal = new ItemStack(stack.getItem(), (int) remainder);
 			}
 
 			if (sim) t.abort();
-			else t.commit();
+			else {
+				t.commit();
+				if (shouldUpdate())
+					updateContents();
+			}
 		}
 		return finalVal;
 	}
 
 	@Override
 	public ItemStack extractItem(int slot, int amount, boolean sim) {
+		if (amount <= 0)
+			return ItemStack.EMPTY;
+
 		ItemStack finalVal = ItemStack.EMPTY;
 		try (Transaction t = Transaction.openOuter()) {
 			int index = 0;
@@ -80,7 +116,11 @@ public class ItemStorageHandler implements IItemHandlerModifiable {
 				index++;
 			}
 			if (sim) t.abort();
-			else t.commit();
+			else {
+				t.commit();
+				if (shouldUpdate())
+					updateContents();
+			}
 		}
 		return finalVal;
 	}

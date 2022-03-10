@@ -18,7 +18,7 @@ import io.github.fabricators_of_create.porting_lib.transfer.item.CustomStorageHa
 import io.github.fabricators_of_create.porting_lib.transfer.item.IItemHandler;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStorageHandler;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemTransferable;
-import io.github.fabricators_of_create.porting_lib.transfer.item.StorageItemHandler;
+import io.github.fabricators_of_create.porting_lib.transfer.item.ItemHandlerStorage;
 import io.github.fabricators_of_create.porting_lib.util.LazyOptional;
 
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
@@ -82,6 +82,7 @@ public class TransferUtil {
 				}
 			}
 		}
+
 
 		if (itemStorages.isEmpty()) return LazyOptional.empty();
 		if (itemStorages.size() == 1) return simplifyItem(itemStorages.get(0));
@@ -164,7 +165,7 @@ public class TransferUtil {
 
 	public static LazyOptional<IItemHandler> simplifyItem(Storage<ItemVariant> storage) {
 		if (storage == null) return LazyOptional.empty();
-		if (storage instanceof StorageItemHandler handler) return LazyOptional.ofObject(handler.getHandler());
+		if (storage instanceof ItemHandlerStorage handler) return LazyOptional.ofObject(handler.getHandler());
 		return LazyOptional.ofObject(new ItemStorageHandler(storage));
 	}
 
@@ -188,7 +189,7 @@ public class TransferUtil {
 		if (be instanceof ItemTransferable transferable) {
 			LazyOptional<IItemHandler> handler = transferable.getItemHandler(side);
 			if (handler instanceof CustomStorageHandler custom) return custom.getStorage();
-			return handler == null || !handler.isPresent() ? null : new StorageItemHandler(handler.getValueUnsafer());
+			return handler == null || !handler.isPresent() ? null : new ItemHandlerStorage(handler.getValueUnsafer());
 		}
 		return null;
 	}
