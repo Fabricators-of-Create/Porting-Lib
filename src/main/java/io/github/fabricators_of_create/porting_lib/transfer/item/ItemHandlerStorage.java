@@ -39,7 +39,7 @@ public class ItemHandlerStorage implements Storage<ItemVariant> {
 	public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
 		ItemStack toInsert = resource.toStack((int) maxAmount);
 		ItemStack remainder = ItemHandlerHelper.insertItemStacked(handler, toInsert, true);
-		transaction.addOuterCloseCallback(result -> {
+		transaction.addCloseCallback((t, result) -> {
 			if (result.wasCommitted()) {
 				ItemHandlerHelper.insertItemStacked(handler, toInsert, false);
 			}
@@ -51,7 +51,7 @@ public class ItemHandlerStorage implements Storage<ItemVariant> {
 	public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
 		ItemStack toExtract = resource.toStack((int) maxAmount);
 		ItemStack extracted = ItemHandlerHelper.extract(handler, toExtract, true);
-		transaction.addOuterCloseCallback(result -> {
+		transaction.addCloseCallback((t, result) -> {
 			if (result.wasCommitted()) {
 				ItemHandlerHelper.extract(handler, toExtract, false);
 			}
@@ -100,7 +100,7 @@ public class ItemHandlerStorage implements Storage<ItemVariant> {
 			ItemStack extracted = owner.extractItem(slotIndex, (int) maxAmount, true);
 			if (extracted.is(resource.getItem())) {
 				actual = extracted.getCount();
-				transaction.addOuterCloseCallback(result -> {
+				transaction.addCloseCallback((t, result) -> {
 					if (result.wasCommitted()) {
 						owner.extractItem(slotIndex, (int) maxAmount, false);
 					}
