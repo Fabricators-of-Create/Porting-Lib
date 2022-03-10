@@ -13,7 +13,7 @@ import io.github.fabricators_of_create.porting_lib.transfer.fluid.FluidStorageHa
 import io.github.fabricators_of_create.porting_lib.transfer.fluid.FluidTransferable;
 import io.github.fabricators_of_create.porting_lib.transfer.fluid.IFluidHandler;
 import io.github.fabricators_of_create.porting_lib.transfer.fluid.IFluidHandlerItem;
-import io.github.fabricators_of_create.porting_lib.transfer.fluid.StorageFluidHandler;
+import io.github.fabricators_of_create.porting_lib.transfer.fluid.FluidHandlerStorage;
 import io.github.fabricators_of_create.porting_lib.transfer.item.CustomStorageHandler;
 import io.github.fabricators_of_create.porting_lib.transfer.item.IItemHandler;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStorageHandler;
@@ -111,7 +111,7 @@ public class TransferUtil {
 			return transferable.getFluidHandler(side);
 		}
 		// client handling
-		if (client) {
+		if (client) { // TODO this system might be unnecessary
 			IFluidHandler cached = FluidTileDataHandler.getCachedHandler(be);
 			return LazyOptional.ofObject(cached);
 		}
@@ -171,7 +171,7 @@ public class TransferUtil {
 
 	public static LazyOptional<IFluidHandler> simplifyFluid(Storage<FluidVariant> storage) {
 		if (storage == null) return LazyOptional.empty();
-		if (storage instanceof StorageFluidHandler handler) return LazyOptional.ofObject(handler.getHandler());
+		if (storage instanceof FluidHandlerStorage handler) return LazyOptional.ofObject(handler.getHandler());
 		return LazyOptional.ofObject(new FluidStorageHandler(storage));
 	}
 
@@ -179,7 +179,7 @@ public class TransferUtil {
 	public static Storage<FluidVariant> getFluidStorageForBE(BlockEntity be, Direction side) {
 		if (be instanceof FluidTransferable transferable) {
 			LazyOptional<IFluidHandler> handler = transferable.getFluidHandler(side);
-			return handler == null || !handler.isPresent() ? null : new StorageFluidHandler(handler.getValueUnsafer());
+			return handler == null || !handler.isPresent() ? null : new FluidHandlerStorage(handler.getValueUnsafer());
 		}
 		return null;
 	}

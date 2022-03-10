@@ -19,10 +19,12 @@ public class ItemStorageHandler implements IItemHandlerModifiable {
 	protected long version;
 	protected int slots;
 	protected ItemStack[] stacks;
+	protected Long[] capacities;
 
 	public ItemStorageHandler(Storage<ItemVariant> storage) {
 		this.storage = storage;
 		this.version = storage.getVersion();
+		updateContents();
 	}
 
 	public boolean shouldUpdate() {
@@ -31,13 +33,16 @@ public class ItemStorageHandler implements IItemHandlerModifiable {
 
 	private void updateContents() {
 		List<ItemStack> stacks = new ArrayList<>();
+		List<Long> capacities = new ArrayList<>();
 		try (Transaction t = Transaction.openOuter()) {
 			for (StorageView<ItemVariant> view : storage.iterable(t)) {
 				stacks.add(view.getResource().toStack((int) view.getAmount()));
+				capacities.add(view.getCapacity());
 			}
 			t.abort();
 		}
 		this.stacks = stacks.toArray(ItemStack[]::new);
+		this.capacities = capacities.toArray(Long[]::new);
 		this.slots = stacks.size();
 		this.version = storage.getVersion();
 	}
@@ -100,6 +105,10 @@ public class ItemStorageHandler implements IItemHandlerModifiable {
 	public ItemStack extractItem(int slot, int amount, boolean sim) {
 		if (amount <= 0)
 			return ItemStack.EMPTY;
+		if (!validIndex(slot)) // check valid slot index
+			return ItemStack.EMPTY;
+		if (!storage.supportsExtraction()) // make sure insertion is supported
+			return ItemStack.EMPTY;
 
 		ItemStack finalVal = ItemStack.EMPTY;
 		try (Transaction t = Transaction.openOuter()) {
@@ -127,7 +136,12 @@ public class ItemStorageHandler implements IItemHandlerModifiable {
 
 	@Override
 	public int getSlotLimit(int slot) {
-		return 64;
+		if (validIndex(slot)) {
+			if (shouldUpdate())
+				updateContents();
+			return (int) (long) capacities[slot];
+		}
+		return 0;
 	}
 
 	@Override

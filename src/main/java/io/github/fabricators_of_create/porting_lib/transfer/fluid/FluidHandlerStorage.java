@@ -17,10 +17,10 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
  * Wraps an IFluidHandler in a Storage, for use outside Create
  */
 @SuppressWarnings({"UnstableApiUsage"})
-public class StorageFluidHandler implements Storage<FluidVariant> {
+public class FluidHandlerStorage implements Storage<FluidVariant> {
 	protected final IFluidHandler handler;
 
-	public StorageFluidHandler(IFluidHandler handler) {
+	public FluidHandlerStorage(IFluidHandler handler) {
 		if (handler == null) {
 			this.handler = EmptyTank.INSTANCE;
 		} else {
@@ -61,7 +61,7 @@ public class StorageFluidHandler implements Storage<FluidVariant> {
 		for (int i = 0; i < tanks; i++) {
 			views.add(new TankStorageView(i, handler));
 		}
-		return Iterators.forArray((StorageView<FluidVariant>[]) views.toArray());
+		return views.iterator();
 	}
 
 	@Override
@@ -75,7 +75,8 @@ public class StorageFluidHandler implements Storage<FluidVariant> {
 	}
 
 	@Override
-	public @Nullable StorageView<FluidVariant> exactView(TransactionContext transaction, FluidVariant resource) {
+	@Nullable
+	public StorageView<FluidVariant> exactView(TransactionContext transaction, FluidVariant resource) {
 		for (StorageView<FluidVariant> view : iterable(transaction)) {
 			if (view.getResource().equals(resource)) {
 				return view;
