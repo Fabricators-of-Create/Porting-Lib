@@ -6,6 +6,5 @@ import io.github.fabricators_of_create.porting_lib.util.LazyOptional;
 import net.minecraft.core.Direction;
 
 public interface ItemTransferable {
-	@Nullable
 	LazyOptional<IItemHandler> getItemHandler(@Nullable Direction direction);
 }

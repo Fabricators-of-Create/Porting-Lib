@@ -6,7 +6,6 @@ import io.github.fabricators_of_create.porting_lib.util.LazyOptional;
 import net.minecraft.core.Direction;
 
 public interface FluidTransferable {
-	@Nullable
 	LazyOptional<IFluidHandler> getFluidHandler(@Nullable Direction direction);
 
 	default boolean shouldRunClientSide() {
