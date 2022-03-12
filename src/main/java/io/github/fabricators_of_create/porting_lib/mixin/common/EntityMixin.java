@@ -71,8 +71,10 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 			cancellable = true
 	)
 	public void port_lib$spawnAtLocation(ItemStack stack, float f, CallbackInfoReturnable<ItemEntity> cir, ItemEntity itemEntity) {
-		if (port_lib$captureDrops != null) port_lib$captureDrops.add(itemEntity);
-		else cir.setReturnValue(itemEntity);
+		if (port_lib$captureDrops != null) {
+			port_lib$captureDrops.add(itemEntity);
+			cir.setReturnValue(itemEntity);
+		}
 	}
 
 	@Unique
