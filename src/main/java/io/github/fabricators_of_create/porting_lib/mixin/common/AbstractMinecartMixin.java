@@ -47,12 +47,12 @@ public abstract class AbstractMinecartMixin extends Entity implements AbstractMi
 
 	@Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
 	private void port_lib$addAdditionalSaveData(CompoundTag compound, CallbackInfo ci) {
-		MinecartEvents.READ.invoker().minecartRead((AbstractMinecart) (Object) this, compound);
+		MinecartEvents.WRITE.invoker().minecartWrite((AbstractMinecart) (Object) this, compound);
 	}
 
 	@Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
 	private void port_lib$readAdditionalSaveData(CompoundTag compound, CallbackInfo ci) {
-		MinecartEvents.WRITE.invoker().minecartWrite((AbstractMinecart) (Object) this, compound);
+		MinecartEvents.READ.invoker().minecartRead((AbstractMinecart) (Object) this, compound);
 	}
 
 	@Override
