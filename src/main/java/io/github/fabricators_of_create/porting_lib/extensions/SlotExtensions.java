@@ -7,4 +7,8 @@ public interface SlotExtensions {
 	default Slot setBackground(ResourceLocation atlas, ResourceLocation sprite) {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
+
+	default int getSlotIndex() {
+		return 0;
+	}
 }

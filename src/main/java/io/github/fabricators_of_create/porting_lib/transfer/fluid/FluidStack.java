@@ -3,6 +3,8 @@ package io.github.fabricators_of_create.porting_lib.transfer.fluid;
 import java.util.Objects;
 import java.util.Optional;
 
+import net.minecraft.network.chat.Component;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -184,6 +186,10 @@ public class FluidStack {
         if (getTag() == null) return;
         getTag().remove(key);
     }
+
+	public Component getDisplayName() {
+		return this.getFluid().getAttributes().getDisplayName(this);
+	}
 
 	public boolean hasTag() {
 		return tag != null;

@@ -7,7 +7,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
 
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,6 +18,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Slot.class)
 public abstract class SlotMixin implements SlotExtensions {
+	@Shadow
+	@Final
+	private int slot;
 	@Unique
 	private Pair<ResourceLocation, ResourceLocation> port_lib$backgroundPair = null;
 
@@ -29,5 +35,22 @@ public abstract class SlotMixin implements SlotExtensions {
 	public Slot setBackground(ResourceLocation atlas, ResourceLocation sprite) {
 		this.port_lib$backgroundPair = Pair.of(atlas, sprite);
 		return (Slot) (Object) this;
+	}
+
+	@Unique
+	@Override
+	public int getSlotIndex() {
+		return slot;
+	}
+
+	/**
+	 * @author AlphaMode
+	 * The base method just returns null
+	 * Yes I did just @Overwrite this :ioa:
+	 */
+	@Nullable
+	@Overwrite
+	public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+		return port_lib$backgroundPair;
 	}
 }

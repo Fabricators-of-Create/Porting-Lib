@@ -1,5 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import io.github.fabricators_of_create.porting_lib.event.common.RecipesUpdatedCallback;
+import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
+
+import net.minecraft.world.item.crafting.RecipeManager;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,6 +36,10 @@ public abstract class ClientPacketListenerMixin {
 	@Final
 	private Connection connection;
 
+	@Shadow
+	@Final
+	private RecipeManager recipeManager;
+
 	@Inject(
 			method = "handleAddEntity(Lnet/minecraft/network/protocol/game/ClientboundAddEntityPacket;)V",
 			at = @At(
@@ -56,5 +65,10 @@ public abstract class ClientPacketListenerMixin {
 			handler.onDataPacket(connection, packet);
 			ci.cancel();
 		}
+	}
+
+	@Inject(method = "handleUpdateRecipes", at = @At("TAIL"))
+	public void port_lib$updateRecipes(ClientboundUpdateRecipesPacket packet, CallbackInfo ci) {
+		RecipesUpdatedCallback.EVENT.invoker().onRecipesUpdated(this.recipeManager);
 	}
 }
