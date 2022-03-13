@@ -65,6 +65,8 @@
   },
   "mixins": [
     "AbstractClientPlayerMixin",
+    "BlockColorsMixin",
+    "ItemColorsMixin",
     "LivingEntityRendererMixin",
     "TextureAtlasMixin"
   ]

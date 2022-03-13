@@ -6,6 +6,7 @@ import net.minecraft.world.level.block.Block;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class LazyRegistrar<T> {
@@ -37,9 +38,19 @@ public class LazyRegistrar<T> {
 		return obj;
 	}
 
+	private Consumer<RegistryObject<? extends T>> callback;
+
 	public void register() {
-		entires.forEach(entry -> Registry.register(registry, entry.getId(), entry.get()));
+		entires.forEach(entry -> {
+			Registry.register(registry, entry.getId(), entry.get());
+			if(callback != null)
+				callback.accept(entry);
+		});
 		entires.forEach(entry -> entry.setWrappedEntry(() -> registry.get(entry.getId())));
+	}
+
+	public void setRegistryCallback(Consumer<RegistryObject<? extends T>> callback) {
+		this.callback = callback;
 	}
 
 	public <B extends Block> RegistryObject register(String name, T b) {

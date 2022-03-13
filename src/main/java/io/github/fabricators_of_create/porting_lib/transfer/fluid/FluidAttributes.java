@@ -5,8 +5,13 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
+import net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler;
+import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;

@@ -15,6 +15,13 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import io.github.fabricators_of_create.porting_lib.PortingLib;
+
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+
+import net.minecraft.server.packs.PackType;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -221,12 +228,13 @@ public class TierSortingRegistry {
 	/*package private (not for us >:))*/
 	public static void init() {
 		ServerPlayConnectionEvents.JOIN.register(TierSortingRegistry::playerLoggedIn);
+		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(getReloadListener());
 		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) ClientEvents.init();
 	}
 
 	/*package private*/
-	static PreparableReloadListener getReloadListener() {
-		return new SimplePreparableReloadListener<JsonObject>() {
+	static IdentifiableResourceReloadListener getReloadListener() {
+		return new IdentifiableSimplePreparableReloadListener<JsonObject>(PortingLib.id("tier_sorting_registry")) {
 			final Gson gson = (new GsonBuilder()).create();
 
 			@Nonnull

@@ -46,6 +46,8 @@ public class ModelLoaderRegistry {
 
 	public static void init() {
 		registerLoader(new ResourceLocation("minecraft","elements"), VanillaProxy.Loader.INSTANCE);
+		registerLoader(new ResourceLocation("forge","bucket"), DynamicBucketModel.Loader.INSTANCE);
+		registerLoader(new ResourceLocation("forge","item-layers"), ItemLayerModel.Loader.INSTANCE);
 	}
 
 	public static void registerLoader(ResourceLocation id, IModelLoader<?> loader) {
@@ -66,7 +68,7 @@ public class ModelLoaderRegistry {
 
 			return loader.read(deserializationContext, data);
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			throw e;
 		}
 	}

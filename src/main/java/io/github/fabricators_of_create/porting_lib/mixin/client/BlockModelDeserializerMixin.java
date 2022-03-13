@@ -33,7 +33,6 @@ public abstract class BlockModelDeserializerMixin {
 		if (geometry != null) {
 			elements.clear();
 			model.getGeometry().setCustomGeometry(geometry);
-			System.out.println(model.name);
 		}
 
 		ModelState modelState = ModelLoaderRegistry.deserializeModelTransforms(deserializationContext, jsonobject);

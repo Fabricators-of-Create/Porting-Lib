@@ -3,7 +3,10 @@ package io.github.fabricators_of_create.porting_lib.transfer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
+import io.github.fabricators_of_create.porting_lib.transfer.fluid.FluidStack;
+import io.github.fabricators_of_create.porting_lib.transfer.item.ItemHandlerHelper;
 import io.github.fabricators_of_create.porting_lib.util.FluidTileDataHandler;
 
 import org.jetbrains.annotations.Nullable;
@@ -35,6 +38,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+
+import javax.annotation.Nonnull;
 
 @SuppressWarnings({"UnstableApiUsage"})
 public class TransferUtil {
@@ -191,6 +196,24 @@ public class TransferUtil {
 			return handler == null || !handler.isPresent() ? null : new StorageItemHandler(handler.getValueUnsafer());
 		}
 		return null;
+	}
+
+	/**
+	 * Helper method to get the fluid contained in an itemStack
+	 */
+	public static Optional<FluidStack> getFluidContained(@Nonnull ItemStack container)
+	{
+		if (!container.isEmpty())
+		{
+			container = ItemHandlerHelper.copyStackWithSize(container, 1);
+			Optional<FluidStack> fluidContained = getFluidHandlerItem(container)
+					.map(handler -> handler.drain(Integer.MAX_VALUE, true));
+			if (fluidContained.isPresent() && !fluidContained.get().isEmpty())
+			{
+				return fluidContained;
+			}
+		}
+		return Optional.empty();
 	}
 
 	private static Direction[] getDirections(@Nullable Direction direction) {
