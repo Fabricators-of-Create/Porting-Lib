@@ -36,6 +36,11 @@
     "TextureAtlasSpriteMixin",
     "TextureManagerMixin",
     "VertexFormatMixin",
+    "BlockColorsMixin",
+    "ItemColorsMixin",
+    "LivingEntityRendererMixin",
+    "TextureAtlasMixin",
+    "AbstractClientPlayerMixin",
     "accessor.AbstractContainerScreenAccessor",
     "accessor.AbstractSelectionList$EntryAccessor",
     "accessor.AbstractSelectionListAccessor",
@@ -62,12 +67,5 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "mixins": [
-    "AbstractClientPlayerMixin",
-    "BlockColorsMixin",
-    "ItemColorsMixin",
-    "LivingEntityRendererMixin",
-    "TextureAtlasMixin"
-  ]
+  }
 }
