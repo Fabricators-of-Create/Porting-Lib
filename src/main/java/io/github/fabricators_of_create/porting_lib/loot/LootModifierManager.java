@@ -67,7 +67,7 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener { // F
         });*/
 		//new way
 		ArrayList<ResourceLocation> finalLocations = new ArrayList<ResourceLocation>();
-		ResourceLocation resourcelocation = new ResourceLocation("forge", "loot_modifiers/global_loot_modifiers.json");
+		ResourceLocation resourcelocation = new ResourceLocation("assets/forge", "loot_modifiers/global_loot_modifiers.json");
 		try {
 			//read in all data files from forge:loot_modifiers/global_loot_modifiers in order to do layering
 			for (Resource iresource : resourceManagerIn.getResources(resourcelocation)) {

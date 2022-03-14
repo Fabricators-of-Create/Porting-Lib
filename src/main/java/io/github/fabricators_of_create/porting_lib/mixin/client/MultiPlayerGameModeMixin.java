@@ -1,7 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
-import com.llamalad7.mixinextras.injector.WrapWithCondition;
 
 import io.github.fabricators_of_create.porting_lib.event.EntityInteractCallback;
 import net.minecraft.world.entity.Entity;
@@ -15,7 +14,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import io.github.fabricators_of_create.porting_lib.item.BlockUseBypassingItem;

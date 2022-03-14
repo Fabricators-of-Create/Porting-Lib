@@ -16,3 +16,6 @@ transitive-accessible field net/minecraft/client/renderer/block/model/BlockModel
 transitive-accessible field net/minecraft/client/renderer/block/model/BlockModel parentLocation Lnet/minecraft/resources/ResourceLocation;
 
 transitive-accessible method net/minecraft/client/renderer/block/model/ItemOverrides <init> ()V
+
+transitive-accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
+transitive-accessible method net/minecraft/client/renderer/texture/TextureAtlasSprite getFrameCount ()I

@@ -3,7 +3,10 @@ package io.github.fabricators_of_create.porting_lib.transfer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
+import io.github.fabricators_of_create.porting_lib.transfer.fluid.FluidStack;
+import io.github.fabricators_of_create.porting_lib.transfer.item.ItemHandlerHelper;
 import io.github.fabricators_of_create.porting_lib.util.FluidTileDataHandler;
 
 import org.jetbrains.annotations.Nullable;
@@ -13,12 +16,12 @@ import io.github.fabricators_of_create.porting_lib.transfer.fluid.FluidStorageHa
 import io.github.fabricators_of_create.porting_lib.transfer.fluid.FluidTransferable;
 import io.github.fabricators_of_create.porting_lib.transfer.fluid.IFluidHandler;
 import io.github.fabricators_of_create.porting_lib.transfer.fluid.IFluidHandlerItem;
-import io.github.fabricators_of_create.porting_lib.transfer.fluid.FluidHandlerStorage;
+import io.github.fabricators_of_create.porting_lib.transfer.fluid.StorageFluidHandler;
 import io.github.fabricators_of_create.porting_lib.transfer.item.CustomStorageHandler;
 import io.github.fabricators_of_create.porting_lib.transfer.item.IItemHandler;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStorageHandler;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemTransferable;
-import io.github.fabricators_of_create.porting_lib.transfer.item.ItemHandlerStorage;
+import io.github.fabricators_of_create.porting_lib.transfer.item.StorageItemHandler;
 import io.github.fabricators_of_create.porting_lib.util.LazyOptional;
 
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
@@ -36,7 +39,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-@SuppressWarnings("UnstableApiUsage")
+import javax.annotation.Nonnull;
+
+@SuppressWarnings({"UnstableApiUsage"})
 public class TransferUtil {
 	public static LazyOptional<IItemHandler> getItemHandler(BlockEntity be) {
 		return getItemHandler(be, null);
@@ -53,7 +58,7 @@ public class TransferUtil {
 	}
 
 	public static LazyOptional<IItemHandler> getItemHandler(BlockEntity be, @Nullable Direction side) {
-		// lib handling
+		// Create handling
 		if (be instanceof ItemTransferable transferable) return transferable.getItemHandler(side);
 		// client handling
 		if (Objects.requireNonNull(be.getLevel()).isClientSide()) {
@@ -75,7 +80,7 @@ public class TransferUtil {
 				}
 
 				for (Storage<ItemVariant> storage : itemStorages) {
-					if (!Objects.equals(itemStorage, storage)) {
+					if (!storage.equals(itemStorage)) {
 						itemStorages.add(itemStorage);
 						break;
 					}
@@ -83,10 +88,9 @@ public class TransferUtil {
 			}
 		}
 
-
 		if (itemStorages.isEmpty()) return LazyOptional.empty();
-		if (itemStorages.size() == 1) return simplifyItem(itemStorages.get(0));
-		return simplifyItem(new CombinedStorage<>(itemStorages));
+		if (itemStorages.size() == 1) return simplifyItem(itemStorages.get(0)).cast();
+		return simplifyItem(new CombinedStorage<>(itemStorages)).cast();
 	}
 
 	// Fluids
@@ -103,7 +107,7 @@ public class TransferUtil {
 
 	public static LazyOptional<IFluidHandler> getFluidHandler(BlockEntity be, @Nullable Direction side) {
 		boolean client = Objects.requireNonNull(be.getLevel()).isClientSide();
-		// lib handling
+		// Create handling
 		if (be instanceof FluidTransferable transferable) {
 			if (client && !transferable.shouldRunClientSide()) {
 				return LazyOptional.empty();
@@ -111,7 +115,7 @@ public class TransferUtil {
 			return transferable.getFluidHandler(side);
 		}
 		// client handling
-		if (client) { // TODO this system might be unnecessary
+		if (client) {
 			IFluidHandler cached = FluidTileDataHandler.getCachedHandler(be);
 			return LazyOptional.ofObject(cached);
 		}
@@ -131,7 +135,7 @@ public class TransferUtil {
 				}
 
 				for (Storage<FluidVariant> storage : fluidStorages) {
-					if (!Objects.equals(fluidStorage, storage)) {
+					if (!storage.equals(fluidStorage)) {
 						fluidStorages.add(fluidStorage);
 						break;
 					}
@@ -140,8 +144,8 @@ public class TransferUtil {
 		}
 
 		if (fluidStorages.isEmpty()) return LazyOptional.empty();
-		if (fluidStorages.size() == 1) return simplifyFluid(fluidStorages.get(0));
-		return simplifyFluid(new CombinedStorage<>(fluidStorages));
+		if (fluidStorages.size() == 1) return simplifyFluid(fluidStorages.get(0)).cast();
+		return simplifyFluid(new CombinedStorage<>(fluidStorages)).cast();
 	}
 
 	// Fluid-containing items
@@ -165,13 +169,13 @@ public class TransferUtil {
 
 	public static LazyOptional<IItemHandler> simplifyItem(Storage<ItemVariant> storage) {
 		if (storage == null) return LazyOptional.empty();
-		if (storage instanceof ItemHandlerStorage handler) return LazyOptional.ofObject(handler.getHandler());
+		if (storage instanceof StorageItemHandler handler) return LazyOptional.ofObject(handler.getHandler());
 		return LazyOptional.ofObject(new ItemStorageHandler(storage));
 	}
 
 	public static LazyOptional<IFluidHandler> simplifyFluid(Storage<FluidVariant> storage) {
 		if (storage == null) return LazyOptional.empty();
-		if (storage instanceof FluidHandlerStorage handler) return LazyOptional.ofObject(handler.getHandler());
+		if (storage instanceof StorageFluidHandler handler) return LazyOptional.ofObject(handler.getHandler());
 		return LazyOptional.ofObject(new FluidStorageHandler(storage));
 	}
 
@@ -179,7 +183,7 @@ public class TransferUtil {
 	public static Storage<FluidVariant> getFluidStorageForBE(BlockEntity be, Direction side) {
 		if (be instanceof FluidTransferable transferable) {
 			LazyOptional<IFluidHandler> handler = transferable.getFluidHandler(side);
-			return handler == null || !handler.isPresent() ? null : new FluidHandlerStorage(handler.getValueUnsafer());
+			return handler == null || !handler.isPresent() ? null : new StorageFluidHandler(handler.getValueUnsafer());
 		}
 		return null;
 	}
@@ -189,9 +193,27 @@ public class TransferUtil {
 		if (be instanceof ItemTransferable transferable) {
 			LazyOptional<IItemHandler> handler = transferable.getItemHandler(side);
 			if (handler instanceof CustomStorageHandler custom) return custom.getStorage();
-			return handler == null || !handler.isPresent() ? null : new ItemHandlerStorage(handler.getValueUnsafer());
+			return handler == null || !handler.isPresent() ? null : new StorageItemHandler(handler.getValueUnsafer());
 		}
 		return null;
+	}
+
+	/**
+	 * Helper method to get the fluid contained in an itemStack
+	 */
+	public static Optional<FluidStack> getFluidContained(@Nonnull ItemStack container)
+	{
+		if (!container.isEmpty())
+		{
+			container = ItemHandlerHelper.copyStackWithSize(container, 1);
+			Optional<FluidStack> fluidContained = getFluidHandlerItem(container)
+					.map(handler -> handler.drain(Integer.MAX_VALUE, true));
+			if (fluidContained.isPresent() && !fluidContained.get().isEmpty())
+			{
+				return fluidContained;
+			}
+		}
+		return Optional.empty();
 	}
 
 	private static Direction[] getDirections(@Nullable Direction direction) {
