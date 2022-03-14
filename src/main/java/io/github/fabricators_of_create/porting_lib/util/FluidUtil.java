@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.Util;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Registry;
@@ -12,6 +14,7 @@ public class FluidUtil {
 		return fluid.defaultFluidState().createLegacyBlock().getLightEmission();
 	}
 
+	@Environment(EnvType.CLIENT)
 	public static String getTranslationKey(Fluid fluid) {
 		String translationKey;
 

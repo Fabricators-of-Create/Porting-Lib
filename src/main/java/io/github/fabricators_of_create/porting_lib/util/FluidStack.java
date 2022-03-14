@@ -1,8 +1,9 @@
-package io.github.fabricators_of_create.porting_lib.transfer.fluid;
+package io.github.fabricators_of_create.porting_lib.util;
 
 import java.util.Objects;
 import java.util.Optional;
 
+import io.github.fabricators_of_create.porting_lib.extensions.FluidExtensions;
 import net.minecraft.network.chat.Component;
 
 import org.jetbrains.annotations.Nullable;
@@ -188,7 +189,7 @@ public class FluidStack {
     }
 
 	public Component getDisplayName() {
-		return this.getFluid().getAttributes().getDisplayName(this);
+		return ((FluidExtensions) this.getFluid()).getAttributes().getDisplayName(this);
 	}
 
 	public boolean hasTag() {

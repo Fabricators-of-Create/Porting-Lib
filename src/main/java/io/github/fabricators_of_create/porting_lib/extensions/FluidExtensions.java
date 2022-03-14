@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.extensions;
 
-import io.github.fabricators_of_create.porting_lib.transfer.fluid.FluidAttributes;
+import io.github.fabricators_of_create.porting_lib.util.FluidAttributes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.material.EmptyFluid;

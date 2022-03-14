@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Unique;
 
 import io.github.fabricators_of_create.porting_lib.extensions.FluidExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.RegistryNameProvider;
-import io.github.fabricators_of_create.porting_lib.transfer.fluid.FluidAttributes;
+import io.github.fabricators_of_create.porting_lib.util.FluidAttributes;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
