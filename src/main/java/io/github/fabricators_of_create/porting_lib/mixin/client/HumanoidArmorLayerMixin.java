@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import io.github.fabricators_of_create.porting_lib.util.ArmorTextureRegistry;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -43,6 +45,9 @@ public abstract class HumanoidArmorLayerMixin {
 	@Shadow
 	@Final
 	private static Map<String, ResourceLocation> ARMOR_LOCATION_CACHE;
+
+	@Shadow
+	protected abstract boolean usesInnerModel(EquipmentSlot slot);
 
 	@Inject(method = "getArmorLocation", at = @At("HEAD"), cancellable = true)
 	private void port_lib$getArmorLocation(ArmorItem armorItem, boolean bl, String string, CallbackInfoReturnable<ResourceLocation> cir) {

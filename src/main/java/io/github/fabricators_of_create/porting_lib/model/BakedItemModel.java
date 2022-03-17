@@ -71,16 +71,15 @@ public class BakedItemModel implements BakedModel, TransformTypeDependentItemBak
 	}
 
 	@Override
-	public BakedModel handlePerspective(TransformType type, PoseStack poseStack)
-	{
-//		if (type == TransformType.GUI && this.guiModel != null)
-//		{
-//			return this.guiModel.handlePerspective(type, poseStack);
-//		}
+	public BakedModel handlePerspective(TransformType type, PoseStack poseStack) {
+		if (type == TransformType.GUI && this.guiModel != null)
+		{
+			return ((TransformTypeDependentItemBakedModel)this.guiModel).handlePerspective(type, poseStack);
+		}
 		return PerspectiveMapWrapper.handlePerspective(this, transforms, type, poseStack);
 	}
 
-	public static class BakedGuiItemModel<T extends BakedItemModel> extends ForwardingBakedModel /*implements TransformTypeDependentItemBakedModel*/ {
+	public static class BakedGuiItemModel<T extends BakedItemModel> extends ForwardingBakedModel implements TransformTypeDependentItemBakedModel {
 		private final ImmutableList<BakedQuad> quads;
 
 		public BakedGuiItemModel(T originalModel) {
@@ -104,15 +103,14 @@ public class BakedItemModel implements BakedModel, TransformTypeDependentItemBak
 			return ImmutableList.of();
 		}
 
-//		@Override
-//		public BakedModel handlePerspective(TransformType type, PoseStack poseStack)
-//		{
-//			if (type == TransformType.GUI)
-//			{
-//				return PerspectiveMapWrapper.handlePerspective(this, originalModel.transforms, type, poseStack);
-//			}
-//			return this.wrapped.handlePerspective(type, poseStack);
-//		}
+		@Override
+		public BakedModel handlePerspective(TransformType type, PoseStack poseStack) {
+			if (type == TransformType.GUI)
+			{
+				return PerspectiveMapWrapper.handlePerspective(this, ((BakedItemModel)wrapped).transforms, type, poseStack);
+			}
+			return ((TransformTypeDependentItemBakedModel)this.wrapped).handlePerspective(type, poseStack);
+		}
 	}
 }
 

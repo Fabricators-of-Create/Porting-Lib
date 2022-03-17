@@ -28,6 +28,14 @@ import com.google.common.collect.Sets;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
+
+import io.github.fabricators_of_create.porting_lib.extensions.FluidExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.RegistryNameProvider;
+import io.github.fabricators_of_create.porting_lib.extensions.TransformationExtensions;
+import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
+import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.minecraft.client.multiplayer.ClientLevel;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
 
@@ -114,8 +122,8 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
 		// if the fluid is lighter than air, will manipulate the initial state to be rotated 180deg to turn it upside down
 		if (flipGas && fluid != Fluids.EMPTY && ((FluidExtensions) fluid).getAttributes().isLighterThanAir()) {
 			modelTransform = new SimpleModelState(
-					((TransformationExtensions) (Object) ((TransformationExtensions) (Object) modelTransform.getRotation()).blockCornerToCenter().compose(
-							new Transformation(null, new Quaternion(0, 0, 1, 0), null, null))).blockCenterToCorner());
+					((TransformationExtensions)(Object)modelTransform.getRotation()).blockCornerToCenter().compose(
+							((TransformationExtensions)(Object)new Transformation(null, new Quaternion(0, 0, 1, 0), null, null)).blockCenterToCorner()));
 		}
 
 		Transformation transform = modelTransform.getRotation();

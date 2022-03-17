@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -25,9 +26,14 @@ import com.mojang.math.Transformation;
 
 import io.github.fabricators_of_create.porting_lib.extensions.TransformationExtensions;
 import io.github.fabricators_of_create.porting_lib.mixin.client.accessor.BlockModelAccessor;
+import io.github.fabricators_of_create.porting_lib.util.TransformationHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockElementFace;
+import net.minecraft.client.renderer.block.model.BlockFaceUV;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.block.model.ItemOverride;
+import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -46,6 +52,16 @@ public class ModelLoaderRegistry {
 	private static final Map<ResourceLocation, IModelLoader<?>> loaders = Maps.newHashMap();
 
 	public static void init() {
+		BlockModelAccessor.setGSON((new GsonBuilder())
+				.registerTypeAdapter(BlockModel.class, new BlockModel.Deserializer())
+				.registerTypeAdapter(BlockElement.class, new BlockElement.Deserializer())
+				.registerTypeAdapter(BlockElementFace.class, new BlockElementFace.Deserializer())
+				.registerTypeAdapter(BlockFaceUV.class, new BlockFaceUV.Deserializer())
+				.registerTypeAdapter(ItemTransform.class, new ItemTransform.Deserializer())
+				.registerTypeAdapter(ItemTransforms.class, new ItemTransforms.Deserializer())
+				.registerTypeAdapter(ItemOverride.class, new ItemOverride.Deserializer())
+				.registerTypeAdapter(Transformation.class, new TransformationHelper.Deserializer())
+				.create());
 		registerLoader(new ResourceLocation("minecraft","elements"), VanillaProxy.Loader.INSTANCE);
 		registerLoader(new ResourceLocation("forge","bucket"), DynamicBucketModel.Loader.INSTANCE);
 		registerLoader(new ResourceLocation("forge","item-layers"), ItemLayerModel.Loader.INSTANCE);

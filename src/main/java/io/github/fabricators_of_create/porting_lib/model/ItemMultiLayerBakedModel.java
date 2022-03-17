@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 
+import io.github.fabricators_of_create.porting_lib.render.LayeredBakedModel;
 import io.github.fabricators_of_create.porting_lib.render.TransformTypeDependentItemBakedModel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.renderer.RenderType;
@@ -24,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class ItemMultiLayerBakedModel implements BakedModel, TransformTypeDependentItemBakedModel {
+public class ItemMultiLayerBakedModel implements BakedModel, TransformTypeDependentItemBakedModel, LayeredBakedModel {
 	private final boolean smoothLighting;
 	private final boolean shadedInGui;
 	private final boolean sideLit;
@@ -108,7 +109,7 @@ public class ItemMultiLayerBakedModel implements BakedModel, TransformTypeDepend
 		return true;
 	}
 
-	//@Override
+	@Override
 	public List<Pair<BakedModel, RenderType>> getLayerModels(ItemStack itemStack, boolean fabulous)
 	{
 		return layerModels;

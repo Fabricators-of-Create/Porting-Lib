@@ -12,6 +12,13 @@ transitive-accessible class net/minecraft/client/renderer/texture/TextureAtlasSp
 transitive-accessible class net/minecraft/client/renderer/RenderType$CompositeState
 transitive-accessible class net/minecraft/client/renderer/RenderType$CompositeRenderType
 
+transitive-accessible method net/minecraft/client/renderer/block/model/ItemOverride$Deserializer <init> ()V
+transitive-accessible method net/minecraft/client/renderer/block/model/ItemTransforms$Deserializer <init> ()V
+transitive-accessible method net/minecraft/client/renderer/block/model/ItemTransform$Deserializer <init> ()V
+transitive-accessible method net/minecraft/client/renderer/block/model/BlockFaceUV$Deserializer <init> ()V
+transitive-accessible method net/minecraft/client/renderer/block/model/BlockElementFace$Deserializer <init> ()V
+transitive-accessible method net/minecraft/client/renderer/block/model/BlockElement$Deserializer <init> ()V
+
 transitive-accessible field net/minecraft/client/renderer/block/model/BlockModel parent Lnet/minecraft/client/renderer/block/model/BlockModel;
 transitive-accessible field net/minecraft/client/renderer/block/model/BlockModel parentLocation Lnet/minecraft/resources/ResourceLocation;
 
