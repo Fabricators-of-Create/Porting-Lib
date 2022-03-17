@@ -1,8 +1,8 @@
 package io.github.fabricators_of_create.porting_lib;
 
 import io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes;
-import io.github.fabricators_of_create.porting_lib.biomee.BiomeDictionary;
-import io.github.fabricators_of_create.porting_lib.transfer.item.item.ItemItemStorages;
+import io.github.fabricators_of_create.porting_lib.biome.BiomeDictionary;
+import io.github.fabricators_of_create.porting_lib.transfer.item.ItemItemStorages;
 import io.github.fabricators_of_create.porting_lib.util.ServerLifecycleHooks;
 import io.github.fabricators_of_create.porting_lib.util.TierSortingRegistry;
 import net.fabricmc.api.ModInitializer;
@@ -22,7 +22,7 @@ public class PortingLib implements ModInitializer {
 		ServerLifecycleHooks.init();
 		PortingLibAttributes.init();
 		BiomeDictionary.init();
-		new ItemItemStorages();
+		ItemItemStorages.init();
 	}
 
 	public static ResourceLocation id(String path) {

@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.biomee;
+package io.github.fabricators_of_create.porting_lib.biome;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -8,7 +8,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import io.github.fabricators_of_create.porting_lib.extensions.ResourceLocationExtensions;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.data.BuiltinRegistries;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +17,7 @@ import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.Registry;
 
-import static io.github.fabricators_of_create.porting_lib.biomee.BiomeDictionary.Type.*;
+import static io.github.fabricators_of_create.porting_lib.biome.BiomeDictionary.Type.*;
 
 import com.google.common.collect.ImmutableList;
 

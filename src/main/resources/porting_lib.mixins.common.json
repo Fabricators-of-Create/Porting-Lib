@@ -80,6 +80,7 @@
     "accessor.BiomeManagerAccessor",
     "accessor.BlockEntityAccessor",
     "accessor.BucketItemAccessor",
+    "accessor.BundleItemAccessor",
     "accessor.ClientboundPlayerAbilitiesPacketAccessor",
     "accessor.CubeVoxelShapeAccessor",
     "accessor.DamageSourceAccessor",

@@ -22,4 +22,10 @@ public class ItemStackUtil {
 			return tag1.equals(tag2);
 		}
 	}
+
+	public static boolean canItemStacksStack(ItemStack first, ItemStack second) {
+		if (first.isEmpty() || !first.sameItem(second) || first.hasTag() != second.hasTag()) return false;
+
+		return !first.hasTag() || first.getTag().equals(second.getTag());
+	}
 }
