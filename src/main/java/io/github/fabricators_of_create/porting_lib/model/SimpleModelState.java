@@ -3,12 +3,13 @@ package io.github.fabricators_of_create.porting_lib.model;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.math.Transformation;
 
+import io.github.fabricators_of_create.porting_lib.extensions.ModelStateExtensions;
 import net.minecraft.client.resources.model.ModelState;
 
 /**
  * Simple implementation of IModelState via a map and a default value.
  */
-public final class SimpleModelState implements ModelState {
+public final class SimpleModelState implements ModelState, ModelStateExtensions {
 	public static final SimpleModelState IDENTITY = new SimpleModelState(Transformation.identity());
 
 	private final ImmutableMap<?, Transformation> map;
