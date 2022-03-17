@@ -1,17 +1,25 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
 import io.github.fabricators_of_create.porting_lib.util.ItemStackUtil;
+import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nonnull;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
-public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implements Storage<ItemVariant> {
+public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implements Storage<ItemVariant>, NBTSerializable {
 	public ItemStack[] stacks;
 
 	public ItemStackHandler() {
@@ -28,21 +36,25 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 		long inserted = 0;
 		updateSnapshots(transaction);
 		for (int i = 0; i < stacks.length; i++) {
-			ItemStack held = stacks[i];
-			if (held.isEmpty()) { // just throw in a full stack
-				int toFill = (int) Math.min(resource.getItem().getMaxStackSize(), maxAmount);
-				maxAmount -= toFill;
-				inserted += toFill;
-				ItemStack stack = resource.toStack(toFill);
-				stacks[i] = stack;
-			} else if (ItemStackUtil.canItemStacksStack(held, resource.toStack())) { // already filled, but can stack
-				int max = held.getMaxStackSize(); // total possible
-				int canInsert = max - held.getCount(); // room available
-				int actuallyInsert = Math.min(canInsert, (int) maxAmount);
-				maxAmount -= actuallyInsert;
-				inserted += actuallyInsert;
-				ItemStack newStack = resource.toStack(actuallyInsert);
-				stacks[i] = newStack;
+			if (isItemValid(i, resource)) {
+				ItemStack held = stacks[i];
+				if (held.isEmpty()) { // just throw in a full stack
+					int toFill = getStackLimit(i, resource);
+					maxAmount -= toFill;
+					inserted += toFill;
+					ItemStack stack = resource.toStack(toFill);
+					stacks[i] = stack;
+				} else if (ItemStackUtil.canItemStacksStack(held, resource.toStack())) { // already filled, but can stack
+					int max = getStackLimit(i, resource); // total possible
+					int canInsert = max - held.getCount(); // room available
+					int actuallyInsert = Math.min(canInsert, (int) maxAmount);
+					if (actuallyInsert > 0) {
+						maxAmount -= actuallyInsert;
+						inserted += actuallyInsert;
+						ItemStack newStack = resource.toStack(actuallyInsert);
+						stacks[i] = newStack;
+					}
+				}
 			}
 			if (maxAmount == 0)
 				break;
@@ -95,5 +107,66 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 		return "ItemStackHandler{" +
 				"stacks=" + Arrays.toString(stacks) +
 				'}';
+	}
+
+	public int getSlots() {
+		return stacks.length;
+	}
+
+	// do not modify this stack!
+	public ItemStack getStackInSlot(int slot) {
+		return stacks[slot];
+	}
+
+	public int getSlotLimit(int slot) {
+		return getStackInSlot(slot).getMaxStackSize();
+	}
+
+	protected int getStackLimit(int slot, ItemVariant resource) {
+		return Math.min(getSlotLimit(slot), resource.getItem().getMaxStackSize());
+	}
+
+	public boolean isItemValid(int slot, ItemVariant resource) {
+		return true;
+	}
+
+	protected void onLoad() {
+	}
+
+	public void setSize(int size) {
+		stacks = new ItemStack[size];
+	}
+
+	@Override
+	public CompoundTag serializeNBT() {
+		ListTag nbtTagList = new ListTag();
+		for (int i = 0; i < stacks.length; i++) {
+			ItemStack stack = stacks[i];
+			if (!stack.isEmpty()) {
+				CompoundTag itemTag = new CompoundTag();
+				itemTag.putInt("Slot", i);
+				stack.save(itemTag);
+				nbtTagList.add(itemTag);
+			}
+		}
+		CompoundTag nbt = new CompoundTag();
+		nbt.put("Items", nbtTagList);
+		nbt.putInt("Size", stacks.length);
+		return nbt;
+	}
+
+	@Override
+	public void deserializeNBT(CompoundTag nbt) {
+		setSize(nbt.contains("Size", Tag.TAG_INT) ? nbt.getInt("Size") : stacks.length);
+		ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
+		for (int i = 0; i < tagList.size(); i++) {
+			CompoundTag itemTags = tagList.getCompound(i);
+			int slot = itemTags.getInt("Slot");
+
+			if (slot >= 0 && slot < stacks.length) {
+				stacks[slot] = ItemStack.of(itemTags);
+			}
+		}
+		onLoad();
 	}
 }
