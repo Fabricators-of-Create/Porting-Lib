@@ -68,6 +68,7 @@
     "TierMixin",
     "TiersMixin",
     "TransformationMixin",
+    "Vector3fMixin",
     "VineBlockMixin",
     "WalkNodeEvaluatorMixin",
     "WebBlockMixin",
@@ -100,8 +101,7 @@
     "accessor.StairBlockAccessor",
     "accessor.StructureTemplateAccessor",
     "accessor.TagContainerAccessor",
-    "accessor.TagValueAccessor",
-    "accessor.Vector3fAccessor"
+    "accessor.TagValueAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

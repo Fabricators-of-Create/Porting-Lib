@@ -109,10 +109,9 @@ public class BlockModelConfiguration implements IModelConfiguration {
 	public ModelState getCombinedTransform() {
 		ModelState state = getCustomModelState();
 
-		return null;
-//		return state != null
-//				? new SimpleModelState(PerspectiveMapWrapper.getTransformsWithFallback(state, getCameraTransforms()), state.getRotation())
-//				: new SimpleModelState(PerspectiveMapWrapper.getTransforms(getCameraTransforms()));
+		return state != null
+				? new SimpleModelState(PerspectiveMapWrapper.getTransformsWithFallback(state, getCameraTransforms()), state.getRotation())
+				: new SimpleModelState(PerspectiveMapWrapper.getTransforms(getCameraTransforms()));
 	}
 
 	public void copyFrom(BlockModelConfiguration other) {
