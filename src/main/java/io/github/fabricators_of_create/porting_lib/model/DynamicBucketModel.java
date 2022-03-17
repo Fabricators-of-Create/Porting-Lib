@@ -30,18 +30,11 @@ import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 
 import io.github.fabricators_of_create.porting_lib.extensions.FluidExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.RegistryNameProvider;
 import io.github.fabricators_of_create.porting_lib.extensions.TransformationExtensions;
-import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
-import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.client.multiplayer.ClientLevel;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
 
-import io.github.fabricators_of_create.porting_lib.extensions.FluidExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.TransformationExtensions;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlas;
