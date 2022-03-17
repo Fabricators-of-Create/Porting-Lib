@@ -3,6 +3,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.client.accessor;
 import java.util.Map;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
@@ -23,6 +24,12 @@ import net.minecraft.resources.ResourceLocation;
 public interface BlockModelAccessor {
 	@Accessor("GSON")
 	static Gson port_lib$GSON() {
+		throw new RuntimeException("mixin failed!");
+	}
+
+	@Accessor()
+	@Mutable
+	static void setGSON(Gson newGson) {
 		throw new RuntimeException("mixin failed!");
 	}
 

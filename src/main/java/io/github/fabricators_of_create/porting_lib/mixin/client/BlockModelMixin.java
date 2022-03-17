@@ -7,6 +7,12 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import io.github.fabricators_of_create.porting_lib.model.CompositeModelState;
+
+import io.github.fabricators_of_create.porting_lib.model.PerspectiveMapWrapper;
+
+import io.github.fabricators_of_create.porting_lib.render.TransformTypeDependentItemBakedModel;
+
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -147,9 +153,17 @@ public abstract class BlockModelMixin implements BlockModelExtensions {
 	public void handleCustomModels(ModelBakery modelBakery, BlockModel otherModel, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation, boolean guiLight3d, CallbackInfoReturnable<BakedModel> cir) {
 		BlockModel blockModel = (BlockModel) (Object) this;
 		IModelGeometry<?> customModel = data.getCustomGeometry();
+		ModelState customModelState = data.getCustomModelState();
+		ModelState newModelState = modelTransform;
+		if (customModelState != null)
+			newModelState = new CompositeModelState(modelTransform, customModelState, modelTransform.isUvLocked());
 
-		if (customModel != null)
-			cir.setReturnValue(customModel.bake(((BlockModelExtensions) blockModel).getGeometry(), modelBakery, spriteGetter, modelTransform, ((BlockModelExtensions) blockModel).getOverrides(modelBakery, otherModel, spriteGetter), modelLocation));
+		if (customModel != null) {
+			BakedModel model = customModel.bake(((BlockModelExtensions) blockModel).getGeometry(), modelBakery, spriteGetter, newModelState, ((BlockModelExtensions) blockModel).getOverrides(modelBakery, otherModel, spriteGetter), modelLocation);
+			if (customModelState != null && !(model instanceof TransformTypeDependentItemBakedModel))
+				model = new PerspectiveMapWrapper(model, customModelState);
+			cir.setReturnValue(model);
+		}
 	}
 
 	@Inject(method = "getElements", at = @At("HEAD"), cancellable = true)
