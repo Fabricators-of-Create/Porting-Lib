@@ -3,11 +3,15 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 import io.github.fabricators_of_create.porting_lib.extensions.ItemStackExtensions;
 
 import io.github.fabricators_of_create.porting_lib.item.ToolActionCheckingItem;
+import io.github.fabricators_of_create.porting_lib.util.CorrectToolItem;
 import io.github.fabricators_of_create.porting_lib.util.ToolAction;
+
+import net.minecraft.world.level.block.state.BlockState;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -53,11 +57,19 @@ public abstract class ItemStackMixin implements NBTSerializable, ItemStackExtens
 		this.setTag(ItemStack.of(nbt).getTag());
 	}
 
+	@Unique
 	@Override
 	public boolean canPerformAction(ToolAction toolAction) {
 		if (this.getItem() instanceof ToolActionCheckingItem checking) {
 			return checking.canPerformAction((ItemStack) (Object) this, toolAction);
 		}
 		return false;
+	}
+
+	@Inject(method = "isCorrectToolForDrops", at = @At("HEAD"), cancellable = true)
+	public void port_lib$isCorrectToolForDropsExtension(BlockState state, CallbackInfoReturnable<Boolean> cir) {
+		if(getItem() instanceof CorrectToolItem correctToolItem) {
+			cir.setReturnValue(correctToolItem.isCorrectToolForDrops((ItemStack) (Object) this, state));
+		}
 	}
 }
