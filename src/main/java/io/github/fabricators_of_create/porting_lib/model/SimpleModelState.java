@@ -32,7 +32,7 @@ public final class SimpleModelState implements ModelState {
 		return base;
 	}
 
-	//  @Override
+	@Override
 	public Transformation getPartTransformation(Object part) {
 		return map.getOrDefault(part, Transformation.identity());
 	}

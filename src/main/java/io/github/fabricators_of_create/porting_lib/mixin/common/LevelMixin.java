@@ -2,6 +2,13 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.Iterator;
 
+import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.ExplosionDamageCalculator;
+
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -53,5 +60,19 @@ public abstract class LevelMixin implements LevelAccessor {
 		if (block instanceof NeighborChangeListeningBlock listener) {
 			listener.onNeighborChange(getBlockState(blockPos2), this, blockPos2, pos);
 		}
+	}
+
+	@Inject(
+			method = "explode(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/level/ExplosionDamageCalculator;DDDFZLnet/minecraft/world/level/Explosion$BlockInteraction;)Lnet/minecraft/world/level/Explosion;",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/Explosion;explode()V",
+					shift = At.Shift.BEFORE
+			),
+			locals = LocalCapture.CAPTURE_FAILHARD
+	)
+	@SuppressWarnings("ALL")
+	public void port_lib$onStartExplosion(@Nullable Entity exploder, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator context, double x, double y, double z, float size, boolean causesFire, Explosion.BlockInteraction mode, CallbackInfoReturnable<Explosion> cir, Explosion explosion) {
+		if(ExplosionEvents.START.invoker().onExplosionStart((Level) (Object) this, explosion)) cir.setReturnValue(explosion);
 	}
 }

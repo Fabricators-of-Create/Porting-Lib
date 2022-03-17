@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.event.ExplosionStartCallback;
+
+import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,7 +34,7 @@ public abstract class ServerLevelMixin {
 										double y, double z, float size, boolean causesFire,
 										Explosion.BlockInteraction mode, CallbackInfoReturnable<Explosion> cir,
 										Explosion explosion) {
-		if (ExplosionStartCallback.EVENT.invoker().onExplosionStart((Level) (Object) this, explosion))
+		if(ExplosionEvents.START.invoker().onExplosionStart((Level) (Object) this, explosion))
 			cir.setReturnValue(explosion);
 	}
 }
