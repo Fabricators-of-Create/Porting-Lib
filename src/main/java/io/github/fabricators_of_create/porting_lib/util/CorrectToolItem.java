@@ -13,6 +13,6 @@ public interface CorrectToolItem {
 	 * @return true if the stack can harvest the block
 	 */
 	default boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
-		return ((ItemStack)(Object)this).isCorrectToolForDrops(state);
+		return ((Item) this).isCorrectToolForDrops(state);
 	}
 }

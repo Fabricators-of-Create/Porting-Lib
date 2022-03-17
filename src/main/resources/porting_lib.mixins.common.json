@@ -28,6 +28,7 @@
     "IngredientMixin",
     "ItemEntityMixin",
     "ItemMixin",
+    "ItemPredicateMixin",
     "ItemStackMixin",
     "LavaFluidMixin",
     "LeavesBlockMixin",
