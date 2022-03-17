@@ -3,6 +3,9 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
 
 import io.github.fabricators_of_create.porting_lib.event.EntityInteractCallback;
+import io.github.fabricators_of_create.porting_lib.extensions.ItemStackExtensions;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 
 import net.minecraft.world.level.GameType;
@@ -46,6 +49,10 @@ public abstract class MultiPlayerGameModeMixin {
 	@Shadow
 	private GameType localPlayerMode;
 
+	@Shadow
+	@Final
+	private Minecraft minecraft;
+
 	@ModifyReceiver(method = "useItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;use(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/InteractionResult;"))
 	public BlockState port_lib$bypassBlockUse(BlockState result, Level level, Player player, InteractionHand hand, BlockHitResult blockHitResult) {
 		Item held = player.getItemInHand(hand).getItem();
@@ -76,5 +83,10 @@ public abstract class MultiPlayerGameModeMixin {
 			InteractionResult cancelResult = EntityInteractCallback.EVENT.invoker().onEntityInteract(player, hand, target);
 			if (cancelResult != null) cir.setReturnValue(cancelResult);
 		}
+	}
+
+	@Inject(method = "destroyBlock", at = @At("HEAD"), cancellable = true)
+	public void port_lib$destroyBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+		if (((ItemStackExtensions)(Object)minecraft.player.getMainHandItem()).onBlockStartBreak(pos, minecraft.player)) cir.setReturnValue(false);
 	}
 }
