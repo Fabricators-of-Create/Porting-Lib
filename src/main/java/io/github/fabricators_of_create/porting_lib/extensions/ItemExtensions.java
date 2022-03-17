@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.extensions;
 
 import io.github.fabricators_of_create.porting_lib.util.ToolAction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -26,6 +27,20 @@ public interface ItemExtensions {
 	 * @return True to prevent harvesting, false to continue as normal
 	 */
 	default boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, Player player) {
+		return false;
+	}
+
+	/**
+	 * Called when the player Left Clicks (attacks) an entity. Processed before
+	 * damage is done, if return value is true further processing is canceled and
+	 * the entity is not attacked.
+	 *
+	 * @param stack  The Item being used
+	 * @param player The player that is attacking
+	 * @param entity The entity being attacked
+	 * @return True to cancel the rest of the interaction.
+	 */
+	default boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
 		return false;
 	}
 }

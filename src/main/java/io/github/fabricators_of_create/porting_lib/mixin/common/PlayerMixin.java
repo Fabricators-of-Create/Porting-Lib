@@ -3,6 +3,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 import io.github.fabricators_of_create.porting_lib.event.EntityInteractCallback;
 import io.github.fabricators_of_create.porting_lib.event.LivingEntityEvents;
 import io.github.fabricators_of_create.porting_lib.event.PlayerTickEvents;
+import io.github.fabricators_of_create.porting_lib.extensions.ItemExtensions;
+import io.github.fabricators_of_create.porting_lib.util.ShieldBlockItem;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -10,6 +12,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
@@ -25,6 +28,9 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(Player.class)
 public abstract class PlayerMixin extends LivingEntity {
+
+	@Shadow
+	public abstract void disableShield(boolean sprinting);
 
 	protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level level) {
 		super(entityType, level);
@@ -52,5 +58,18 @@ public abstract class PlayerMixin extends LivingEntity {
 	public void port_lib$onEntityInteract(Entity entityToInteractOn, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
 		InteractionResult cancelResult = EntityInteractCallback.EVENT.invoker().onEntityInteract((Player) (Object) this, hand, entityToInteractOn);
 		if (cancelResult != null) cir.setReturnValue(cancelResult);
+	}
+
+	@Inject(method = "blockUsingShield", at = @At("TAIL"))
+	public void port_lib$blockShieldItem(LivingEntity entity, CallbackInfo ci) {
+		if(entity.getMainHandItem().getItem() instanceof ShieldBlockItem shieldBlockItem) {
+			if (shieldBlockItem.canDisableShield(entity.getMainHandItem(), this.useItem, this, entity))
+				disableShield(true);
+		}
+	}
+
+	@Inject(method = "attack", at = @At("HEAD"), cancellable = true)
+	public void port_lib$itemAttack(Entity targetEntity, CallbackInfo ci) {
+		if(((ItemExtensions)getMainHandItem().getItem()).onLeftClickEntity(getMainHandItem(), (Player) (Object) this, targetEntity)) ci.cancel();
 	}
 }
