@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.transfer.fluid;
+package io.github.fabricators_of_create.porting_lib.util;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -189,7 +189,7 @@ public class FluidStack {
     }
 
 	public Component getDisplayName() {
-		return ((FluidExtensions)this.getFluid()).getAttributes().getDisplayName(this);
+		return ((FluidExtensions) this.getFluid()).getAttributes().getDisplayName(this);
 	}
 
 	public boolean hasTag() {

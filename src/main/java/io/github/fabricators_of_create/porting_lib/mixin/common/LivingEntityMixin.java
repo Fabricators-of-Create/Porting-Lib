@@ -11,8 +11,8 @@ import io.github.fabricators_of_create.porting_lib.block.CustomFrictionBlock;
 import io.github.fabricators_of_create.porting_lib.block.CustomLandingEffectsBlock;
 import io.github.fabricators_of_create.porting_lib.event.LivingEntityEvents.Fall.FallEvent;
 import io.github.fabricators_of_create.porting_lib.event.PotionEvents;
-import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityUseItemEvents;
+import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.item.EquipmentItem;
 import net.minecraft.world.InteractionResult;
 
@@ -191,6 +191,7 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 		LivingEntityEvents.JUMP.invoker().onLivingEntityJump((LivingEntity) (Object) this);
 	}
 
+	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@Inject(
 			method = "checkFallDamage",
 			at = @At(
@@ -210,6 +211,7 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 		}
 	}
 
+	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyVariable(
 			method = "travel",
 			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getBlockPosBelowThatAffectsMyMovement()Lnet/minecraft/core/BlockPos;")),
@@ -255,7 +257,7 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 		return this.getAttribute(PortingLibAttributes.ENTITY_GRAVITY).getValue();
 	}
 
-	@Inject(method = "completeUsingItem", at = @At(value = "JUMP", opcode = Opcodes.IF_ACMPEQ), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
+	@Inject(method = "completeUsingItem", at = @At(value = "JUMP", opcode = Opcodes.IF_ACMPEQ), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void port_lib$onFinishUsing(CallbackInfo ci, InteractionHand hand, ItemStack result) {
 		LivingEntityUseItemEvents.LIVING_USE_ITEM_FINISH.invoker().onUseItem((LivingEntity) (Object) this, this.getUseItem().copy(), getUseItemRemainingTicks(), result);
 	}

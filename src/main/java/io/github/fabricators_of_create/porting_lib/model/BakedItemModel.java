@@ -44,7 +44,7 @@ public class BakedItemModel implements BakedModel, TransformTypeDependentItemBak
 	private static boolean hasGuiIdentity(ImmutableMap<TransformType, Transformation> transforms)
 	{
 		Transformation guiTransform = transforms.get(TransformType.GUI);
-		return guiTransform == null || ((TransformationExtensions)(Object)guiTransform).isIdentity();
+		return guiTransform == null || ((TransformationExtensions) (Object) guiTransform).isIdentity();
 	}
 
 	@Override public boolean useAmbientOcclusion() { return true; }

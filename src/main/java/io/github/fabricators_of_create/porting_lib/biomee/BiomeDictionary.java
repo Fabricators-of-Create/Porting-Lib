@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import io.github.fabricators_of_create.porting_lib.extensions.ResourceLocationExtensions;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.data.BuiltinRegistries;
 
 import org.apache.logging.log4j.LogManager;
@@ -358,7 +359,7 @@ public class BiomeDictionary
 					buf.append("    ").append(type.name).append(": ")
 							.append(type.biomes.stream()
 									.map(ResourceKey::location)
-									.sorted((a,b) -> ((ResourceLocationExtensions)a).compareNamespaced(b))
+									.sorted((a,b) -> ((ResourceLocationExtensions) a).compareNamespaced(b))
 									.map(Object::toString)
 									.collect(Collectors.joining(", "))
 							)

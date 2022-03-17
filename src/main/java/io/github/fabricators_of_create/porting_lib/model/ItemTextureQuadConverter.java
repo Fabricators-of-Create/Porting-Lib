@@ -249,7 +249,7 @@ public final class ItemTextureQuadConverter
 		builder.setApplyDiffuseLighting(luminosity == 0);
 
 		// only apply the transform if it's not identity
-		boolean hasTransform = !((TransformationExtensions)(Object)transform).isIdentity();
+		boolean hasTransform = !((TransformationExtensions) (Object) transform).isIdentity();
 		IVertexConsumer consumer = hasTransform ? new TRSRTransformer(builder, transform) : builder;
 
 		if (side == Direction.SOUTH)

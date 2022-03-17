@@ -8,6 +8,7 @@ import com.mojang.datafixers.util.Pair;
 
 import io.github.fabricators_of_create.porting_lib.extensions.TextureAtlasSpriteExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.TransformationExtensions;
+import net.fabricmc.fabric.impl.client.texture.FabricSprite;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -145,7 +146,7 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel> {
 				ptu = true;
 				for(int u = 0; u < uMax; u++)
 				{
-					int alpha = ((TextureAtlasSpriteExtensions)sprite).getPixelRGBA(f, u, vMax - v - 1) >> 24 & 0xFF;
+					int alpha = ((TextureAtlasSpriteExtensions) sprite).getPixelRGBA(f, u, vMax - v - 1) >> 24 & 0xFF;
 					boolean t = alpha / 255f <= 0.1f;
 
 					if (!t && alpha < 255)
@@ -404,7 +405,7 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel> {
 		builder.setQuadOrientation(side);
 		builder.setApplyDiffuseLighting(false);
 
-		boolean hasTransform = !((TransformationExtensions)(Object)transform).isIdentity();
+		boolean hasTransform = !((TransformationExtensions) (Object) transform).isIdentity();
 		IVertexConsumer consumer = hasTransform ? new TRSRTransformer(builder, transform) : builder;
 
 		int uLight, vLight;
