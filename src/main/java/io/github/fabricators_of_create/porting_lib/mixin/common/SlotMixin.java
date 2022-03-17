@@ -42,15 +42,4 @@ public abstract class SlotMixin implements SlotExtensions {
 	public int getSlotIndex() {
 		return slot;
 	}
-
-	/**
-	 * @author AlphaMode
-	 * The base method just returns null
-	 * Yes I did just @Overwrite this :ioa:
-	 */
-	@Nullable
-	@Overwrite
-	public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-		return port_lib$backgroundPair;
-	}
 }

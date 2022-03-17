@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.model;
 
 import com.google.common.collect.Lists;
 
+import io.github.fabricators_of_create.porting_lib.extensions.TransformationExtensions;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -248,7 +249,7 @@ public final class ItemTextureQuadConverter
 		builder.setApplyDiffuseLighting(luminosity == 0);
 
 		// only apply the transform if it's not identity
-		boolean hasTransform = !transform.isIdentity();
+		boolean hasTransform = !((TransformationExtensions)(Object)transform).isIdentity();
 		IVertexConsumer consumer = hasTransform ? new TRSRTransformer(builder, transform) : builder;
 
 		if (side == Direction.SOUTH)

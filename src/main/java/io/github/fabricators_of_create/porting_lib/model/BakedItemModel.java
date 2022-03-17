@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import io.github.fabricators_of_create.porting_lib.extensions.TransformationExtensions;
 import io.github.fabricators_of_create.porting_lib.render.TransformTypeDependentItemBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -43,7 +44,7 @@ public class BakedItemModel implements BakedModel, TransformTypeDependentItemBak
 	private static boolean hasGuiIdentity(ImmutableMap<TransformType, Transformation> transforms)
 	{
 		Transformation guiTransform = transforms.get(TransformType.GUI);
-		return guiTransform == null || guiTransform.isIdentity();
+		return guiTransform == null || ((TransformationExtensions)(Object)guiTransform).isIdentity();
 	}
 
 	@Override public boolean useAmbientOcclusion() { return true; }
