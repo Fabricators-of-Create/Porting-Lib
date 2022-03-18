@@ -70,6 +70,8 @@ public abstract class ItemRendererMixin {
 	@Final
 	private BlockEntityWithoutLevelRenderer blockEntityRenderer;
 
+	//TODO: pop pose somewhere else if pushed
+	/*
 	// FIXME CANVAS COMPAT
 	@ModifyVariable(method = "render", at = @At("HEAD"), argsOnly = true)
 	private BakedModel port_lib$handleModel(BakedModel model, ItemStack itemStack, ItemTransforms.TransformType transformType, boolean leftHand, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, BakedModel model1) {
@@ -77,7 +79,7 @@ public abstract class ItemRendererMixin {
 			return handler.handlePerspective(transformType, matrixStack);
 		}
 		return model;
-	}
+	}*/
 
 	@Unique
 	private void drawItemLayered(LayeredBakedModel modelIn, ItemStack itemStackIn, PoseStack matrixStackIn,
