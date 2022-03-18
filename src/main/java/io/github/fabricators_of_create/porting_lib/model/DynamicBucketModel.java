@@ -9,14 +9,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import io.github.fabricators_of_create.porting_lib.extensions.RegistryNameProvider;
-import io.github.fabricators_of_create.porting_lib.util.TransferUtil;
-import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
-
-import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
-
-import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
