@@ -1,8 +1,11 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.ItemStackExtensions;
 import net.minecraft.core.BlockPos;
 
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.GameMasterBlock;
 
@@ -11,6 +14,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import io.github.fabricators_of_create.porting_lib.item.UseFirstBehaviorItem;
@@ -55,5 +59,10 @@ public abstract class ServerPlayerGameModeMixin {
 	public void port_lib$destroyBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
 		if(!(this.level.getBlockState(pos).getBlock() instanceof GameMasterBlock && !this.player.canUseGameMasterBlocks()) && ((ItemStackExtensions)(Object)player.getMainHandItem()).onBlockStartBreak(pos, player))
 			cir.setReturnValue(false);
+	}
+
+	@Inject(method = "handleBlockBreakAction", at = @At("HEAD"))
+	public void port_lib$blockBreak(BlockPos pos, ServerboundPlayerActionPacket.Action action, Direction direction, int worldHeight, CallbackInfo ci) {
+		BlockEvents.LEFT_CLICK_BLOCK.invoker().onLeftClickBlock(player, pos, direction);
 	}
 }

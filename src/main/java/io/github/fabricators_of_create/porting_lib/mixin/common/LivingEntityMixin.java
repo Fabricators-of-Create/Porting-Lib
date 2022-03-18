@@ -64,7 +64,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static net.minecraft.world.effect.MobEffects.SLOW_FALLING;
 
-@Mixin(LivingEntity.class)
+@Mixin(value = LivingEntity.class, priority = 500)
 public abstract class LivingEntityMixin extends Entity implements EntityExtensions {
 	@Shadow
 	protected Player lastHurtByPlayer;
