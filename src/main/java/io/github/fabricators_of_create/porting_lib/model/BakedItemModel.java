@@ -94,10 +94,8 @@ public class BakedItemModel implements BakedModel, TransformTypeDependentItemBak
 		}
 
 		@Override
-		public List<BakedQuad> getQuads (@Nullable BlockState state, @Nullable Direction side, Random rand)
-		{
-			if(side == null)
-			{
+		public List<BakedQuad> getQuads (@Nullable BlockState state, @Nullable Direction side, Random rand) {
+			if(side == null) {
 				return quads;
 			}
 			return ImmutableList.of();
@@ -105,8 +103,7 @@ public class BakedItemModel implements BakedModel, TransformTypeDependentItemBak
 
 		@Override
 		public BakedModel handlePerspective(TransformType type, PoseStack poseStack) {
-			if (type == TransformType.GUI)
-			{
+			if (type == TransformType.GUI) {
 				return PerspectiveMapWrapper.handlePerspective(this, ((BakedItemModel)wrapped).transforms, type, poseStack);
 			}
 			return ((TransformTypeDependentItemBakedModel)this.wrapped).handlePerspective(type, poseStack);

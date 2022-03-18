@@ -2,6 +2,11 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
+
+import io.github.fabricators_of_create.porting_lib.extensions.Matrix3fExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.Matrix4fExtensions;
 import io.github.fabricators_of_create.porting_lib.render.LayeredBakedModel;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -70,11 +75,35 @@ public abstract class ItemRendererMixin {
 	@Final
 	private BlockEntityWithoutLevelRenderer blockEntityRenderer;
 
+	private static final Matrix4f flipX;
+	private static final Matrix3f flipXNormal;
+	static {
+		flipX = Matrix4f.createScaleMatrix(-1,1,1);
+		flipXNormal = new Matrix3f(flipX);
+	}
+
 	// FIXME CANVAS COMPAT
 	@ModifyVariable(method = "render", at = @At("HEAD"), argsOnly = true)
 	private BakedModel port_lib$handleModel(BakedModel model, ItemStack itemStack, ItemTransforms.TransformType transformType, boolean leftHand, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, BakedModel model1) {
 		if (model instanceof TransformTypeDependentItemBakedModel handler) {
-			return handler.handlePerspective(transformType, matrixStack);
+			PoseStack stack = new PoseStack();
+			BakedModel bakedModel = handler.handlePerspective(transformType, stack);
+			if (!stack.clear())
+			{
+				// Apply the transformation to the real matrix stack, flipping for left hand
+				Matrix4f tMat = stack.last().pose();
+				Matrix3f nMat = stack.last().normal();
+				if (leftHand)
+				{
+					((Matrix4fExtensions)(Object)tMat).multiplyBackward(flipX);
+					tMat.multiply(flipX);
+					((Matrix3fExtensions)(Object)nMat).multiplyBackward(flipXNormal);
+					nMat.mul(flipXNormal);
+				}
+				matrixStack.last().pose().multiply(tMat);
+				matrixStack.last().normal().mul(nMat);
+			}
+			return bakedModel;
 		}
 		return model;
 	}
