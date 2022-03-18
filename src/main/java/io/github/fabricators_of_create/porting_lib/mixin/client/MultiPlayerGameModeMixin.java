@@ -3,9 +3,11 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
 
 import io.github.fabricators_of_create.porting_lib.event.EntityInteractCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.ItemStackExtensions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 
 import net.minecraft.world.level.GameType;
@@ -88,5 +90,10 @@ public abstract class MultiPlayerGameModeMixin {
 	@Inject(method = "destroyBlock", at = @At("HEAD"), cancellable = true)
 	public void port_lib$destroyBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
 		if (((ItemStackExtensions)(Object)minecraft.player.getMainHandItem()).onBlockStartBreak(pos, minecraft.player)) cir.setReturnValue(false);
+	}
+
+	@Inject(method = "startDestroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;", ordinal = 1))
+	public void port_lib$startDestroy(BlockPos loc, Direction face, CallbackInfoReturnable<Boolean> cir) {
+		BlockEvents.LEFT_CLICK_BLOCK.invoker().onLeftClickBlock(minecraft.player, loc, face);
 	}
 }
