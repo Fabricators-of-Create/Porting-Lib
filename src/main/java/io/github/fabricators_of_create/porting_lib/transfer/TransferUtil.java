@@ -262,7 +262,7 @@ public class TransferUtil {
 		try (Transaction t = getTransaction()) {
 			for (StorageView<FluidVariant> view : storage.iterable(t)) {
 				if (!view.isResourceBlank()) {
-					long extracted = view.extract(view.getResource(), view.getAmount(), t);
+					long extracted = view.extract(view.getResource(), Math.min(view.getAmount(), maxAmount), t);
 					if (extracted == 0) continue;
 					t.commit();
 					return new FluidStack(view.getResource(), extracted);

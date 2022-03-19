@@ -5,9 +5,9 @@ import com.google.common.collect.Multimap;
 import io.github.fabricators_of_create.porting_lib.extensions.ItemStackExtensions;
 
 import io.github.fabricators_of_create.porting_lib.item.ToolActionCheckingItem;
-import io.github.fabricators_of_create.porting_lib.util.AttributeModiferItem;
+import io.github.fabricators_of_create.porting_lib.util.AttributeModifierItem;
 import io.github.fabricators_of_create.porting_lib.util.CorrectToolItem;
-import io.github.fabricators_of_create.porting_lib.util.DamagableItem;
+import io.github.fabricators_of_create.porting_lib.util.DamageableItem;
 import io.github.fabricators_of_create.porting_lib.util.ToolAction;
 
 import net.minecraft.world.entity.EquipmentSlot;
@@ -25,7 +25,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import io.github.fabricators_of_create.porting_lib.item.CustomMaxCountItem;
-import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
 
 import net.minecraft.nbt.CompoundTag;
@@ -89,14 +88,14 @@ public abstract class ItemStackMixin implements NBTSerializable, ItemStackExtens
 
 	@Inject(method = "getAttributeModifiers", at = @At("RETURN"), cancellable = true)
 	public void port_lib$modifierItem(EquipmentSlot slot, CallbackInfoReturnable<Multimap<Attribute, AttributeModifier>> cir) {
-		if(getItem() instanceof AttributeModiferItem attributeModiferItem && !(this.hasTag() && this.tag.contains("AttributeModifiers", 9))) {
+		if(getItem() instanceof AttributeModifierItem attributeModiferItem && !(this.hasTag() && this.tag.contains("AttributeModifiers", 9))) {
 			attributeModiferItem.getAttributeModifiers(slot, (ItemStack) (Object) this);
 		}
 	}
 
 	@Inject(method = "setDamageValue", at = @At("HEAD"), cancellable = true)
 	public void port_lib$itemSetDamage(int damage, CallbackInfo ci) {
-		if(getItem() instanceof DamagableItem damagableItem) {
+		if(getItem() instanceof DamageableItem damagableItem) {
 			damagableItem.setDamage((ItemStack) (Object) this, damage);
 			ci.cancel();
 		}
@@ -104,14 +103,14 @@ public abstract class ItemStackMixin implements NBTSerializable, ItemStackExtens
 
 	@Inject(method = "getMaxDamage", at = @At("HEAD"), cancellable = true)
 	public void port_lib$itemMaxDamage(CallbackInfoReturnable<Integer> cir) {
-		if(getItem() instanceof DamagableItem damagableItem) {
+		if(getItem() instanceof DamageableItem damagableItem) {
 			cir.setReturnValue(damagableItem.getMaxDamage((ItemStack) (Object) this));
 		}
 	}
 
 	@Inject(method = "getDamageValue", at = @At("HEAD"), cancellable = true)
 	public void port_lib$itemDamage(CallbackInfoReturnable<Integer> cir) {
-		if(getItem() instanceof DamagableItem damagableItem) {
+		if(getItem() instanceof DamageableItem damagableItem) {
 			cir.setReturnValue(damagableItem.getDamage((ItemStack) (Object) this));
 		}
 	}

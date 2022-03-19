@@ -8,12 +8,11 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public interface AttributeModiferItem {
+public interface AttributeModifierItem {
 	/**
 	 * ItemStack sensitive version of getItemAttributeModifiers
 	 */
-	@SuppressWarnings("deprecation")
 	default Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
-		return ((Item)this).getDefaultAttributeModifiers(slot);
+		return ((Item) this).getDefaultAttributeModifiers(slot);
 	}
 }

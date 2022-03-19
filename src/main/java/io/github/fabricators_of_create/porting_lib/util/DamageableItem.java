@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.util;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public interface DamagableItem {
+public interface DamageableItem {
 	private Item self() {
 		return (Item) this;
 	}
