@@ -155,6 +155,15 @@ public class TransferUtil {
 		return Optional.empty();
 	}
 
+	public static FluidStack firstCopyOrEmpty(Storage<FluidVariant> storage) {
+		return firstOrEmpty(storage).copy();
+	}
+
+	public static FluidStack firstOrEmpty(Storage<FluidVariant> storage) {
+		FluidStack stack = getFirstFluid(storage);
+		return stack == null ? FluidStack.EMPTY : stack;
+	}
+
 	@Nullable
 	public static FluidStack getFirstFluid(Storage<FluidVariant> storage) {
 		List<FluidStack> stacks = getFluids(storage, 1);
