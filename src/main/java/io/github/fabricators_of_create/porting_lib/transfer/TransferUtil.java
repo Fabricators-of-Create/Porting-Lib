@@ -155,6 +155,30 @@ public class TransferUtil {
 		return Optional.empty();
 	}
 
+	public static <T> long firstCapacity(Storage<T> storage) {
+		List<Long> capacities = capacities(storage, 1);
+		return capacities.size() > 0 ? capacities.get(0) : 0;
+	}
+
+	public static <T> long totalCapacity(Storage<T> storage) {
+		long total = 0;
+		List<Long> capacities = capacities(storage, Integer.MAX_VALUE);
+		for (Long l : capacities) total += l;
+		return total;
+	}
+
+	public static <T> List<Long> capacities(Storage<T> storage, int cutoff) {
+		List<Long> capacities = new ArrayList<>();
+		try (Transaction t = getTransaction()) {
+			for (StorageView<T> view : storage.iterable(t)) {
+				capacities.add(view.getCapacity());
+				if (capacities.size() == cutoff)
+					break;
+			}
+		}
+		return capacities;
+	}
+
 	public static FluidStack firstCopyOrEmpty(Storage<FluidVariant> storage) {
 		return firstOrEmpty(storage).copy();
 	}
