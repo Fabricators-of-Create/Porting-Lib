@@ -29,7 +29,8 @@ import javax.annotation.Nullable;
 /**
  * Utilities for transfering things.
  * for all storage getters, if a direction is not provided,
- * a CombinedStorage of all sides will be returned.
+ * a CombinedStorage of all sides will be returned. All
+ * may return null.
  */
 public class TransferUtil {
 	public static Transaction getTransaction() {
@@ -50,14 +51,14 @@ public class TransferUtil {
 
 	public static Storage<ItemVariant> getItemStorage(Level level, BlockPos pos, @Nullable Direction direction) {
 		BlockEntity be = level.getBlockEntity(pos);
-		if (be == null) return Storage.empty();
+		if (be == null) return null;
 		return getItemStorage(be, direction);
 	}
 
 	public static Storage<ItemVariant> getItemStorage(BlockEntity be, @Nullable Direction side) {
 		// client handling
 		if (Objects.requireNonNull(be.getLevel()).isClientSide()) {
-			return Storage.empty();
+			return null;
 		}
 		// external handling
 		List<Storage<ItemVariant>> itemStorages = new ArrayList<>();
@@ -84,7 +85,7 @@ public class TransferUtil {
 		}
 
 
-		if (itemStorages.isEmpty()) return Storage.empty();
+		if (itemStorages.isEmpty()) return null;
 		if (itemStorages.size() == 1) return itemStorages.get(0);
 		return new CombinedStorage<>(itemStorages);
 	}
@@ -93,7 +94,7 @@ public class TransferUtil {
 
 	public static Storage<FluidVariant> getFluidStorage(Level level, BlockPos pos) {
 		BlockEntity be = level.getBlockEntity(pos);
-		if (be == null) return Storage.empty();
+		if (be == null) return null;
 		return getFluidStorage(be);
 	}
 
@@ -107,6 +108,7 @@ public class TransferUtil {
 		if (client) { // TODO CLIENT TRANSFER
 //			IFluidStorage cached = FluidTileDataStorage.getCachedStorage(be);
 //			return LazyOptional.ofObject(cached);
+			return null;
 		}
 		// external handling
 		List<Storage<FluidVariant>> fluidStorages = new ArrayList<>();
@@ -132,7 +134,7 @@ public class TransferUtil {
 			}
 		}
 
-		if (fluidStorages.isEmpty()) return Storage.empty();
+		if (fluidStorages.isEmpty()) return null;
 		if (fluidStorages.size() == 1) return fluidStorages.get(0);
 		return new CombinedStorage<>(fluidStorages);
 	}
@@ -144,15 +146,63 @@ public class TransferUtil {
 
 	public static Optional<FluidStack> getFluidContained(ItemStack container) {
 		if (container != null && !container.isEmpty()) {
-			try (Transaction t = getTransaction()) {
-				Storage<FluidVariant> storage = FluidStorage.ITEM.find(container, ContainerItemContext.withInitial(container));
-				if (storage != null) {
-					for (StorageView<FluidVariant> view : storage.iterable(t)) {
-						return Optional.of(new FluidStack(view.getResource(), view.getAmount()));
-					}
-				}
+			Storage<FluidVariant> storage = FluidStorage.ITEM.find(container, ContainerItemContext.withInitial(container));
+			if (storage != null) {
+				FluidStack first = getFirstFluid(storage);
+				if (first != null) return Optional.of(first);
 			}
 		}
 		return Optional.empty();
+	}
+
+	@Nullable
+	public static FluidStack getFirstFluid(Storage<FluidVariant> storage) {
+		List<FluidStack> stacks = getFluids(storage, 1);
+		if (stacks.size() > 0) return stacks.get(0);
+		return null;
+	}
+
+	public static List<FluidStack> getAllFluids(Storage<FluidVariant> storage) {
+		return getFluids(storage, Integer.MAX_VALUE);
+	}
+
+	/**
+	 * Find all unique fluids inside a storage.
+	 * @param cutoff number of unique fluids to find before exiting early
+	 */
+	public static List<FluidStack> getFluids(Storage<FluidVariant> storage, int cutoff) {
+		List<FluidStack> stacks = new ArrayList<>();
+		try (Transaction t = getTransaction()) {
+			for (StorageView<FluidVariant> view : storage.iterable(t)) {
+				if (!view.isResourceBlank()) {
+					// get the contained stack and only add to list if unique
+					FluidStack contained = new FluidStack(view.getResource(), view.getAmount());
+					if (stacks.size() == 0) {
+						stacks.add(contained);
+						continue;
+					} else {
+						// check if unique
+						FluidStack existing = null;
+						for (FluidStack stack : stacks) {
+							if (stack.isFluidEqual(contained)) {
+								// find the existing matching stack and exit early
+								existing = stack;
+								break;
+							}
+						}
+						if (existing == null) {
+							stacks.add(contained); // only add if unique
+						} else { // else just update amount stored
+							long newAmount = existing.getAmount() + contained.getAmount();
+							existing.setAmount(newAmount);
+						}
+					}
+				}
+				if (stacks.size() == cutoff) {
+					break;
+				}
+			}
+		}
+		return stacks;
 	}
 }
