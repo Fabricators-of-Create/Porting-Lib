@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import io.github.fabricators_of_create.porting_lib.extensions.FluidExtensions;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.minecraft.network.chat.Component;
 
 import org.jetbrains.annotations.Nullable;
@@ -50,6 +51,19 @@ public class FluidStack {
 		}
 
 		@Override
+		public void grow(long amount) {
+		}
+
+		@Override
+		public void setTag(CompoundTag tag) {
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return true;
+		}
+
+		@Override
 		public FluidStack copy() {
 			return this;
 		}
@@ -69,6 +83,10 @@ public class FluidStack {
 	public FluidStack(FluidVariant type, long amount, @Nullable CompoundTag tag) {
 		this(type, amount);
 		this.tag = tag;
+	}
+
+	public FluidStack(StorageView<FluidVariant> view) {
+		this(view.getResource(), view.getAmount());
 	}
 
 	/**
@@ -150,7 +168,7 @@ public class FluidStack {
 
 	public static FluidStack loadFluidStackFromNBT(CompoundTag tag) {
 		FluidStack stack;
-		if (tag.contains("FluidName")) {
+		if (tag.contains("FluidName")) { // legacy forge loading
 			Fluid fluid = Registry.FLUID.get(new ResourceLocation(tag.getString("FluidName")));
 			int amount = tag.getInt("Amount");
 			if (tag.contains("Tag")) {

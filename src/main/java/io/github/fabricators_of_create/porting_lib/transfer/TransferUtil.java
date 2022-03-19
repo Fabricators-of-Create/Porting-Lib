@@ -257,4 +257,18 @@ public class TransferUtil {
 		}
 		return success;
 	}
+
+	public static FluidStack extractAny(Storage<FluidVariant> storage, long maxAmount) {
+		try (Transaction t = getTransaction()) {
+			for (StorageView<FluidVariant> view : storage.iterable(t)) {
+				if (!view.isResourceBlank()) {
+					long extracted = view.extract(view.getResource(), view.getAmount(), t);
+					if (extracted == 0) continue;
+					t.commit();
+					return new FluidStack(view.getResource(), extracted);
+				}
+			}
+		}
+		return FluidStack.EMPTY;
+	}
 }
