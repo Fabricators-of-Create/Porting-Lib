@@ -27,7 +27,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import javax.annotation.Nullable;
 
 /**
- * Utilities for transfering things.
+ * Utilities for transferring things.
  * for all storage getters, if a direction is not provided,
  * a CombinedStorage of all sides will be returned. All
  * may return null.
@@ -167,6 +167,10 @@ public class TransferUtil {
 		return total;
 	}
 
+	/**
+	 * Finds the capacities of each StorageView in the storage.
+	 * @param cutoff number of capacities to find before exiting early
+	 */
 	public static <T> List<Long> capacities(Storage<T> storage, int cutoff) {
 		List<Long> capacities = new ArrayList<>();
 		try (Transaction t = getTransaction()) {
@@ -200,36 +204,15 @@ public class TransferUtil {
 	}
 
 	/**
-	 * Find all unique fluids inside a storage.
-	 * @param cutoff number of unique fluids to find before exiting early
+	 * Find all fluids inside a storage.
+	 * @param cutoff number of fluids to find before exiting early
 	 */
 	public static List<FluidStack> getFluids(Storage<FluidVariant> storage, int cutoff) {
 		List<FluidStack> stacks = new ArrayList<>();
 		try (Transaction t = getTransaction()) {
 			for (StorageView<FluidVariant> view : storage.iterable(t)) {
 				if (!view.isResourceBlank()) {
-					// get the contained stack and only add to list if unique
-					FluidStack contained = new FluidStack(view.getResource(), view.getAmount());
-					if (stacks.size() == 0) {
-						stacks.add(contained);
-						continue;
-					} else {
-						// check if unique
-						FluidStack existing = null;
-						for (FluidStack stack : stacks) {
-							if (stack.isFluidEqual(contained)) {
-								// find the existing matching stack and exit early
-								existing = stack;
-								break;
-							}
-						}
-						if (existing == null) {
-							stacks.add(contained); // only add if unique
-						} else { // else just update amount stored
-							long newAmount = existing.getAmount() + contained.getAmount();
-							existing.setAmount(newAmount);
-						}
-					}
+					stacks.add(new FluidStack(view.getResource(), view.getAmount()));
 				}
 				if (stacks.size() == cutoff) {
 					break;
@@ -237,5 +220,41 @@ public class TransferUtil {
 			}
 		}
 		return stacks;
+	}
+
+	public static List<ItemStack> getAllItems(Storage<ItemVariant> storage) {
+		return getItems(storage, Integer.MAX_VALUE);
+	}
+
+	public static List<ItemStack> getItems(Storage<ItemVariant> storage, int cutoff) {
+		List<ItemStack> stacks = new ArrayList<>();
+		try (Transaction t = getTransaction()) {
+			for (StorageView<ItemVariant> view : storage.iterable(t)) {
+				if (!view.isResourceBlank()) {
+					stacks.add(view.getResource().toStack((int) view.getAmount()));
+				}
+				if (stacks.size() == cutoff) {
+					break;
+				}
+			}
+		}
+		return stacks;
+	}
+
+	/**
+	 * Remove as much as possible from a Storage.
+	 * @return true if all removed
+	 */
+	public static <T> boolean clearStorage(Storage<T> storage) {
+		boolean success = true;
+		try (Transaction t = getTransaction()) {
+			for (StorageView<T> view : storage.iterable(t)) {
+				long toRemove = view.getAmount();
+				long actual = view.extract(view.getResource(), view.getAmount(), t);
+				success &= toRemove == actual;
+			}
+			t.commit();
+		}
+		return success;
 	}
 }
