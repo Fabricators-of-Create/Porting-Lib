@@ -38,12 +38,17 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 		for (int i = 0; i < stacks.length; i++) {
 			if (isItemValid(i, resource)) {
 				ItemStack held = stacks[i];
+				int finalI = i;
 				if (held.isEmpty()) { // just throw in a full stack
 					int toFill = getStackLimit(i, resource);
 					maxAmount -= toFill;
 					inserted += toFill;
 					ItemStack stack = resource.toStack(toFill);
 					stacks[i] = stack;
+					transaction.addOuterCloseCallback((r) -> {
+						if (r.wasCommitted())
+							onContentsChanged(finalI);
+					});
 				} else if (ItemStackUtil.canItemStacksStack(held, resource.toStack())) { // already filled, but can stack
 					int max = getStackLimit(i, resource); // total possible
 					int canInsert = max - held.getCount(); // room available
@@ -53,6 +58,10 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 						inserted += actuallyInsert;
 						ItemStack newStack = resource.toStack(actuallyInsert);
 						stacks[i] = newStack;
+						transaction.addOuterCloseCallback((r) -> {
+							if (r.wasCommitted())
+								onContentsChanged(finalI);
+						});
 					}
 				}
 			}
@@ -75,7 +84,13 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 				maxAmount -= toRemove;
 				extracted += toRemove;
 				// remove from storage
+				stack = stack.copy();
 				stack.setCount(stack.getCount() - toRemove);
+				int finalI = i;
+				transaction.addOuterCloseCallback((r) -> {
+					if (r.wasCommitted())
+						onContentsChanged(finalI);
+				});
 				if (stack.isEmpty()) // set to empty for a clean list
 					stacks[i] = ItemStack.EMPTY;
 				if (maxAmount == 0) // nothing left to extract - exit
@@ -113,6 +128,11 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 		return stacks.length;
 	}
 
+	public void setStackInSlot(int slot, ItemStack stack) {
+		stacks[slot] = stack;
+		onContentsChanged(slot);
+	}
+
 	// do not modify this stack!
 	public ItemStack getStackInSlot(int slot) {
 		return stacks[slot];
@@ -131,6 +151,9 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 	}
 
 	protected void onLoad() {
+	}
+
+	protected void onContentsChanged(int slot) {
 	}
 
 	public void setSize(int size) {
