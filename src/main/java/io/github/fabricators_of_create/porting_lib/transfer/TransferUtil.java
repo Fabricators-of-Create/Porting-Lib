@@ -139,6 +139,17 @@ public class TransferUtil {
 		return new CombinedStorage<>(fluidStorages);
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <T> Storage<T> getStorage(BlockEntity be, @Nullable Direction side, Class<T> capability) {
+		if (capability == ItemVariant.class) {
+			return (Storage<T>) getItemStorage(be, side);
+		} else if (capability == FluidVariant.class) {
+			return (Storage<T>) getFluidStorage(be, side);
+		} else {
+			throw new RuntimeException("Class must either be ItemVariant or FluidVariant!");
+		}
+	}
+
 	private static Direction[] getDirections(@Nullable Direction direction) {
 		if (direction == null) return Direction.values();
 		return new Direction[] { direction };

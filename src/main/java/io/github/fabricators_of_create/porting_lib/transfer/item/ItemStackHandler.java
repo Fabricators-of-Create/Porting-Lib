@@ -100,6 +100,8 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 		return extracted;
 	}
 
+
+
 	@Override
 	public Iterator<StorageView<ItemVariant>> iterator(TransactionContext transaction) {
 		return new ItemStackHandlerIterator(this, transaction);
@@ -119,9 +121,7 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 
 	@Override
 	public String toString() {
-		return "ItemStackHandler{" +
-				"stacks=" + Arrays.toString(stacks) +
-				'}';
+		return  getClass().getSimpleName() + '{' + "stacks=" + Arrays.toString(stacks) + '}';
 	}
 
 	public int getSlots() {
