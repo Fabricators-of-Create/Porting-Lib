@@ -223,7 +223,7 @@ public class TransferUtil {
 		try (Transaction t = getTransaction()) {
 			for (StorageView<FluidVariant> view : storage.iterable(t)) {
 				if (!view.isResourceBlank()) {
-					stacks.add(new FluidStack(view.getResource(), view.getAmount()));
+					stacks.add(new FluidStack(view));
 				}
 				if (stacks.size() == cutoff) {
 					break;
@@ -242,7 +242,15 @@ public class TransferUtil {
 		try (Transaction t = getTransaction()) {
 			for (StorageView<ItemVariant> view : storage.iterable(t)) {
 				if (!view.isResourceBlank()) {
-					stacks.add(view.getResource().toStack((int) view.getAmount()));
+					long contained = view.getAmount();
+					ItemVariant item = view.getResource();
+					int maxSize = item.getItem().getMaxStackSize();
+					while (contained > 0 && stacks.size() < cutoff) {
+						int stackSize = Math.min(maxSize, (int) contained);
+						contained -= stackSize;
+						stacks.add(item.toStack(stackSize));
+					}
+
 				}
 				if (stacks.size() == cutoff) {
 					break;
