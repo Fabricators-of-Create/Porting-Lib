@@ -7,5 +7,6 @@ import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.minecraft.core.Direction;
 
 public interface ItemTransferable {
-	Storage<ItemVariant> getStorage(@Nullable Direction face);
+	@Nullable
+	Storage<ItemVariant> getItemStorage(@Nullable Direction face);
 }

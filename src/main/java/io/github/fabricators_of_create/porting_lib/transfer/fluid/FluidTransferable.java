@@ -7,5 +7,6 @@ import net.minecraft.core.Direction;
 import javax.annotation.Nullable;
 
 public interface FluidTransferable {
-	Storage<FluidVariant> getStorage(@Nullable Direction face);
+	@Nullable
+	Storage<FluidVariant> getFluidStorage(@Nullable Direction face);
 }
