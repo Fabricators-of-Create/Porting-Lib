@@ -304,6 +304,22 @@ public class TransferUtil {
 		((ServerWorldCache) level).fabric_invalidateCache(pos);
 	}
 
+	public static <T> long extract(Storage<T> storage, T variant, long amount) {
+		try (Transaction t = getTransaction()) {
+			long extracted = storage.extract(variant, amount, t);
+			t.commit();
+			return extracted;
+		}
+	}
+
+	public static <T> long insert(Storage<T> storage, T variant, long amount) {
+		try (Transaction t = getTransaction()) {
+			long inserted = storage.insert(variant, amount, t);
+			t.commit();
+			return inserted;
+		}
+	}
+
 	public static void initApi() {
 		FluidStorage.SIDED.registerFallback((world, pos, state, be, face) -> {
 			if (be instanceof FluidTransferable t) {
