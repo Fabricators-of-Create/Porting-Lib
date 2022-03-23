@@ -18,8 +18,10 @@ import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import net.fabricmc.fabric.impl.lookup.block.ServerWorldCache;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -290,6 +292,16 @@ public class TransferUtil {
 			}
 		}
 		return FluidStack.EMPTY;
+	}
+
+	public static void invalidateCaches(BlockEntity be) {
+		if (be.getLevel() instanceof ServerLevel server) {
+			invalidateCaches(server, be.getBlockPos());
+		}
+	}
+
+	public static void invalidateCaches(ServerLevel level, BlockPos pos) {
+		((ServerWorldCache) level).fabric_invalidateCache(pos);
 	}
 
 	public static void initApi() {
