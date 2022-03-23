@@ -13,15 +13,18 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.impl.lookup.block.ServerWorldCache;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -312,9 +315,44 @@ public class TransferUtil {
 		}
 	}
 
+	public static FluidStack extractAnyFluid(Storage<FluidVariant> storage, long maxAmount) {
+		FluidStack fluid = FluidStack.EMPTY;
+		try (Transaction t = getTransaction()) {
+			for (StorageView<FluidVariant> view : storage.iterable(t)) {
+				if (!view.isResourceBlank()) {
+					long amount = Math.min(maxAmount, view.getAmount());
+					maxAmount -= amount;
+					if (fluid.isEmpty()) {
+						fluid = new FluidStack(view.getResource(), amount);
+					} else if (fluid.canFill(view.getResource())) {
+						fluid.grow(amount);
+					}
+					if (maxAmount == 0)
+						break;
+				}
+			}
+		}
+		return fluid;
+	}
+
 	public static <T> long insert(Storage<T> storage, T variant, long amount) {
 		try (Transaction t = getTransaction()) {
 			long inserted = storage.insert(variant, amount, t);
+			t.commit();
+			return inserted;
+		}
+	}
+
+	public static long insertToNotHotbar(Player player, ItemVariant variant, long amount) {
+		long inserted = 0;
+		try (Transaction t = getTransaction()) {
+			PlayerInventoryStorage inv = PlayerInventoryStorage.of(player);
+			List<SingleSlotStorage<ItemVariant>> slots = inv.getSlots();
+			for (int i = 9; i < slots.size(); i++) { // start at 9 and skip hotbar
+				SingleSlotStorage<ItemVariant> slot = slots.get(i);
+				inserted += slot.insert(variant, amount - inserted, t);
+				if (amount == 0) break;
+			}
 			t.commit();
 			return inserted;
 		}
