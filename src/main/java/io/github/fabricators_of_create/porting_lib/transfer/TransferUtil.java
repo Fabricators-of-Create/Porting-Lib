@@ -331,8 +331,9 @@ public class TransferUtil {
 						break;
 				}
 			}
+			t.commit();
+			return fluid;
 		}
-		return fluid;
 	}
 
 	public static <T> long insert(Storage<T> storage, T variant, long amount) {
