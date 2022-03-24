@@ -9,4 +9,8 @@ import javax.annotation.Nullable;
 public interface FluidTransferable {
 	@Nullable
 	Storage<FluidVariant> getFluidStorage(@Nullable Direction face);
+
+	default boolean shouldWorkClientSide() {
+		return true;
+	}
 }

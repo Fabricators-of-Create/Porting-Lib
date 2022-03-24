@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
+import io.github.fabricators_of_create.porting_lib.PortingLib;
+import io.github.fabricators_of_create.porting_lib.transfer.sync.SyncableStorage;
 import io.github.fabricators_of_create.porting_lib.util.ItemStackUtil;
 import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -10,17 +12,16 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.Nonnull;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
-public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implements Storage<ItemVariant>, NBTSerializable {
+public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implements Storage<ItemVariant>, NBTSerializable, SyncableStorage {
 	public ItemStack[] stacks;
+	public boolean client = false;
 
 	public ItemStackHandler() {
 		this(1);
@@ -29,6 +30,10 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 	public ItemStackHandler(int stacks) {
 		this.stacks = new ItemStack[stacks];
 		Arrays.fill(this.stacks, ItemStack.EMPTY);
+	}
+
+	public ItemStackHandler(ItemStack[] stacks) {
+		this.stacks = stacks;
 	}
 
 	@Override
@@ -120,6 +125,11 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 	}
 
 	@Override
+	protected void onFinalCommit() {
+		if (client) throw new RuntimeException("Storages may not be modified on the client.");
+	}
+
+	@Override
 	public String toString() {
 		return  getClass().getSimpleName() + '{' + "stacks=" + Arrays.toString(stacks) + '}';
 	}
@@ -191,5 +201,26 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 			}
 		}
 		onLoad();
+	}
+
+	public static final ResourceLocation SYNC_ID = PortingLib.id("item_stack_handler_sync");
+
+	@Override
+	public void write(FriendlyByteBuf buf) {
+		buf.writeVarInt(stacks.length);
+		for (ItemStack stack : stacks) {
+			buf.writeItem(stack);
+		}
+	}
+
+	public static ItemStackHandler fromBuffer(FriendlyByteBuf buf) {
+		int size = buf.readVarInt();
+		ItemStack[] stacks = new ItemStack[size];
+		for (int i = 0; i < size; i++) {
+			stacks[i] = buf.readItem();
+		}
+		ItemStackHandler handler = new ItemStackHandler(stacks);
+		handler.client = true;
+		return handler;
 	}
 }

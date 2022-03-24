@@ -62,10 +62,10 @@ public class TransferUtil {
 	}
 
 	public static Storage<ItemVariant> getItemStorage(BlockEntity be, @Nullable Direction side) {
-		// client handling
-		if (Objects.requireNonNull(be.getLevel()).isClientSide()) {
-			return null;
-		}
+		boolean client = Objects.requireNonNull(be.getLevel()).isClientSide();
+		// lib handling
+		if (be instanceof ItemTransferable t && (!client || t.shouldWorkClientSide())) return t.getItemStorage(side);
+		else if (client) return null;
 		// external handling
 		List<Storage<ItemVariant>> itemStorages = new ArrayList<>();
 		Level l = be.getLevel();
@@ -110,12 +110,9 @@ public class TransferUtil {
 
 	public static Storage<FluidVariant> getFluidStorage(BlockEntity be, @Nullable Direction side) {
 		boolean client = Objects.requireNonNull(be.getLevel()).isClientSide();
-		// client handling
-		if (client) { // TODO CLIENT TRANSFER
-//			IFluidStorage cached = FluidTileDataStorage.getCachedStorage(be);
-//			return LazyOptional.ofObject(cached);
-			return null;
-		}
+		// lib handling
+		if (be instanceof FluidTransferable t && (!client || t.shouldWorkClientSide())) return t.getFluidStorage(side);
+		else if (client) return null;
 		// external handling
 		List<Storage<FluidVariant>> fluidStorages = new ArrayList<>();
 		Level l = be.getLevel();
@@ -163,7 +160,7 @@ public class TransferUtil {
 
 	public static Optional<FluidStack> getFluidContained(ItemStack container) {
 		if (container != null && !container.isEmpty()) {
-			Storage<FluidVariant> storage = FluidStorage.ITEM.find(container, ContainerItemContext.withInitial(container));
+			Storage<FluidVariant> storage = ContainerItemContext.withInitial(container).find(FluidStorage.ITEM);
 			if (storage != null) {
 				FluidStack first = getFirstFluid(storage);
 				if (first != null) return Optional.of(first);
@@ -295,16 +292,6 @@ public class TransferUtil {
 			}
 		}
 		return FluidStack.EMPTY;
-	}
-
-	public static void invalidateCaches(BlockEntity be) {
-		if (be.getLevel() instanceof ServerLevel server) {
-			invalidateCaches(server, be.getBlockPos());
-		}
-	}
-
-	public static void invalidateCaches(ServerLevel level, BlockPos pos) {
-		((ServerWorldCache) level).fabric_invalidateCache(pos);
 	}
 
 	public static <T> long extract(Storage<T> storage, T variant, long amount) {

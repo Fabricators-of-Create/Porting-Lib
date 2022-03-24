@@ -9,4 +9,8 @@ import net.minecraft.core.Direction;
 public interface ItemTransferable {
 	@Nullable
 	Storage<ItemVariant> getItemStorage(@Nullable Direction face);
+
+	default boolean shouldWorkClientSide() {
+		return true;
+	}
 }

@@ -12,6 +12,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 
 public class LevelUtil {
 	public static boolean isAreaLoaded(LevelAccessor world, BlockPos center, int range) {
+		if (range == 0) return world.hasChunkAt(center);
 		return world.hasChunksAt(center.offset(-range, -range, -range), center.offset(range, range, range));
 	}
 
