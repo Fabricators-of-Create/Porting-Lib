@@ -1,7 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
 import io.github.fabricators_of_create.porting_lib.PortingLib;
-import io.github.fabricators_of_create.porting_lib.transfer.sync.SyncableStorage;
 import io.github.fabricators_of_create.porting_lib.util.ItemStackUtil;
 import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -19,7 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.Arrays;
 import java.util.Iterator;
 
-public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implements Storage<ItemVariant>, NBTSerializable, SyncableStorage {
+public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implements Storage<ItemVariant>, NBTSerializable {
 	public ItemStack[] stacks;
 	public boolean client = false;
 
@@ -201,26 +200,5 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 			}
 		}
 		onLoad();
-	}
-
-	public static final ResourceLocation SYNC_ID = PortingLib.id("item_stack_handler_sync");
-
-	@Override
-	public void write(FriendlyByteBuf buf) {
-		buf.writeVarInt(stacks.length);
-		for (ItemStack stack : stacks) {
-			buf.writeItem(stack);
-		}
-	}
-
-	public static ItemStackHandler fromBuffer(FriendlyByteBuf buf) {
-		int size = buf.readVarInt();
-		ItemStack[] stacks = new ItemStack[size];
-		for (int i = 0; i < size; i++) {
-			stacks[i] = buf.readItem();
-		}
-		ItemStackHandler handler = new ItemStackHandler(stacks);
-		handler.client = true;
-		return handler;
 	}
 }
