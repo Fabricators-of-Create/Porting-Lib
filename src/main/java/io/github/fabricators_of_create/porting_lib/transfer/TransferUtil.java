@@ -20,10 +20,8 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
-import net.fabricmc.fabric.impl.lookup.block.ServerWorldCache;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -64,7 +62,7 @@ public class TransferUtil {
 	public static Storage<ItemVariant> getItemStorage(BlockEntity be, @Nullable Direction side) {
 		boolean client = Objects.requireNonNull(be.getLevel()).isClientSide();
 		// lib handling
-		if (be instanceof ItemTransferable t && (!client || t.shouldWorkClientSide())) return t.getItemStorage(side);
+		if (be instanceof ItemTransferable t && (!client || t.canTransferItemsClientSide())) return t.getItemStorage(side);
 		else if (client) return null;
 		// external handling
 		List<Storage<ItemVariant>> itemStorages = new ArrayList<>();
@@ -111,7 +109,7 @@ public class TransferUtil {
 	public static Storage<FluidVariant> getFluidStorage(BlockEntity be, @Nullable Direction side) {
 		boolean client = Objects.requireNonNull(be.getLevel()).isClientSide();
 		// lib handling
-		if (be instanceof FluidTransferable t && (!client || t.shouldWorkClientSide())) return t.getFluidStorage(side);
+		if (be instanceof FluidTransferable t && (!client || t.canTransferFluidsClientSide())) return t.getFluidStorage(side);
 		else if (client) return null;
 		// external handling
 		List<Storage<FluidVariant>> fluidStorages = new ArrayList<>();

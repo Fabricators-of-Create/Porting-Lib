@@ -10,7 +10,7 @@ public interface ItemTransferable {
 	@Nullable
 	Storage<ItemVariant> getItemStorage(@Nullable Direction face);
 
-	default boolean shouldWorkClientSide() {
+	default boolean canTransferItemsClientSide() {
 		return true;
 	}
 }

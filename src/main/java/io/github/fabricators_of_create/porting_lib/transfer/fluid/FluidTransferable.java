@@ -10,7 +10,7 @@ public interface FluidTransferable {
 	@Nullable
 	Storage<FluidVariant> getFluidStorage(@Nullable Direction face);
 
-	default boolean shouldWorkClientSide() {
+	default boolean canTransferFluidsClientSide() {
 		return true;
 	}
 }
