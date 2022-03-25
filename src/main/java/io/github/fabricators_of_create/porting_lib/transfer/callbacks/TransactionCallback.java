@@ -6,6 +6,8 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext.Result;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
@@ -60,13 +62,17 @@ public abstract class TransactionCallback implements TransactionContext.CloseCal
 	}
 
 	public static void setBlockAndUpdate(TransactionContext ctx, Level level, BlockPos pos, BlockState state) {
-		setBlock(ctx, level, pos, state, 3);
+		setBlock(ctx, level, pos, state, Block.UPDATE_ALL);
 	}
 
 	public static void setBlock(TransactionContext ctx, Level level, BlockPos pos, BlockState state, int flags) {
 		BlockState old = level.getBlockState(pos);
-		onFail(ctx, () -> level.setBlock(pos, old, 0));
-		level.setBlock(pos, state, 0);
-		onSuccess(ctx, () -> level.setBlock(pos, state, flags));
+		BlockEntity be = old.hasBlockEntity() ? level.getBlockEntity(pos) : null;
+		onFail(ctx, () -> {
+			level.setBlock(pos, old, 0); // reset back to old on fail
+			if (be != null && level.getBlockEntity(pos) != be) level.setBlockEntity(be); // restore any BEs
+		});
+		level.setBlock(pos, state, 0); // set silently
+		onSuccess(ctx, () -> level.setBlock(pos, state, flags)); // send update on new
 	}
 }
