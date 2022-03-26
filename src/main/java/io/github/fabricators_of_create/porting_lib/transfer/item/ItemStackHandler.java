@@ -124,11 +124,6 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 	}
 
 	@Override
-	protected void onFinalCommit() {
-		if (client) throw new RuntimeException("Storages may not be modified on the client.");
-	}
-
-	@Override
 	public String toString() {
 		return  getClass().getSimpleName() + '{' + "stacks=" + Arrays.toString(stacks) + '}';
 	}
