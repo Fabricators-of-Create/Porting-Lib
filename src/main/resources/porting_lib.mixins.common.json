@@ -42,6 +42,7 @@
     "MushroomCowMixin",
     "OreBlockMixin",
     "ParticleTypeMixin",
+    "PiglinAiMixin",
     "PlayerListMixin",
     "PlayerMixin",
     "ProjectileMixin",
