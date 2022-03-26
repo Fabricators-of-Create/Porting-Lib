@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
-import io.github.fabricators_of_create.porting_lib.PortingLib;
+import io.github.fabricators_of_create.porting_lib.transfer.callbacks.TransactionCallback;
+import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler.SnapshotData;
 import io.github.fabricators_of_create.porting_lib.util.ItemStackUtil;
 import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -11,14 +12,12 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Arrays;
 import java.util.Iterator;
 
-public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implements Storage<ItemVariant>, NBTSerializable {
+public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implements Storage<ItemVariant>, NBTSerializable {
 	public ItemStack[] stacks;
 	public boolean client = false;
 
@@ -42,17 +41,12 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 		for (int i = 0; i < stacks.length; i++) {
 			if (isItemValid(i, resource)) {
 				ItemStack held = stacks[i];
-				int finalI = i;
 				if (held.isEmpty()) { // just throw in a full stack
 					int toFill = getStackLimit(i, resource);
 					maxAmount -= toFill;
 					inserted += toFill;
 					ItemStack stack = resource.toStack(toFill);
-					stacks[i] = stack;
-					transaction.addOuterCloseCallback((r) -> {
-						if (r.wasCommitted())
-							onContentsChanged(finalI);
-					});
+					contentsChangedInternal(i, stack, transaction);
 				} else if (ItemStackUtil.canItemStacksStack(held, resource.toStack())) { // already filled, but can stack
 					int max = getStackLimit(i, resource); // total possible
 					int canInsert = max - held.getCount(); // room available
@@ -61,11 +55,7 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 						maxAmount -= actuallyInsert;
 						inserted += actuallyInsert;
 						ItemStack newStack = resource.toStack(actuallyInsert);
-						stacks[i] = newStack;
-						transaction.addOuterCloseCallback((r) -> {
-							if (r.wasCommitted())
-								onContentsChanged(finalI);
-						});
+						contentsChangedInternal(i, newStack, transaction);
 					}
 				}
 			}
@@ -91,10 +81,7 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 				stack = stack.copy();
 				stack.setCount(stack.getCount() - toRemove);
 				int finalI = i;
-				transaction.addOuterCloseCallback((r) -> {
-					if (r.wasCommitted())
-						onContentsChanged(finalI);
-				});
+				TransactionCallback.onSuccess(transaction, () -> onContentsChanged(finalI));
 				if (stack.isEmpty()) // set to empty for a clean list
 					stacks[i] = ItemStack.EMPTY;
 				if (maxAmount == 0) // nothing left to extract - exit
@@ -104,7 +91,10 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 		return extracted;
 	}
 
-
+	protected void contentsChangedInternal(int slot, ItemStack newStack, TransactionContext ctx) {
+		stacks[slot] = newStack;
+		TransactionCallback.onSuccess(ctx, () -> onContentsChanged(slot));
+	}
 
 	@Override
 	public Iterator<StorageView<ItemVariant>> iterator(TransactionContext transaction) {
@@ -112,15 +102,15 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 	}
 
 	@Override
-	protected ItemStack[] createSnapshot() {
+	protected SnapshotData createSnapshot() {
 		ItemStack[] array = new ItemStack[stacks.length];
 		System.arraycopy(stacks, 0, array, 0, stacks.length);
-		return array;
+		return new SnapshotData(array);
 	}
 
 	@Override
-	protected void readSnapshot(ItemStack[] snapshot) {
-		this.stacks = snapshot;
+	protected void readSnapshot(SnapshotData snapshot) {
+		this.stacks = snapshot.stacks;
 	}
 
 	@Override
@@ -195,5 +185,13 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStack[]> implement
 			}
 		}
 		onLoad();
+	}
+
+	public static class SnapshotData {
+		public final ItemStack[] stacks;
+
+		public SnapshotData(ItemStack[] stacks) {
+			this.stacks = stacks;
+		}
 	}
 }
