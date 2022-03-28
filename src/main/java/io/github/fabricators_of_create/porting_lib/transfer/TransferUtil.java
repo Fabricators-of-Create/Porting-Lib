@@ -28,6 +28,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import org.lwjgl.system.CallbackI.F;
+
 import javax.annotation.Nullable;
 
 /**
@@ -329,12 +331,28 @@ public class TransferUtil {
 		}
 	}
 
+	public static long extractItem(Storage<ItemVariant> storage, ItemStack stack) {
+		return extract(storage, ItemVariant.of(stack), stack.getCount());
+	}
+
+	public static long extractFluid(Storage<FluidVariant> storage, FluidStack stack) {
+		return extract(storage, stack.getType(), stack.getAmount());
+	}
+
 	public static <T> long insert(Storage<T> storage, T variant, long amount) {
 		try (Transaction t = getTransaction()) {
 			long inserted = storage.insert(variant, amount, t);
 			t.commit();
 			return inserted;
 		}
+	}
+
+	public static long insertItem(Storage<ItemVariant> storage, ItemStack stack) {
+		return insert(storage, ItemVariant.of(stack), stack.getCount());
+	}
+
+	public static long insertFluid(Storage<FluidVariant> storage, FluidStack stack) {
+		return insert(storage, stack.getType(), stack.getAmount());
 	}
 
 	public static long insertToNotHotbar(Player player, ItemVariant variant, long amount) {
