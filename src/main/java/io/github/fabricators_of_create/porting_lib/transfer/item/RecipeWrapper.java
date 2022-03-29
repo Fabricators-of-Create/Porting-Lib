@@ -15,12 +15,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 /**
- * Wraps a ItemStackHandler in a Container for use in recipes and crafting.
+ * Wraps an ItemStackHandler in a Container for use in recipes and crafting.
  */
 public class RecipeWrapper extends ItemStackHandler implements Container {
 	protected final ItemStackHandler handler;
 
 	public RecipeWrapper(ItemStackHandler handler) {
+		super(0);
 		this.handler = handler;
 	}
 
@@ -206,5 +207,10 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	@Override
 	public String toString() {
 		return "RecipeWrapper{" + handler + "}";
+	}
+
+	@Override
+	public void setStackInSlot(int slot, ItemStack stack) {
+		handler.setStackInSlot(slot, stack);
 	}
 }

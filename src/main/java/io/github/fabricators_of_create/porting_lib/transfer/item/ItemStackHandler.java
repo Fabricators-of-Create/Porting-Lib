@@ -26,7 +26,8 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 	}
 
 	public ItemStackHandler(int stacks) {
-		setSize(stacks);
+		this.stacks = new ItemStack[stacks];
+		Arrays.fill(this.stacks, ItemStack.EMPTY);
 	}
 
 	public ItemStackHandler(ItemStack[] stacks) {
