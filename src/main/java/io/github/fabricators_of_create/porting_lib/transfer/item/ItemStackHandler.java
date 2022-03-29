@@ -26,8 +26,7 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 	}
 
 	public ItemStackHandler(int stacks) {
-		this.stacks = new ItemStack[stacks];
-		Arrays.fill(this.stacks, ItemStack.EMPTY);
+		setSize(stacks);
 	}
 
 	public ItemStackHandler(ItemStack[] stacks) {
@@ -151,7 +150,8 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 	}
 
 	public void setSize(int size) {
-		stacks = new ItemStack[size];
+		this.stacks = new ItemStack[size];
+		Arrays.fill(this.stacks, ItemStack.EMPTY);
 	}
 
 	@Override
