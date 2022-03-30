@@ -1,10 +1,10 @@
-package io.github.fabricators_of_create.porting_lib.extensions;
+package io.github.fabricators_of_create.porting_lib.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 
-public interface BlockExtensions {
+public interface CustomExpBlock {
 	/**
 	 * Gathers how much experience this block drops when broken.
 	 *

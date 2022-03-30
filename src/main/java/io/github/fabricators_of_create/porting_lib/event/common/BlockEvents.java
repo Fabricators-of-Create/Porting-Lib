@@ -1,7 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.event.common;
 
+import io.github.fabricators_of_create.porting_lib.block.CustomExpBlock;
 import io.github.fabricators_of_create.porting_lib.event.BaseEvent;
-import io.github.fabricators_of_create.porting_lib.extensions.BlockExtensions;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.core.BlockPos;
@@ -71,7 +71,7 @@ public abstract class BlockEvents extends BaseEvent {
 			} else{
 				int bonusLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, player.getMainHandItem());
 				int silklevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getMainHandItem());
-				this.exp = ((BlockExtensions)state.getBlock()).getExpDrop(state, world, pos, bonusLevel, silklevel);
+				this.exp = state.getBlock() instanceof CustomExpBlock exp ? exp.getExpDrop(state, world, pos, bonusLevel, silklevel) : 0;
 			}
 		}
 

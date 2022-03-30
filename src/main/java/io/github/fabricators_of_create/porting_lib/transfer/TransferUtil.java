@@ -5,9 +5,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientFluidLookupCache;
+import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientItemLookupCache;
+import io.github.fabricators_of_create.porting_lib.transfer.cache.EmptyFluidLookupCache;
+import io.github.fabricators_of_create.porting_lib.transfer.cache.EmptyItemLookupCache;
 import io.github.fabricators_of_create.porting_lib.transfer.fluid.FluidTransferable;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemTransferable;
 import io.github.fabricators_of_create.porting_lib.util.FluidStack;
+import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -20,15 +25,15 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-
-import org.lwjgl.system.CallbackI.F;
 
 import javax.annotation.Nullable;
 
@@ -368,6 +373,24 @@ public class TransferUtil {
 			t.commit();
 			return inserted;
 		}
+	}
+
+	public static BlockApiCache<Storage<ItemVariant>, Direction> getItemCache(Level level, BlockPos pos) {
+		if (level instanceof ServerLevel server) {
+			return BlockApiCache.create(ItemStorage.SIDED, server, pos);
+		} else if (level instanceof ClientLevel client) {
+			return new ClientItemLookupCache(client, pos);
+		}
+		return EmptyItemLookupCache.INSTANCE;
+	}
+
+	public static BlockApiCache<Storage<FluidVariant>, Direction> getFluidCache(Level level, BlockPos pos) {
+		if (level instanceof ServerLevel server) {
+			return BlockApiCache.create(FluidStorage.SIDED, server, pos);
+		} else if (level instanceof ClientLevel client) {
+			return new ClientFluidLookupCache(client, pos);
+		}
+		return EmptyFluidLookupCache.INSTANCE;
 	}
 
 	public static void initApi() {

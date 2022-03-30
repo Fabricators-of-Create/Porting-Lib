@@ -1,6 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.extensions.BlockExtensions;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 
 @Mixin(Block.class)
-public abstract class BlockMixin extends BlockBehaviour implements BlockExtensions, RegistryNameProvider {
+public abstract class BlockMixin extends BlockBehaviour implements RegistryNameProvider {
 
 	private BlockMixin(BlockBehaviour.Properties properties) {
 		super(properties);

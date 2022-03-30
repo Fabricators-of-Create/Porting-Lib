@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ItemColors.class)
-public class ItemColorsMixin {
+public abstract class ItemColorsMixin {
   @Inject(method = "createDefault", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
   private static void registerModdedColorHandlers(BlockColors colors, CallbackInfoReturnable<ItemColors> cir, ItemColors itemcolors) {
     ColorHandlersCallback.ITEM.invoker().registerItemColors(itemcolors, colors);

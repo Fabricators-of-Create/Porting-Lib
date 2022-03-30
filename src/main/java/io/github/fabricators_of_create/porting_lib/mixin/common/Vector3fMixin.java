@@ -9,10 +9,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(Vector3f.class)
-public class Vector3fMixin implements Vector3fExtensions {
+public abstract class Vector3fMixin implements Vector3fExtensions {
 
   @Shadow
-  public float x, y, z;
+  private float x, y, z;
 
   @Unique
   @Override

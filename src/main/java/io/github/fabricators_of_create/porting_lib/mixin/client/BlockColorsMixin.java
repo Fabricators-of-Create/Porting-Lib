@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import net.minecraft.client.color.block.BlockColors;
 
 @Mixin(BlockColors.class)
-public class BlockColorsMixin {
+public abstract class BlockColorsMixin {
   @Inject(method = "createDefault", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
   private static void registerModdedColorHandlers(CallbackInfoReturnable<BlockColors> cir, BlockColors blockColors) {
     ColorHandlersCallback.BLOCK.invoker().registerBlockColors(blockColors);

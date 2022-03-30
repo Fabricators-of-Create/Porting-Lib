@@ -1,8 +1,15 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
+import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
+import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
+import net.fabricmc.fabric.impl.lookup.block.BlockApiCacheImpl;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
@@ -11,6 +18,7 @@ import net.minecraft.world.level.ExplosionDamageCalculator;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;

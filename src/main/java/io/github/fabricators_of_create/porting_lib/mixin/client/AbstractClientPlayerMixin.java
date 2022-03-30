@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(AbstractClientPlayer.class)
-public class AbstractClientPlayerMixin {
+public abstract class AbstractClientPlayerMixin {
   @Inject(method = "getFieldOfViewModifier", at = @At(value = "RETURN", ordinal = 1), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
   public void newFov(CallbackInfoReturnable<Float> cir, float fov) {
     float newFov = FOVModifierCallback.EVENT.invoker().getNewFOV((Player) (Object) this, fov);

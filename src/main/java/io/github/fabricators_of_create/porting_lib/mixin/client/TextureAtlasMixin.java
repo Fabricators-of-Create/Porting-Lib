@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 @Mixin(TextureAtlas.class)
-public class TextureAtlasMixin {
+public abstract class TextureAtlasMixin {
   @Inject(method = "prepareToStitch",
     at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V", ordinal = 0,
       shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)

@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ItemPredicate.class)
-public class ItemPredicateMixin {
+public abstract class ItemPredicateMixin {
 	@Inject(method = "fromJson", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/critereon/MinMaxBounds$Ints;fromJson(Lcom/google/gson/JsonElement;)Lnet/minecraft/advancements/critereon/MinMaxBounds$Ints;", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	private static void port_lib$customItemPredicates(JsonElement json, CallbackInfoReturnable<ItemPredicate> cir, JsonObject jsonobject) {
 		if (jsonobject.has("type")) {
