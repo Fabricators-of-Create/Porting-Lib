@@ -290,12 +290,13 @@ public class TransferUtil {
 		try (Transaction t = getTransaction()) {
 			for (StorageView<FluidVariant> view : storage.iterable(t)) {
 				if (!view.isResourceBlank()) {
+					FluidVariant var = view.getResource();
 					long amount = Math.min(maxAmount, view.getAmount());
-					long extracted = view.extract(view.getResource(), amount, t);
+					long extracted = view.extract(var, amount, t);
 					maxAmount -= extracted;
 					if (fluid.isEmpty()) {
-						fluid = new FluidStack(view.getResource(), extracted);
-					} else if (fluid.canFill(view.getResource())) {
+						fluid = new FluidStack(var, extracted);
+					} else if (fluid.canFill(var)) {
 						fluid.grow(extracted);
 					}
 					if (maxAmount == 0)
@@ -312,12 +313,13 @@ public class TransferUtil {
 		try (Transaction t = getTransaction()) {
 			for (StorageView<ItemVariant> view : storage.iterable(t)) {
 				if (!view.isResourceBlank()) {
-					long amount = Math.min(view.getResource().getItem().getMaxStackSize(), Math.min(maxAmount, view.getAmount()));
-					long extracted = view.extract(view.getResource(), amount, t);
+					ItemVariant var = view.getResource();
+					long amount = Math.min(var.getItem().getMaxStackSize(), Math.min(maxAmount, view.getAmount()));
+					long extracted = view.extract(var, amount, t);
 					maxAmount -= extracted;
 					if (stack.isEmpty()) {
-						stack = view.getResource().toStack((int) extracted);
-					} else if (view.getResource().matches(stack)) {
+						stack = var.toStack((int) extracted);
+					} else if (var.matches(stack)) {
 						stack.grow((int) extracted);
 					}
 					if (maxAmount == 0)
