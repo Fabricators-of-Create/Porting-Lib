@@ -1,10 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.transfer.callbacks;
 
-import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
-import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import io.github.fabricators_of_create.porting_lib.util.LevelUtil;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext.Result;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -73,6 +73,8 @@ public abstract class TransactionCallback implements TransactionContext.CloseCal
 			if (be != null && level.getBlockEntity(pos) != be) level.setBlockEntity(be); // restore any BEs
 		});
 		level.setBlock(pos, state, 0); // set silently
-		onSuccess(ctx, () -> level.setBlock(pos, state, flags)); // send update on new
+		onSuccess(ctx, () -> { // send update on new
+			LevelUtil.markAndNotifyBlock(level, pos, level.getChunkAt(pos), old, state, flags, 512);
+		});
 	}
 }

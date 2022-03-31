@@ -42,7 +42,7 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 			if (isItemValid(i, resource)) {
 				ItemStack held = stacks[i];
 				if (held.isEmpty()) { // just throw in a full stack
-					int toFill = getStackLimit(i, resource);
+					int toFill = (int) Math.min(getStackLimit(i, resource), maxAmount);
 					maxAmount -= toFill;
 					inserted += toFill;
 					ItemStack stack = resource.toStack(toFill);
@@ -54,8 +54,8 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 					if (actuallyInsert > 0) {
 						maxAmount -= actuallyInsert;
 						inserted += actuallyInsert;
-						ItemStack newStack = resource.toStack(actuallyInsert);
-						contentsChangedInternal(i, newStack, transaction);
+						held.grow(actuallyInsert);
+						contentsChangedInternal(i, held, transaction);
 					}
 				}
 			}

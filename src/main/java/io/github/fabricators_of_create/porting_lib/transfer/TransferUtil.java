@@ -67,6 +67,7 @@ public class TransferUtil {
 	}
 
 	public static Storage<ItemVariant> getItemStorage(BlockEntity be, @Nullable Direction side) {
+		if (be == null) return null;
 		boolean client = Objects.requireNonNull(be.getLevel()).isClientSide();
 		// lib handling
 		if (be instanceof ItemTransferable t && (!client || t.canTransferItemsClientSide())) return t.getItemStorage(side);
@@ -114,6 +115,7 @@ public class TransferUtil {
 	}
 
 	public static Storage<FluidVariant> getFluidStorage(BlockEntity be, @Nullable Direction side) {
+		if (be == null) return null;
 		boolean client = Objects.requireNonNull(be.getLevel()).isClientSide();
 		// lib handling
 		if (be instanceof FluidTransferable t && (!client || t.canTransferFluidsClientSide())) return t.getFluidStorage(side);
