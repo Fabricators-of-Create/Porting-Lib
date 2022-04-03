@@ -328,8 +328,9 @@ public class TransferUtil {
 						break;
 				}
 			}
+			t.commit();
+			return stack;
 		}
-		return ItemStack.EMPTY;
 	}
 
 	public static <T> long extract(Storage<T> storage, T variant, long amount) {
