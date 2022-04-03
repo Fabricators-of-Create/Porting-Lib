@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import io.github.fabricators_of_create.porting_lib.PortingLib;
 import io.github.fabricators_of_create.porting_lib.model.CompositeModelState;
 
 import io.github.fabricators_of_create.porting_lib.model.PerspectiveMapWrapper;
@@ -47,10 +48,6 @@ import net.minecraft.resources.ResourceLocation;
 
 @Mixin(BlockModel.class)
 public abstract class BlockModelMixin implements BlockModelExtensions {
-	@Shadow
-	@Final
-	private static Logger LOGGER;
-
 	@Unique
 	private final BlockModelConfiguration data = new BlockModelConfiguration((BlockModel) (Object) this);
 
@@ -98,11 +95,11 @@ public abstract class BlockModelMixin implements BlockModelExtensions {
 			set.add(blockmodel);
 			UnbakedModel unbakedmodel = pModelGetter.apply(blockmodel.parentLocation);
 			if (unbakedmodel == null) {
-				LOGGER.warn("No parent '{}' while loading model '{}'", this.parentLocation, blockmodel);
+				PortingLib.LOGGER.warn("No parent '{}' while loading model '{}'", this.parentLocation, blockmodel);
 			}
 
 			if (set.contains(unbakedmodel)) {
-				LOGGER.warn("Found 'parent' loop while loading model '{}' in chain: {} -> {}", blockmodel, set.stream().map(Object::toString).collect(Collectors.joining(" -> ")), this.parentLocation);
+				PortingLib.LOGGER.warn("Found 'parent' loop while loading model '{}' in chain: {} -> {}", blockmodel, set.stream().map(Object::toString).collect(Collectors.joining(" -> ")), this.parentLocation);
 				unbakedmodel = null;
 			}
 

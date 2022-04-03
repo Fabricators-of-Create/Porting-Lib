@@ -1,31 +1,27 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import org.spongepowered.asm.mixin.Final;
+import net.minecraft.server.ReloadableServerResources;
+
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import io.github.fabricators_of_create.porting_lib.event.DataPackReloadCallback;
-import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
+import io.github.fabricators_of_create.porting_lib.event.AddReloadListenersCallback;
 
-import net.minecraft.commands.Commands;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.server.ServerResources;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.server.packs.resources.ReloadableResourceManager;
 
-@Mixin(ServerResources.class)
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Mixin(ReloadableServerResources.class)
 public abstract class ServerResourcesMixin {
-	@Shadow
-	@Final
-	private ReloadableResourceManager resources;
 
-	@Inject(method = "<init>",at = @At("TAIL"))
-	public void port_lib$DataPackRegistries(RegistryAccess registryAccess, Commands.CommandSelection commandSelection, int i, CallbackInfo ci) {
-		for (PreparableReloadListener listener : DataPackReloadCallback.EVENT.invoker().onDataPackReload((ServerResources) (Object) this)) {
-			resources.registerReloadListener(listener);
-		}
+	@ModifyArgs(method = "loadResources",at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/resources/SimpleReloadInstance;create(Lnet/minecraft/server/packs/resources/ResourceManager;Ljava/util/List;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;Z)Lnet/minecraft/server/packs/resources/ReloadInstance;"))
+	private static void port_lib$DataPackRegistries(Args args) {
+		List<PreparableReloadListener> listeners = new ArrayList<>(args.get(1));
+		AddReloadListenersCallback.EVENT.invoker().addReloadListeners(listeners);
+		args.set(1, listeners);
 	}
 }

@@ -65,7 +65,6 @@
     "SpreadPlayersCommandMixin",
     "StructureProcessorMixin",
     "StructureTemplateMixin",
-    "TagContainerMixin",
     "TallGrassBlockMixin",
     "TeleportCommandMixin",
     "ThrownEnderpearlMixin",
@@ -105,7 +104,6 @@
     "accessor.SlotAccessor",
     "accessor.StairBlockAccessor",
     "accessor.StructureTemplateAccessor",
-    "accessor.TagContainerAccessor",
     "accessor.TagValueAccessor"
   ],
   "injectors": {

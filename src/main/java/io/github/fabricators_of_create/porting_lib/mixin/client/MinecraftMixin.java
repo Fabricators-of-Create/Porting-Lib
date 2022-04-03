@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import io.github.fabricators_of_create.porting_lib.event.AttackAirCallback;
@@ -53,18 +54,6 @@ public abstract class MinecraftMixin {
 		ParticleManagerRegistrationCallback.EVENT.invoker().onParticleManagerRegistration();
 	}
 
-	// should inject to right after the initialization of resourceManager
-	@Inject(
-			method = "<init>",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/server/packs/resources/SimpleReloadableResourceManager;<init>(Lnet/minecraft/server/packs/PackType;)V"
-			)
-	)
-	public void port_lib$instanceRegistration(GameConfig args, CallbackInfo ci) {
-		InstanceRegistrationCallback.EVENT.invoker().registerInstance();
-	}
-
 	@Inject(method = "<init>", at = @At("TAIL"))
 	public void port_lib$mcTail(GameConfig gameConfiguration, CallbackInfo ci) {
 		MinecraftTailCallback.EVENT.invoker().onMinecraftTail((Minecraft) (Object) this);
@@ -91,7 +80,7 @@ public abstract class MinecraftMixin {
 	}
 
 	@Inject(method = "startAttack", at = @At(value = "FIELD", ordinal = 2, target = "Lnet/minecraft/client/Minecraft;player:Lnet/minecraft/client/player/LocalPlayer;"))
-	private void port_lib$onClickMouse(CallbackInfo ci) {
+	private void port_lib$onClickMouse(CallbackInfoReturnable<Boolean> cir) {
 		AttackAirCallback.EVENT.invoker().attackAir(player);
 	}
 
