@@ -7,6 +7,8 @@ transitive-accessible class net/minecraft/world/item/crafting/Ingredient$ItemVal
 transitive-accessible method net/minecraft/world/item/crafting/Ingredient$ItemValue <init> (Lnet/minecraft/world/item/ItemStack;)V
 transitive-accessible class net/minecraft/world/item/crafting/Ingredient$TagValue
 
+transitive-accessible class net/minecraft/world/item/alchemy/PotionBrewing$Mix
+
 transitive-accessible class net/minecraft/client/renderer/texture/TextureAtlasSprite$AnimatedTexture
 
 transitive-accessible class net/minecraft/client/renderer/RenderType$CompositeState

@@ -97,6 +97,7 @@
     "accessor.LivingEntityAccessor",
     "accessor.MinecraftServerAccessor",
     "accessor.PlayerAccessor",
+    "accessor.PotionBrewing$MixAccessor",
     "accessor.PotionBrewingAccessor",
     "accessor.RailStateAccessor",
     "accessor.RecipeManagerAccessor",
