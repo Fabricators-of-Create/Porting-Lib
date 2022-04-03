@@ -47,7 +47,7 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	@Override
 	public ItemStack removeItem(int index, int count) {
 		ItemStack[] stacks = handler.stacks;
-		if (index > 0 && index < stacks.length) {
+		if (index >= 0 && index < stacks.length) {
 			ItemStack current = stacks[index];
 			stacks[index] = ItemStack.EMPTY;
 			return current.split(count);
@@ -63,7 +63,7 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	@Override
 	public void setItem(int index, ItemStack stack) {
 		ItemStack[] stacks = handler.stacks;
-		if (index > 0 && index < stacks.length) {
+		if (index >= 0 && index < stacks.length) {
 			stacks[index] = stack;
 		}
 	}
