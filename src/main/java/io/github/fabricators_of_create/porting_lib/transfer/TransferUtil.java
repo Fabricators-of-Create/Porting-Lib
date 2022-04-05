@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.transfer;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -343,6 +344,37 @@ public class TransferUtil {
 
 	public static long extractItem(Storage<ItemVariant> storage, ItemStack stack) {
 		return extract(storage, ItemVariant.of(stack), stack.getCount());
+	}
+
+	public static List<ItemStack> extractAllAsStacks(Storage<ItemVariant> storage) {
+		List<ItemStack> stacks = new ArrayList<>();
+		if (!storage.supportsExtraction()) return stacks;
+		try (Transaction t = getTransaction()) {
+			Iterator<StorageView<ItemVariant>> itr = storage.iterator(t);
+			StorageView<ItemVariant> currentView = itr.hasNext() ? itr.next() : null;
+			while (currentView != null) {
+				if (currentView.isResourceBlank()) {
+					currentView = itr.hasNext() ? itr.next() : null;
+					continue;
+				}
+				long contained = currentView.getAmount();
+				if (contained == 0) {
+					currentView = itr.hasNext() ? itr.next() : null;
+					continue;
+				}
+				ItemVariant variant = currentView.getResource();
+				int max = (int) Math.min(contained, variant.getItem().getMaxStackSize());
+				long extracted = currentView.extract(variant, max, t);
+				if (extracted == 0) {
+					currentView = itr.hasNext() ? itr.next() : null;
+					continue;
+				}
+				ItemStack stack = variant.toStack((int) extracted);
+				stacks.add(stack);
+			}
+			t.commit();
+			return stacks;
+		}
 	}
 
 	public static long extractFluid(Storage<FluidVariant> storage, FluidStack stack) {

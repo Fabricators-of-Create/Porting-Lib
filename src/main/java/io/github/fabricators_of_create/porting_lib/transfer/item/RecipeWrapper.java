@@ -213,4 +213,19 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	public void setStackInSlot(int slot, ItemStack stack) {
 		handler.setStackInSlot(slot, stack);
 	}
+
+	@Override
+	public void contentsChangedInternal(int slot, ItemStack newStack, TransactionContext ctx) {
+		handler.contentsChangedInternal(slot, newStack, ctx);
+	}
+
+	@Override
+	public void onContentsChanged(int slot) {
+		handler.onContentsChanged(slot);
+	}
+
+	@Override
+	protected void onFinalCommit() {
+		handler.onFinalCommit();
+	}
 }

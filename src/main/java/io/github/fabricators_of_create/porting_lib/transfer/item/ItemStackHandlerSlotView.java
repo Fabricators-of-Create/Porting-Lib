@@ -3,8 +3,11 @@ package io.github.fabricators_of_create.porting_lib.transfer.item;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext.Result;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nullable;
 
 public class ItemStackHandlerSlotView extends SnapshotParticipant<ItemStack> implements StorageView<ItemVariant> {
 	protected ItemStackHandler handler;
@@ -19,10 +22,10 @@ public class ItemStackHandlerSlotView extends SnapshotParticipant<ItemStack> imp
 		this.variant = ItemVariant.of(stack);
 	}
 
-	private void setStack(ItemStack stack) {
+	private void setStack(ItemStack stack, @Nullable TransactionContext ctx) {
+		handler.contentsChangedInternal(index, stack, ctx);
 		this.stack = stack;
-		handler.stacks[index] = stack;
-		variant = ItemVariant.of(stack);
+		this.variant = ItemVariant.of(stack);
 	}
 
 	@Override
@@ -34,11 +37,11 @@ public class ItemStackHandlerSlotView extends SnapshotParticipant<ItemStack> imp
 				updateSnapshots(transaction);
 				int remaining = stack.getCount() - extracted;
 				if (remaining <= 0) {
-					setStack(ItemStack.EMPTY);
+					setStack(ItemStack.EMPTY, transaction);
 				} else {
 					ItemStack newStack = stack.copy();
 					newStack.setCount(remaining);
-					setStack(newStack);
+					setStack(newStack, transaction);
 				}
 			}
 		}
@@ -72,7 +75,7 @@ public class ItemStackHandlerSlotView extends SnapshotParticipant<ItemStack> imp
 
 	@Override
 	protected void readSnapshot(ItemStack snapshot) {
-		setStack(snapshot);
+		setStack(snapshot, null);
 	}
 
 	@Override
@@ -81,5 +84,10 @@ public class ItemStackHandlerSlotView extends SnapshotParticipant<ItemStack> imp
 				"index=" + index +
 				", stack=" + stack +
 				'}';
+	}
+
+	@Override
+	protected void onFinalCommit() {
+		handler.onFinalCommit();
 	}
 }

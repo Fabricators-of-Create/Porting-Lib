@@ -14,6 +14,8 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nullable;
+
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -91,9 +93,9 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 		return extracted;
 	}
 
-	protected void contentsChangedInternal(int slot, ItemStack newStack, TransactionContext ctx) {
+	protected void contentsChangedInternal(int slot, ItemStack newStack, @Nullable TransactionContext ctx) {
 		stacks[slot] = newStack;
-		TransactionCallback.onSuccess(ctx, () -> onContentsChanged(slot));
+		if (ctx != null) TransactionCallback.onSuccess(ctx, () -> onContentsChanged(slot));
 	}
 
 	@Override
@@ -194,5 +196,10 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 		public SnapshotData(ItemStack[] stacks) {
 			this.stacks = stacks;
 		}
+	}
+
+	@Override
+	protected void onFinalCommit() {
+		super.onFinalCommit();
 	}
 }
