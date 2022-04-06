@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import io.github.fabricators_of_create.porting_lib.PortingLib;
 import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientFluidLookupCache;
 import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientItemLookupCache;
 import io.github.fabricators_of_create.porting_lib.transfer.cache.EmptyFluidLookupCache;
@@ -40,11 +41,22 @@ import javax.annotation.Nullable;
 
 /**
  * Utilities for transferring things.
- * for all storage getters, if a direction is not provided,
- * a CombinedStorage of all sides will be returned. All
- * may return null.
+ * All Storage-modifying helpers use {@link TransferUtil#getTransaction()} to
+ * create Transactions, and they automatically commit.
+ * This means that in order to simulate these actions, they must be wrapped as so:<pre>{@code
+ *  try (Transaction t = Transaction.openOuter()) {
+ * 		boolean result = TransferUtil.clearStorage(storage);
+ * 		t.abort();
+ * 		if (result) {
+ * 		 	...
+ * 		}
+ * 	}
+ * }</pre>
  */
 public class TransferUtil {
+	/**
+	 * @return Either an outer transaction or a nested one in the current open one
+	 */
 	public static Transaction getTransaction() {
 		TransactionContext open = Transaction.getCurrentUnsafe();
 		if (open != null) {
@@ -53,20 +65,34 @@ public class TransferUtil {
 		return Transaction.openOuter();
 	}
 
+	/** @see TransferUtil#getItemStorage(BlockEntity, Direction) */
+	@Nullable
 	public static Storage<ItemVariant> getItemStorage(BlockEntity be) {
 		return getItemStorage(be, null);
 	}
 
+	/** @see TransferUtil#getItemStorage(BlockEntity, Direction) */
+	@Nullable
 	public static Storage<ItemVariant> getItemStorage(Level level, BlockPos pos) {
 		return getItemStorage(level, pos, null);
 	}
 
+	/** @see TransferUtil#getItemStorage(BlockEntity, Direction) */
+	@Nullable
 	public static Storage<ItemVariant> getItemStorage(Level level, BlockPos pos, @Nullable Direction direction) {
+		if (direction != null) return ItemStorage.SIDED.find(level, pos, direction);
 		BlockEntity be = level.getBlockEntity(pos);
 		if (be == null) return null;
-		return getItemStorage(be, direction);
+		return getItemStorage(be, null);
 	}
 
+	/**
+	 * Using the provided BlockEntity and Direction, find a Storage containing ItemVariants.
+	 * @param be the BlockEntity to check
+	 * @param side the Direction to check in - null is considered all sides and will return a wrapper around all found
+	 * @return a Storage of ItemVariants, or null if none found.
+	 */
+	@Nullable
 	public static Storage<ItemVariant> getItemStorage(BlockEntity be, @Nullable Direction side) {
 		if (be == null) return null;
 		boolean client = Objects.requireNonNull(be.getLevel()).isClientSide();
@@ -105,16 +131,27 @@ public class TransferUtil {
 
 	// Fluids
 
+	/** @see TransferUtil#getFluidStorage(BlockEntity, Direction) */
+	@Nullable
 	public static Storage<FluidVariant> getFluidStorage(Level level, BlockPos pos) {
 		BlockEntity be = level.getBlockEntity(pos);
 		if (be == null) return null;
 		return getFluidStorage(be);
 	}
 
+	/** @see TransferUtil#getFluidStorage(BlockEntity, Direction) */
+	@Nullable
 	public static Storage<FluidVariant> getFluidStorage(BlockEntity be) {
 		return getFluidStorage(be, null);
 	}
 
+	/**
+	 * Using the provided BlockEntity and Direction, find a Storage containing FluidVariants.
+	 * @param be the BlockEntity to check
+	 * @param side the Direction to check in - null is considered all sides and will return a wrapper around all found
+	 * @return a Storage of FluidVariants, or null if none found.
+	 */
+	@Nullable
 	public static Storage<FluidVariant> getFluidStorage(BlockEntity be, @Nullable Direction side) {
 		if (be == null) return null;
 		boolean client = Objects.requireNonNull(be.getLevel()).isClientSide();
@@ -150,6 +187,15 @@ public class TransferUtil {
 		return new CombinedStorage<>(fluidStorages);
 	}
 
+	/**
+	 * Find A Storage of the given Class using the given BlockEntity and Direction.
+	 * @param be the BlockEntity to check
+	 * @param side the Direction to check
+	 * @param capability either ItemVariant.class or FluidVariant.class
+	 * @param <T> either ItemVariant or FluidVariant, corresponding to the provided Class.
+	 * @return the found storage, or null if none available.
+	 */
+	@Nullable
 	@SuppressWarnings("unchecked")
 	public static <T> Storage<T> getStorage(BlockEntity be, @Nullable Direction side, Class<T> capability) {
 		if (capability == ItemVariant.class) {
@@ -161,11 +207,18 @@ public class TransferUtil {
 		}
 	}
 
+	/**
+	 * Given a Direction, determine which Directions should be checked for storages.
+	 * @return the provided Direction if non-null, otherwise all Directions
+	 */
 	private static Direction[] getDirections(@Nullable Direction direction) {
 		if (direction == null) return Direction.values();
 		return new Direction[] { direction };
 	}
 
+	/**
+	 * @return an Optional of a FluidStack containing the first fluid found in the supplied item, or Optional.empty() if none.
+	 */
 	public static Optional<FluidStack> getFluidContained(ItemStack container) {
 		if (container != null && !container.isEmpty()) {
 			Storage<FluidVariant> storage = ContainerItemContext.withInitial(container).find(FluidStorage.ITEM);
@@ -177,11 +230,17 @@ public class TransferUtil {
 		return Optional.empty();
 	}
 
+	/**
+	 * @return the capacity of the first StorageView of the storage
+	 */
 	public static <T> long firstCapacity(Storage<T> storage) {
 		List<Long> capacities = capacities(storage, 1);
 		return capacities.size() > 0 ? capacities.get(0) : 0;
 	}
 
+	/**
+	 * @return the capacities of all StorageViews of the storage added together.
+	 */
 	public static <T> long totalCapacity(Storage<T> storage) {
 		long total = 0;
 		List<Long> capacities = capacities(storage, Integer.MAX_VALUE);
@@ -205,15 +264,18 @@ public class TransferUtil {
 		return capacities;
 	}
 
+	/** @return a copy of the first FluidStack found, or EMPTY if none */
 	public static FluidStack firstCopyOrEmpty(Storage<FluidVariant> storage) {
 		return firstOrEmpty(storage).copy();
 	}
 
+	/** @return the first FluidStack found, or EMPTY if none */
 	public static FluidStack firstOrEmpty(Storage<FluidVariant> storage) {
 		FluidStack stack = getFirstFluid(storage);
 		return stack == null ? FluidStack.EMPTY : stack;
 	}
 
+	/** @return the first FluidStack found, or null if none */
 	@Nullable
 	public static FluidStack getFirstFluid(Storage<FluidVariant> storage) {
 		List<FluidStack> stacks = getFluids(storage, 1);
@@ -221,12 +283,13 @@ public class TransferUtil {
 		return null;
 	}
 
+	/** @see TransferUtil#getFluids(Storage, int) */
 	public static List<FluidStack> getAllFluids(Storage<FluidVariant> storage) {
 		return getFluids(storage, Integer.MAX_VALUE);
 	}
 
 	/**
-	 * Find all fluids inside a storage.
+	 * Find all fluids inside a storage, until the cutoff is hit. One FluidStack for each non-empty StorageView.
 	 * @param cutoff number of fluids to find before exiting early
 	 */
 	public static List<FluidStack> getFluids(Storage<FluidVariant> storage, int cutoff) {
@@ -244,10 +307,16 @@ public class TransferUtil {
 		return stacks;
 	}
 
+	/** @see TransferUtil#getItems(Storage, int) */
 	public static List<ItemStack> getAllItems(Storage<ItemVariant> storage) {
 		return getItems(storage, Integer.MAX_VALUE);
 	}
 
+	/**
+	 * Find all ItemStacks within a Storage. There is no guarantee a single StorageView holds a single ItemStack.
+	 * For example, if a single StorageView holds 128 dirt blocks, that will be converted into two ItemStacks of 64.
+	 * @return a list of all ItemStacks found
+	 */
 	public static List<ItemStack> getItems(Storage<ItemVariant> storage, int cutoff) {
 		List<ItemStack> stacks = new ArrayList<>();
 		try (Transaction t = getTransaction()) {
@@ -276,20 +345,42 @@ public class TransferUtil {
 	 * @return true if all removed
 	 */
 	public static <T> boolean clearStorage(Storage<T> storage) {
+		if (!storage.supportsExtraction()) {
+			return false;
+		}
 		boolean success = true;
 		try (Transaction t = getTransaction()) {
-			for (StorageView<T> view : storage.iterable(t)) {
-				long toRemove = view.getAmount();
-				long actual = view.extract(view.getResource(), view.getAmount(), t);
-				success &= toRemove == actual;
+			Iterator<StorageView<T>> itr = storage.iterator(t);
+			StorageView<T> currentView = itr.hasNext() ? itr.next() : null;
+			while (currentView != null) {
+				if (currentView.isResourceBlank()) {
+					currentView = itr.hasNext() ? itr.next() : null;
+					continue;
+				}
+				long contained = currentView.getAmount();
+				if (contained == 0) {
+					currentView = itr.hasNext() ? itr.next() : null;
+					continue;
+				}
+				T variant = currentView.getResource();
+				long extracted = currentView.extract(variant, contained, t);
+				if (extracted == 0) {
+					success = false;
+					currentView = itr.hasNext() ? itr.next() : null;
+				}
 			}
 			t.commit();
 		}
 		return success;
 	}
 
+	/**
+	 * Try to extract any FluidStack possible from a Storage.
+	 * @return the extracted FluidStack, or EMPTY if none.
+	 */
 	public static FluidStack extractAnyFluid(Storage<FluidVariant> storage, long maxAmount) {
 		FluidStack fluid = FluidStack.EMPTY;
+		if (!storage.supportsExtraction()) return fluid;
 		try (Transaction t = getTransaction()) {
 			for (StorageView<FluidVariant> view : storage.iterable(t)) {
 				if (!view.isResourceBlank()) {
@@ -311,8 +402,10 @@ public class TransferUtil {
 		}
 	}
 
+	/** @see TransferUtil#extractAnyFluid(Storage, long) */
 	public static ItemStack extractAnyItem(Storage<ItemVariant> storage, long maxAmount) {
 		ItemStack stack = ItemStack.EMPTY;
+		if (!storage.supportsExtraction()) return stack;
 		try (Transaction t = getTransaction()) {
 			for (StorageView<ItemVariant> view : storage.iterable(t)) {
 				if (!view.isResourceBlank()) {
@@ -334,7 +427,9 @@ public class TransferUtil {
 		}
 	}
 
+	/** Quickly extract and commit the given variant with the given amount. */
 	public static <T> long extract(Storage<T> storage, T variant, long amount) {
+		if (!storage.supportsExtraction()) return 0;
 		try (Transaction t = getTransaction()) {
 			long extracted = storage.extract(variant, amount, t);
 			t.commit();
@@ -342,10 +437,57 @@ public class TransferUtil {
 		}
 	}
 
+	/** Quickly extract and commit the given ItemStack. */
 	public static long extractItem(Storage<ItemVariant> storage, ItemStack stack) {
 		return extract(storage, ItemVariant.of(stack), stack.getCount());
 	}
 
+	/** Quickly extract and commit the given ItemStack. */
+	public static long extractFluid(Storage<FluidVariant> storage, FluidStack stack) {
+		return extract(storage, stack.getType(), stack.getAmount());
+	}
+
+	/** Quickly insert and commit the given variant with the given amount. */
+	public static <T> long insert(Storage<T> storage, T variant, long amount) {
+		if (!storage.supportsInsertion()) return 0;
+		try (Transaction t = getTransaction()) {
+			long inserted = storage.insert(variant, amount, t);
+			t.commit();
+			return inserted;
+		}
+	}
+
+	/** Quickly insert and commit the given ItemStack. */
+	public static long insertItem(Storage<ItemVariant> storage, ItemStack stack) {
+		return insert(storage, ItemVariant.of(stack), stack.getCount());
+	}
+
+	/** Quickly insert and commit the given FluidStack. */
+	public static long insertFluid(Storage<FluidVariant> storage, FluidStack stack) {
+		return insert(storage, stack.getType(), stack.getAmount());
+	}
+
+	/** Insert the given variant and amount into the given Player's inventory, excluding the hotbar. */
+	public static long insertToNotHotbar(Player player, ItemVariant variant, long amount) {
+		long inserted = 0;
+		try (Transaction t = getTransaction()) {
+			PlayerInventoryStorage inv = PlayerInventoryStorage.of(player);
+			if (!inv.supportsInsertion()) return 0;
+			List<SingleSlotStorage<ItemVariant>> slots = inv.getSlots();
+			for (int i = 9; i < slots.size(); i++) { // start at 9 and skip hotbar
+				SingleSlotStorage<ItemVariant> slot = slots.get(i);
+				inserted += slot.insert(variant, amount - inserted, t);
+				if (amount == 0) break;
+			}
+			t.commit();
+			return inserted;
+		}
+	}
+
+	/**
+	 * Extract all contents of the Storage as ItemStacks.
+	 * Follows the same logic as {@link TransferUtil#getItems(Storage, int) }
+	 */
 	public static List<ItemStack> extractAllAsStacks(Storage<ItemVariant> storage) {
 		List<ItemStack> stacks = new ArrayList<>();
 		if (!storage.supportsExtraction()) return stacks;
@@ -377,41 +519,10 @@ public class TransferUtil {
 		}
 	}
 
-	public static long extractFluid(Storage<FluidVariant> storage, FluidStack stack) {
-		return extract(storage, stack.getType(), stack.getAmount());
-	}
-
-	public static <T> long insert(Storage<T> storage, T variant, long amount) {
-		try (Transaction t = getTransaction()) {
-			long inserted = storage.insert(variant, amount, t);
-			t.commit();
-			return inserted;
-		}
-	}
-
-	public static long insertItem(Storage<ItemVariant> storage, ItemStack stack) {
-		return insert(storage, ItemVariant.of(stack), stack.getCount());
-	}
-
-	public static long insertFluid(Storage<FluidVariant> storage, FluidStack stack) {
-		return insert(storage, stack.getType(), stack.getAmount());
-	}
-
-	public static long insertToNotHotbar(Player player, ItemVariant variant, long amount) {
-		long inserted = 0;
-		try (Transaction t = getTransaction()) {
-			PlayerInventoryStorage inv = PlayerInventoryStorage.of(player);
-			List<SingleSlotStorage<ItemVariant>> slots = inv.getSlots();
-			for (int i = 9; i < slots.size(); i++) { // start at 9 and skip hotbar
-				SingleSlotStorage<ItemVariant> slot = slots.get(i);
-				inserted += slot.insert(variant, amount - inserted, t);
-				if (amount == 0) break;
-			}
-			t.commit();
-			return inserted;
-		}
-	}
-
+	/**
+	 * Get a BlockApiCache for ItemStorage.SIDED. If on client, will return a client-side cache,
+	 * which can only interact with BlockEntities using the ItemTransferable interface.
+	 */
 	public static BlockApiCache<Storage<ItemVariant>, Direction> getItemCache(Level level, BlockPos pos) {
 		if (level instanceof ServerLevel server) {
 			return BlockApiCache.create(ItemStorage.SIDED, server, pos);
@@ -421,6 +532,10 @@ public class TransferUtil {
 		return EmptyItemLookupCache.INSTANCE;
 	}
 
+	/**
+	 * Get a BlockApiCache for FluidStorage.SIDED. If on client, will return a client-side cache,
+	 * which can only interact with BlockEntities using the FluidTransferable interface.
+	 */
 	public static BlockApiCache<Storage<FluidVariant>, Direction> getFluidCache(Level level, BlockPos pos) {
 		if (level instanceof ServerLevel server) {
 			return BlockApiCache.create(FluidStorage.SIDED, server, pos);
@@ -430,6 +545,9 @@ public class TransferUtil {
 		return EmptyFluidLookupCache.INSTANCE;
 	}
 
+	/**
+	 * Initialize the ItemTransferable and FluidTransferable fallback callbacks. Do not call, is done by {@link PortingLib#onInitialize() }
+	 */
 	public static void initApi() {
 		FluidStorage.SIDED.registerFallback((world, pos, state, be, face) -> {
 			if (be instanceof FluidTransferable t) {
