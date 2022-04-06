@@ -53,28 +53,11 @@ public abstract class TransactionCallback implements TransactionContext.CloseCal
 		}
 	}
 
-	public static void onSuccess(TransactionContext ctx, Runnable r) {
-		new TransactionSuccessCallback(ctx, r);
+	public static TransactionSuccessCallback onSuccess(TransactionContext ctx, Runnable r) {
+		return new TransactionSuccessCallback(ctx, r);
 	}
 
-	public static void onFail(TransactionContext ctx, Runnable r) {
-		new TransactionFailCallback(ctx, r);
-	}
-
-	public static void setBlockAndUpdate(TransactionContext ctx, Level level, BlockPos pos, BlockState state) {
-		setBlock(ctx, level, pos, state, Block.UPDATE_ALL);
-	}
-
-	public static void setBlock(TransactionContext ctx, Level level, BlockPos pos, BlockState state, int flags) {
-		BlockState old = level.getBlockState(pos);
-		BlockEntity be = old.hasBlockEntity() ? level.getBlockEntity(pos) : null;
-		onFail(ctx, () -> {
-			level.setBlock(pos, old, 0); // reset back to old on fail
-			if (be != null && level.getBlockEntity(pos) != be) level.setBlockEntity(be); // restore any BEs
-		});
-		level.setBlock(pos, state, 0); // set silently
-		onSuccess(ctx, () -> { // send update on new
-			LevelUtil.markAndNotifyBlock(level, pos, level.getChunkAt(pos), old, state, flags, 512);
-		});
+	public static TransactionFailCallback onFail(TransactionContext ctx, Runnable r) {
+		return new TransactionFailCallback(ctx, r);
 	}
 }

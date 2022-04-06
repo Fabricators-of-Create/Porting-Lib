@@ -61,6 +61,7 @@
       "net/minecraft/class_1799": ["io/github/fabricators_of_create/porting_lib/extensions/ItemStackExtensions"],
       "net/minecraft/class_1832": ["io/github/fabricators_of_create/porting_lib/extensions/TierExtensions"],
       "net/minecraft/class_1856": ["io/github/fabricators_of_create/porting_lib/extensions/IngredientExtensions"],
+      "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/extensions/LevelExtensions"],
       "net/minecraft/class_2241": ["io/github/fabricators_of_create/porting_lib/extensions/BaseRailBlockExtensions"],
       "net/minecraft/class_2248": ["io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"],
       "net/minecraft/class_2311": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
