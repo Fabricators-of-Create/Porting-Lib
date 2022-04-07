@@ -6,7 +6,6 @@ import java.util.Map;
 
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
-import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -35,7 +34,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-@Mixin(Level.class)
+@Mixin(value = Level.class, priority = 1100) // need to apply after lithium
 public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	// only non-null during transactions. Is set back to null in
 	// onFinalCommit on commits, and through snapshot rollbacks on aborts.
