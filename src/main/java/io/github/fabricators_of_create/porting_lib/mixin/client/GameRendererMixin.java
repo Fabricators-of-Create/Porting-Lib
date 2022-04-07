@@ -24,11 +24,11 @@ import net.minecraft.server.packs.resources.ResourceManager;
 @Mixin(GameRenderer.class)
 public abstract class GameRendererMixin {
 	@Inject(method = "reloadShaders", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;shutdownShaders()V"), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void registerShaders(ResourceManager manager, CallbackInfo ci, List<Program> list, List<Pair<ShaderInstance, Consumer<ShaderInstance>>> shaderRegistry) {
+	public void port_lib$registerShaders(ResourceManager manager, CallbackInfo ci, List<Program> list, List<Pair<ShaderInstance, Consumer<ShaderInstance>>> shaderRegistry) {
 		try {
 			RegisterShadersCallback.EVENT.invoker().onShaderReload(manager, new RegisterShadersCallback.ShaderRegistry(shaderRegistry));
 		} catch (IOException e) {
-			throw new RuntimeException("failed to reload modded shaders", e);
+			throw new RuntimeException("[Porting Lib] failed to reload modded shaders", e);
 		}
 	}
 }
