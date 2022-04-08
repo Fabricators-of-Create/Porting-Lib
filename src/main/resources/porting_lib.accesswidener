@@ -26,3 +26,6 @@ transitive-accessible method net/minecraft/client/renderer/block/model/ItemOverr
 
 transitive-accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
 transitive-accessible method net/minecraft/client/renderer/texture/TextureAtlasSprite getFrameCount ()I
+
+transitive-accessible field net/minecraft/world/entity/LivingEntity effectsDirty Z
+transitive-accessible method net/minecraft/world/entity/LivingEntity onEffectRemoved (Lnet/minecraft/world/effect/MobEffectInstance;)V

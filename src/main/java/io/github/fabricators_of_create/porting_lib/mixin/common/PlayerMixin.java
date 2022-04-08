@@ -11,11 +11,17 @@ import net.minecraft.world.damagesource.DamageSource;
 
 import net.minecraft.world.entity.Entity;
 
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+
+import net.minecraft.world.entity.ai.attributes.Attributes;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.world.entity.EntityType;
@@ -34,6 +40,11 @@ public abstract class PlayerMixin extends LivingEntity {
 
 	protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level level) {
 		super(entityType, level);
+	}
+
+	@Inject(method = "createAttributes", at = @At("RETURN"))
+	private static void port_lib$addAttributes(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
+		cir.getReturnValue().add(Attributes.ATTACK_KNOCKBACK);
 	}
 
 	@Inject(method = "tick", at = @At("HEAD"))
@@ -71,5 +82,10 @@ public abstract class PlayerMixin extends LivingEntity {
 	@Inject(method = "attack", at = @At("HEAD"), cancellable = true)
 	public void port_lib$itemAttack(Entity targetEntity, CallbackInfo ci) {
 		if(((ItemExtensions)getMainHandItem().getItem()).onLeftClickEntity(getMainHandItem(), (Player) (Object) this, targetEntity)) ci.cancel();
+	}
+
+	@ModifyConstant(method = "attack", constant = @Constant(intValue = 0, ordinal = 2))
+	public int port_lib$knockback(int constant) {
+		return (int) this.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
 	}
 }
