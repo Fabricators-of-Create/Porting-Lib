@@ -46,6 +46,8 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
 @Mixin(BlockModel.class)
 public abstract class BlockModelMixin implements BlockModelExtensions {
 	@Unique
@@ -83,67 +85,23 @@ public abstract class BlockModelMixin implements BlockModelExtensions {
 		return this.overrides.isEmpty() ? ItemOverrides.EMPTY : new ItemOverrides(pModelBakery, pModel, pModelBakery::getModel/*, textureGetter*/, this.overrides);
 	}
 
-	/**
-	 * @author AlphaMode
-	 * @reason custom model loading
-	 * TODO: Replace with ASM PortingLibER
-	 */
-	@Overwrite
-	public Collection<Material> getMaterials(Function<ResourceLocation, UnbakedModel> pModelGetter, Set<Pair<String, String>> pMissingTextureErrors) {
-		Set<UnbakedModel> set = Sets.newLinkedHashSet();
-		for (BlockModel blockmodel = (BlockModel) (Object) this; blockmodel.parentLocation != null && blockmodel.parent == null; blockmodel = blockmodel.parent) {
-			set.add(blockmodel);
-			UnbakedModel unbakedmodel = pModelGetter.apply(blockmodel.parentLocation);
-			if (unbakedmodel == null) {
-				PortingLib.LOGGER.warn("No parent '{}' while loading model '{}'", this.parentLocation, blockmodel);
-			}
-
-			if (set.contains(unbakedmodel)) {
-				PortingLib.LOGGER.warn("Found 'parent' loop while loading model '{}' in chain: {} -> {}", blockmodel, set.stream().map(Object::toString).collect(Collectors.joining(" -> ")), this.parentLocation);
-				unbakedmodel = null;
-			}
-
-			if (unbakedmodel == null) {
-				blockmodel.parentLocation = ModelBakery.MISSING_MODEL_LOCATION;
-				unbakedmodel = pModelGetter.apply(blockmodel.parentLocation);
-			}
-
-			if (!(unbakedmodel instanceof BlockModel)) {
-				throw new IllegalStateException("BlockModel parent has to be a block model.");
-			}
-
-			blockmodel.parent = (BlockModel) unbakedmodel;
-		}
-
-		Set<Material> set1 = Sets.newHashSet(this.getMaterial("particle"));
-
-		if (data.hasCustomGeometry())
-			set1.addAll(data.getTextureDependencies(pModelGetter, pMissingTextureErrors));
-		else
-			for (BlockElement blockelement : this.getElements()) {
-				for (BlockElementFace blockelementface : blockelement.faces.values()) {
-					Material material = this.getMaterial(blockelementface.texture);
-					if (Objects.equals(material.texture(), MissingTextureAtlasSprite.getLocation())) {
-						pMissingTextureErrors.add(Pair.of(blockelementface.texture, this.name));
-					}
-
-					set1.add(material);
+	@Inject(method = "getMaterials", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/model/BlockModel;getElements()Ljava/util/List;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
+	public void port_lib$getModelMaterials(Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors, CallbackInfoReturnable<Collection<Material>> cir, Set set, BlockModel blockModel, Set<Material> materials) {
+		if(data.hasCustomGeometry()) {
+			materials.addAll(data.getTextureDependencies(modelGetter, missingTextureErrors));
+			this.overrides.forEach((p_111475_) -> {
+				UnbakedModel unbakedmodel1 = modelGetter.apply(p_111475_.getModel());
+				if (!Objects.equals(unbakedmodel1, this)) {
+					materials.addAll(unbakedmodel1.getMaterials(modelGetter, missingTextureErrors));
 				}
-			}
-
-		this.overrides.forEach((p_111475_) -> {
-			UnbakedModel unbakedmodel1 = pModelGetter.apply(p_111475_.getModel());
-			if (!Objects.equals(unbakedmodel1, this)) {
-				set1.addAll(unbakedmodel1.getMaterials(pModelGetter, pMissingTextureErrors));
-			}
-		});
-		if (this.getRootModel() == ModelBakery.GENERATION_MARKER) {
-			ItemModelGenerator.LAYERS.forEach((p_111467_) -> {
-				set1.add(this.getMaterial(p_111467_));
 			});
+			if (this.getRootModel() == ModelBakery.GENERATION_MARKER) {
+				ItemModelGenerator.LAYERS.forEach((p_111467_) -> {
+					materials.add(this.getMaterial(p_111467_));
+				});
+			}
+			cir.setReturnValue(materials);
 		}
-
-		return set1;
 	}
 
 	@Inject(method = "bake(Lnet/minecraft/client/resources/model/ModelBakery;Lnet/minecraft/client/renderer/block/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/resources/model/BakedModel;", at = @At("HEAD"), cancellable = true)
