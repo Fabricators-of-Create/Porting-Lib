@@ -56,6 +56,7 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 					if (actuallyInsert > 0) {
 						maxAmount -= actuallyInsert;
 						inserted += actuallyInsert;
+						held = held.copy();
 						held.grow(actuallyInsert);
 						contentsChangedInternal(i, held, transaction);
 					}
