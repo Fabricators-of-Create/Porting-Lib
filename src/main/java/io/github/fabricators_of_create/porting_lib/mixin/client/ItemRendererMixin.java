@@ -107,29 +107,4 @@ public abstract class ItemRendererMixin {
 		}
 		return model;
 	}
-
-	@Unique
-	private void drawItemLayered(LayeredBakedModel modelIn, ItemStack itemStackIn, PoseStack matrixStackIn,
-									   MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn, boolean fabulous) {
-		for(com.mojang.datafixers.util.Pair<BakedModel,RenderType> layerModel : modelIn.getLayerModels(itemStackIn, fabulous))
-		{
-			BakedModel layer = layerModel.getFirst();
-			RenderType rendertype = layerModel.getSecond();
-//			net.minecraftforge.client.ForgeHooksClient.setRenderType(rendertype); // neded for compatibility with MultiLayerModels
-			VertexConsumer ivertexbuilder;
-			if (fabulous)
-			{
-				ivertexbuilder = ItemRenderer.getFoilBufferDirect(bufferIn, rendertype, true, itemStackIn.hasFoil());
-			} else {
-				ivertexbuilder = ItemRenderer.getFoilBuffer(bufferIn, rendertype, true, itemStackIn.hasFoil());
-			}
-			this.renderModelLists(layer, itemStackIn, combinedLightIn, combinedOverlayIn, matrixStackIn, ivertexbuilder);
-		}
-//		net.minecraftforge.client.ForgeHooksClient.setRenderType(null);
-	}
-
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/model/ItemTransform;apply(ZLcom/mojang/blaze3d/vertex/PoseStack;)V", shift = At.Shift.BEFORE), cancellable = true)
-	public void port_lib$layeredItemModel(ItemStack itemStack, ItemTransforms.TransformType transformType, boolean leftHand, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, BakedModel model, CallbackInfo ci) {
-
-	}
 }
