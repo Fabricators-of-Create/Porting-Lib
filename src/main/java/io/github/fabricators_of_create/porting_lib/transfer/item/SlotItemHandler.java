@@ -59,21 +59,16 @@ public class SlotItemHandler extends Slot {
 
 	@Override
 	public boolean mayPickup(Player playerIn) {
-		return !remove(1).isEmpty();
+		return !itemHandler.getStackInSlot(index).isEmpty();
 	}
 
 	@Override
 	@Nonnull
 	public ItemStack remove(int amount) {
-		try (Transaction t = TransferUtil.getTransaction()) {
-			ItemStackHandler handler = getItemHandler();
-			ItemStack held = getItem();
-			long extracted = handler.extract(ItemVariant.of(held), amount, t);
-			held = held.copy();
-			held.setCount((int) (held.getCount() - extracted));
-			t.commit();
-			return held;
-		}
+		ItemStack held = itemHandler.getStackInSlot(index).copy();
+		ItemStack removed = held.split(amount);
+		itemHandler.setStackInSlot(index, held);
+		return removed;
 	}
 
 	public ItemStackHandler getItemHandler() {
