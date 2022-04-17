@@ -8,7 +8,6 @@ import com.mojang.datafixers.util.Pair;
 
 import io.github.fabricators_of_create.porting_lib.extensions.TextureAtlasSpriteExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.TransformationExtensions;
-import net.fabricmc.fabric.impl.client.texture.FabricSprite;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
