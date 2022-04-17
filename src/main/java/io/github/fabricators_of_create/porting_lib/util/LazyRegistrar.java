@@ -56,4 +56,8 @@ public class LazyRegistrar<T> {
 	public <B extends Block> RegistryObject register(String name, T b) {
 		return register(name, () -> b);
 	}
+
+	public List<RegistryObject<? extends T>> getEntires() {
+		return entires;
+	}
 }
