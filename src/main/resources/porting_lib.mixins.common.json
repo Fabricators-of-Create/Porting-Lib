@@ -52,6 +52,7 @@
     "RailStateMixin",
     "RedStoneOreBlockMixin",
     "RedStoneWireBlockMixin",
+    "ReloadableServerResourcesMixin",
     "ResourceLocationMixin",
     "ResultSlotMixin",
     "SeagrassBlockMixin",
@@ -59,7 +60,6 @@
     "ServerLevelMixin",
     "ServerPlayerGameModeMixin",
     "ServerPlayerMixin",
-    "ServerResourcesMixin",
     "ShapedRecipeMixin",
     "ShapelessRecipe$SerializerMixin",
     "SheepMixin",
@@ -69,7 +69,6 @@
     "SpreadPlayersCommandMixin",
     "StructureProcessorMixin",
     "StructureTemplateMixin",
-    "TagContainerMixin",
     "TallGrassBlockMixin",
     "TeleportCommandMixin",
     "ThrownEnderpearlMixin",
@@ -108,7 +107,6 @@
     "accessor.SlotAccessor",
     "accessor.StairBlockAccessor",
     "accessor.StructureTemplateAccessor",
-    "accessor.TagContainerAccessor",
     "accessor.TagValueAccessor"
   ],
   "injectors": {

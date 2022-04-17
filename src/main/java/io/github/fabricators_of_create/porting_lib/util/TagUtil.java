@@ -3,10 +3,9 @@ package io.github.fabricators_of_create.porting_lib.util;
 import javax.annotation.Nullable;
 
 import io.github.fabricators_of_create.porting_lib.extensions.TierExtensions;
-import me.alphamode.forgetags.DyeUtil;
 import me.alphamode.forgetags.Tags;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
@@ -24,15 +23,13 @@ public class TagUtil {
 		}
 
 		for (DyeColor color : DyeColor.values()) {
-			if (DyeUtil.getDyeTag(color).contains(stack.getItem())) {
-				return color;
-			}
+			if (stack.is(color.getTag())) return color;
 		}
 
 		return null;
 	}
 
-	public static Tag.Named<Block> getTagFromVanillaTier(Tiers tier) {
+	public static TagKey<Block> getTagFromVanillaTier(Tiers tier) {
 		return switch (tier) {
 			case WOOD -> Tags.Blocks.NEEDS_WOOD_TOOL;
 			case GOLD -> Tags.Blocks.NEEDS_GOLD_TOOL;
@@ -43,7 +40,7 @@ public class TagUtil {
 		};
 	}
 
-	public static Tag<Block> getTagFromTier(Tier tier) {
+	public static TagKey<Block> getTagFromTier(Tier tier) {
 		return ((TierExtensions) tier).getTag();
 	}
 }

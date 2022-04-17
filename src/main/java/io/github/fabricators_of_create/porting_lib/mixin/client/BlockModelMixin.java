@@ -13,8 +13,8 @@ import io.github.fabricators_of_create.porting_lib.model.PerspectiveMapWrapper;
 
 import io.github.fabricators_of_create.porting_lib.render.TransformTypeDependentItemBakedModel;
 
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -47,9 +47,6 @@ import net.minecraft.resources.ResourceLocation;
 
 @Mixin(BlockModel.class)
 public abstract class BlockModelMixin implements BlockModelExtensions {
-	@Shadow
-	@Final
-	private static Logger LOGGER;
 
 	@Unique
 	private final BlockModelConfiguration data = new BlockModelConfiguration((BlockModel) (Object) this);
@@ -73,6 +70,10 @@ public abstract class BlockModelMixin implements BlockModelExtensions {
 
 	@Shadow
 	public abstract List<BlockElement> getElements();
+
+	@Shadow
+	@Final
+	private static Logger LOGGER;
 
 	@Unique
 	@Override

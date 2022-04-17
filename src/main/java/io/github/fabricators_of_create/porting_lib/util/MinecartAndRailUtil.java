@@ -5,10 +5,11 @@ import javax.annotation.Nullable;
 import io.github.fabricators_of_create.porting_lib.extensions.AbstractMinecartExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.BaseRailBlockExtensions;
 import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.AbstractMinecartAccessor;
-import net.fabricmc.fabric.api.tag.TagFactory;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.BaseRailBlock;
@@ -20,10 +21,10 @@ public class MinecartAndRailUtil {
 
 	// rails
 
-	public static final Tag.Named<Block> ACTIVATOR_RAILS = TagFactory.BLOCK.create(new ResourceLocation("c", "rails/activator"));
+	public static final TagKey<Block> ACTIVATOR_RAILS = TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation("c", "rails/activator"));
 
 	public static boolean isActivatorRail(Block rail) {
-		return ACTIVATOR_RAILS.contains(rail);
+		return rail.builtInRegistryHolder().is(ACTIVATOR_RAILS);
 	}
 
 	public static RailShape getDirectionOfRail(BlockState state, BlockGetter world, BlockPos pos, @Nullable BaseRailBlock block) {

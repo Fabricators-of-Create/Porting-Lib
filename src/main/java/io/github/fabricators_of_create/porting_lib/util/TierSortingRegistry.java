@@ -22,6 +22,8 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 
 import net.minecraft.server.packs.PackType;
 
+import net.minecraft.tags.TagKey;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -169,7 +171,7 @@ public class TierSortingRegistry {
 			return isCorrectTierVanilla(tier, state);
 
 		for (int x = sortedTiers.indexOf(tier) + 1; x < sortedTiers.size(); x++) {
-			Tag<Block> tag = TagUtil.getTagFromTier(sortedTiers.get(x));
+			TagKey<Block> tag = TagUtil.getTagFromTier(sortedTiers.get(x));
 			if (tag != null && state.is(tag))
 				return false;
 		}

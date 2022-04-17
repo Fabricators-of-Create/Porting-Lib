@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.util;
 
 import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,7 +27,7 @@ public class PortingHooks {
 				preCancelEvent = true;
 
 			if (!entityPlayer.mayBuild()) {
-				if (itemstack.isEmpty() || !itemstack.hasAdventureModeBreakTagForBlock(world.getTagManager(), new BlockInWorld(world, pos, false)))
+				if (itemstack.isEmpty() || !itemstack.hasAdventureModeBreakTagForBlock(world.registryAccess().registryOrThrow(Registry.BLOCK_REGISTRY), new BlockInWorld(world, pos, false)))
 					preCancelEvent = true;
 			}
 		}

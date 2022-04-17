@@ -1,8 +1,11 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import io.github.fabricators_of_create.porting_lib.event.TagsUpdatedCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.RecipesUpdatedCallback;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
 
+import net.minecraft.network.protocol.game.ClientboundUpdateTagsPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.crafting.RecipeManager;
 
@@ -50,6 +53,9 @@ public abstract class ClientPacketListenerMixin {
 	@Shadow
 	public abstract Set<ResourceKey<Level>> levels();
 
+	@Shadow
+	private RegistryAccess.Frozen registryAccess;
+
 	@Inject(
 			method = "handleAddEntity(Lnet/minecraft/network/protocol/game/ClientboundAddEntityPacket;)V",
 			at = @At(
@@ -85,5 +91,10 @@ public abstract class ClientPacketListenerMixin {
 	@Inject(method = "handleUpdateRecipes", at = @At("TAIL"))
 	public void port_lib$updateRecipes(ClientboundUpdateRecipesPacket packet, CallbackInfo ci) {
 		RecipesUpdatedCallback.EVENT.invoker().onRecipesUpdated(this.recipeManager);
+	}
+
+	@Inject(method = "handleUpdateTags", at = @At("TAIL"))
+	public void port_lib$updateTags(ClientboundUpdateTagsPacket packet, CallbackInfo ci) {
+		TagsUpdatedCallback.EVENT.invoker().onTagsUpdated(this.registryAccess);
 	}
 }
