@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 
 import io.github.fabricators_of_create.porting_lib.extensions.VertexFormatExtensions;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 
 public class LightUtil {
 	private LightUtil() {
@@ -15,6 +16,13 @@ public class LightUtil {
 
 	public static int getLightOffset(int v) {
 		return (v * 8) + 6;
+	}
+
+	public static void setLightData(BakedQuad q, int light) {
+		int[] data = q.getVertices();
+		for (int i = 0; i < 4; i++) {
+			data[getLightOffset(i)] = light;
+		}
 	}
 
 	public static void pack(float[] from, int[] to, VertexFormat formatTo, int v, int e) {
