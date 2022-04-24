@@ -42,6 +42,7 @@ public abstract class IngredientMixin implements IngredientExtensions {
 	@Shadow
 	@Final
 	private Value[] values;
+
 	@Unique
 	private boolean port_lib$simple;
 	@Unique
