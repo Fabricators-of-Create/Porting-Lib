@@ -25,7 +25,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-@Mixin(value = Ingredient.class, priority = 234) // magic random number to make sure we apply in the correct order
+@Mixin(value = Ingredient.class, priority = 2340) // magic random number to make sure we apply in the correct order
 public abstract class IngredientMixin implements IngredientExtensions {
 
     @Shadow
