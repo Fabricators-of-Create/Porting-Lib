@@ -5,6 +5,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.Camera;
+import net.minecraft.client.renderer.FogRenderer;
 
 @Environment(EnvType.CLIENT)
 public class FogEvents {
@@ -15,9 +16,15 @@ public class FogEvents {
 		return density;
 	});
 
-	public static final Event<SetColor> SET_COLOR = EventFactory.createArrayBacked(SetColor.class, callbacks -> data -> {
+	public static final Event<SetColor> SET_COLOR = EventFactory.createArrayBacked(SetColor.class, callbacks -> (data, partialTicks) -> {
 		for (SetColor callback : callbacks) {
-			callback.setColor(data);
+			callback.setColor(data, partialTicks);
+		}
+	});
+
+	public static final Event<RenderFog> RENDER_FOG = EventFactory.createArrayBacked(RenderFog.class, callbacks -> (type, info, partialTicks, distance) -> {
+		for (RenderFog callback : callbacks) {
+			callback.onFogRender(type, info, partialTicks, distance);
 		}
 	});
 
@@ -31,7 +38,12 @@ public class FogEvents {
 
 	@FunctionalInterface
 	public interface SetColor {
-		void setColor(ColorData d);
+		void setColor(ColorData d, float partialTicks);
+	}
+
+	@FunctionalInterface
+	public interface RenderFog {
+		void onFogRender(FogRenderer.FogMode type, Camera info, float partial, float distance);
 	}
 
 	public static class ColorData {

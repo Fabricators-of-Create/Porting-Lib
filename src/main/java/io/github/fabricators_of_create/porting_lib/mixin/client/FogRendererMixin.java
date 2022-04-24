@@ -33,7 +33,7 @@ public abstract class FogRendererMixin {
 	@ModifyArgs(method = "setupColor", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V", remap = false))
 	private static void port_lib$modifyFogColors(Args args, Camera camera, float partialTicks, ClientLevel level, int renderDistanceChunks, float bossColorModifier) {
 		ColorData data = new ColorData(camera, fogRed, fogGreen, fogBlue);
-		FogEvents.SET_COLOR.invoker().setColor(data);
+		FogEvents.SET_COLOR.invoker().setColor(data, partialTicks);
 		fogRed = data.getRed();
 		fogGreen = data.getGreen();
 		fogBlue = data.getBlue();
