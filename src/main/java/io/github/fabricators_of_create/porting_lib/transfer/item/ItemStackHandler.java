@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
 import io.github.fabricators_of_create.porting_lib.transfer.callbacks.TransactionCallback;
+import io.github.fabricators_of_create.porting_lib.transfer.callbacks.TransactionSuccessCallback;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler.SnapshotData;
 import io.github.fabricators_of_create.porting_lib.util.ItemStackUtil;
 import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
@@ -72,6 +73,7 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 	public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
 		long extracted = 0;
 		updateSnapshots(transaction);
+		TransactionSuccessCallback callback = new TransactionSuccessCallback(transaction);
 		for (int i = 0; i < stacks.length; i++) {
 			ItemStack stack = stacks[i];
 			if (resource.matches(stack)) {
@@ -84,9 +86,10 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 				stack = stack.copy();
 				stack.setCount(stack.getCount() - toRemove);
 				int finalI = i;
-				TransactionCallback.onSuccess(transaction, () -> onContentsChanged(finalI));
+				callback.addCallback(() -> onContentsChanged(finalI));
 				if (stack.isEmpty()) // set to empty for a clean list
-					stacks[i] = ItemStack.EMPTY;
+					stack = ItemStack.EMPTY;
+				stacks[i] = stack;
 				if (maxAmount == 0) // nothing left to extract - exit
 					break;
 			}
