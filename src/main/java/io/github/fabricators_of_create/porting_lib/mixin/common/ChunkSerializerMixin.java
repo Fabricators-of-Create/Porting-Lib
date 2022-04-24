@@ -31,7 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import java.util.Iterator;
 
 @Mixin(ChunkSerializer.class)
-public class ChunkSerializerMixin {
+public abstract class ChunkSerializerMixin {
 	@Inject(method = "read", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getLightEmission()I"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
 	private static void port_lib$lightLevel(ServerLevel lvel, PoiManager poiManager, ChunkPos pos, CompoundTag tag, CallbackInfoReturnable<ProtoChunk> cir, ChunkPos chunkPos, UpgradeData data, boolean flag, ListTag listTag, int i, LevelChunkSection[] section, boolean flag2, ChunkSource source, LevelLightEngine engine, Registry<?> registry, Codec codec, long l, ChunkStatus.ChunkType type, BlendingData blendingData, ChunkAccess chunkAccess, ProtoChunk protoChunk, boolean flag3, Iterator var26, BlockPos blockPos) {
 		BlockState state = chunkAccess.getBlockState(blockPos);

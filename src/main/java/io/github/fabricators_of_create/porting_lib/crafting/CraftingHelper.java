@@ -62,10 +62,7 @@ public class CraftingHelper {
 		ResourceLocation key = ingredients.inverse().get(serializer);
 		if (key == null)
 			throw new IllegalArgumentException("Tried to serialize unregistered Ingredient: " + ingredient + " " + serializer);
-		if (serializer != VanillaIngredientSerializer.INSTANCE) {
-			buffer.writeVarInt(-1); //Marker to know there is a custom ingredient
-			buffer.writeResourceLocation(key);
-		}
+		buffer.writeResourceLocation(key);
 		serializer.write(buffer, ingredient);
 	}
 
