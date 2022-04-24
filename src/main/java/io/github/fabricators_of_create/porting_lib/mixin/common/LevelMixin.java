@@ -2,8 +2,12 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
+import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
+import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
@@ -12,7 +16,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 
+import net.minecraft.world.level.entity.EntityTypeTest;
+
 import org.jetbrains.annotations.Nullable;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -132,5 +139,28 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	@SuppressWarnings("ALL")
 	public void port_lib$onStartExplosion(@Nullable Entity exploder, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator context, double x, double y, double z, float size, boolean causesFire, Explosion.BlockInteraction mode, CallbackInfoReturnable<Explosion> cir, Explosion explosion) {
 		if (ExplosionEvents.START.invoker().onExplosionStart((Level) (Object) this, explosion)) cir.setReturnValue(explosion);
+	}
+
+	@Inject(method = "method_31593", at = @At(value = "JUMP", opcode = Opcodes.IFEQ), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
+	private static void port_lib$addGetEntities(Entity entity, Predicate<? super Entity> predicate, List<Entity> list, Entity entity2, CallbackInfo ci) {
+		if (entity2 instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
+			for(PartEntity<?> enderdragonpart : partEntity.getParts()) {
+				if (partEntity != entity && predicate.test(enderdragonpart)) {
+					list.add(enderdragonpart);
+				}
+			}
+		}
+	}
+
+	@Inject(method = "m_mbvohlyp", at = @At(value = "JUMP", opcode = Opcodes.IFEQ), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
+	private static <T extends Entity> void port_lib$addGetEntitiesByType(Predicate<? super T> predicate, List<T> list, EntityTypeTest<Entity, T> entityTypeTest, Entity entity, CallbackInfo ci) {
+		if (entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
+			for(PartEntity<?> enderdragonpart : partEntity.getParts()) {
+				T t = entityTypeTest.tryCast(enderdragonpart);
+				if (t != null && predicate.test(t)) {
+					list.add(t);
+				}
+			}
+		}
 	}
 }

@@ -3,6 +3,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
 
+import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -36,5 +38,11 @@ public abstract class ServerLevelMixin {
 										Explosion explosion) {
 		if(ExplosionEvents.START.invoker().onExplosionStart((Level) (Object) this, explosion))
 			cir.setReturnValue(explosion);
+	}
+
+	@Inject(method = "getEntityOrPart", at = @At("RETURN"), cancellable = true)
+	public void port_lib$getMultipart(int id, CallbackInfoReturnable<Entity> cir) {
+		if(cir.getReturnValue() == null)
+			cir.setReturnValue(PortingHooks.multiParts.get((ServerLevel) (Object) this).get(id));
 	}
 }
