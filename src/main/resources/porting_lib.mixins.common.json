@@ -43,6 +43,7 @@
     "MobMixin",
     "MushroomCowMixin",
     "OreBlockMixin",
+    "PackRepositoryMixin",
     "ParticleTypeMixin",
     "PlayerListMixin",
     "PlayerMixin",

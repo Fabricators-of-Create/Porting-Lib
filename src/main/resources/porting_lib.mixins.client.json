@@ -5,7 +5,9 @@
   "package": "io.github.fabricators_of_create.porting_lib.mixin.client",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "AbstractClientPlayerMixin",
     "AbstractTextureMixin",
+    "BlockColorsMixin",
     "BlockModelDeserializerMixin",
     "BlockModelMixin",
     "BufferBuilderMixin",
@@ -17,11 +19,13 @@
     "GuiComponentMixin",
     "GuiMixin",
     "HumanoidArmorLayerMixin",
+    "ItemColorsMixin",
     "ItemInHandRendererMixin",
     "ItemRendererMixin",
     "KeyboardHandlerMixin",
     "LanguageInfoMixin",
     "LevelRendererMixin",
+    "LivingEntityRendererMixin",
     "MinecraftMixin",
     "ModelBakeryMixin",
     "ModelManagerMixin",
@@ -33,14 +37,10 @@
     "RenderTargetMixin",
     "ScreenMixin",
     "ShaderInstanceMixin",
+    "TextureAtlasMixin",
     "TextureAtlasSpriteMixin",
     "TextureManagerMixin",
     "VertexFormatMixin",
-    "BlockColorsMixin",
-    "ItemColorsMixin",
-    "LivingEntityRendererMixin",
-    "TextureAtlasMixin",
-    "AbstractClientPlayerMixin",
     "accessor.AbstractContainerScreenAccessor",
     "accessor.AbstractSelectionList$EntryAccessor",
     "accessor.AbstractSelectionListAccessor",
@@ -67,5 +67,8 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+    "EntityRenderDispatcherMixin"
+  ]
 }

@@ -1,10 +1,16 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
+import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
+import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
@@ -12,6 +18,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PortingHooks {
 	public static int onBlockBreakEvent(Level world, GameType gameType, ServerPlayer entityPlayer, BlockPos pos) {
@@ -58,5 +67,27 @@ public class PortingHooks {
 			}
 		}
 		return event.isCanceled() ? -1 : event.getExpToDrop();
+	}
+
+	public static final Map<ServerLevel, Int2ObjectMap<PartEntity<?>>> multiParts = new HashMap<>();
+
+	public static void init() {
+
+		ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
+			if(entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
+				multiParts.putIfAbsent(world, new Int2ObjectOpenHashMap<>());
+				for(PartEntity<?> part : partEntity.getParts()) {
+					multiParts.get(world).put(part.getId(), part);
+				}
+			}
+		});
+		ServerEntityEvents.ENTITY_UNLOAD.register((entity, world) -> {
+			if(entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
+				multiParts.putIfAbsent(world, new Int2ObjectOpenHashMap<>());
+				for(PartEntity<?> part : partEntity.getParts()) {
+					multiParts.get(world).remove(part.getId());
+				}
+			}
+		});
 	}
 }
