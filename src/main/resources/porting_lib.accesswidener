@@ -28,3 +28,17 @@ transitive-accessible method net/minecraft/client/renderer/block/model/ItemOverr
 
 transitive-accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
 transitive-accessible method net/minecraft/client/renderer/texture/TextureAtlasSprite getFrameCount ()I
+
+transitive-accessible class net/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier
+transitive-accessible method net/minecraft/world/item/crafting/Ingredient <init> (Ljava/util/stream/Stream;)V
+transitive-extendable method net/minecraft/data/loot/BlockLoot add (Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/level/storage/loot/LootTable$Builder;)V
+transitive-extendable class net/minecraft/world/item/crafting/Ingredient
+transitive-extendable class net/minecraft/data/tags/TagsProvider
+transitive-accessible field net/minecraft/client/renderer/block/model/BlockModel$GuiLight name Ljava/lang/String;
+transitive-accessible class net/minecraft/client/renderer/block/model/ItemTransform$Deserializer
+transitive-accessible field net/minecraft/client/renderer/block/model/ItemTransform$Deserializer DEFAULT_ROTATION Lcom/mojang/math/Vector3f;
+transitive-accessible field net/minecraft/client/renderer/block/model/ItemTransform$Deserializer DEFAULT_TRANSLATION Lcom/mojang/math/Vector3f;
+transitive-accessible field net/minecraft/client/renderer/block/model/ItemTransform$Deserializer DEFAULT_SCALE Lcom/mojang/math/Vector3f;
+transitive-accessible method net/minecraft/client/renderer/block/model/BlockElement uvsByFace (Lnet/minecraft/core/Direction;)[F
+transitive-accessible field net/minecraft/client/resources/ClientPackSource BUILT_IN Lnet/minecraft/server/packs/metadata/pack/PackMetadataSection;
+transitive-accessible field net/minecraft/client/Minecraft RESOURCE_RELOAD_INITIAL_TASK Ljava/util/concurrent/CompletableFuture;
