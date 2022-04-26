@@ -158,7 +158,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	}
 
 	@Group(name = "port_lib_part_entity_getting", min = 1, max = 1)
-	// no idea why hashed is 1. here 2. not remapping. So we have this mess.
+	// no idea why hashed is not remapping. So we have this mess.
 	@Inject(method = "m_mbvohlyp", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD, require = 0)
 	private static <T extends Entity> void port_lib$partEntityGettingHashed(Predicate<? super T> predicate, List<T> list, EntityTypeTest<Entity, T> test, Entity entity, CallbackInfo ci) {
 		port_lib$partEntityGetting(predicate, list, test, entity);
