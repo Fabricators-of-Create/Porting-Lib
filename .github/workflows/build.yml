@@ -12,6 +12,7 @@ jobs:
       MAVEN_USER: ${{ secrets.MAVEN_USER }}
       MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
     steps:
+
       - name: checkout repository
         uses: actions/checkout@v2
 
