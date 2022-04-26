@@ -10,10 +10,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 public class FluidUtil {
-	public static int getLuminosity(Fluid fluid) {
-		return fluid.defaultFluidState().createLegacyBlock().getLightEmission();
-	}
-
 	@Environment(EnvType.CLIENT)
 	public static String getTranslationKey(Fluid fluid) {
 		String translationKey;

@@ -12,6 +12,7 @@ jobs:
       MAVEN_USER: ${{ secrets.MAVEN_USER }}
       MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
     steps:
+
       - name: checkout repository
         uses: actions/checkout@v2
 
@@ -19,6 +20,15 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/loom-cache
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle
 
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew

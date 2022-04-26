@@ -13,6 +13,7 @@ import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 
@@ -25,6 +26,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
+import org.spongepowered.asm.mixin.injection.Group;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -143,22 +145,40 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 
 	@Inject(method = "method_31593", at = @At(value = "JUMP", opcode = Opcodes.IFEQ), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
 	private static void port_lib$addGetEntities(Entity entity, Predicate<? super Entity> predicate, List<Entity> list, Entity entity2, CallbackInfo ci) {
-		if (entity2 instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
-			for(PartEntity<?> enderdragonpart : partEntity.getParts()) {
-				if (partEntity != entity && predicate.test(enderdragonpart)) {
-					list.add(enderdragonpart);
+		if (entity2 instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity() && !(entity instanceof EnderDragon)) { // dragons are already handled, skip
+			PartEntity<?>[] parts = partEntity.getParts();
+			if (parts != null) {
+				for (PartEntity<?> part : partEntity.getParts()) {
+					if (partEntity != entity && predicate.test(part)) {
+						list.add(part);
+					}
 				}
 			}
 		}
 	}
 
-	@Inject(method = "m_mbvohlyp", at = @At(value = "JUMP", opcode = Opcodes.IFEQ), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
-	private static <T extends Entity> void port_lib$addGetEntitiesByType(Predicate<? super T> predicate, List<T> list, EntityTypeTest<Entity, T> entityTypeTest, Entity entity, CallbackInfo ci) {
-		if (entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
-			for(PartEntity<?> enderdragonpart : partEntity.getParts()) {
-				T t = entityTypeTest.tryCast(enderdragonpart);
-				if (t != null && predicate.test(t)) {
-					list.add(t);
+	@Group(name = "port_lib_part_entity_getting", min = 1, max = 1)
+	// no idea why hashed is not remapping. So we have this mess.
+	@Inject(method = "m_mbvohlyp", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD, require = 0)
+	private static <T extends Entity> void port_lib$partEntityGettingHashed(Predicate<? super T> predicate, List<T> list, EntityTypeTest<Entity, T> test, Entity entity, CallbackInfo ci) {
+		port_lib$partEntityGetting(predicate, list, test, entity);
+	}
+
+	@Group(name = "port_lib_part_entity_getting", min = 1, max = 1)
+	@Inject(method = "method_31596", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD, require = 0)
+	private static <T extends Entity> void port_lib$partEntityGettingIntermediary(Predicate<? super T> predicate, List<T> list, EntityTypeTest<Entity, T> test, Entity entity, CallbackInfo ci) {
+		port_lib$partEntityGetting(predicate, list, test, entity);
+	}
+
+	private static <T extends Entity> void port_lib$partEntityGetting(Predicate<? super T> predicate, List<T> list, EntityTypeTest<Entity, T> test, Entity entity) {
+		if (entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity() && !(entity instanceof EnderDragon)) { // dragons are already handled, skip
+			PartEntity<?>[] parts = partEntity.getParts();
+			if (parts != null) {
+				for (PartEntity<?> part : partEntity.getParts()) {
+					T t = test.tryCast(part);
+					if (t != null && predicate.test(t)) {
+						list.add(t);
+					}
 				}
 			}
 		}
