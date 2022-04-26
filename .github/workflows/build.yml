@@ -26,8 +26,8 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/loom-cache
             ~/.gradle/wrapper
-            key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties') }}
-            restore-keys: ${{ runner.os }}-gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle
 
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
