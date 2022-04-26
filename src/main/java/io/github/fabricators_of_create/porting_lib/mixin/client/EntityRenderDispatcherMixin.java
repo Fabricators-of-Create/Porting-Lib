@@ -55,8 +55,8 @@ public class EntityRenderDispatcherMixin {
 		}
 	}
 
-	@Inject(method = "onResourceManagerReload", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT)
-	public void nonAsmCursedness(ResourceManager resourceManager, CallbackInfo ci, EntityRendererProvider.Context context) {
+	@Inject(method = "onResourceManagerReload", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
+	public void port_lib$resourceReload(ResourceManager resourceManager, CallbackInfo ci, EntityRendererProvider.Context context) {
 		EntityAddedLayerCallback.EVENT.invoker().addLayers(renderers, playerRenderers);
 	}
 }
