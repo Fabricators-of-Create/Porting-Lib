@@ -4,13 +4,14 @@ import java.util.Collection;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
 
 public class LivingEntityEvents {
 	public static final Event<ExperienceDrop> EXPERIENCE_DROP = EventFactory.createArrayBacked(ExperienceDrop.class, callbacks -> (i, player) -> {
@@ -86,6 +87,30 @@ public class LivingEntityEvents {
 			callback.onLivingEntityJump(entity);
 		}
 	});
+
+	public static final Event<Attack> ATTACK = EventFactory.createArrayBacked(Attack.class, callbacks -> (entity, source, amount) -> {
+		for (Attack callback : callbacks) {
+			if (callback.onAttack(entity, source, amount)) {
+				return true;
+			}
+		}
+		return false;
+	});
+
+	public static final Event<EquipmentChange> EQUIPMENT_CHANGE = EventFactory.createArrayBacked(EquipmentChange.class, callbacks -> ((entity, slot, from, to) -> {
+		for (EquipmentChange callback : callbacks)
+			callback.onEquipmentChange(entity, slot, from, to);
+	}));
+
+	@FunctionalInterface
+	public interface EquipmentChange {
+		void onEquipmentChange(LivingEntity entity, EquipmentSlot slot, @Nonnull ItemStack from, @Nonnull ItemStack to);
+	}
+
+	@FunctionalInterface
+	public interface Attack {
+		boolean onAttack(LivingEntity entity, DamageSource source, float amount);
+	}
 
 	@FunctionalInterface
 	public interface Hurt {

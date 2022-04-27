@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -290,5 +291,15 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 		InteractionResult result = PotionEvents.POTION_APPLICABLE.invoker().onPotionApplicable((LivingEntity) (Object) this, effect);
 		if (result != InteractionResult.PASS)
 			cir.setReturnValue(result == InteractionResult.SUCCESS);
+	}
+
+	@Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
+	public void port_lib$attackEvent(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+		if(LivingEntityEvents.ATTACK.invoker().onAttack((LivingEntity) (Object) this, source, amount)) cir.setReturnValue(false);
+	}
+
+	@Inject(method = "collectEquipmentChanges", at = @At(value = "JUMP", opcode = Opcodes.IFNONNULL), locals = LocalCapture.CAPTURE_FAILHARD)
+	public void port_lib$equipmentChange(CallbackInfoReturnable<Map<EquipmentSlot, ItemStack>> cir, Map<EquipmentSlot, ItemStack> map, EquipmentSlot[] equipmentslots, int i, int j, EquipmentSlot equipmentslot, ItemStack itemstack, ItemStack itemstack1) {
+		LivingEntityEvents.EQUIPMENT_CHANGE.invoker().onEquipmentChange((LivingEntity) (Object) this, equipmentslot, itemstack, itemstack1);
 	}
 }

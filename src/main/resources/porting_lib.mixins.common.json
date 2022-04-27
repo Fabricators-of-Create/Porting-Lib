@@ -45,6 +45,7 @@
     "OreBlockMixin",
     "PackRepositoryMixin",
     "ParticleTypeMixin",
+    "PlayerAdvancementsMixin",
     "PlayerListMixin",
     "PlayerMixin",
     "ProjectileMixin",

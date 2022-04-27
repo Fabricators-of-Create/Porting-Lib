@@ -69,6 +69,8 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "EntityRenderDispatcherMixin"
+    "EntityRenderDispatcherMixin",
+    "LocalPlayerMixin",
+    "RemotePlayerMixin"
   ]
 }

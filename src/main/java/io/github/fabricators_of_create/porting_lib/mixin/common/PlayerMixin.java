@@ -72,4 +72,9 @@ public abstract class PlayerMixin extends LivingEntity {
 	public void port_lib$itemAttack(Entity targetEntity, CallbackInfo ci) {
 		if(((ItemExtensions)getMainHandItem().getItem()).onLeftClickEntity(getMainHandItem(), (Player) (Object) this, targetEntity)) ci.cancel();
 	}
+
+	@Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
+	public void port_lib$attackEvent(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+		if(LivingEntityEvents.ATTACK.invoker().onAttack((LivingEntity) (Object) this, source, amount)) cir.setReturnValue(false);
+	}
 }

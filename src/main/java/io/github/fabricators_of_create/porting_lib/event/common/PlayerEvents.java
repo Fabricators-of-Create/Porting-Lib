@@ -4,7 +4,9 @@ import io.github.fabricators_of_create.porting_lib.event.EntityEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class PlayerEvents extends EntityEvent {
@@ -12,6 +14,11 @@ public abstract class PlayerEvents extends EntityEvent {
 	public static Event<PlayerBreakSpeed> BREAK_SPEED = EventFactory.createArrayBacked(PlayerBreakSpeed.class, callbacks -> event -> {
 		for(PlayerBreakSpeed e : callbacks)
 			e.setBreakSpeed(event);
+	});
+
+	public static Event<PlayerChangedDimensionEvent> CHANGED_DIMENSION = EventFactory.createArrayBacked(PlayerChangedDimensionEvent.class, callbacks -> (player, fromDim, toDim) -> {
+		for(PlayerChangedDimensionEvent e : callbacks)
+			e.onChangedDimension(player, fromDim, toDim);
 	});
 
 	private final Player entityPlayer;
@@ -59,5 +66,10 @@ public abstract class PlayerEvents extends EntityEvent {
 	@FunctionalInterface
 	public interface PlayerBreakSpeed {
 		void setBreakSpeed(BreakSpeed event);
+	}
+
+	@FunctionalInterface
+	public interface PlayerChangedDimensionEvent {
+		void onChangedDimension(Player player, ResourceKey<Level> fromDim, ResourceKey<Level> toDim);
 	}
 }

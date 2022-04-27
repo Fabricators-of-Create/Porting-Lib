@@ -4,17 +4,17 @@ import io.github.fabricators_of_create.porting_lib.block.CustomRunningEffectsBlo
 import io.github.fabricators_of_create.porting_lib.event.EntityEvents;
 import io.github.fabricators_of_create.porting_lib.event.EntityReadExtraDataCallback;
 import io.github.fabricators_of_create.porting_lib.event.MinecartEvents;
-import io.github.fabricators_of_create.porting_lib.event.StartRidingCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.MountEntityCallback;
 import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.RegistryNameProvider;
 import io.github.fabricators_of_create.porting_lib.util.EntityHelper;
-import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.block.state.BlockState;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -52,6 +52,10 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 
 	@Shadow
 	public abstract EntityType<?> getType();
+
+	@Shadow
+	@Nullable
+	private Entity vehicle;
 
 	@Inject(at = @At("TAIL"), method = "<init>")
 	public void port_lib$entityInit(EntityType<?> entityType, Level world, CallbackInfo ci) {
@@ -140,8 +144,15 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 			cancellable = true
 	)
 	public void port_lib$startRiding(Entity entity, boolean bl, CallbackInfoReturnable<Boolean> cir) {
-		if (StartRidingCallback.EVENT.invoker().onStartRiding((Entity) (Object) this, entity) == InteractionResult.FAIL) {
+		if (MountEntityCallback.EVENT.invoker().onStartRiding((Entity) (Object) this, entity, true) == InteractionResult.FAIL) {
 			cir.setReturnValue(false);
+		}
+	}
+
+	@Inject(method = "removeVehicle", at = @At(value = "CONSTANT", args = "nullValue=true"), cancellable = true)
+	public void port_lib$removeRidingEntity(CallbackInfo ci) {
+		if (MountEntityCallback.EVENT.invoker().onStartRiding((Entity) (Object) this, this.vehicle, true) == InteractionResult.FAIL) {
+			ci.cancel();
 		}
 	}
 
