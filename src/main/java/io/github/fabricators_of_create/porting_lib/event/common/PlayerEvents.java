@@ -16,11 +16,6 @@ public abstract class PlayerEvents extends EntityEvent {
 			e.setBreakSpeed(event);
 	});
 
-	public static Event<PlayerChangedDimensionEvent> CHANGED_DIMENSION = EventFactory.createArrayBacked(PlayerChangedDimensionEvent.class, callbacks -> (player, fromDim, toDim) -> {
-		for(PlayerChangedDimensionEvent e : callbacks)
-			e.onChangedDimension(player, fromDim, toDim);
-	});
-
 	private final Player entityPlayer;
 
 	public PlayerEvents(Player player) {
@@ -66,10 +61,5 @@ public abstract class PlayerEvents extends EntityEvent {
 	@FunctionalInterface
 	public interface PlayerBreakSpeed {
 		void setBreakSpeed(BreakSpeed event);
-	}
-
-	@FunctionalInterface
-	public interface PlayerChangedDimensionEvent {
-		void onChangedDimension(Player player, ResourceKey<Level> fromDim, ResourceKey<Level> toDim);
 	}
 }
