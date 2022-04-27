@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import com.google.common.collect.Multimap;
 
+import io.github.fabricators_of_create.porting_lib.event.common.ItemAttributeModifierCallback;
 import io.github.fabricators_of_create.porting_lib.extensions.ItemStackExtensions;
 
 import io.github.fabricators_of_create.porting_lib.item.ToolActionCheckingItem;
@@ -89,8 +90,9 @@ public abstract class ItemStackMixin implements NBTSerializable, ItemStackExtens
 	@Inject(method = "getAttributeModifiers", at = @At("RETURN"), cancellable = true)
 	public void port_lib$modifierItem(EquipmentSlot slot, CallbackInfoReturnable<Multimap<Attribute, AttributeModifier>> cir) {
 		if(getItem() instanceof AttributeModifierItem attributeModiferItem && !(this.hasTag() && this.tag.contains("AttributeModifiers", 9))) {
-			attributeModiferItem.getAttributeModifiers(slot, (ItemStack) (Object) this);
+			cir.setReturnValue(attributeModiferItem.getAttributeModifiers(slot, (ItemStack) (Object) this));
 		}
+		ItemAttributeModifierCallback.EVENT.invoker().onItemStackModifiers((ItemStack) (Object) this, slot, cir.getReturnValue());
 	}
 
 	@Inject(method = "setDamageValue", at = @At("HEAD"), cancellable = true)
