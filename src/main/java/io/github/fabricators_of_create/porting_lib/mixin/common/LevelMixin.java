@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +20,8 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 
 import net.minecraft.world.level.entity.EntityTypeTest;
+
+import net.minecraft.world.phys.AABB;
 
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
@@ -143,44 +147,56 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		if (ExplosionEvents.START.invoker().onExplosionStart((Level) (Object) this, explosion)) cir.setReturnValue(explosion);
 	}
 
-	@Inject(method = "method_31593", at = @At(value = "JUMP", opcode = Opcodes.IFEQ), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
-	private static void port_lib$addGetEntities(Entity entity, Predicate<? super Entity> predicate, List<Entity> list, Entity entity2, CallbackInfo ci) {
-		if (entity2 instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity() && !(entity instanceof EnderDragon)) { // dragons are already handled, skip
-			PartEntity<?>[] parts = partEntity.getParts();
-			if (parts != null) {
-				for (PartEntity<?> part : partEntity.getParts()) {
-					if (partEntity != entity && predicate.test(part)) {
-						list.add(part);
+	// --- adding part entities to getEntities methods ---
+	// inject to tail, capturing the found list of entities.
+	// iterate over them, check if multiparts, add subentities
+
+	@Inject(
+			method = "getEntities(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;",
+			at = @At("TAIL"),
+			locals = LocalCapture.CAPTURE_FAILHARD
+	)
+	private void port_lib$appendPartEntitiesPredicate(@Nullable Entity entity, AABB area, Predicate<? super Entity> predicate, CallbackInfoReturnable<List<Entity>> cir, List<Entity> list) {
+		if (list.isEmpty())
+			return;
+		List<PartEntity<?>> parts = new ArrayList<>();
+		for (Entity e : list) {
+			if (e instanceof MultiPartEntity multiPart && multiPart.isMultipartEntity() && !(e instanceof EnderDragon)) {
+				PartEntity<?>[] array = multiPart.getParts();
+				if (array != null) {
+					for (PartEntity<?> part : array) {
+						if (part != entity && predicate.test(part)) {
+							parts.add(part);
+						}
 					}
 				}
 			}
 		}
+		list.addAll(parts);
 	}
 
-	@Group(name = "port_lib_part_entity_getting", min = 1, max = 1)
-	// no idea why hashed is not remapping. So we have this mess.
-	@Inject(method = "m_mbvohlyp", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD, require = 0)
-	private static <T extends Entity> void port_lib$partEntityGettingHashed(Predicate<? super T> predicate, List<T> list, EntityTypeTest<Entity, T> test, Entity entity, CallbackInfo ci) {
-		port_lib$partEntityGetting(predicate, list, test, entity);
-	}
-
-	@Group(name = "port_lib_part_entity_getting", min = 1, max = 1)
-	@Inject(method = "method_31596", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD, require = 0)
-	private static <T extends Entity> void port_lib$partEntityGettingIntermediary(Predicate<? super T> predicate, List<T> list, EntityTypeTest<Entity, T> test, Entity entity, CallbackInfo ci) {
-		port_lib$partEntityGetting(predicate, list, test, entity);
-	}
-
-	private static <T extends Entity> void port_lib$partEntityGetting(Predicate<? super T> predicate, List<T> list, EntityTypeTest<Entity, T> test, Entity entity) {
-		if (entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity() && !(entity instanceof EnderDragon)) { // dragons are already handled, skip
-			PartEntity<?>[] parts = partEntity.getParts();
-			if (parts != null) {
-				for (PartEntity<?> part : partEntity.getParts()) {
-					T t = test.tryCast(part);
-					if (t != null && predicate.test(t)) {
-						list.add(t);
+	@Inject(
+			method = "getEntities(Lnet/minecraft/world/level/entity/EntityTypeTest;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;",
+			at = @At("TAIL"),
+			locals = LocalCapture.CAPTURE_FAILHARD
+	)
+	private <T extends Entity> void port_lib$appendPartEntitiesTypeTest(EntityTypeTest<Entity, T> test, AABB area, Predicate<? super T> predicate, CallbackInfoReturnable<List<T>> cir, List<Entity> list) {
+		if (list.isEmpty())
+			return;
+		List<PartEntity<?>> parts = new ArrayList<>();
+		for (Entity e : list) {
+			if (e instanceof MultiPartEntity multiPart && multiPart.isMultipartEntity() && !(e instanceof EnderDragon)) {
+				PartEntity<?>[] array = multiPart.getParts();
+				if (array != null) {
+					for (PartEntity<?> part : array) {
+						T t = test.tryCast(part);
+						if (t != null && predicate.test(t)) {
+							parts.add(part);
+						}
 					}
 				}
 			}
 		}
+		list.addAll(parts);
 	}
 }
