@@ -50,6 +50,7 @@
     "PlayerListMixin",
     "PlayerMixin",
     "ProjectileMixin",
+    "ProjectileUtilMixin",
     "ProtoChunkMixin",
     "RailStateMixin",
     "RedStoneOreBlockMixin",
