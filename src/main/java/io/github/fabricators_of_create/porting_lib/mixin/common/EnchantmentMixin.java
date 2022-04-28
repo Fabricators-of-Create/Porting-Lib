@@ -3,6 +3,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import io.github.fabricators_of_create.porting_lib.util.EnchantableItem;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,6 +26,9 @@ public abstract class EnchantmentMixin {
 					cir.setReturnValue(true);
 				}
 			}
+		}
+		if(itemStack.getItem() instanceof EnchantableItem enchantableItem) {
+			cir.setReturnValue(enchantableItem.canApplyAtEnchantingTable(itemStack, (Enchantment) (Object) this));
 		}
 	}
 }
