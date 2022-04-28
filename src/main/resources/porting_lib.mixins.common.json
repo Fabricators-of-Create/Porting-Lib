@@ -15,6 +15,7 @@
     "BlockItemMixin",
     "BlockMixin",
     "BoatMixin",
+    "BowItemMixin",
     "ChorusFruitItemMixin",
     "ChunkSerializerMixin",
     "ChunkStatusMixin",

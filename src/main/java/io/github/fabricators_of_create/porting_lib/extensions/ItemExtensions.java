@@ -20,10 +20,6 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import javax.annotation.Nullable;
 
 public interface ItemExtensions {
-	default boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-		throw new RuntimeException("this should be overridden via mixin. what?");
-	}
-
 	default boolean canPerformAction(ItemStack stack, ToolAction toolAction) {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
