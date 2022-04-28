@@ -64,6 +64,29 @@ dependencies {
 
 loom {
 	accessWidenerPath = file("src/main/resources/porting_lib.accesswidener")
+
+	sourceSets {
+            main {
+                resources {
+                    srcDir("src/generated/resources")
+                    exclude("src/generated/resources/.cache")
+                }
+            }
+        }
+
+        runs {
+            datagen {
+                client()
+
+                name "Data Generation"
+                vmArg "-Dfabric-api.datagen"
+                vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
+                vmArg "-Dfabric-api.datagen.modid=porting_lib"
+                // from ae2
+
+                runDir "build/datagen"
+            }
+        }
 }
 
 task buildOrPublish {

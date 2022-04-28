@@ -28,11 +28,6 @@ public abstract class ItemMixin implements RegistryNameProvider, ItemExtensions 
 	}
 
 	@Override
-	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-		return !oldStack.equals(newStack);
-	}
-
-	@Override
 	public boolean canPerformAction(ItemStack stack, ToolAction toolAction) {
 		return false;
 	}

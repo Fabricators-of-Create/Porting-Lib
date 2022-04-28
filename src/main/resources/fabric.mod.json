@@ -22,6 +22,9 @@
     ],
     "preLaunch": [
       "io.github.fabricators_of_create.porting_lib.PortingLibPreLaunch"
+    ],
+    "fabric-datagen": [
+      "io.github.fabricators_of_create.porting_lib.PortingLibData"
     ]
   },
   "mixins": [
