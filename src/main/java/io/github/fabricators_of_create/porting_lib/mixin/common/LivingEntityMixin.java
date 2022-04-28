@@ -244,21 +244,27 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 	)
 	public void port_lib$entityGravity(Vec3 travelVector, CallbackInfo ci) {
 		AttributeInstance gravity = this.getAttribute(PortingLibAttributes.ENTITY_GRAVITY);
-		boolean flag = this.getDeltaMovement().y <= 0.0D;
-		if (flag && this.hasEffect(MobEffects.SLOW_FALLING)) {
-			if (!gravity.hasModifier(SLOW_FALLING)) gravity.addTransientModifier(SLOW_FALLING);
-			this.resetFallDistance();
-		} else if (gravity.hasModifier(SLOW_FALLING)) {
-			gravity.removeModifier(SLOW_FALLING);
+		if (gravity != null) {
+			boolean falling = this.getDeltaMovement().y <= 0.0D;
+			if (falling && this.hasEffect(MobEffects.SLOW_FALLING)) {
+				if (!gravity.hasModifier(SLOW_FALLING)) gravity.addTransientModifier(SLOW_FALLING);
+				this.resetFallDistance();
+			} else if (gravity.hasModifier(SLOW_FALLING)) {
+				gravity.removeModifier(SLOW_FALLING);
+			}
 		}
 	}
 
-	@ModifyConstant(method = "travel", constant = @Constant(doubleValue = 0.08D))
-	public double modifyGravity(double originalGrav) {
-		return this.getAttribute(PortingLibAttributes.ENTITY_GRAVITY).getValue();
+	@ModifyVariable(method = "travel", at = @At(value = "STORE", ordinal = 0)) // double d = 0.08;
+	private double port_lib$modifyGravity(double original) {
+		if (original == 0.08) { // only apply gravity if other mods haven't changed it
+			return this.getAttribute(PortingLibAttributes.ENTITY_GRAVITY).getValue();
+		}
+		return original;
 	}
 
-	@Inject(method = "completeUsingItem", at = @At(value = "JUMP", opcode = Opcodes.IF_ACMPEQ), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "completeUsingItem", at = @At(value = "INVOKE", shift = Shift.BY, by = 2, target = "Lnet/minecraft/world/item/ItemStack;finishUsingItem(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/item/ItemStack;"),
+			locals = LocalCapture.CAPTURE_FAILHARD)
 	public void port_lib$onFinishUsing(CallbackInfo ci, InteractionHand hand, ItemStack result) {
 		LivingEntityUseItemEvents.LIVING_USE_ITEM_FINISH.invoker().onUseItem((LivingEntity) (Object) this, this.getUseItem().copy(), getUseItemRemainingTicks(), result);
 	}

@@ -14,6 +14,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -30,9 +31,9 @@ public class ClientFluidLookupCache implements BlockApiCache<Storage<FluidVarian
 	private BlockEntity cachedBlockEntity = null;
 	private BlockState lastState = null;
 
-	public ClientFluidLookupCache(ClientLevel world, BlockPos pos) {
+	public ClientFluidLookupCache(Level world, BlockPos pos) {
 		((ClientLevelExtensions) world).port_lib$registerCache(pos ,this);
-		this.world = world;
+		this.world = (ClientLevel) world;
 		this.pos = pos.immutable();
 	}
 

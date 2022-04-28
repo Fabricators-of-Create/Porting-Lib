@@ -526,7 +526,7 @@ public class TransferUtil {
 	public static BlockApiCache<Storage<ItemVariant>, Direction> getItemCache(Level level, BlockPos pos) {
 		if (level instanceof ServerLevel server) {
 			return BlockApiCache.create(ItemStorage.SIDED, server, pos);
-		} else if (level instanceof ClientLevel client) {
+		} else if (level.isClientSide() && level instanceof ClientLevel client) {
 			return new ClientItemLookupCache(client, pos);
 		}
 		return EmptyItemLookupCache.INSTANCE;
@@ -539,7 +539,7 @@ public class TransferUtil {
 	public static BlockApiCache<Storage<FluidVariant>, Direction> getFluidCache(Level level, BlockPos pos) {
 		if (level instanceof ServerLevel server) {
 			return BlockApiCache.create(FluidStorage.SIDED, server, pos);
-		} else if (level instanceof ClientLevel client) {
+		} else if (level.isClientSide() && level instanceof ClientLevel client) {
 			return new ClientFluidLookupCache(client, pos);
 		}
 		return EmptyFluidLookupCache.INSTANCE;
