@@ -2,13 +2,10 @@ package io.github.fabricators_of_create.porting_lib.transfer.cache;
 
 import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientBlockEntityEvents;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -31,9 +28,15 @@ public class ClientFluidLookupCache implements BlockApiCache<Storage<FluidVarian
 	private BlockEntity cachedBlockEntity = null;
 	private BlockState lastState = null;
 
-	public ClientFluidLookupCache(Level world, BlockPos pos) {
+	public static BlockApiCache<Storage<FluidVariant>, Direction> get(Level level, BlockPos pos) {
+		if (level instanceof ClientLevel c)
+			return new ClientFluidLookupCache(c, pos);
+		return EmptyFluidLookupCache.INSTANCE;
+	}
+
+	public ClientFluidLookupCache(ClientLevel world, BlockPos pos) {
 		((ClientLevelExtensions) world).port_lib$registerCache(pos ,this);
-		this.world = (ClientLevel) world;
+		this.world = world;
 		this.pos = pos.immutable();
 	}
 

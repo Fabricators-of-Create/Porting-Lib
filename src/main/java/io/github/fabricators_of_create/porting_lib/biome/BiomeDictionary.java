@@ -23,13 +23,11 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.world.level.biome.Biome;
 
-public class BiomeDictionary
-{
+public class BiomeDictionary {
 	private static final boolean DEBUG = false;
 	private static final Logger LOGGER = LogManager.getLogger();
 
-	public static final class Type
-	{
+	public static final class Type {
 		private static final Map<String, Type> byName = new TreeMap<>();
 		private static Collection<Type> allTypes = Collections.unmodifiableCollection(byName.values());
 
@@ -96,8 +94,7 @@ public class BiomeDictionary
 		private final Set<ResourceKey<Biome>> biomes = new HashSet<>();
 		private final Set<ResourceKey<Biome>> biomesUn = Collections.unmodifiableSet(biomes);
 
-		private Type(String name, Type... subTypes)
-		{
+		private Type(String name, Type... subTypes) {
 			this.name = name;
 			this.subTypes = ImmutableList.copyOf(subTypes);
 
@@ -107,13 +104,11 @@ public class BiomeDictionary
 		/**
 		 * Gets the name for this type.
 		 */
-		public String getName()
-		{
+		public String getName() {
 			return name;
 		}
 
-		public String toString()
-		{
+		public String toString() {
 			return name;
 		}
 
@@ -134,12 +129,10 @@ public class BiomeDictionary
 		 * @param name The name of this Type
 		 * @return An instance of Type for this name.
 		 */
-		public static Type getType(String name, Type... subTypes)
-		{
+		public static Type getType(String name, Type... subTypes) {
 			name = name.toUpperCase();
 			Type t = byName.get(name);
-			if (t == null)
-			{
+			if (t == null) {
 				t = new Type(name, subTypes);
 			}
 			return t;
@@ -148,27 +141,24 @@ public class BiomeDictionary
 		/**
 		 * Checks if a type instance exists for a given name. Does not have any side effects if a type does not already exist.
 		 * This can be used for checking if a user-defined type is valid, for example, in a codec which accepts biome dictionary names.
+		 *
 		 * @param name The name.
 		 * @return {@code true} if a type exists with this name.
-		 *
 		 * @see #getType(String, Type...) #getType for type naming conventions.
 		 */
-		public static boolean hasType(String name)
-		{
+		public static boolean hasType(String name) {
 			return byName.containsKey(name.toUpperCase());
 		}
 
 		/**
 		 * @return An unmodifiable collection of all current biome types.
 		 */
-		public static Collection<Type> getAll()
-		{
+		public static Collection<Type> getAll() {
 			return allTypes;
 		}
 
 		@Nullable
-		public static Type fromVanilla(Biome.BiomeCategory category)
-		{
+		public static Type fromVanilla(Biome.BiomeCategory category) {
 			if (category == Biome.BiomeCategory.NONE)
 				return null;
 			if (category == Biome.BiomeCategory.THEEND)
@@ -179,29 +169,26 @@ public class BiomeDictionary
 
 	private static final Map<ResourceKey<Biome>, BiomeInfo> biomeInfoMap = new HashMap<>();
 
-	private static class BiomeInfo
-	{
+	private static class BiomeInfo {
 		private final Set<Type> types = new HashSet<Type>();
 		private final Set<Type> typesUn = Collections.unmodifiableSet(this.types);
 	}
 
-	public static void init() {}
-	static
-	{
+	public static void init() {
+	}
+
+	static {
 		registerVanillaBiomes();
 	}
 
 	/**
 	 * Adds the given types to the biome.
-	 *
 	 */
-	public static void addTypes(ResourceKey<Biome> biome, Type... types)
-	{
+	public static void addTypes(ResourceKey<Biome> biome, Type... types) {
 		Collection<Type> supertypes = listSupertypes(types);
 		Collections.addAll(supertypes, types);
 
-		for (Type type : supertypes)
-		{
+		for (Type type : supertypes) {
 			type.biomes.add(biome);
 		}
 
@@ -212,21 +199,17 @@ public class BiomeDictionary
 
 	/**
 	 * Gets the set of biomes that have the given type.
-	 *
 	 */
 	@Nonnull
-	public static Set<ResourceKey<Biome>> getBiomes(Type type)
-	{
+	public static Set<ResourceKey<Biome>> getBiomes(Type type) {
 		return type.biomesUn;
 	}
 
 	/**
 	 * Gets the set of types that have been added to the given biome.
-	 *
 	 */
 	@Nonnull
-	public static Set<Type> getTypes(ResourceKey<Biome> biome)
-	{
+	public static Set<Type> getTypes(ResourceKey<Biome> biome) {
 		return getBiomeInfo(biome).typesUn;
 	}
 
@@ -235,8 +218,7 @@ public class BiomeDictionary
 	 *
 	 * @return returns true if a common type is found, false otherwise
 	 */
-	public static boolean areSimilar(ResourceKey<Biome> biomeA, ResourceKey<Biome> biomeB)
-	{
+	public static boolean areSimilar(ResourceKey<Biome> biomeA, ResourceKey<Biome> biomeB) {
 		Set<Type> typesA = getTypes(biomeA);
 		Set<Type> typesB = getTypes(biomeB);
 		return typesA.stream().anyMatch(typesB::contains);
@@ -244,40 +226,32 @@ public class BiomeDictionary
 
 	/**
 	 * Checks if the given type has been added to the given biome.
-	 *
 	 */
-	public static boolean hasType(ResourceKey<Biome> biome, Type type)
-	{
+	public static boolean hasType(ResourceKey<Biome> biome, Type type) {
 		return getTypes(biome).contains(type);
 	}
 
 	/**
 	 * Checks if any type has been added to the given biome.
-	 *
 	 */
-	public static boolean hasAnyType(ResourceKey<Biome> biome)
-	{
+	public static boolean hasAnyType(ResourceKey<Biome> biome) {
 		return !getBiomeInfo(biome).types.isEmpty();
 	}
 
 	//Internal implementation
-	private static BiomeInfo getBiomeInfo(ResourceKey<Biome> biome)
-	{
+	private static BiomeInfo getBiomeInfo(ResourceKey<Biome> biome) {
 		return biomeInfoMap.computeIfAbsent(biome, k -> new BiomeInfo());
 	}
 
-	private static Collection<Type> listSupertypes(Type... types)
-	{
+	private static Collection<Type> listSupertypes(Type... types) {
 		Set<Type> supertypes = new HashSet<Type>();
 		Deque<Type> next = new ArrayDeque<Type>();
 		Collections.addAll(next, types);
 
-		while (!next.isEmpty())
-		{
+		while (!next.isEmpty()) {
 			Type type = next.remove();
 
-			for (Type sType : Type.byName.values())
-			{
+			for (Type sType : Type.byName.values()) {
 				if (sType.subTypes.contains(type) && supertypes.add(sType))
 					next.add(sType);
 			}
@@ -286,8 +260,7 @@ public class BiomeDictionary
 		return supertypes;
 	}
 
-	private static void registerVanillaBiomes()
-	{
+	private static void registerVanillaBiomes() {
 		addTypes(Biomes.OCEAN, OCEAN, OVERWORLD);
 		addTypes(Biomes.PLAINS, PLAINS, OVERWORLD);
 		addTypes(Biomes.DESERT, HOT, DRY, SANDY, OVERWORLD);
@@ -350,15 +323,14 @@ public class BiomeDictionary
 		addTypes(Biomes.WARPED_FOREST, HOT, DRY, NETHER, FOREST);
 		addTypes(Biomes.BASALT_DELTAS, HOT, DRY, NETHER);
 
-		if (DEBUG)
-		{
+		if (DEBUG) {
 			StringBuilder buf = new StringBuilder();
 			buf.append("BiomeDictionary:\n");
 			Type.byName.forEach((name, type) ->
 					buf.append("    ").append(type.name).append(": ")
 							.append(type.biomes.stream()
 									.map(ResourceKey::location)
-									.sorted((a,b) -> ((ResourceLocationExtensions) a).compareNamespaced(b))
+									.sorted((a, b) -> ((ResourceLocationExtensions) a).compareNamespaced(b))
 									.map(Object::toString)
 									.collect(Collectors.joining(", "))
 							)

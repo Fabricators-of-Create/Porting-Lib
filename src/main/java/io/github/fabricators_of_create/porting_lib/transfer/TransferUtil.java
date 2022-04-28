@@ -14,6 +14,7 @@ import io.github.fabricators_of_create.porting_lib.transfer.cache.EmptyItemLooku
 import io.github.fabricators_of_create.porting_lib.transfer.fluid.FluidTransferable;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemTransferable;
 import io.github.fabricators_of_create.porting_lib.util.FluidStack;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
@@ -27,6 +28,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -526,8 +528,8 @@ public class TransferUtil {
 	public static BlockApiCache<Storage<ItemVariant>, Direction> getItemCache(Level level, BlockPos pos) {
 		if (level instanceof ServerLevel server) {
 			return BlockApiCache.create(ItemStorage.SIDED, server, pos);
-		} else if (level.isClientSide() && level instanceof ClientLevel client) {
-			return new ClientItemLookupCache(client, pos);
+		} else if (level.isClientSide()) {
+			return ClientItemLookupCache.get(level, pos);
 		}
 		return EmptyItemLookupCache.INSTANCE;
 	}
@@ -539,8 +541,8 @@ public class TransferUtil {
 	public static BlockApiCache<Storage<FluidVariant>, Direction> getFluidCache(Level level, BlockPos pos) {
 		if (level instanceof ServerLevel server) {
 			return BlockApiCache.create(FluidStorage.SIDED, server, pos);
-		} else if (level.isClientSide() && level instanceof ClientLevel client) {
-			return new ClientFluidLookupCache(client, pos);
+		} else if (level.isClientSide()) {
+			return ClientFluidLookupCache.get(level, pos);
 		}
 		return EmptyFluidLookupCache.INSTANCE;
 	}

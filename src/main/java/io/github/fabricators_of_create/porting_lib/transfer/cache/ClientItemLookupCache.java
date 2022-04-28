@@ -12,6 +12,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -27,6 +28,12 @@ public class ClientItemLookupCache implements BlockApiCache<Storage<ItemVariant>
 	private boolean blockEntityCacheValid = false;
 	private BlockEntity cachedBlockEntity = null;
 	private BlockState lastState = null;
+
+	public static BlockApiCache<Storage<ItemVariant>, Direction> get(Level level, BlockPos pos) {
+		if (level instanceof ClientLevel c)
+			return new ClientItemLookupCache(c, pos);
+		return EmptyItemLookupCache.INSTANCE;
+	}
 
 	public ClientItemLookupCache(ClientLevel world, BlockPos pos) {
 		((ClientLevelExtensions) world).port_lib$registerCache(pos ,this);
