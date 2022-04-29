@@ -22,7 +22,6 @@ import java.util.Iterator;
 
 public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implements Storage<ItemVariant>, NBTSerializable {
 	public ItemStack[] stacks;
-	public boolean client = false;
 
 	public ItemStackHandler() {
 		this(1);
