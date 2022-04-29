@@ -19,7 +19,6 @@
     "ChorusFruitItemMixin",
     "ChunkSerializerMixin",
     "ChunkStatusMixin",
-    "ClientboundAddEntityPacketMixin",
     "ClipContextMixin",
     "DeadBushBlockMixin",
     "EnchantmentMixin",
