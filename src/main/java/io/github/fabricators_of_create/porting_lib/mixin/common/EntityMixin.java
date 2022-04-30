@@ -6,13 +6,17 @@ import io.github.fabricators_of_create.porting_lib.event.EntityReadExtraDataCall
 import io.github.fabricators_of_create.porting_lib.event.MinecartEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.MountEntityCallback;
 import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.ITeleporter;
 import io.github.fabricators_of_create.porting_lib.extensions.RegistryNameProvider;
 import io.github.fabricators_of_create.porting_lib.util.EntityHelper;
 import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.level.portal.PortalInfo;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -56,6 +60,22 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 	@Shadow
 	@Nullable
 	private Entity vehicle;
+
+	@Shadow
+	protected abstract void removeAfterChangingDimensions();
+
+	@Shadow
+	@Nullable
+	protected abstract PortalInfo findDimensionEntryPoint(ServerLevel destination);
+
+	@Shadow
+	private float yRot;
+
+	@Shadow
+	public abstract boolean isRemoved();
+
+	@Shadow
+	public abstract void unRide();
 
 	@Inject(at = @At("TAIL"), method = "<init>")
 	public void port_lib$entityInit(EntityType<?> entityType, Level world, CallbackInfo ci) {
@@ -199,5 +219,43 @@ public abstract class EntityMixin implements EntityExtensions, NBTSerializable, 
 			port_lib$registryName = Registry.ENTITY_TYPE.getKey(getType());
 		}
 		return port_lib$registryName;
+	}
+
+	@Unique
+	@Override
+	public Entity changeDimension(ServerLevel p_20118_, ITeleporter teleporter) {
+		if (this.level instanceof ServerLevel && !this.isRemoved()) {
+			this.level.getProfiler().push("changeDimension");
+			this.unRide();
+			this.level.getProfiler().push("reposition");
+			PortalInfo portalinfo = teleporter.getPortalInfo((Entity) (Object) this, p_20118_, this::findDimensionEntryPoint);
+			if (portalinfo == null) {
+				return null;
+			} else {
+				Entity transportedEntity = teleporter.placeEntity((Entity) (Object) this, (ServerLevel) this.level, p_20118_, this.yRot, spawnPortal -> { //Forge: Start vanilla logic
+					this.level.getProfiler().popPush("reloading");
+					Entity entity = this.getType().create(p_20118_);
+					if (entity != null) {
+						entity.restoreFrom((Entity) (Object) this);
+						entity.moveTo(portalinfo.pos.x, portalinfo.pos.y, portalinfo.pos.z, portalinfo.yRot, entity.getXRot());
+						entity.setDeltaMovement(portalinfo.speed);
+						p_20118_.addDuringTeleport(entity);
+						if (spawnPortal && p_20118_.dimension() == Level.END) {
+							ServerLevel.makeObsidianPlatform(p_20118_);
+						}
+					}
+					return entity;
+				}); //Forge: End vanilla logic
+
+				this.removeAfterChangingDimensions();
+				this.level.getProfiler().pop();
+				((ServerLevel)this.level).resetEmptyTime();
+				p_20118_.resetEmptyTime();
+				this.level.getProfiler().pop();
+				return transportedEntity;
+			}
+		} else {
+			return null;
+		}
 	}
 }
