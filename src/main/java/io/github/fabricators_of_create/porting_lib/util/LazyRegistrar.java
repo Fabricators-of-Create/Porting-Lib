@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
+import com.google.common.base.Supplier;
+
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -8,7 +10,6 @@ import net.minecraft.world.level.block.Block;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class LazyRegistrar<T> {
 	public final String mod_id;

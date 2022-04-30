@@ -27,7 +27,7 @@ public final class RegistryObject<T> implements Supplier<T> {
 	}
 
 	public void setWrappedEntry(Supplier<?> wrappedEntry) {
-		this.wrappedEntry = (Supplier<T>) wrappedEntry;
+		this.wrappedEntry = (Supplier<T>) Suppliers.memoize(wrappedEntry);
 	}
 
 	@Override
