@@ -22,5 +22,7 @@ public interface IPlantable {
 		return PlantType.PLAINS;
 	}
 
-	BlockState getPlant(BlockGetter world, BlockPos pos);
+	default BlockState getPlant(BlockGetter world, BlockPos pos) {
+		return null;
+	}
 }
