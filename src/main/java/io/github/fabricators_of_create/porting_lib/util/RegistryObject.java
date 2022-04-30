@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
-import java.util.function.Supplier;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +18,7 @@ public final class RegistryObject<T> implements Supplier<T> {
 
 	public RegistryObject(ResourceLocation id, Supplier<T> wrappedEntry, ResourceKey<?> key) {
 		this.id = id;
-		this.wrappedEntry = wrappedEntry;
+		this.wrappedEntry = Suppliers.memoize(wrappedEntry);
 		this.key = (ResourceKey<T>) key;
 	}
 
