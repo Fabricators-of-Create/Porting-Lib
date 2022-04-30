@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 
@@ -33,7 +34,7 @@ public class LazyRegistrar<T> {
 	}
 
 	public <R extends T> RegistryObject<R> register(ResourceLocation id, Supplier<R> entry) {
-		RegistryObject<R> obj = new RegistryObject<>(id, entry);
+		RegistryObject<R> obj = new RegistryObject<>(id, entry, ResourceKey.create(registry.key(), id));
 		entires.add(obj);
 		return obj;
 	}
