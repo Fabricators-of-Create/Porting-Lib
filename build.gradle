@@ -56,8 +56,8 @@ dependencies {
 	// dependencies
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
 	modApi(include("me.alphamode:ForgeTags:${project.forge_tags_version}"))
-	api(include("com.github.LlamaLad7:MixinExtras:0.0.6"))
-	annotationProcessor(include("com.github.LlamaLad7:MixinExtras:0.0.6"))
+	api(include("com.github.LlamaLad7:MixinExtras:0.0.9"))
+	annotationProcessor(include("com.github.LlamaLad7:MixinExtras:0.0.9"))
 
 	modApi(include("com.github.Chocohead:Fabric-ASM:v2.3"))
 }
