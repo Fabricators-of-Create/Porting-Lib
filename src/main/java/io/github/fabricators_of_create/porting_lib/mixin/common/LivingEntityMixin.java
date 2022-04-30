@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
+import io.github.fabricators_of_create.porting_lib.util.ContinueUsingItem;
+import io.github.fabricators_of_create.porting_lib.util.UsingTickItem;
+
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -76,6 +79,15 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 
 	@Shadow
 	public abstract int getUseItemRemainingTicks();
+
+	@Shadow
+	protected ItemStack useItem;
+
+	@Shadow
+	protected int useItemRemaining;
+
+	@Shadow
+	public abstract InteractionHand getUsedItemHand();
 
 	public LivingEntityMixin(EntityType<?> entityType, Level world) {
 		super(entityType, world);
@@ -298,5 +310,28 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 	@Inject(method = "collectEquipmentChanges", at = @At(value = "JUMP", opcode = Opcodes.IFNONNULL), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void port_lib$equipmentChange(CallbackInfoReturnable<Map<EquipmentSlot, ItemStack>> cir, Map<EquipmentSlot, ItemStack> map, EquipmentSlot[] equipmentslots, int i, int j, EquipmentSlot equipmentslot, ItemStack itemstack, ItemStack itemstack1) {
 		LivingEntityEvents.EQUIPMENT_CHANGE.invoker().onEquipmentChange((LivingEntity) (Object) this, equipmentslot, itemstack, itemstack1);
+	}
+
+	@Inject(method = "updatingUsingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;", shift = Shift.AFTER, ordinal = 1))
+	public void port_lib$onUsingTick(CallbackInfo ci) {
+		if (useItem.getItem() instanceof UsingTickItem usingTickItem) {
+			if (!this.useItem.isEmpty()) {
+				if (useItemRemaining > 0)
+					usingTickItem.onUsingTick(useItem, (LivingEntity) (Object) this, useItemRemaining);
+			}
+		}
+	}
+
+	@ModifyExpressionValue(method = "updatingUsingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isSameIgnoreDurability(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
+	public boolean port_lib$canContinueUsing(boolean original) {
+		if (useItem.getItem() instanceof ContinueUsingItem continueUsingItem) {
+			ItemStack to = this.getItemInHand(this.getUsedItemHand());
+			if (!useItem.isEmpty() && !to.isEmpty())
+			{
+				return continueUsingItem.canContinueUsing(useItem, to);
+			}
+			return false;
+		}
+		return original;
 	}
 }

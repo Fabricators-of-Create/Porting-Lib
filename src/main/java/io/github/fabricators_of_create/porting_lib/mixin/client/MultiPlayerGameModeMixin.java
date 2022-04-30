@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.ModifyReceiver;
 import io.github.fabricators_of_create.porting_lib.event.EntityInteractCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.ItemStackExtensions;
+import io.github.fabricators_of_create.porting_lib.util.PlayerDestroyBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,7 +13,10 @@ import net.minecraft.world.entity.Entity;
 
 import net.minecraft.world.level.GameType;
 
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+
+import net.minecraft.world.level.material.FluidState;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,6 +44,8 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Environment(EnvType.CLIENT)
 @Mixin(MultiPlayerGameMode.class)
@@ -95,5 +101,17 @@ public abstract class MultiPlayerGameModeMixin {
 	@Inject(method = "startDestroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;", ordinal = 1))
 	public void port_lib$startDestroy(BlockPos loc, Direction face, CallbackInfoReturnable<Boolean> cir) {
 		BlockEvents.LEFT_CLICK_BLOCK.invoker().onLeftClickBlock(minecraft.player, loc, face);
+	}
+
+	@Inject(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
+	public void port_lib$playerDestroyBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir, Level level, BlockState blockstate, Block block, FluidState fluidstate) {
+		if (blockstate.getBlock() instanceof PlayerDestroyBlock destroyBlock) {
+			boolean flag = destroyBlock.onDestroyedByPlayer(blockstate, level, pos, minecraft.player, false, fluidstate);
+			if (flag) {
+				block.destroy(level, pos, blockstate);
+			}
+
+			cir.setReturnValue(flag);
+		}
 	}
 }
