@@ -41,6 +41,11 @@
     "TextureAtlasSpriteMixin",
     "TextureManagerMixin",
     "VertexFormatMixin",
+    "ChestRendererMixin",
+    "EntityRenderDispatcherMixin",
+    "LocalPlayerMixin",
+    "MapRendererMapInstanceMixin",
+    "RemotePlayerMixin",
     "accessor.AbstractContainerScreenAccessor",
     "accessor.AbstractSelectionList$EntryAccessor",
     "accessor.AbstractSelectionListAccessor",
@@ -68,12 +73,5 @@
   "injectors": {
     "defaultRequire": 1,
     "maxShiftBy": 999999
-  },
-  "mixins": [
-    "ChestRendererMixin",
-    "EntityRenderDispatcherMixin",
-    "LocalPlayerMixin",
-    "MapRendererMapInstanceMixin",
-    "RemotePlayerMixin"
-  ]
+  }
 }
