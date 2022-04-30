@@ -44,3 +44,6 @@ transitive-accessible field net/minecraft/client/resources/ClientPackSource BUIL
 transitive-accessible field net/minecraft/client/Minecraft RESOURCE_RELOAD_INITIAL_TASK Ljava/util/concurrent/CompletableFuture;
 
 transitive-accessible method net/minecraft/world/level/block/BushBlock mayPlaceOn (Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z
+
+transitive-accessible class net/minecraft/client/gui/MapRenderer$MapInstance
+transitive-accessible field net/minecraft/client/gui/MapRenderer MAP_ICONS Lnet/minecraft/client/renderer/RenderType;

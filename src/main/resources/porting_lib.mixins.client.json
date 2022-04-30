@@ -73,6 +73,7 @@
     "ChestRendererMixin",
     "EntityRenderDispatcherMixin",
     "LocalPlayerMixin",
+    "MapRendererMapInstanceMixin",
     "RemotePlayerMixin"
   ]
 }
