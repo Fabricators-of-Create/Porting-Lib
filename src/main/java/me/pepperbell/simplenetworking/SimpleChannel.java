@@ -119,6 +119,10 @@ public class SimpleChannel {
 		}
 	}
 
+	public Packet<?> toVanillaPacket(S2CPacket packet) {
+		return ServerPlayNetworking.createS2CPacket(channelName, createBuf(packet));
+	}
+
 	public void sendToClientsInServer(S2CPacket packet, MinecraftServer server) {
 		sendToClients(packet, PlayerLookup.all(server));
 	}
