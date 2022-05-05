@@ -31,6 +31,7 @@ transitive-accessible method net/minecraft/client/renderer/texture/TextureAtlasS
 
 transitive-accessible class net/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier
 transitive-accessible method net/minecraft/world/item/crafting/Ingredient <init> (Ljava/util/stream/Stream;)V
+transitive-accessible method net/minecraft/world/item/crafting/Ingredient fromValues (Ljava/util/stream/Stream;)Lnet/minecraft/world/item/crafting/Ingredient;
 transitive-extendable method net/minecraft/data/loot/BlockLoot add (Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/level/storage/loot/LootTable$Builder;)V
 transitive-extendable class net/minecraft/world/item/crafting/Ingredient
 transitive-extendable class net/minecraft/data/tags/TagsProvider
