@@ -1,9 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomRunningEffectsBlock;
-import io.github.fabricators_of_create.porting_lib.event.EntityEvents;
-import io.github.fabricators_of_create.porting_lib.event.EntityReadExtraDataCallback;
-import io.github.fabricators_of_create.porting_lib.event.MinecartEvents;
+import io.github.fabricators_of_create.porting_lib.event.common.EntityEvents;
+import io.github.fabricators_of_create.porting_lib.event.common.EntityReadExtraDataCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.MinecartEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.MountEntityCallback;
 import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.ITeleporter;

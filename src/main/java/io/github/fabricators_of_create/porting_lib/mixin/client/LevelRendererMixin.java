@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 
 import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
-import io.github.fabricators_of_create.porting_lib.event.FogEvents;
+import io.github.fabricators_of_create.porting_lib.event.client.FogEvents;
 import io.github.fabricators_of_create.porting_lib.event.client.DrawSelectionEvents;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -39,7 +39,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Environment(EnvType.CLIENT)
 @Mixin(LevelRenderer.class)

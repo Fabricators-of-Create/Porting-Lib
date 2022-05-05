@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 import static net.minecraft.world.InteractionResult.PASS;
 import static net.minecraft.world.InteractionResult.SUCCESS;
 
-import io.github.fabricators_of_create.porting_lib.event.MinecraftTailCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.MinecraftTailCallback;
 
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
@@ -16,12 +16,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import io.github.fabricators_of_create.porting_lib.event.AttackAirCallback;
-import io.github.fabricators_of_create.porting_lib.event.ClientWorldEvents;
-import io.github.fabricators_of_create.porting_lib.event.InstanceRegistrationCallback;
-import io.github.fabricators_of_create.porting_lib.event.OnStartUseItemCallback;
-import io.github.fabricators_of_create.porting_lib.event.ParticleManagerRegistrationCallback;
-import io.github.fabricators_of_create.porting_lib.event.RenderTickStartCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.AttackAirCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.ClientWorldEvents;
+import io.github.fabricators_of_create.porting_lib.event.client.OnStartUseItemCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.ParticleManagerRegistrationCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.RenderTickStartCallback;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

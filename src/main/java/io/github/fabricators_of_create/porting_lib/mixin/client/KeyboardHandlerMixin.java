@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import io.github.fabricators_of_create.porting_lib.event.KeyInputCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.KeyInputCallback;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

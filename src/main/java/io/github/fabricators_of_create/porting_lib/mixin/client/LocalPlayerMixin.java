@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
-import io.github.fabricators_of_create.porting_lib.event.LivingEntityEvents;
+import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEvents;
 import net.minecraft.client.player.LocalPlayer;
 
 import net.minecraft.world.damagesource.DamageSource;

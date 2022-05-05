@@ -5,10 +5,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import io.github.fabricators_of_create.porting_lib.event.ProjectileImpactCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.ProjectileImpactCallback;
 
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.ThrownEgg;
 import net.minecraft.world.phys.HitResult;
 
 @Mixin(Projectile.class)

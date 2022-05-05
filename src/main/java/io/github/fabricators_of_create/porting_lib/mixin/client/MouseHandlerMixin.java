@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import io.github.fabricators_of_create.porting_lib.event.MouseButtonCallback;
-import io.github.fabricators_of_create.porting_lib.event.MouseScrolledCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.MouseButtonCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.MouseScrolledCallback;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

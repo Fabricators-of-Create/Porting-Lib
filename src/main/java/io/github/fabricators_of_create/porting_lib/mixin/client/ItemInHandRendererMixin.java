@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import io.github.fabricators_of_create.porting_lib.event.RenderHandCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.RenderHandCallback;
 import io.github.fabricators_of_create.porting_lib.item.ReequipAnimationItem;
 
 import net.fabricmc.api.EnvType;

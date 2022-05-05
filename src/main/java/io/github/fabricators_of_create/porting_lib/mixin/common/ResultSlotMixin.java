@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.event.ItemCraftedCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.ItemCraftedCallback;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.ResultSlot;

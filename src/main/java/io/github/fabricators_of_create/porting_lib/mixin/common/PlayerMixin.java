@@ -1,8 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.event.EntityInteractCallback;
-import io.github.fabricators_of_create.porting_lib.event.LivingEntityEvents;
-import io.github.fabricators_of_create.porting_lib.event.PlayerTickEvents;
+import io.github.fabricators_of_create.porting_lib.event.common.EntityInteractCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEvents;
+import io.github.fabricators_of_create.porting_lib.event.common.PlayerTickEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.ItemExtensions;
 import io.github.fabricators_of_create.porting_lib.util.ShieldBlockItem;
 import net.minecraft.world.InteractionHand;

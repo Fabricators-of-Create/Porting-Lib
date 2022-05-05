@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
-import io.github.fabricators_of_create.porting_lib.event.RenderTooltipBorderColorCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.RenderTooltipBorderColorCallback;
 import io.github.fabricators_of_create.porting_lib.mixin.client.accessor.ScreenAccessor;
 
 import net.minecraft.client.Minecraft;

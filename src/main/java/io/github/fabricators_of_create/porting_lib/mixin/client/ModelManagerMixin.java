@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import io.github.fabricators_of_create.porting_lib.event.ModelsBakedCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.ModelsBakedCallback;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

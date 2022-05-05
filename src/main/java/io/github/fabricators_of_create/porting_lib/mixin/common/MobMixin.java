@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import io.github.fabricators_of_create.porting_lib.event.MobEntitySetTargetCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.MobEntitySetTargetCallback;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;

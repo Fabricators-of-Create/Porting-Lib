@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import io.github.fabricators_of_create.porting_lib.event.ModelLoadCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.ModelLoadCallback;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.server.packs.resources.ResourceManager;

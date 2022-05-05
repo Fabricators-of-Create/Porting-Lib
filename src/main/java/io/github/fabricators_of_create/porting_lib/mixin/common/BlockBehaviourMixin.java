@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import io.github.fabricators_of_create.porting_lib.event.PlayerBreakSpeedCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.PlayerBreakSpeedCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;

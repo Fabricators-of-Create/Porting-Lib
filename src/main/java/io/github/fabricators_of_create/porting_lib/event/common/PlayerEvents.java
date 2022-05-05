@@ -1,12 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.event.common;
 
-import io.github.fabricators_of_create.porting_lib.event.EntityEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class PlayerEvents extends EntityEvent {

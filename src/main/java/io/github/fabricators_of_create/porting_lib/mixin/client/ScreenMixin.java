@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import io.github.fabricators_of_create.porting_lib.event.RenderTooltipBorderColorCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.RenderTooltipBorderColorCallback;
 import io.github.fabricators_of_create.porting_lib.util.ScreenHelper;
 
 import net.fabricmc.api.EnvType;

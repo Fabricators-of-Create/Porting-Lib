@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import com.mojang.blaze3d.shaders.Program;
 import com.mojang.datafixers.util.Pair;
 
-import io.github.fabricators_of_create.porting_lib.event.RegisterShadersCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.RegisterShadersCallback;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.GameRenderer;

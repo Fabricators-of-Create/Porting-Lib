@@ -1,8 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.event.PlayerTickEvents;
+import io.github.fabricators_of_create.porting_lib.event.common.PlayerTickEvents;
 
-import io.github.fabricators_of_create.porting_lib.event.common.PlayerEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.ITeleporter;
 import net.minecraft.network.protocol.game.ClientboundChangeDifficultyPacket;
@@ -32,7 +31,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.authlib.GameProfile;
-import io.github.fabricators_of_create.porting_lib.event.ServerPlayerCreationCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.ServerPlayerCreationCallback;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
@@ -40,8 +39,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.annotation.Nullable;
 

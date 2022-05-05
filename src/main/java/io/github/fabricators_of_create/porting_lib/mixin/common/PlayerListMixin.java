@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.event.OnDatapackSyncCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.OnDatapackSyncCallback;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;

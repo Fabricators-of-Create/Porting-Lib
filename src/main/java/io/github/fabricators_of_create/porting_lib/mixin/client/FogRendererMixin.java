@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import io.github.fabricators_of_create.porting_lib.event.FogEvents;
-import io.github.fabricators_of_create.porting_lib.event.FogEvents.ColorData;
+import io.github.fabricators_of_create.porting_lib.event.client.FogEvents;
+import io.github.fabricators_of_create.porting_lib.event.client.FogEvents.ColorData;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

@@ -5,7 +5,7 @@ import net.minecraft.server.ReloadableServerResources;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-import io.github.fabricators_of_create.porting_lib.event.AddReloadListenersCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.AddReloadListenersCallback;
 
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 

@@ -2,7 +2,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
 
-import io.github.fabricators_of_create.porting_lib.event.EntityInteractCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.EntityInteractCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.ItemStackExtensions;
 import io.github.fabricators_of_create.porting_lib.util.PlayerDestroyBlock;
