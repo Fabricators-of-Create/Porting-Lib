@@ -69,23 +69,28 @@ public class PortingHooks {
 		return event.isCanceled() ? -1 : event.getExpToDrop();
 	}
 
-	public static final Map<ServerLevel, Int2ObjectMap<PartEntity<?>>> multiParts = new HashMap<>();
+	public static final Map<ServerLevel, Int2ObjectMap<PartEntity<?>>> WORLDS_TO_MULTIPARTS = new HashMap<>();
 
 	public static void init() {
-
 		ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
 			if(entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
-				multiParts.putIfAbsent(world, new Int2ObjectOpenHashMap<>());
-				for(PartEntity<?> part : partEntity.getParts()) {
-					multiParts.get(world).put(part.getId(), part);
+				WORLDS_TO_MULTIPARTS.putIfAbsent(world, new Int2ObjectOpenHashMap<>());
+				PartEntity<?>[] parts = partEntity.getParts();
+				if (parts != null) {
+					for (PartEntity<?> part : parts) {
+						WORLDS_TO_MULTIPARTS.get(world).put(part.getId(), part);
+					}
 				}
 			}
 		});
 		ServerEntityEvents.ENTITY_UNLOAD.register((entity, world) -> {
 			if(entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
-				multiParts.putIfAbsent(world, new Int2ObjectOpenHashMap<>());
-				for(PartEntity<?> part : partEntity.getParts()) {
-					multiParts.get(world).remove(part.getId());
+				WORLDS_TO_MULTIPARTS.putIfAbsent(world, new Int2ObjectOpenHashMap<>());
+				PartEntity<?>[] parts = partEntity.getParts();
+				if (parts != null) {
+					for (PartEntity<?> part : parts) {
+						WORLDS_TO_MULTIPARTS.get(world).remove(part.getId());
+					}
 				}
 			}
 		});

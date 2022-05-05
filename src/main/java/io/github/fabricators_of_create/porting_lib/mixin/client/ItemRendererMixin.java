@@ -7,25 +7,14 @@ import com.mojang.math.Matrix4f;
 
 import io.github.fabricators_of_create.porting_lib.extensions.Matrix3fExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.Matrix4fExtensions;
-import io.github.fabricators_of_create.porting_lib.render.LayeredBakedModel;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.HalfTransparentBlock;
-import net.minecraft.world.level.block.StainedGlassPaneBlock;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -38,8 +27,6 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.item.ItemStack;
-
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Environment(EnvType.CLIENT)
 @Mixin(value = ItemRenderer.class, priority = 10000)
