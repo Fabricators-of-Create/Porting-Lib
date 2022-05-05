@@ -14,11 +14,9 @@ import io.github.fabricators_of_create.porting_lib.model.PerspectiveMapWrapper;
 
 import io.github.fabricators_of_create.porting_lib.render.TransformTypeDependentItemBakedModel;
 
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;

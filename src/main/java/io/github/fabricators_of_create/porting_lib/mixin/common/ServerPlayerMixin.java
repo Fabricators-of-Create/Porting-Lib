@@ -3,6 +3,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 import io.github.fabricators_of_create.porting_lib.event.PlayerTickEvents;
 
 import io.github.fabricators_of_create.porting_lib.event.common.PlayerEvents;
+import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.ITeleporter;
 import net.minecraft.network.protocol.game.ClientboundChangeDifficultyPacket;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
@@ -45,7 +46,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import javax.annotation.Nullable;
 
 @Mixin(ServerPlayer.class)
-public abstract class ServerPlayerMixin extends Player {
+public abstract class ServerPlayerMixin extends Player implements EntityExtensions {
 
 	@Shadow
 	public abstract ServerLevel getLevel();

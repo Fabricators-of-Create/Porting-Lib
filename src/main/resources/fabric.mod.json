@@ -39,10 +39,6 @@
     "java": ">=${java_version}"
   },
   "custom": {
-    "loom:injected_interfaces": {
-      "net/minecraft/class_1160": ["io/github/fabricators_of_create/porting_lib/extensions/Vector3fExtensions"],
-      "net/minecraft/class_1297": ["io/github/fabricators_of_create/porting_lib/extensions/EntityExtensions"]
-    },
     "loom why are you like this https://github.com/FabricMC/fabric-loom/issues/611 /* loom:injected_interfaces*/ ": {
       "net/minecraft/class_293": ["io/github/fabricators_of_create/porting_lib/extensions/VertexFormatExtensions"],
       "net/minecraft/class_276": ["io/github/fabricators_of_create/porting_lib/extensions/RenderTargetExtensions"],

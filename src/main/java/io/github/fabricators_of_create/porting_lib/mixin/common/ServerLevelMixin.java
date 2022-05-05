@@ -1,9 +1,14 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
+import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
 
 import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,13 +41,18 @@ public abstract class ServerLevelMixin {
 										double y, double z, float size, boolean causesFire,
 										Explosion.BlockInteraction mode, CallbackInfoReturnable<Explosion> cir,
 										Explosion explosion) {
-		if(ExplosionEvents.START.invoker().onExplosionStart((Level) (Object) this, explosion))
+		if (ExplosionEvents.START.invoker().onExplosionStart((Level) (Object) this, explosion))
 			cir.setReturnValue(explosion);
 	}
 
-	@Inject(method = "getEntityOrPart", at = @At("RETURN"), cancellable = true)
-	public void port_lib$getMultipart(int id, CallbackInfoReturnable<Entity> cir) {
-		if(cir.getReturnValue() == null)
-			cir.setReturnValue(PortingHooks.multiParts.get((ServerLevel) (Object) this).get(id));
+	@ModifyReturnValue(method = "getEntityOrPart", at = @At("RETURN"))
+	public Entity port_lib$getMultipart(Entity entity, int id) {
+		if (entity == null) {
+			Int2ObjectMap<PartEntity<?>> worldParts = PortingHooks.WORLDS_TO_MULTIPARTS.get((ServerLevel) (Object) this);
+			if (worldParts != null) {
+				return worldParts.get(id);
+			}
+		}
+		return entity;
 	}
 }
