@@ -37,12 +37,12 @@ public abstract class PlayerMixin extends LivingEntity {
 	}
 
 	@Inject(method = "tick", at = @At("HEAD"))
-	public void port_lib$clientStartTickEvent(CallbackInfo ci) {
+	public void port_lib$playerStartTickEvent(CallbackInfo ci) {
 		PlayerTickEvents.START.invoker().onStartOfPlayerTick((Player) (Object) this);
 	}
 
 	@Inject(method = "tick", at = @At("TAIL"))
-	public void port_lib$clientEndTickEvent(CallbackInfo ci) {
+	public void port_lib$playerEndTickEvent(CallbackInfo ci) {
 		PlayerTickEvents.END.invoker().onEndOfPlayerTick((Player) (Object) this);
 	}
 
