@@ -38,7 +38,7 @@ public abstract class MapRendererMapInstanceMixin {
 
 	/**
 	 * @author AlphaMode
-	 * mixin doesn't allow continuing in loops :why:
+	 * @reason mixin doesn't allow continuing in loops :why:
 	 */
 	@Overwrite
 	void draw(PoseStack p_93292_, MultiBufferSource p_93293_, boolean p_93294_, int p_93295_) {
