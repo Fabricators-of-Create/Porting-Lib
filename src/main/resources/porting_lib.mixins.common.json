@@ -63,6 +63,7 @@
     "RailStateMixin",
     "RedStoneOreBlockMixin",
     "RedStoneWireBlockMixin",
+    "ReloadableServerResourcesMixin",
     "ResourceLocationMixin",
     "ResultSlotMixin",
     "SeagrassBlockMixin",

@@ -1,8 +1,11 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import io.github.fabricators_of_create.porting_lib.event.common.RecipesUpdatedCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.TagsUpdatedCallback;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
 
+import net.minecraft.network.protocol.game.ClientboundUpdateTagsPacket;
 import net.minecraft.world.item.crafting.RecipeManager;
 
 import org.spongepowered.asm.mixin.Final;
@@ -32,6 +35,9 @@ public abstract class ClientPacketListenerMixin {
 	@Final
 	private RecipeManager recipeManager;
 
+	@Shadow
+	private RegistryAccess.Frozen registryAccess;
+
 	@Inject(method = "method_38542", at = @At("HEAD"), cancellable = true)
 	public void port_lib$handleCustomBlockEntity(ClientboundBlockEntityDataPacket packet, BlockEntity blockEntity, CallbackInfo ci) {
 		if (blockEntity instanceof CustomDataPacketHandlingBlockEntity handler) {
@@ -43,5 +49,10 @@ public abstract class ClientPacketListenerMixin {
 	@Inject(method = "handleUpdateRecipes", at = @At("TAIL"))
 	public void port_lib$updateRecipes(ClientboundUpdateRecipesPacket packet, CallbackInfo ci) {
 		RecipesUpdatedCallback.EVENT.invoker().onRecipesUpdated(this.recipeManager);
+	}
+
+	@Inject(method = "handleUpdateTags", at = @At("TAIL"))
+	public void port_lib$updateTags(ClientboundUpdateTagsPacket packet, CallbackInfo ci) {
+		TagsUpdatedCallback.EVENT.invoker().onTagsUpdated(this.registryAccess);
 	}
 }
