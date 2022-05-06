@@ -7,6 +7,7 @@ import io.github.fabricators_of_create.porting_lib.transfer.item.ItemItemStorage
 import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import io.github.fabricators_of_create.porting_lib.util.ServerLifecycleHooks;
 import io.github.fabricators_of_create.porting_lib.util.TierSortingRegistry;
+import io.github.fabricators_of_create.porting_lib.util.TrueCondition;
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.resources.ResourceLocation;
@@ -23,9 +24,10 @@ public class PortingLib implements ModInitializer {
 		TierSortingRegistry.init();
 		ServerLifecycleHooks.init();
 		PortingLibAttributes.init();
-		BiomeDictionary.init();
 		ItemItemStorages.init();
+		BiomeDictionary.init();
 		TransferUtil.initApi();
+		TrueCondition.init();
 		PortingHooks.init();
 	}
 
