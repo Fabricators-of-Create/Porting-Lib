@@ -2,11 +2,12 @@ package io.github.fabricators_of_create.porting_lib.extensions;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.core.Direction;
 
 public interface TransformationExtensions {
@@ -23,6 +24,7 @@ public interface TransformationExtensions {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 
+	@Environment(EnvType.CLIENT)
 	default void push(PoseStack stack) {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}

@@ -12,6 +12,8 @@ import com.mojang.math.Vector4f;
 import io.github.fabricators_of_create.porting_lib.extensions.Matrix4fExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.TransformationExtensions;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.core.Direction;
 
 import org.spongepowered.asm.mixin.Final;
@@ -58,6 +60,7 @@ public abstract class TransformationMixin implements TransformationExtensions {
 		}
 	}
 
+	@Environment(EnvType.CLIENT)
 	@Override
 	public void push(PoseStack stack) {
 		stack.pushPose();
