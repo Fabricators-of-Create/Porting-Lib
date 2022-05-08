@@ -41,7 +41,7 @@ public abstract class MapRendererMapInstanceMixin {
 	 * @reason mixin doesn't allow continuing in loops :why:
 	 */
 	@Overwrite
-	void draw(PoseStack p_93292_, MultiBufferSource p_93293_, boolean p_93294_, int p_93295_) {
+	public void draw(PoseStack p_93292_, MultiBufferSource p_93293_, boolean p_93294_, int p_93295_) {
 		if (this.requiresUpload) {
 			this.updateTexture();
 			this.requiresUpload = false;
