@@ -105,7 +105,7 @@ public class CompositeModel implements BakedModel, FabricBakedModel, TransformTy
 
 	@Override
 	public ItemTransforms getTransforms() {
-		return null;
+		return ItemTransforms.NO_TRANSFORMS;
 	}
 
 	@Override
