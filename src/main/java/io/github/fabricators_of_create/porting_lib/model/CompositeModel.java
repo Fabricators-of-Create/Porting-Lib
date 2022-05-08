@@ -141,9 +141,7 @@ public class CompositeModel implements BakedModel, FabricBakedModel, TransformTy
 	}
 
 	@Override
-	public void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context) {
-		context.fallbackConsumer().accept(this);
-	}
+	public void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context) {}
 
 	private static class Submodel implements IModelGeometryPart
 	{
