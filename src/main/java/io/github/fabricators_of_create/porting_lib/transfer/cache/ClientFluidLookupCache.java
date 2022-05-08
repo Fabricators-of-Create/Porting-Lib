@@ -66,6 +66,8 @@ public class ClientFluidLookupCache implements BlockApiCache<Storage<FluidVarian
 		}
 
 		// Query the provider
+		if (cachedBlockEntity == null)
+			return null;
 		return TransferUtil.getFluidStorage(cachedBlockEntity, context);
 	}
 
