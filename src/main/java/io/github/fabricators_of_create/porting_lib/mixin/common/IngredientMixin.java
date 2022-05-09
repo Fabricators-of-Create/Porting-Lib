@@ -68,10 +68,10 @@ public abstract class IngredientMixin implements IngredientExtensions {
     }
 
     @Inject(method = "fromNetwork", at = @At("HEAD"), cancellable = true)
-    private static void port_lib$fromNetwork(FriendlyByteBuf buffer, CallbackInfoReturnable<Ingredient> cir) {
+    private static void port_lib$fromNetwork(FriendlyByteBuf oldBuffer, CallbackInfoReturnable<Ingredient> cir) {
+		FriendlyByteBuf buffer = new FriendlyByteBuf(oldBuffer.duplicate());
 		int size = buffer.readVarInt();
 		if (size == -1) cir.setReturnValue(CraftingHelper.getIngredient(buffer.readResourceLocation(), buffer));
-		buffer.resetReaderIndex(); // Make sure vanilla can still read the buffer
     }
 
 	@Inject(method = "fromJson", at = @At(value = "INVOKE", target = "Lcom/google/gson/JsonElement;isJsonObject()Z"), cancellable = true)
