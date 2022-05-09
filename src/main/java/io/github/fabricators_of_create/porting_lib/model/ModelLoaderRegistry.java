@@ -64,6 +64,7 @@ public class ModelLoaderRegistry {
 				.create());
 		registerLoader(new ResourceLocation("minecraft","elements"), VanillaProxy.Loader.INSTANCE);
 		registerLoader(new ResourceLocation("forge","bucket"), DynamicBucketModel.Loader.INSTANCE);
+		registerLoader(new ResourceLocation("forge","composite"), CompositeModel.Loader.INSTANCE);
 		registerLoader(new ResourceLocation("forge","item-layers"), ItemLayerModel.Loader.INSTANCE);
 	}
 

@@ -108,7 +108,6 @@
     "accessor.DimensionTypeAccessor",
     "accessor.EntityAccessor",
     "accessor.HashMapPaletteAccessor",
-    "accessor.IngredientAccessor",
     "accessor.ItemAccessor",
     "accessor.ItemValueAccessor",
     "accessor.LiquidBlockAccessor",
