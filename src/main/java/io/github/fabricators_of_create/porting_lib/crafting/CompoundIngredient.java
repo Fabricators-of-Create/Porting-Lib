@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.crafting;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -19,26 +21,55 @@ import io.github.fabricators_of_create.porting_lib.extensions.IngredientExtensio
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.network.FriendlyByteBuf;
 
-public class CompoundIngredient extends Ingredient implements IngredientExtensions {
-	private final boolean isSimple;
-	private final List<Ingredient> children;
+import static io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper.merge;
+
+/** Ingredient that matches if any of the child ingredients match */
+public class CompoundIngredient extends AbstractIngredient {
+	private List<Ingredient> children;
 	private ItemStack[] stacks;
 	private IntList itemIds;
+	private final boolean isSimple;
 
-	protected CompoundIngredient(List<Ingredient> children) {
-		super(Stream.of());
+	protected CompoundIngredient(List<Ingredient> children)
+	{
 		this.children = Collections.unmodifiableList(children);
-		this.isSimple = children.stream().allMatch(ingredient -> ((IngredientExtensions) ingredient).isSimple());
+		this.isSimple = children.stream().allMatch(ingredient -> ((IngredientExtensions)ingredient).isSimple());
+	}
+
+	/** Creates a compound ingredient from the given list of ingredients */
+	public static Ingredient of(Ingredient... children) {
+		// if 0 or 1 ingredient, can save effort
+		if (children.length == 0)
+			throw new IllegalArgumentException("Cannot create a compound ingredient with no children, use Ingredient.of() to create an empty ingredient");
+		if (children.length == 1)
+			return children[0];
+
+		// need to merge vanilla ingredients, as otherwise the JSON produced by this ingredient could be invalid
+		List<Ingredient> vanillaIngredients = new ArrayList<>();
+		List<Ingredient> allIngredients = new ArrayList<>();
+		for (Ingredient child : children) {
+			if (((IngredientExtensions)child).getSerializer() == VanillaIngredientSerializer.INSTANCE)
+				vanillaIngredients.add(child);
+			else
+				allIngredients.add(child);
+		}
+		if (!vanillaIngredients.isEmpty())
+			allIngredients.add(merge(vanillaIngredients));
+		if (allIngredients.size() == 1)
+			return allIngredients.get(0);
+		return new CompoundIngredient(allIngredients);
 	}
 
 	@Override
 	@Nonnull
-	public ItemStack[] getItems() {
-		if (stacks == null) {
+	public ItemStack[] getItems()
+	{
+		if (stacks == null)
+		{
 			List<ItemStack> tmp = Lists.newArrayList();
 			for (Ingredient child : children)
 				Collections.addAll(tmp, child.getItems());
@@ -51,8 +82,12 @@ public class CompoundIngredient extends Ingredient implements IngredientExtensio
 	@Override
 	@Nonnull
 	public IntList getStackingIds() {
-		//TODO: Add a child.isInvalid()?
-		if (this.itemIds == null) {
+		boolean childrenNeedInvalidation = false;
+		for (Ingredient child : children) {
+			childrenNeedInvalidation |= ((IngredientExtensions)child).checkInvalidation();
+		}
+		if (childrenNeedInvalidation || this.itemIds == null || checkInvalidation()) {
+			this.markValid();
 			this.itemIds = new IntArrayList();
 			for (Ingredient child : children)
 				this.itemIds.addAll(child.getStackingIds());
@@ -74,7 +109,6 @@ public class CompoundIngredient extends Ingredient implements IngredientExtensio
 	public void invalidate() {
 		this.itemIds = null;
 		this.stacks = null;
-		//Shouldn't need to invalidate children as this is only called form invalidateAll..
 	}
 
 	@Override
@@ -105,7 +139,7 @@ public class CompoundIngredient extends Ingredient implements IngredientExtensio
 
 	@Override
 	public boolean isEmpty() {
-		return getItems().length == 0;
+		return children.stream().allMatch(Ingredient::isEmpty);
 	}
 
 	public static class Serializer implements IIngredientSerializer<CompoundIngredient> {
@@ -126,5 +160,6 @@ public class CompoundIngredient extends Ingredient implements IngredientExtensio
 			buffer.writeVarInt(ingredient.children.size());
 			ingredient.children.forEach(c -> c.toNetwork(buffer));
 		}
+
 	}
 }

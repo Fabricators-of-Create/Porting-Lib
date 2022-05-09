@@ -1,7 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.google.gson.JsonElement;
+
 import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
 import io.github.fabricators_of_create.porting_lib.crafting.IIngredientSerializer;
+import io.github.fabricators_of_create.porting_lib.crafting.IngredientInvalidator;
 import io.github.fabricators_of_create.porting_lib.crafting.VanillaIngredientSerializer;
 import io.github.fabricators_of_create.porting_lib.extensions.IngredientExtensions;
 
@@ -48,6 +51,9 @@ public abstract class IngredientMixin implements IngredientExtensions {
 	@Unique
 	private final boolean port_lib$vanilla = this.getClass().equals(Ingredient.class);
 
+	@Unique
+	private int invalidationCounter;
+
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void port_lib$init(Stream<? extends Ingredient.Value> stream, CallbackInfo ci) {
 		port_lib$simple = Arrays.stream(values).noneMatch(list -> list.getItems().stream().anyMatch(stack -> stack.getItem().canBeDepleted()));
@@ -55,19 +61,24 @@ public abstract class IngredientMixin implements IngredientExtensions {
 
     @Inject(method = "toNetwork", at = @At(value = "INVOKE", shift = Shift.AFTER, target = "Lnet/minecraft/world/item/crafting/Ingredient;dissolve()V"), cancellable = true)
     private void port_lib$toNetwork(FriendlyByteBuf buffer, CallbackInfo ci) {
-		buffer.writeBoolean(port_lib$vanilla);
-        if (!port_lib$vanilla) {
-            CraftingHelper.write(buffer, (Ingredient) (Object) this);
-            ci.cancel();
-        }
+		if (!this.isVanilla()) {
+			CraftingHelper.write(buffer, (Ingredient) (Object) this);
+			ci.cancel();
+		}
     }
 
     @Inject(method = "fromNetwork", at = @At("HEAD"), cancellable = true)
     private static void port_lib$fromNetwork(FriendlyByteBuf buffer, CallbackInfoReturnable<Ingredient> cir) {
-		boolean vanilla = buffer.readBoolean();
-        if (!vanilla)
-			cir.setReturnValue(CraftingHelper.getIngredient(buffer.readResourceLocation(), buffer));
+		int size = buffer.readVarInt();
+		if (size == -1) cir.setReturnValue(CraftingHelper.getIngredient(buffer.readResourceLocation(), buffer));
+		buffer.resetReaderIndex(); // Make sure vanilla can still read the buffer
     }
+
+	@Inject(method = "fromJson", at = @At(value = "INVOKE", target = "Lcom/google/gson/JsonElement;isJsonObject()Z"), cancellable = true)
+	private static void port_lib$fromJson(JsonElement json, CallbackInfoReturnable<Ingredient> cir) {
+		Ingredient ret = CraftingHelper.getIngredient(json);
+		if (ret != null) cir.setReturnValue(ret);
+	}
 
     @Override
     public IIngredientSerializer<? extends Ingredient> getSerializer() {
@@ -80,9 +91,29 @@ public abstract class IngredientMixin implements IngredientExtensions {
         return (Object) this == EMPTY || port_lib$simple;
     }
 
-    @Override
+	@Override
+	public final boolean isVanilla() {
+		return port_lib$vanilla;
+	}
+
+	@Override
     public void invalidate() {
         itemStacks = null;
         stackingIds = null;
     }
+
+	@Override
+	public final void markValid() {
+		this.invalidationCounter = IngredientInvalidator.INVALIDATION_COUNTER.get();
+	}
+
+	@Override
+	public final boolean checkInvalidation() {
+		int currentInvalidationCounter = IngredientInvalidator.INVALIDATION_COUNTER.get();
+		if (this.invalidationCounter != currentInvalidationCounter) {
+			invalidate();
+			return true;
+		}
+		return false;
+	}
 }

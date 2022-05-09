@@ -42,6 +42,11 @@ public class CraftingHelper {
 	private static final BiMap<ResourceLocation, IIngredientSerializer<?>> ingredients = HashBiMap.create();
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
+	public static void init() {
+		CraftingHelper.register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
+		CraftingHelper.register(new ResourceLocation("forge", "nbt"), NBTIngredient.Serializer.INSTANCE);
+	}
+
 	public static <T extends Ingredient> IIngredientSerializer<T> register(ResourceLocation key, IIngredientSerializer<T> serializer) {
 		if (ingredients.containsKey(key))
 			throw new IllegalStateException("Duplicate recipe ingredient serializer: " + key);

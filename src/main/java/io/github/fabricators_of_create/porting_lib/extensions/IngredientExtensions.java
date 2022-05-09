@@ -12,7 +12,19 @@ public interface IngredientExtensions {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 
+	default boolean isVanilla() {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
+
 	default void invalidate() {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
+
+	default void markValid() {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
+
+	default boolean checkInvalidation() {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 }
