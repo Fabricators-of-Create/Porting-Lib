@@ -3,11 +3,20 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 import static io.github.fabricators_of_create.porting_lib.util.ShapedRecipeUtil.HEIGHT;
 import static io.github.fabricators_of_create.porting_lib.util.ShapedRecipeUtil.WIDTH;
 
+import com.google.gson.JsonObject;
+
+import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
+import net.minecraft.world.item.ItemStack;
+
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
 import net.minecraft.world.item.crafting.ShapedRecipe;
+
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ShapedRecipe.class)
 public abstract class ShapedRecipeMixin {
@@ -39,5 +48,11 @@ public abstract class ShapedRecipeMixin {
 	)
 	private static String port_lib$changeWidthWarning(String original) {
 		return "Invalid pattern: too many columns, " + WIDTH + " is maximum";
+	}
+
+	@Inject(method = "itemStackFromJson", at = @At("HEAD"), cancellable = true)
+	private static void port_lib$customNbtItemStack(JsonObject json, CallbackInfoReturnable<ItemStack> cir) {
+		if (json.has("nbt"))
+			cir.setReturnValue(CraftingHelper.getItemStack(json, true, true));
 	}
 }
