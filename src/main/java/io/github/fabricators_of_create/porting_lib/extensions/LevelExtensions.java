@@ -5,7 +5,11 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -20,24 +24,12 @@ public interface LevelExtensions {
 		snapshotParticipant().updateSnapshots(ctx);
 	}
 
-	record LevelSnapshotData(Map<BlockPos, ChangedPosData> changedStates) {
-		public LevelSnapshotData(Map<BlockPos, ChangedPosData> changedStates) {
-			this.changedStates = changedStates == null ? null : new HashMap<>(changedStates);
+	record LevelSnapshotData(List<ChangedPosData> changedStates) {
+		public LevelSnapshotData(List<ChangedPosData> changedStates) {
+			this.changedStates = changedStates == null ? null : new LinkedList<>(changedStates);
 		}
 	}
 
-	record ChangedPosData(BlockState state, int flags) {
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
-			ChangedPosData that = (ChangedPosData) o;
-			return flags == that.flags && Objects.equals(state, that.state);
-		}
-
-		@Override
-		public int hashCode() {
-			return Objects.hash(state, flags);
-		}
+	record ChangedPosData(BlockPos pos, BlockState state, int flags) {
 	}
 }

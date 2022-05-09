@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.entity.EntityTypeTest;
 
 import net.minecraft.world.phys.AABB;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -52,7 +54,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	// only non-null during transactions. Is set back to null in
 	// onFinalCommit on commits, and through snapshot rollbacks on aborts.
 	@Unique
-	private Map<BlockPos, ChangedPosData> port_lib$modifiedStates = null;
+	private List<ChangedPosData> port_lib$modifiedStates = null;
 
 	@Unique
 	private final SnapshotParticipant<LevelSnapshotData> port_lib$snapshotParticipant = new SnapshotParticipant<>() {
@@ -60,7 +62,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		@Override
 		protected LevelSnapshotData createSnapshot() {
 			LevelSnapshotData data = new LevelSnapshotData(port_lib$modifiedStates);
-			if (port_lib$modifiedStates == null) port_lib$modifiedStates = new HashMap<>();
+			if (port_lib$modifiedStates == null) port_lib$modifiedStates = new LinkedList<>();
 			return data;
 		}
 
@@ -72,9 +74,11 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		@Override
 		protected void onFinalCommit() {
 			super.onFinalCommit();
-			Map<BlockPos, ChangedPosData> modifications = port_lib$modifiedStates;
+			List<ChangedPosData> modifications = port_lib$modifiedStates;
 			port_lib$modifiedStates = null;
-			modifications.forEach((pos, data) -> setBlock(pos, data.state(), data.flags()));
+			for (ChangedPosData data : modifications) {
+				setBlock(data.pos(), data.state(), data.flags());
+			}
 		}
 	};
 
@@ -90,8 +94,13 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 			target = "Lnet/minecraft/world/level/Level;getChunk(II)Lnet/minecraft/world/level/chunk/LevelChunk;"), cancellable = true)
 	private void port_lib$getBlockState(BlockPos pos, CallbackInfoReturnable<BlockState> cir) {
 		if (port_lib$modifiedStates != null) {
-			ChangedPosData data = port_lib$modifiedStates.get(pos);
-			if (data != null) cir.setReturnValue(data.state());
+			// iterate in reverse order - latest changes priority
+			for (ChangedPosData data : port_lib$modifiedStates) {
+				if (data.pos().equals(pos)) {
+					cir.setReturnValue(data.state());
+					return;
+				}
+			}
 		}
 	}
 
@@ -99,7 +108,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 			at = @At(value = "INVOKE", shift = Shift.BEFORE, target = "Lnet/minecraft/world/level/Level;getChunkAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/chunk/LevelChunk;"), cancellable = true)
 	private void port_lib$setBlock(BlockPos pos, BlockState state, int flags, int recursionLeft, CallbackInfoReturnable<Boolean> cir) {
 		if (port_lib$modifiedStates != null) {
-			port_lib$modifiedStates.put(pos, new ChangedPosData(state, flags));
+			port_lib$modifiedStates.add(new ChangedPosData(pos, state, flags));
 			cir.setReturnValue(true);
 		}
 	}
