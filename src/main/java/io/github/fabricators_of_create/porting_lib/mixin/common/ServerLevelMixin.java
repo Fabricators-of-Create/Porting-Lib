@@ -11,7 +11,10 @@ import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -26,6 +29,10 @@ import net.minecraft.world.level.Level;
 
 @Mixin(ServerLevel.class)
 public abstract class ServerLevelMixin implements LevelExtensions {
+
+	@Unique
+	final Int2ObjectMap<PartEntity<?>> multiparts = new Int2ObjectOpenHashMap<>();
+
 	@Inject(
 			method = "explode",
 			at = @At(
@@ -49,9 +56,8 @@ public abstract class ServerLevelMixin implements LevelExtensions {
 	@ModifyReturnValue(method = "getEntityOrPart", at = @At("RETURN"))
 	public Entity port_lib$getMultipart(Entity entity, int id) {
 		if (entity == null) {
-			Int2ObjectMap<PartEntity<?>> worldParts = PortingHooks.WORLDS_TO_MULTIPARTS.get((ServerLevel) (Object) this);
-			if (worldParts != null) {
-				return worldParts.get(id);
+			if (multiparts != null) {
+				return multiparts.get(id);
 			}
 		}
 		return entity;
@@ -59,6 +65,6 @@ public abstract class ServerLevelMixin implements LevelExtensions {
 
 	@Override
 	public Int2ObjectMap<PartEntity<?>> getPartEntityMap() {
-		return PortingHooks.WORLDS_TO_MULTIPARTS.get(this);
+		return multiparts;
 	}
 }

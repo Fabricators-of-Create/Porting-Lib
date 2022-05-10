@@ -4,6 +4,7 @@ import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.BlockItemExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
@@ -74,27 +75,23 @@ public class PortingHooks {
 		return event.isCanceled() ? -1 : event.getExpToDrop();
 	}
 
-	public static final Map<ServerLevel, Int2ObjectMap<PartEntity<?>>> WORLDS_TO_MULTIPARTS = new HashMap<>();
-
 	public static void init() {
 		ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
 			if(entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
-				WORLDS_TO_MULTIPARTS.putIfAbsent(world, new Int2ObjectOpenHashMap<>());
 				PartEntity<?>[] parts = partEntity.getParts();
 				if (parts != null) {
 					for (PartEntity<?> part : parts) {
-						WORLDS_TO_MULTIPARTS.get(world).put(part.getId(), part);
+						((LevelExtensions)world).getPartEntityMap().put(part.getId(), part);
 					}
 				}
 			}
 		});
 		ServerEntityEvents.ENTITY_UNLOAD.register((entity, world) -> {
 			if(entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
-				WORLDS_TO_MULTIPARTS.putIfAbsent(world, new Int2ObjectOpenHashMap<>());
 				PartEntity<?>[] parts = partEntity.getParts();
 				if (parts != null) {
 					for (PartEntity<?> part : parts) {
-						WORLDS_TO_MULTIPARTS.get(world).remove(part.getId());
+						((LevelExtensions)world).getPartEntityMap().remove(part.getId());
 					}
 				}
 			}
