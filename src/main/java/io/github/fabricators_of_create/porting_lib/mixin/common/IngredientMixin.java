@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import com.google.gson.JsonElement;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
 import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
 import io.github.fabricators_of_create.porting_lib.crafting.IIngredientSerializer;
 import io.github.fabricators_of_create.porting_lib.crafting.IngredientInvalidator;
@@ -12,6 +14,7 @@ import net.minecraft.world.item.crafting.Ingredient.Value;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -61,18 +64,24 @@ public abstract class IngredientMixin implements IngredientExtensions {
 
     @Inject(method = "toNetwork", at = @At(value = "INVOKE", shift = Shift.AFTER, target = "Lnet/minecraft/world/item/crafting/Ingredient;dissolve()V"), cancellable = true)
     private void port_lib$toNetwork(FriendlyByteBuf buffer, CallbackInfo ci) {
+		buffer.writeBoolean(isVanilla());
 		if (!this.isVanilla()) {
 			CraftingHelper.write(buffer, (Ingredient) (Object) this);
 			ci.cancel();
 		}
     }
 
-    @Inject(method = "fromNetwork", at = @At("HEAD"), cancellable = true)
-    private static void port_lib$fromNetwork(FriendlyByteBuf oldBuffer, CallbackInfoReturnable<Ingredient> cir) {
-		FriendlyByteBuf buffer = new FriendlyByteBuf(oldBuffer.duplicate());
-		int size = buffer.readVarInt();
-		if (size == -1) cir.setReturnValue(CraftingHelper.getIngredient(buffer.readResourceLocation(), buffer));
-    }
+	/**
+	 * @author AlphaMode
+	 * @reason help me...
+	 */
+	@Overwrite
+	public static Ingredient fromNetwork(FriendlyByteBuf p_43941_) {
+		var size = p_43941_.readVarInt();
+		if (size == -1) return CraftingHelper.getIngredient(p_43941_.readResourceLocation(), p_43941_);
+		return Ingredient.fromValues(Stream.generate(() -> new Ingredient.ItemValue(p_43941_.readItem())).limit(size));
+	}
+
 
 	@Inject(method = "fromJson", at = @At(value = "INVOKE", target = "Lcom/google/gson/JsonElement;isJsonObject()Z"), cancellable = true)
 	private static void port_lib$fromJson(JsonElement json, CallbackInfoReturnable<Ingredient> cir) {

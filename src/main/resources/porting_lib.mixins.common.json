@@ -74,6 +74,7 @@
     "ServerResourcesMixin",
     "ShapedRecipeMixin",
     "ShapelessRecipe$SerializerMixin",
+    "ShapelessRecipeMixin",
     "SheepMixin",
     "SlotMixin",
     "SnowGolemMixin",
