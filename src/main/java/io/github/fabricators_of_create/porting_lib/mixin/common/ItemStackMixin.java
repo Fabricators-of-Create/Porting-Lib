@@ -23,14 +23,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import io.github.fabricators_of_create.porting_lib.item.CustomMaxCountItem;
-import io.github.fabricators_of_create.porting_lib.util.INBTSerializable;
+import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 @Mixin(ItemStack.class)
-public abstract class ItemStackMixin implements INBTSerializable<CompoundTag>, ItemStackExtensions {
+public abstract class ItemStackMixin implements NBTSerializable, ItemStackExtensions {
 
 	@Shadow
 	public abstract CompoundTag save(CompoundTag compoundTag);

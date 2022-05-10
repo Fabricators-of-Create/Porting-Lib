@@ -9,13 +9,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import io.github.fabricators_of_create.porting_lib.extensions.BlockEntityExtensions;
 import io.github.fabricators_of_create.porting_lib.util.BlockEntityHelper;
-import io.github.fabricators_of_create.porting_lib.util.INBTSerializable;
+import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 @Mixin(BlockEntity.class)
-public abstract class BlockEntityMixin implements BlockEntityExtensions, INBTSerializable<CompoundTag> {
+public abstract class BlockEntityMixin implements BlockEntityExtensions, NBTSerializable {
 	@Unique
 	private CompoundTag port_lib$extraData = null;
 

@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import io.github.fabricators_of_create.porting_lib.block.MinecartPassHandlerBlock;
 import io.github.fabricators_of_create.porting_lib.extensions.AbstractMinecartExtensions;
-import io.github.fabricators_of_create.porting_lib.util.INBTSerializable;
+import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 @Mixin(AbstractMinecart.class)
-public abstract class AbstractMinecartMixin extends Entity implements AbstractMinecartExtensions, INBTSerializable<CompoundTag> {
+public abstract class AbstractMinecartMixin extends Entity implements AbstractMinecartExtensions, NBTSerializable {
 	private AbstractMinecartMixin(EntityType<?> entityType, Level world) {
 		super(entityType, world);
 	}
