@@ -166,8 +166,6 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void port_lib$appendPartEntitiesPredicate(@Nullable Entity entity, AABB area, Predicate<? super Entity> predicate, CallbackInfoReturnable<List<Entity>> cir, List<Entity> list) {
-		if (list.isEmpty())
-			return;
 		for (PartEntity<?> p : this.getPartEntities()) {
 			if (p != entity && p.getBoundingBox().intersects(area) && predicate.test(p)) {
 				list.add(p);
@@ -181,8 +179,6 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private <T extends Entity> void port_lib$appendPartEntitiesTypeTest(EntityTypeTest<Entity, T> test, AABB area, Predicate<? super T> predicate, CallbackInfoReturnable<List<T>> cir, List<Entity> list) {
-		if (list.isEmpty())
-			return;
 		for (PartEntity<?> p : this.getPartEntities()) {
 			T t = test.tryCast(p);
 			if (t != null && t.getBoundingBox().intersects(area) && predicate.test(t)) {
