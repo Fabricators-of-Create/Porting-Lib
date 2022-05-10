@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
 
+import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
 import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -24,7 +25,7 @@ import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 
 @Mixin(ServerLevel.class)
-public abstract class ServerLevelMixin {
+public abstract class ServerLevelMixin implements LevelExtensions {
 	@Inject(
 			method = "explode",
 			at = @At(
@@ -54,5 +55,10 @@ public abstract class ServerLevelMixin {
 			}
 		}
 		return entity;
+	}
+
+	@Override
+	public Int2ObjectMap<PartEntity<?>> getPartEntityMap() {
+		return PortingHooks.WORLDS_TO_MULTIPARTS.get(this);
 	}
 }

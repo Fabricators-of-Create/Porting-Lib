@@ -168,20 +168,15 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	private void port_lib$appendPartEntitiesPredicate(@Nullable Entity entity, AABB area, Predicate<? super Entity> predicate, CallbackInfoReturnable<List<Entity>> cir, List<Entity> list) {
 		if (list.isEmpty())
 			return;
-		List<PartEntity<?>> parts = new ArrayList<>();
 		for (Entity e : list) {
 			if (e instanceof MultiPartEntity multiPart && multiPart.isMultipartEntity() && !(e instanceof EnderDragon)) {
-				PartEntity<?>[] array = multiPart.getParts();
-				if (array != null) {
-					for (PartEntity<?> part : array) {
-						if (part != entity && predicate.test(part)) {
-							parts.add(part);
-						}
+				for (PartEntity<?> p : this.getPartEntities()) {
+					if (p != entity && p.getBoundingBox().intersects(area) && predicate.test(p)) {
+						list.add(p);
 					}
 				}
 			}
 		}
-		list.addAll(parts);
 	}
 
 	@Inject(

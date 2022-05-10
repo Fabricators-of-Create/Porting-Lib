@@ -1,7 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
 import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientBlockApiCache;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.minecraft.core.BlockPos;
 
@@ -23,12 +26,13 @@ import net.minecraft.client.multiplayer.ClientLevel;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 @Environment(EnvType.CLIENT)
 @Mixin(ClientLevel.class)
-public abstract class ClientLevelMixin implements ClientLevelExtensions {
+public abstract class ClientLevelMixin implements ClientLevelExtensions, LevelExtensions {
 	@Shadow
 	@Final
 	private Minecraft minecraft;
@@ -37,6 +41,9 @@ public abstract class ClientLevelMixin implements ClientLevelExtensions {
 	public void port_lib$init(CallbackInfo ci) {
 		ClientWorldEvents.LOAD.invoker().onWorldLoad(minecraft, MixinHelper.cast(this));
 	}
+
+	@Unique
+	private final it.unimi.dsi.fastutil.ints.Int2ObjectMap<PartEntity<?>> partEntities = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>();
 
 	// lookup stuff, from FAPI
 
@@ -84,5 +91,10 @@ public abstract class ClientLevelMixin implements ClientLevelExtensions {
 		caches.removeIf(weakReference -> weakReference.get() == null);
 		caches.add(new WeakReference<>(cache));
 		apiLookupAccessesWithoutCleanup++;
+	}
+
+	@Override
+	public Int2ObjectMap<PartEntity<?>> getPartEntityMap() {
+		return partEntities;
 	}
 }
