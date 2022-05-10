@@ -64,7 +64,6 @@ public abstract class IngredientMixin implements IngredientExtensions {
 
     @Inject(method = "toNetwork", at = @At(value = "INVOKE", shift = Shift.AFTER, target = "Lnet/minecraft/world/item/crafting/Ingredient;dissolve()V"), cancellable = true)
     private void port_lib$toNetwork(FriendlyByteBuf buffer, CallbackInfo ci) {
-		buffer.writeBoolean(isVanilla());
 		if (!this.isVanilla()) {
 			CraftingHelper.write(buffer, (Ingredient) (Object) this);
 			ci.cancel();
