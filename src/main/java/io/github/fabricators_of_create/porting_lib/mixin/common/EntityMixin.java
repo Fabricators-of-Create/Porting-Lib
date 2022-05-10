@@ -9,7 +9,7 @@ import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.ITeleporter;
 import io.github.fabricators_of_create.porting_lib.extensions.RegistryNameProvider;
 import io.github.fabricators_of_create.porting_lib.util.EntityHelper;
-import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
+import io.github.fabricators_of_create.porting_lib.util.INBTSerializable;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -39,7 +39,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 @Mixin(Entity.class)
-public abstract class EntityMixin implements EntityExtensions, NBTSerializable, RegistryNameProvider {
+public abstract class EntityMixin implements EntityExtensions, INBTSerializable<CompoundTag>, RegistryNameProvider {
 	@Shadow
 	public Level level;
 	@Shadow

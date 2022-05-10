@@ -4,7 +4,7 @@ import io.github.fabricators_of_create.porting_lib.transfer.callbacks.Transactio
 import io.github.fabricators_of_create.porting_lib.transfer.callbacks.TransactionSuccessCallback;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler.SnapshotData;
 import io.github.fabricators_of_create.porting_lib.util.ItemStackUtil;
-import io.github.fabricators_of_create.porting_lib.util.NBTSerializable;
+import io.github.fabricators_of_create.porting_lib.util.INBTSerializable;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Iterator;
 
-public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implements Storage<ItemVariant>, NBTSerializable {
+public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implements Storage<ItemVariant>, INBTSerializable<CompoundTag> {
 	public ItemStack[] stacks;
 
 	public ItemStackHandler() {
