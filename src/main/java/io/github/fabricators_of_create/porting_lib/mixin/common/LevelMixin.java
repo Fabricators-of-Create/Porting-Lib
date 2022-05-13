@@ -13,6 +13,7 @@ import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
+import io.github.fabricators_of_create.porting_lib.util.OnLoadBlockEntity;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -20,6 +21,7 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.entity.EntityTypeTest;
 
 import net.minecraft.world.phys.AABB;
@@ -84,6 +86,9 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 
 	@Shadow
 	public abstract BlockState getBlockState(BlockPos blockPos);
+
+	@Shadow
+	private boolean tickingBlockEntities;
 
 	@Override
 	public SnapshotParticipant<LevelSnapshotData> snapshotParticipant() {
@@ -186,4 +191,37 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 			}
 		}
 	}
+
+	private final java.util.ArrayList<BlockEntity> freshBlockEntities = new java.util.ArrayList<>();
+	private final java.util.ArrayList<BlockEntity> pendingFreshBlockEntities = new java.util.ArrayList<>();
+
+	@Inject(method = "tickBlockEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;push(Ljava/lang/String;)V", shift = Shift.AFTER))
+	public void port_lib$pendingBlockEntities(CallbackInfo ci) {
+		if (!this.pendingFreshBlockEntities.isEmpty()) {
+			this.freshBlockEntities.addAll(this.pendingFreshBlockEntities);
+			this.pendingFreshBlockEntities.clear();
+		}
+	}
+
+	@Inject(method = "tickBlockEntities", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z"))
+	public void port_lib$onBlockEntitiesLoad(CallbackInfo ci) {
+		if (!this.freshBlockEntities.isEmpty()) {
+			this.freshBlockEntities.forEach(blockEntity -> {
+				if (blockEntity instanceof OnLoadBlockEntity onLoadBlock)
+					onLoadBlock.onLoad();
+			});
+			this.freshBlockEntities.clear();
+		}
+	}
+
+	@Unique
+	@Override
+	public void addFreshBlockEntities(java.util.Collection<BlockEntity> beList) {
+		if (this.tickingBlockEntities) {
+			this.pendingFreshBlockEntities.addAll(beList);
+		} else {
+			this.freshBlockEntities.addAll(beList);
+		}
+	}
+
 }

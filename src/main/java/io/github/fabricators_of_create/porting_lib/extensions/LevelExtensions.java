@@ -4,6 +4,7 @@ import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -47,4 +48,6 @@ public interface LevelExtensions {
 	default it.unimi.dsi.fastutil.ints.Int2ObjectMap<PartEntity<?>> getPartEntityMap() {
 		return null;
 	}
+
+	default void addFreshBlockEntities(java.util.Collection<BlockEntity> beList) {}
 }
