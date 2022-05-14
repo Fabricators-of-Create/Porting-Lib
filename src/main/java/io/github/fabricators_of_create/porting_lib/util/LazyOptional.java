@@ -98,6 +98,11 @@ public class LazyOptional<T> {
 			consumer.accept(val);
 	}
 
+	public <U> LazyOptional<U> lazyMap(NonNullFunction<? super T, ? extends U> mapper) {
+		Objects.requireNonNull(mapper);
+		return isPresent() ? of(() -> mapper.apply(getValueUnsafe())) : empty();
+	}
+
 	public <U> Optional<U> map(NonNullFunction<? super T, ? extends U> mapper) {
 		Objects.requireNonNull(mapper);
 		return isPresent() ? Optional.of(mapper.apply(getValueUnsafe())) : Optional.empty();
