@@ -41,6 +41,11 @@ public abstract class BlockEntityMixin implements BlockEntityExtensions, INBTSer
 		}
 	}
 
+	@Inject(method = "setRemoved", at = @At("TAIL"))
+	public void port_lib$invalidate(CallbackInfo ci) {
+		invalidateCaps();
+	}
+
 	@Override
 	public CompoundTag serializeNBT() {
 		return this.saveWithFullMetadata();
