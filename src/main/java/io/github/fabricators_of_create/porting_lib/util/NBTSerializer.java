@@ -12,7 +12,7 @@ public class NBTSerializer {
 		return ((INBTSerializable) o).serializeNBT();
 	}
 
-	public static Tag serializeNBTCompound(Object o) {
+	public static CompoundTag serializeNBTCompound(Object o) {
 		Tag tag = ((INBTSerializable) o).serializeNBT();
 		if (tag instanceof CompoundTag c)
 			return c;
