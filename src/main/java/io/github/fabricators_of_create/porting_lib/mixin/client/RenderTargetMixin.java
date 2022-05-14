@@ -56,6 +56,8 @@ public abstract class RenderTargetMixin implements RenderTargetExtensions {
 		return true;
 	}
 
+	// separate ModifyArg injects instead of one ModifyArgs to avoid creating objects
+
 	@ModifyArg(method = "createBuffers",
 			at = @At(
 					value = "INVOKE",
