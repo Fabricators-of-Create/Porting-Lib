@@ -15,6 +15,11 @@ public interface RenderTargetExtensions {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 
+	/** @see RenderTargetExtensions#enableStencil() */
+	default void disableStencil() {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
+
 	/**
 	 * Returns whether this FBO has been successfully initialized with stencil bits.
 	 * If not, and a modder wishes it to be, they must call enableStencil.
