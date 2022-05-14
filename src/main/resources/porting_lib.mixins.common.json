@@ -20,6 +20,7 @@
     "BushBlockMixin",
     "CactusBlockMixin",
     "ChorusFruitItemMixin",
+    "ChunkMapMixin",
     "ChunkSerializerMixin",
     "ChunkStatusMixin",
     "ClipContextMixin",
