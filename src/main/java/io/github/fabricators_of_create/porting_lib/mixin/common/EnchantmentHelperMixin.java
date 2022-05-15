@@ -30,32 +30,4 @@ public abstract class EnchantmentHelperMixin {
 			}
 		}
 	}
-
-//	/**
-//	 * @author Tropheus Jay
-//	 * @reason We need to check enchant compat based on the enchantment instead of its category.
-//	 */
-//	@Overwrite
-//	public static List<EnchantmentInstance> getAvailableEnchantmentResults(int level, ItemStack stack, boolean allowTreasure) {
-//		List<EnchantmentInstance> list = Lists.newArrayList();
-//		Item item = stack.getItem();
-//		boolean book = stack.is(Items.BOOK);
-//
-//		for(Enchantment enchantment : Registry.ENCHANTMENT) {
-//			boolean enchantmentAllows = enchantment.category.canEnchant(item); // vanilla behavior
-//			if (enchantment instanceof CustomEnchantingTableBehaviorEnchantment custom) {
-//				enchantmentAllows = custom.canApplyAtEnchantingTable(stack);
-//			}
-//			if ((!enchantment.isTreasureOnly() || allowTreasure) && enchantment.isDiscoverable() && (enchantmentAllows || book)) {
-//				for(int i = enchantment.getMaxLevel(); i > enchantment.getMinLevel() - 1; --i) {
-//					if (level >= enchantment.getMinCost(i) && level <= enchantment.getMaxCost(i)) {
-//						list.add(new EnchantmentInstance(enchantment, i));
-//						break;
-//					}
-//				}
-//			}
-//		}
-//
-//		return list;
-//	}
 }
