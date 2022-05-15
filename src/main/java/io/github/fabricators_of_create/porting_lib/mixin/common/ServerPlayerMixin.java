@@ -133,7 +133,7 @@ public abstract class ServerPlayerMixin extends Player implements EntityExtensio
 			PlayerList playerlist = this.server.getPlayerList();
 			playerlist.sendPlayerPermissionLevel((ServerPlayer) (Object) this);
 			serverlevel.removePlayerImmediately((ServerPlayer) (Object) this, Entity.RemovalReason.CHANGED_DIMENSION);
-//			this.revive();
+			this.unsetRemoved();
 			PortalInfo portalinfo = teleporter.getPortalInfo(this, p_9180_, this::findDimensionEntryPoint);
 			if (portalinfo != null) {
 				Entity e = teleporter.placeEntity(this, serverlevel, p_9180_, this.getYRot(), spawnPortal -> {//Forge: Start vanilla logic
