@@ -102,6 +102,7 @@
     "accessor.BaseSpawnerAccessor",
     "accessor.BeaconBlockEntityAccessor",
     "accessor.BiomeManagerAccessor",
+    "accessor.BlockAccessor",
     "accessor.BlockEntityAccessor",
     "accessor.BucketItemAccessor",
     "accessor.BundleItemAccessor",
