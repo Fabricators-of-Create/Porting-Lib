@@ -1,9 +1,9 @@
-package io.github.fabricators_of_create.porting_lib.util;
+package io.github.fabricators_of_create.porting_lib.enchant;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 
-public interface EnchantableItem {
+public interface CustomEnchantingBehaviorItem {
 	/**
 	 * Allow or forbid the specific book/item combination as an anvil enchant
 	 *
@@ -21,7 +21,7 @@ public interface EnchantableItem {
 	 * applies specifically to enchanting an item in the enchanting table and is
 	 * called when retrieving the list of possible enchantments for an item.
 	 * Enchantments may additionally (or exclusively) be doing their own checks in
-	 * {@link Enchantment#canApplyAtEnchantingTable(ItemStack)};
+	 * {@link CustomEnchantingTableBehaviorEnchantment#canApplyAtEnchantingTable(ItemStack)};
 	 * check the individual implementation for reference. By default this will check
 	 * if the enchantment type is valid for this item type.
 	 *
