@@ -4,10 +4,16 @@ import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
+import io.github.fabricators_of_create.porting_lib.event.client.FOVModifierCallback;
+import net.minecraft.client.Camera;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import com.mojang.blaze3d.shaders.Program;
@@ -30,5 +36,12 @@ public abstract class GameRendererMixin {
 		} catch (IOException e) {
 			throw new RuntimeException("[Porting Lib] failed to reload modded shaders", e);
 		}
+	}
+
+	@Inject(method = "getFov", at = @At(value = "RETURN", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
+	public void port_lib$modifyFOV(Camera activeRenderInfo, float partialTicks, boolean useFOVSetting, CallbackInfoReturnable<Double> cir, double oldFov) {
+		double newFov = FOVModifierCallback.PARTIAL_FOV.invoker().getNewFOV((GameRenderer) (Object) this, activeRenderInfo, partialTicks, oldFov);
+		if (newFov != oldFov)
+			cir.setReturnValue(newFov);
 	}
 }
