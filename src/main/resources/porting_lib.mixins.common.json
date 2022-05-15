@@ -25,6 +25,7 @@
     "ChunkStatusMixin",
     "ClipContextMixin",
     "DeadBushBlockMixin",
+    "EnchantmentHelperMixin",
     "EnchantmentMixin",
     "EnderManMixin",
     "EntityCollisionContextMixin",

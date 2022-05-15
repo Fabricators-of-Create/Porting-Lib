@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.util;
+package io.github.fabricators_of_create.porting_lib.enchant;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 // TODO: implement
-public interface EnchantableBounusBlock {
+public interface EnchantmentBonusBlock {
 	/**
 	 * Determines the amount of enchanting power this block can provide to an enchanting table.
 	 * @param level The level
@@ -14,6 +14,6 @@ public interface EnchantableBounusBlock {
 	 * @return The amount of enchanting power this block produces.
 	 */
 	default float getEnchantPowerBonus(BlockState state, LevelReader level, BlockPos pos) {
-		return state.is(Blocks.BOOKSHELF) ? 1: 0;
+		return state.is(Blocks.BOOKSHELF) ? 1 : 0;
 	}
 }
