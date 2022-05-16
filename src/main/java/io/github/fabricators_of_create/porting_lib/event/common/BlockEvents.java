@@ -25,7 +25,7 @@ public abstract class BlockEvents extends BaseEvent {
 			e.onLeftClickBlock(player, pos, face);
 	}));
 
-	interface BlockBreak {
+	public interface BlockBreak {
 		void onBlockBreak(BreakEvent event);
 	}
 
