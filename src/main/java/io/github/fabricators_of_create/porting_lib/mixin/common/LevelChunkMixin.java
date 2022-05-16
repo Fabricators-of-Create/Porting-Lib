@@ -48,7 +48,7 @@ public abstract class LevelChunkMixin extends ChunkAccess {
 		blockEntities.values().forEach(be -> {
 			try {
 				if (be instanceof ChunkUnloadListeningBlockEntity listener) {
-					listener.onChunkUnload();
+					listener.onChunkUnloaded();
 				}
 			} catch (IllegalAccessError e) {
 				PortingLib.LOGGER.error("illegal access on " + be.getClass());
