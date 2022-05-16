@@ -1,7 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import io.github.fabricators_of_create.porting_lib.extensions.BlockEntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
-import io.github.fabricators_of_create.porting_lib.util.OnLoadBlockEntity;
 
 import net.minecraft.world.level.Level;
 
@@ -15,7 +15,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomUpdateTagHandlingBlockEntity;
-import io.github.fabricators_of_create.porting_lib.block.ChunkUnloadListeningBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -35,7 +34,7 @@ import net.minecraft.world.level.levelgen.blending.BlendingData;
 public abstract class LevelChunkMixin extends ChunkAccess {
 	@Shadow
 	@Final
-	private Level level;
+	Level level;
 
 	public LevelChunkMixin(ChunkPos chunkPos, UpgradeData upgradeData, LevelHeightAccessor levelHeightAccessor, Registry<Biome> registry, long l, @Nullable LevelChunkSection[] levelChunkSections, @Nullable BlendingData blendingData) {
 		super(chunkPos, upgradeData, levelHeightAccessor, registry, l, levelChunkSections, blendingData);
@@ -44,8 +43,8 @@ public abstract class LevelChunkMixin extends ChunkAccess {
 	@Inject(method = "clearAllBlockEntities", at = @At("HEAD"))
 	private void port_lib$blockEntityClear(CallbackInfo ci) {
 		blockEntities.values().forEach(be -> {
-			if (be instanceof ChunkUnloadListeningBlockEntity listener) {
-				listener.onChunkUnloaded();
+			if (be instanceof BlockEntityExtensions ex) {
+				ex.onChunkUnloaded();
 			}
 		});
 	}
@@ -63,12 +62,12 @@ public abstract class LevelChunkMixin extends ChunkAccess {
 
 	@Inject(method = "addAndRegisterBlockEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/chunk/LevelChunk;updateBlockEntityTicker(Lnet/minecraft/world/level/block/entity/BlockEntity;)V", shift = At.Shift.AFTER))
 	public void port_lib$onBlockEntityLoad(BlockEntity blockEntity, CallbackInfo ci) {
-		if (blockEntity instanceof OnLoadBlockEntity onLoadBlock)
-			onLoadBlock.onLoad();
+		if (blockEntity instanceof BlockEntityExtensions ex)
+			ex.onLoad();
 	}
 
 	@Inject(method = "registerAllBlockEntitiesAfterLevelLoad", at = @At("HEAD"))
 	public void port_lib$addPendingBlockEntities(CallbackInfo ci) {
-		((LevelExtensions)this.level).addFreshBlockEntities(this.blockEntities.values());
+		((LevelExtensions) this.level).addFreshBlockEntities(this.blockEntities.values());
 	}
 }

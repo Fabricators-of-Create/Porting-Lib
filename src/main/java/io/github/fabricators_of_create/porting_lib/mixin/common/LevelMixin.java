@@ -1,23 +1,17 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
-import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
+import io.github.fabricators_of_create.porting_lib.extensions.BlockEntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
-import io.github.fabricators_of_create.porting_lib.util.OnLoadBlockEntity;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 
@@ -26,15 +20,12 @@ import net.minecraft.world.level.entity.EntityTypeTest;
 
 import net.minecraft.world.phys.AABB;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
-import org.spongepowered.asm.mixin.injection.Group;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -101,7 +92,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		if (port_lib$modifiedStates != null) {
 			// iterate in reverse order - latest changes priority
 			for (ChangedPosData data : port_lib$modifiedStates) {
-				if (data.pos().equals(pos)) {
+				if (data.pos().equals(pos) && data.state() != null) {
 					cir.setReturnValue(data.state());
 					return;
 				}
@@ -207,8 +198,8 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	public void port_lib$onBlockEntitiesLoad(CallbackInfo ci) {
 		if (!this.freshBlockEntities.isEmpty()) {
 			this.freshBlockEntities.forEach(blockEntity -> {
-				if (blockEntity instanceof OnLoadBlockEntity onLoadBlock)
-					onLoadBlock.onLoad();
+				if (blockEntity instanceof BlockEntityExtensions ex)
+					ex.onLoad();
 			});
 			this.freshBlockEntities.clear();
 		}
