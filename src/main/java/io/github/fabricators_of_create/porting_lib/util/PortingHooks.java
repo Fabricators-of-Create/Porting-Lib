@@ -128,7 +128,7 @@ public class PortingHooks {
 				blockItem.removeFromBlockToItemMap(Item.BY_BLOCK, item);
 			}
 		});
-		ServerLifecycleEvents.SERVER_STARTING.register(PortingHooks::loadLanguagesOnServer);
+		ServerLifecycleEvents.SERVER_STARTED.register(PortingHooks::loadLanguagesOnServer);
 	}
 
 	private static List<Map<String, String>> capturedTables = new ArrayList<>(2);
