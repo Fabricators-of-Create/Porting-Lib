@@ -12,10 +12,6 @@ public interface BlockEntityExtensions {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 
-	default void onChunkUnloaded() {
-		this.invalidateCaps();
-	}
-
 	default void onLoad() {
 	}
 

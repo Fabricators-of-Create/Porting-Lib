@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import io.github.fabricators_of_create.porting_lib.PortingLib;
+import io.github.fabricators_of_create.porting_lib.block.ChunkUnloadListeningBlockEntity;
 import io.github.fabricators_of_create.porting_lib.extensions.BlockEntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
 
@@ -30,6 +32,7 @@ import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.UpgradeData;
 import net.minecraft.world.level.levelgen.blending.BlendingData;
 
+
 @Mixin(LevelChunk.class)
 public abstract class LevelChunkMixin extends ChunkAccess {
 	@Shadow
@@ -43,8 +46,13 @@ public abstract class LevelChunkMixin extends ChunkAccess {
 	@Inject(method = "clearAllBlockEntities", at = @At("HEAD"))
 	private void port_lib$blockEntityClear(CallbackInfo ci) {
 		blockEntities.values().forEach(be -> {
-			if (be instanceof BlockEntityExtensions ex) {
-				ex.onChunkUnloaded();
+			try {
+				if (be instanceof ChunkUnloadListeningBlockEntity listener) {
+					listener.onChunkUnload();
+				}
+			} catch (IllegalAccessError e) {
+				PortingLib.LOGGER.error("illegal access on " + be.getClass());
+				e.printStackTrace();
 			}
 		});
 	}
