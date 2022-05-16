@@ -1,21 +1,16 @@
 package io.github.fabricators_of_create.porting_lib.extensions;
 
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 // allows block modification to be done in transactions easily.
 // this only modifies set/getBlockState.
@@ -45,9 +40,11 @@ public interface LevelExtensions {
 		return getPartEntityMap().values();
 	}
 
-	default it.unimi.dsi.fastutil.ints.Int2ObjectMap<PartEntity<?>> getPartEntityMap() {
-		return null;
+	default Int2ObjectMap<PartEntity<?>> getPartEntityMap() {
+		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 
-	default void addFreshBlockEntities(java.util.Collection<BlockEntity> beList) {}
+	default void addFreshBlockEntities(Collection<BlockEntity> beList) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 }
