@@ -10,4 +10,7 @@ import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
 public interface MinecraftServerAccessor {
 	@Accessor("storageSource")
 	LevelStorageAccess port_lib$getStorageSource();
+
+	@Accessor("resources")
+	MinecraftServer.ReloadableResources port_lib$getServerResources();
 }

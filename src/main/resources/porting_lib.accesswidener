@@ -50,3 +50,5 @@ transitive-accessible method net/minecraft/world/level/block/BushBlock mayPlaceO
 
 transitive-accessible class net/minecraft/client/gui/MapRenderer$MapInstance
 transitive-accessible field net/minecraft/client/gui/MapRenderer MAP_ICONS Lnet/minecraft/client/renderer/RenderType;
+
+transitive-accessible class net/minecraft/server/MinecraftServer$ReloadableResources
