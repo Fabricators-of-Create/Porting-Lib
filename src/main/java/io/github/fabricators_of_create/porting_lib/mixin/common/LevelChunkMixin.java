@@ -46,13 +46,8 @@ public abstract class LevelChunkMixin extends ChunkAccess {
 	@Inject(method = "clearAllBlockEntities", at = @At("HEAD"))
 	private void port_lib$blockEntityClear(CallbackInfo ci) {
 		blockEntities.values().forEach(be -> {
-			try {
-				if (be instanceof ChunkUnloadListeningBlockEntity listener) {
-					listener.onChunkUnloaded();
-				}
-			} catch (IllegalAccessError e) {
-				PortingLib.LOGGER.error("illegal access on " + be.getClass());
-				e.printStackTrace();
+			if (be instanceof ChunkUnloadListeningBlockEntity listener) {
+				listener.onChunkUnloaded();
 			}
 		});
 	}
