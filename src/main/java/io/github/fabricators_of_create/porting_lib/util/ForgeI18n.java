@@ -74,7 +74,7 @@ public class ForgeI18n {
 	}
 
 	public static void loadLanguageData(final Map<String, String> properties) {
-		LOGGER.info("Loading I18N data entries: {}", properties.size());
+		LOGGER.debug("Loading I18N data entries: {}", properties.size());
 		i18n = properties;
 	}
 
