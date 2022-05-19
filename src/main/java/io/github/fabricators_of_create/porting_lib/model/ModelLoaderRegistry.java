@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -26,6 +28,7 @@ import com.mojang.math.Transformation;
 
 import io.github.fabricators_of_create.porting_lib.extensions.TransformationExtensions;
 import io.github.fabricators_of_create.porting_lib.mixin.client.accessor.BlockModelAccessor;
+import io.github.fabricators_of_create.porting_lib.model.obj.OBJLoader;
 import io.github.fabricators_of_create.porting_lib.util.TransformationHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BlockElement;
@@ -37,6 +40,7 @@ import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
@@ -63,6 +67,7 @@ public class ModelLoaderRegistry {
 				.registerTypeAdapter(Transformation.class, new TransformationHelper.Deserializer())
 				.create());
 		registerLoader(new ResourceLocation("minecraft","elements"), VanillaProxy.Loader.INSTANCE);
+		registerLoader(new ResourceLocation("forge","obj"), OBJLoader.INSTANCE);
 		registerLoader(new ResourceLocation("forge","bucket"), DynamicBucketModel.Loader.INSTANCE);
 		registerLoader(new ResourceLocation("forge","composite"), CompositeModel.Loader.INSTANCE);
 		registerLoader(new ResourceLocation("forge","item-layers"), ItemLayerModel.Loader.INSTANCE);
@@ -158,6 +163,54 @@ public class ModelLoaderRegistry {
 
 		ResourceLocation loader = new ResourceLocation(GsonHelper.getAsString(object, "loader"));
 		return getModel(loader, deserializationContext, object);
+	}
+
+	/* Explanation:
+	 * This takes anything that looks like a valid resourcepack texture location, and tries to extract a resourcelocation out of it.
+	 *  1. it will ignore anything up to and including an /assets/ folder,
+	 *  2. it will take the next path component as a namespace,
+	 *  3. it will match but skip the /textures/ part of the path,
+	 *  4. it will take the rest of the path up to but excluding the .png extension as the resource path
+	 * It's a best-effort situation, to allow model files exported by modelling software to be used without post-processing.
+	 * Example:
+	 *   C:\Something\Or Other\src\main\resources\assets\mymodid\textures\item\my_thing.png
+	 *   ........................................--------_______----------_____________----
+	 *                                                 <namespace>        <path>
+	 * Result after replacing '\' to '/': mymodid:item/my_thing
+	 */
+	private static final Pattern FILESYSTEM_PATH_TO_RESLOC =
+			Pattern.compile("(?:.*[\\\\/]assets[\\\\/](?<namespace>[a-z_-]+)[\\\\/]textures[\\\\/])?(?<path>[a-z_\\\\/-]+)\\.png");
+
+	public static final String WHITE_TEXTURE = "porting_lib:white";
+
+	public static Material resolveTexture(@Nullable String tex, IModelConfiguration owner) {
+		if (tex == null)
+			return blockMaterial(WHITE_TEXTURE);
+		if (tex.startsWith("#"))
+			return owner.resolveTexture(tex);
+
+		// Attempt to convert a common (windows/linux/mac) filesystem path to a ResourceLocation.
+		// This makes no promises, if it doesn't work, too bad, fix your mtl file.
+		Matcher match = FILESYSTEM_PATH_TO_RESLOC.matcher(tex);
+		if (match.matches()) {
+			String namespace = match.group("namespace");
+			String path = match.group("path").replace("\\", "/");
+			if (namespace != null)
+				return blockMaterial(new ResourceLocation(namespace, path));
+			return blockMaterial(path);
+		}
+
+		return blockMaterial(tex);
+	}
+
+	@SuppressWarnings("deprecation")
+	public static Material blockMaterial(String location) {
+		return new Material(TextureAtlas.LOCATION_BLOCKS, new ResourceLocation(location));
+	}
+
+	@SuppressWarnings("deprecation")
+	public static Material blockMaterial(ResourceLocation location) {
+		return new Material(TextureAtlas.LOCATION_BLOCKS, location);
 	}
 
 	public static class VanillaProxy implements ISimpleModelGeometry<VanillaProxy> {
