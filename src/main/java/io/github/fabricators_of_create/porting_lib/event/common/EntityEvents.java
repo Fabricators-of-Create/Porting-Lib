@@ -37,6 +37,16 @@ public class EntityEvents {
 		}
 	});
 
+	public static final Event<EnteringSection> ENTERING_SECTION = EventFactory.createArrayBacked(EnteringSection.class, callbacks -> (entity, packedOldPos, packedNewPos) -> {
+		for (EnteringSection e : callbacks)
+			e.onEntityEnterSection(entity, packedOldPos, packedNewPos);
+	});
+
+	@FunctionalInterface
+	public interface EnteringSection {
+		void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos);
+	}
+
 	@FunctionalInterface
 	public interface Remove {
 		void onRemove(Entity entity, RemovalReason reason);
