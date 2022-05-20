@@ -7,7 +7,6 @@ import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
 
 import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
-import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 
@@ -31,7 +30,7 @@ import net.minecraft.world.level.Level;
 public abstract class ServerLevelMixin implements LevelExtensions {
 
 	@Unique
-	final Int2ObjectMap<PartEntity<?>> multiparts = new Int2ObjectOpenHashMap<>();
+	final Int2ObjectMap<PartEntity<?>> port_lib$multiparts = new Int2ObjectOpenHashMap<>();
 
 	@Inject(
 			method = "explode",
@@ -56,8 +55,8 @@ public abstract class ServerLevelMixin implements LevelExtensions {
 	@ModifyReturnValue(method = "getEntityOrPart", at = @At("RETURN"))
 	public Entity port_lib$getMultipart(Entity entity, int id) {
 		if (entity == null) {
-			if (multiparts != null) {
-				return multiparts.get(id);
+			if (port_lib$multiparts != null) {
+				return port_lib$multiparts.get(id);
 			}
 		}
 		return entity;
@@ -65,6 +64,6 @@ public abstract class ServerLevelMixin implements LevelExtensions {
 
 	@Override
 	public Int2ObjectMap<PartEntity<?>> getPartEntityMap() {
-		return multiparts;
+		return port_lib$multiparts;
 	}
 }

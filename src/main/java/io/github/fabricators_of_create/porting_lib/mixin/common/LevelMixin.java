@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +51,10 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	// onFinalCommit on commits, and through snapshot rollbacks on aborts.
 	@Unique
 	private List<ChangedPosData> port_lib$modifiedStates = null;
+	@Unique
+	private final ArrayList<BlockEntity> port_lib$freshBlockEntities = new ArrayList<>();
+	@Unique
+	private final ArrayList<BlockEntity> port_lib$pendingFreshBlockEntities = new ArrayList<>();
 
 	@Unique
 	private final SnapshotParticipant<LevelSnapshotData> port_lib$snapshotParticipant = new SnapshotParticipant<>() {
@@ -173,10 +179,14 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void port_lib$appendPartEntitiesPredicate(@Nullable Entity entity, AABB area, Predicate<? super Entity> predicate, CallbackInfoReturnable<List<Entity>> cir, List<Entity> list) {
-		for (PartEntity<?> p : this.getPartEntities()) {
-			if (p != entity && p.getBoundingBox().intersects(area) && predicate.test(p)) {
-				list.add(p);
+		try {
+			for (PartEntity<?> p : this.getPartEntities()) {
+				if (p != entity && p.getBoundingBox().intersects(area) && predicate.test(p)) {
+					list.add(p);
+				}
 			}
+		} catch (ClassCastException e) {
+			System.out.println("h");
 		}
 	}
 
@@ -186,43 +196,44 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private <T extends Entity> void port_lib$appendPartEntitiesTypeTest(EntityTypeTest<Entity, T> test, AABB area, Predicate<? super T> predicate, CallbackInfoReturnable<List<T>> cir, List<Entity> list) {
-		for (PartEntity<?> p : this.getPartEntities()) {
-			T t = test.tryCast(p);
-			if (t != null && t.getBoundingBox().intersects(area) && predicate.test(t)) {
-				list.add(t);
+		try {
+			for (PartEntity<?> p : this.getPartEntities()) {
+				T t = test.tryCast(p);
+				if (t != null && t.getBoundingBox().intersects(area) && predicate.test(t)) {
+					list.add(t);
+				}
 			}
+		} catch (ClassCastException ex) {
+			System.out.println("h");
 		}
 	}
 
-	private final java.util.ArrayList<BlockEntity> freshBlockEntities = new java.util.ArrayList<>();
-	private final java.util.ArrayList<BlockEntity> pendingFreshBlockEntities = new java.util.ArrayList<>();
-
 	@Inject(method = "tickBlockEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;push(Ljava/lang/String;)V", shift = Shift.AFTER))
 	public void port_lib$pendingBlockEntities(CallbackInfo ci) {
-		if (!this.pendingFreshBlockEntities.isEmpty()) {
-			this.freshBlockEntities.addAll(this.pendingFreshBlockEntities);
-			this.pendingFreshBlockEntities.clear();
+		if (!this.port_lib$pendingFreshBlockEntities.isEmpty()) {
+			this.port_lib$freshBlockEntities.addAll(this.port_lib$pendingFreshBlockEntities);
+			this.port_lib$pendingFreshBlockEntities.clear();
 		}
 	}
 
 	@Inject(method = "tickBlockEntities", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z"))
 	public void port_lib$onBlockEntitiesLoad(CallbackInfo ci) {
-		if (!this.freshBlockEntities.isEmpty()) {
-			this.freshBlockEntities.forEach(blockEntity -> {
+		if (!this.port_lib$freshBlockEntities.isEmpty()) {
+			this.port_lib$freshBlockEntities.forEach(blockEntity -> {
 				if (blockEntity instanceof BlockEntityExtensions ex)
 					ex.onLoad();
 			});
-			this.freshBlockEntities.clear();
+			this.port_lib$freshBlockEntities.clear();
 		}
 	}
 
 	@Unique
 	@Override
-	public void addFreshBlockEntities(java.util.Collection<BlockEntity> beList) {
+	public void addFreshBlockEntities(Collection<BlockEntity> beList) {
 		if (this.tickingBlockEntities) {
-			this.pendingFreshBlockEntities.addAll(beList);
+			this.port_lib$pendingFreshBlockEntities.addAll(beList);
 		} else {
-			this.freshBlockEntities.addAll(beList);
+			this.port_lib$freshBlockEntities.addAll(beList);
 		}
 	}
 

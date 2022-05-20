@@ -77,11 +77,11 @@ public class PortingHooks {
 
 	public static void init() {
 		ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
-			if(entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
+			if (entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
 				PartEntity<?>[] parts = partEntity.getParts();
 				if (parts != null) {
 					for (PartEntity<?> part : parts) {
-						((LevelExtensions)world).getPartEntityMap().put(part.getId(), part);
+						((LevelExtensions) world).getPartEntityMap().put(part.getId(), part);
 					}
 				}
 			}
@@ -91,7 +91,7 @@ public class PortingHooks {
 				PartEntity<?>[] parts = partEntity.getParts();
 				if (parts != null) {
 					for (PartEntity<?> part : parts) {
-						((LevelExtensions)world).getPartEntityMap().remove(part.getId());
+						((LevelExtensions) world).getPartEntityMap().remove(part.getId());
 					}
 				}
 			}

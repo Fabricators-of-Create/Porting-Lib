@@ -5,6 +5,7 @@ import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensi
 import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
 import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientBlockApiCache;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.minecraft.core.BlockPos;
 
@@ -26,7 +27,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -43,24 +43,24 @@ public abstract class ClientLevelMixin implements ClientLevelExtensions, LevelEx
 	}
 
 	@Unique
-	private final it.unimi.dsi.fastutil.ints.Int2ObjectMap<PartEntity<?>> partEntities = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>();
+	private final Int2ObjectMap<PartEntity<?>> port_lib$partEntities = new Int2ObjectOpenHashMap<>();
 
 	// lookup stuff, from FAPI
 
 	@Unique
-	private final Map<BlockPos, List<WeakReference<ClientBlockApiCache>>> apiLookupCaches = new Object2ReferenceOpenHashMap<>();
+	private final Map<BlockPos, List<WeakReference<ClientBlockApiCache>>> port_lib$apiLookupCaches = new Object2ReferenceOpenHashMap<>();
 	@Unique
-	private int apiLookupAccessesWithoutCleanup = 0;
+	private int port_lib$apiLookupAccessesWithoutCleanup = 0;
 
 	@Override
 	public void port_lib$invalidateCache(BlockPos pos) {
-		List<WeakReference<ClientBlockApiCache>> caches = apiLookupCaches.get(pos);
+		List<WeakReference<ClientBlockApiCache>> caches = port_lib$apiLookupCaches.get(pos);
 
 		if (caches != null) {
 			caches.removeIf(weakReference -> weakReference.get() == null);
 
 			if (caches.size() == 0) {
-				apiLookupCaches.remove(pos);
+				port_lib$apiLookupCaches.remove(pos);
 			} else {
 				caches.forEach(weakReference -> {
 					ClientBlockApiCache cache = weakReference.get();
@@ -72,29 +72,29 @@ public abstract class ClientLevelMixin implements ClientLevelExtensions, LevelEx
 			}
 		}
 
-		apiLookupAccessesWithoutCleanup++;
+		port_lib$apiLookupAccessesWithoutCleanup++;
 
 		// Try to invalidate GC'd lookups from the cache after 2 * the number of cached lookups
-		if (apiLookupAccessesWithoutCleanup > 2 * apiLookupCaches.size()) {
-			apiLookupCaches.entrySet().removeIf(entry -> {
+		if (port_lib$apiLookupAccessesWithoutCleanup > 2 * port_lib$apiLookupCaches.size()) {
+			port_lib$apiLookupCaches.entrySet().removeIf(entry -> {
 				entry.getValue().removeIf(weakReference -> weakReference.get() == null);
 				return entry.getValue().isEmpty();
 			});
 
-			apiLookupAccessesWithoutCleanup = 0;
+			port_lib$apiLookupAccessesWithoutCleanup = 0;
 		}
 	}
 
 	@Override
 	public void port_lib$registerCache(BlockPos pos, ClientBlockApiCache cache) {
-		List<WeakReference<ClientBlockApiCache>> caches = apiLookupCaches.computeIfAbsent(pos.immutable(), ignored -> new ArrayList<>());
+		List<WeakReference<ClientBlockApiCache>> caches = port_lib$apiLookupCaches.computeIfAbsent(pos.immutable(), ignored -> new ArrayList<>());
 		caches.removeIf(weakReference -> weakReference.get() == null);
 		caches.add(new WeakReference<>(cache));
-		apiLookupAccessesWithoutCleanup++;
+		port_lib$apiLookupAccessesWithoutCleanup++;
 	}
 
 	@Override
 	public Int2ObjectMap<PartEntity<?>> getPartEntityMap() {
-		return partEntities;
+		return port_lib$partEntities;
 	}
 }

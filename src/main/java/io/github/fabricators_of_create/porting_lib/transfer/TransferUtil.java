@@ -427,7 +427,7 @@ public class TransferUtil {
 		}
 		boolean success = true;
 		try (Transaction t = getTransaction()) {
-			Iterator<StorageView<T>> itr = storage.iterator(t);
+			Iterator<? extends StorageView<T>> itr = storage.iterator(t);
 			StorageView<T> currentView = itr.hasNext() ? itr.next() : null;
 			while (currentView != null) {
 				if (currentView.isResourceBlank()) {
@@ -569,7 +569,7 @@ public class TransferUtil {
 		List<ItemStack> stacks = new ArrayList<>();
 		if (!storage.supportsExtraction()) return stacks;
 		try (Transaction t = getTransaction()) {
-			Iterator<StorageView<ItemVariant>> itr = storage.iterator(t);
+			Iterator<? extends StorageView<ItemVariant>> itr = storage.iterator(t);
 			StorageView<ItemVariant> currentView = itr.hasNext() ? itr.next() : null;
 			while (currentView != null) {
 				if (currentView.isResourceBlank()) {
