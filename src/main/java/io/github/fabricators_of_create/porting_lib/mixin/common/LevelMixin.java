@@ -144,14 +144,17 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/Level;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;",
-					shift = At.Shift.AFTER
+					shift = Shift.BY,
+					by = 2,
+					ordinal = 0
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	public void port_lib$updateNeighbourForOutputSignal(BlockPos pos, Block block, CallbackInfo ci,
-												   Iterator<?> var3, Direction direction, BlockPos blockPos2) {
+														Iterator<?> var3, Direction direction, BlockPos offset,
+														BlockState state) {
 		if (block instanceof NeighborChangeListeningBlock listener) {
-			listener.onNeighborChange(getBlockState(blockPos2), this, blockPos2, pos);
+			listener.onNeighborChange(state, this, offset, pos);
 		}
 	}
 
