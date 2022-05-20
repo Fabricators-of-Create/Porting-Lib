@@ -153,7 +153,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	public void port_lib$updateNeighbourForOutputSignal(BlockPos pos, Block block, CallbackInfo ci,
 														Iterator<?> var3, Direction direction, BlockPos offset,
 														BlockState state) {
-		if (block instanceof NeighborChangeListeningBlock listener) {
+		if (state.getBlock() instanceof NeighborChangeListeningBlock listener) {
 			listener.onNeighborChange(state, this, offset, pos);
 		}
 	}
