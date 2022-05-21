@@ -74,7 +74,6 @@
     "ServerLevelMixin",
     "ServerPlayerGameModeMixin",
     "ServerPlayerMixin",
-    "ServerResourcesMixin",
     "ShapedRecipeMixin",
     "ShapelessRecipe$SerializerMixin",
     "ShapelessRecipeMixin",

@@ -75,7 +75,6 @@
       "net/minecraft/class_2541": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
       "net/minecraft/class_2560": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
       "net/minecraft/class_2586": ["io/github/fabricators_of_create/porting_lib/extensions/BlockEntityExtensions"],
-      "net/minecraft/class_2604": ["io/github/fabricators_of_create/porting_lib/extensions/ClientboundAddEntityPacketExtensions"],
       "net/minecraft/class_2960": ["io/github/fabricators_of_create/porting_lib/extensions/ResourceLocationExtensions"],
       "net/minecraft/class_3491": ["io/github/fabricators_of_create/porting_lib/extensions/StructureProcessorExtensions"],
       "net/minecraft/class_3499": ["io/github/fabricators_of_create/porting_lib/extensions/StructureTemplateExtensions"],

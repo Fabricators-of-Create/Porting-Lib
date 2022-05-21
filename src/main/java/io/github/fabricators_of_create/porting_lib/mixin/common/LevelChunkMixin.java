@@ -65,12 +65,11 @@ public abstract class LevelChunkMixin extends ChunkAccess {
 
 	@Inject(method = "addAndRegisterBlockEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/chunk/LevelChunk;updateBlockEntityTicker(Lnet/minecraft/world/level/block/entity/BlockEntity;)V", shift = At.Shift.AFTER))
 	public void port_lib$onBlockEntityLoad(BlockEntity blockEntity, CallbackInfo ci) {
-		if (blockEntity instanceof BlockEntityExtensions ex)
-			ex.onLoad();
+		blockEntity.onLoad();
 	}
 
 	@Inject(method = "registerAllBlockEntitiesAfterLevelLoad", at = @At("HEAD"))
 	public void port_lib$addPendingBlockEntities(CallbackInfo ci) {
-		((LevelExtensions) this.level).addFreshBlockEntities(this.blockEntities.values());
+		this.level.addFreshBlockEntities(this.blockEntities.values());
 	}
 }
