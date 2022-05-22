@@ -5,6 +5,8 @@ import static net.minecraft.world.InteractionResult.SUCCESS;
 
 import io.github.fabricators_of_create.porting_lib.event.client.MinecraftTailCallback;
 
+import io.github.fabricators_of_create.porting_lib.event.client.PickBlockCallback;
+
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -103,6 +105,13 @@ public abstract class MinecraftMixin {
 			if (result == SUCCESS) {
 				player.swing(hand);
 			}
+			ci.cancel();
+		}
+	}
+
+	@Inject(method = "pickBlock", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getAbilities()Lnet/minecraft/world/entity/player/Abilities;"))
+	private void port_lib$onPickBlock(CallbackInfo ci) {
+		if (PickBlockCallback.EVENT.invoker().onPickBlock()) {
 			ci.cancel();
 		}
 	}
