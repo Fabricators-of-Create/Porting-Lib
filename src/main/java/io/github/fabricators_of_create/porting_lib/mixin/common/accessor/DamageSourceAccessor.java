@@ -17,4 +17,13 @@ public interface DamageSourceAccessor {
 
 	@Invoker("bypassArmor")
 	DamageSource port_lib$setDamageBypassesArmor();
+
+	@Invoker("bypassInvul")
+	DamageSource port_lib$bypassInvul();
+
+	@Invoker("bypassMagic")
+	DamageSource port_lib$bypassMagic();
+
+	@Invoker("damageHelmet")
+	DamageSource port_lib$damageHelmet();
 }
