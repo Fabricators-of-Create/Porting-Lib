@@ -69,7 +69,7 @@ public class CompositeModel implements BakedModel, FabricBakedModel, TransformTy
 //	}
 
 	@Override
-	public List<BakedQuad> getQuads(@org.jetbrains.annotations.Nullable BlockState state, @org.jetbrains.annotations.Nullable Direction side, Random rand) {
+	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand) {
 		return null;
 	}
 
@@ -141,7 +141,11 @@ public class CompositeModel implements BakedModel, FabricBakedModel, TransformTy
 	}
 
 	@Override
-	public void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context) {}
+	public void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context) {
+		for (Map.Entry<String, BakedModel> entry : bakedParts.entrySet()) {
+			((FabricBakedModel) entry.getValue()).emitItemQuads(stack, randomSupplier, context);
+		}
+	}
 
 	private static class Submodel implements IModelGeometryPart
 	{
