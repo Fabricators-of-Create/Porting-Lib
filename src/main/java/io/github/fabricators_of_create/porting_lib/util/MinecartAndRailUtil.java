@@ -8,7 +8,6 @@ import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.Abstrac
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.BlockGetter;
@@ -33,16 +32,8 @@ public class MinecartAndRailUtil {
 
 	// carts
 
-	public static void moveMinecartOnRail(AbstractMinecart cart, BlockPos pos) {
-		((AbstractMinecartExtensions) cart).moveMinecartOnRail(pos);
-	}
-
 	public static double getMaximumSpeed(AbstractMinecart cart) {
 		return ((AbstractMinecartAccessor) cart).port_lib$getMaxSpeed();
-	}
-
-	public static BlockPos getExpectedRailPos(AbstractMinecart cart) {
-		return ((AbstractMinecartExtensions) cart).getCurrentRailPos();
 	}
 
 	public static double getSlopeAdjustment() {

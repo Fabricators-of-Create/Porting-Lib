@@ -13,10 +13,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.common.collect.Lists;
-import io.github.fabricators_of_create.porting_lib.extensions.StructureProcessorExtensions;
+
 import io.github.fabricators_of_create.porting_lib.extensions.StructureTemplateExtensions;
 import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.StructureTemplateAccessor;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.DoubleTag;
@@ -70,7 +69,7 @@ public abstract class StructureTemplateMixin implements StructureTemplateExtensi
 			BlockPos blockpos = StructureTemplate.calculateRelativePosition(settings, entityInfo.blockPos).offset(blockPos);
 			StructureTemplate.StructureEntityInfo info = new StructureTemplate.StructureEntityInfo(pos, blockpos, entityInfo.nbt);
 			for (StructureProcessor proc : settings.getProcessors()) {
-				info = ((StructureProcessorExtensions) proc).processEntity(world, blockPos, entityInfo, info, settings, template);
+				info = proc.processEntity(world, blockPos, entityInfo, info, settings, template);
 				if (info == null)
 					break;
 			}

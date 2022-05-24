@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
-import io.github.fabricators_of_create.porting_lib.extensions.RenderTargetExtensions;
 
 import net.minecraft.client.renderer.PostChain;
 
@@ -29,8 +28,8 @@ public abstract class PostChainMixin {
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	public void port_lib$isStencil(String name, int width, int height, CallbackInfo ci, RenderTarget rendertarget) {
-		if (((RenderTargetExtensions) screenTarget).isStencilEnabled()) {
-			((RenderTargetExtensions) rendertarget).enableStencil();
+		if (screenTarget.isStencilEnabled()) {
+			rendertarget.enableStencil();
 		}
 	}
 }

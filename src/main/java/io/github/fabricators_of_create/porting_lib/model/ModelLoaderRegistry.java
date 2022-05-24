@@ -26,7 +26,6 @@ import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Transformation;
 
-import io.github.fabricators_of_create.porting_lib.extensions.TransformationExtensions;
 import io.github.fabricators_of_create.porting_lib.mixin.client.accessor.BlockModelAccessor;
 import io.github.fabricators_of_create.porting_lib.model.obj.OBJLoader;
 import io.github.fabricators_of_create.porting_lib.util.TransformationHelper;
@@ -108,7 +107,7 @@ public class ModelLoaderRegistry {
 		if (!transformData.isJsonObject()) {
 			try {
 				Transformation base = context.deserialize(transformData, Transformation.class);
-				return Optional.of(new SimpleModelState(ImmutableMap.of(), ((TransformationExtensions) (Object) base).blockCenterToCorner()));
+				return Optional.of(new SimpleModelState(ImmutableMap.of(), base.blockCenterToCorner()));
 			} catch (JsonParseException e) {
 				throw new JsonParseException("transform: expected a string, object or valid base transformation, got: " + transformData);
 			}
@@ -151,7 +150,7 @@ public class ModelLoaderRegistry {
 	private static void deserializeTRSR(JsonDeserializationContext context, EnumMap<ItemTransforms.TransformType, Transformation> transforms, JsonObject transform, String name, ItemTransforms.TransformType itemCameraTransform) {
 		if (transform.has(name)) {
 			Transformation t = context.deserialize(transform.remove(name), Transformation.class);
-			transforms.put(itemCameraTransform, ((TransformationExtensions) (Object) t).blockCenterToCorner());
+			transforms.put(itemCameraTransform, t.blockCenterToCorner());
 		}
 	}
 
@@ -230,7 +229,7 @@ public class ModelLoaderRegistry {
 						modelBuilder.addGeneralQuad(BlockModelAccessor.port_lib$bakeFace(blockpart, blockpartface, textureatlassprite1, direction, modelTransform, modelLocation));
 					} else {
 						modelBuilder.addFaceQuad(
-								((TransformationExtensions) (Object) modelTransform.getRotation()).rotateTransform(blockpartface.cullForDirection),
+								modelTransform.getRotation().rotateTransform(blockpartface.cullForDirection),
 								BlockModelAccessor.port_lib$bakeFace(blockpart, blockpartface, textureatlassprite1, direction, modelTransform, modelLocation));
 					}
 				}

@@ -81,7 +81,7 @@ public class PortingHooks {
 				PartEntity<?>[] parts = partEntity.getParts();
 				if (parts != null) {
 					for (PartEntity<?> part : parts) {
-						((LevelExtensions) world).getPartEntityMap().put(part.getId(), part);
+						world.getPartEntityMap().put(part.getId(), part);
 					}
 				}
 			}
@@ -91,7 +91,7 @@ public class PortingHooks {
 				PartEntity<?>[] parts = partEntity.getParts();
 				if (parts != null) {
 					for (PartEntity<?> part : parts) {
-						((LevelExtensions) world).getPartEntityMap().remove(part.getId());
+						world.getPartEntityMap().remove(part.getId());
 					}
 				}
 			}

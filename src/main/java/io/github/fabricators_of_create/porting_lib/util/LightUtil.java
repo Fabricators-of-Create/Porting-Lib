@@ -27,7 +27,7 @@ public class LightUtil {
 
 	public static void pack(float[] from, int[] to, VertexFormat formatTo, int v, int e) {
 		VertexFormatElement element = formatTo.getElements().get(e);
-		int vertexStart = v * formatTo.getVertexSize() + ((VertexFormatExtensions) formatTo).getOffset(e);
+		int vertexStart = v * formatTo.getVertexSize() + formatTo.getOffset(e);
 		int count = element.getCount();
 		VertexFormatElement.Type type = element.getType();
 		int size = type.getSize();

@@ -60,7 +60,7 @@ public abstract class MapRendererMapInstanceMixin {
 
 		for(MapDecoration mapdecoration : this.data.getDecorations()) {
 			if (!p_93294_ || mapdecoration.renderOnFrame()) {
-				if (((MapDecorationExtensions)mapdecoration).render(k)) { k++; continue; }
+				if (mapdecoration.render(k)) { k++; continue; }
 				p_93292_.pushPose();
 				p_93292_.translate(0.0F + (float)mapdecoration.getX() / 2.0F + 64.0F, 0.0F + (float)mapdecoration.getY() / 2.0F + 64.0F, (double)-0.02F);
 				p_93292_.mulPose(Vector3f.ZP.rotationDegrees((float)(mapdecoration.getRot() * 360) / 16.0F));

@@ -30,7 +30,7 @@ public class ShapelessRecipeMixin {
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	public void port_lib$init(ResourceLocation resourceLocation, String string, ItemStack itemStack, NonNullList<Ingredient> nonNullList, CallbackInfo ci) {
-		this.isSimple = nonNullList.stream().allMatch(ingredient -> ((IngredientExtensions) ingredient).isSimple());
+		this.isSimple = nonNullList.stream().allMatch(IngredientExtensions::isSimple);
 	}
 
 	@Inject(method = "matches(Lnet/minecraft/world/inventory/CraftingContainer;Lnet/minecraft/world/level/Level;)Z", at = @At("HEAD"), cancellable = true)

@@ -112,7 +112,7 @@ public abstract class BlockModelMixin implements BlockModelExtensions {
 			newModelState = new CompositeModelState(modelTransform, customModelState, modelTransform.isUvLocked());
 
 		if (customModel != null) {
-			BakedModel model = customModel.bake(((BlockModelExtensions) blockModel).getGeometry(), modelBakery, spriteGetter, newModelState, ((BlockModelExtensions) blockModel).getOverrides(modelBakery, otherModel, spriteGetter), modelLocation);
+			BakedModel model = customModel.bake(blockModel.getGeometry(), modelBakery, spriteGetter, newModelState, blockModel.getOverrides(modelBakery, otherModel, spriteGetter), modelLocation);
 			if (customModelState != null && !(model instanceof TransformTypeDependentItemBakedModel))
 				model = new PerspectiveMapWrapper(model, customModelState);
 			cir.setReturnValue(model);

@@ -15,7 +15,7 @@ public interface Matrix3fExtensions {
 
 	default void multiplyBackward(Matrix3f other) {
 		Matrix3f copy = other.copy();
-		copy.mul((Matrix3f) (Object) this);
-		((Matrix3f) (Object)this).load(copy);
+		copy.mul((Matrix3f) this);
+		((Matrix3f) this).load(copy);
 	}
 }

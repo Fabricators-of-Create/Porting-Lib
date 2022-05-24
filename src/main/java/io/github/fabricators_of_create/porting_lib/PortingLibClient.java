@@ -22,14 +22,14 @@ public class PortingLibClient implements ClientModInitializer {
 		ClientEntityEvents.ENTITY_LOAD.register((entity, world) -> {
 			if (entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
 				for (PartEntity<?> part : partEntity.getParts()) {
-					((LevelExtensions)world).getPartEntityMap().put(part.getId(), part);
+					world.getPartEntityMap().put(part.getId(), part);
 				}
 			}
 		});
 		ClientEntityEvents.ENTITY_UNLOAD.register((entity, world) -> {
 			if (entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
 				for (PartEntity<?> part : partEntity.getParts()) {
-					((LevelExtensions)world).getPartEntityMap().remove(part.getId());
+					world.getPartEntityMap().remove(part.getId());
 				}
 			}
 		});

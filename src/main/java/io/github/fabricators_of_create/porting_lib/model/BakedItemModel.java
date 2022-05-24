@@ -1,29 +1,27 @@
 package io.github.fabricators_of_create.porting_lib.model;
 
-import javax.annotation.Nullable;
-
 import java.util.List;
 import java.util.Random;
+
+import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Transformation;
 
-import io.github.fabricators_of_create.porting_lib.extensions.TransformationExtensions;
 import io.github.fabricators_of_create.porting_lib.render.TransformTypeDependentItemBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.world.level.block.state.BlockState;
-import com.mojang.math.Transformation;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 
-public class BakedItemModel implements BakedModel, TransformTypeDependentItemBakedModel
-{
+public class BakedItemModel implements BakedModel, TransformTypeDependentItemBakedModel {
 	protected final ImmutableList<BakedQuad> quads;
 	protected final TextureAtlasSprite particle;
 	protected final ImmutableMap<TransformType, Transformation> transforms;
@@ -44,7 +42,7 @@ public class BakedItemModel implements BakedModel, TransformTypeDependentItemBak
 	private static boolean hasGuiIdentity(ImmutableMap<TransformType, Transformation> transforms)
 	{
 		Transformation guiTransform = transforms.get(TransformType.GUI);
-		return guiTransform == null || ((TransformationExtensions) (Object) guiTransform).isIdentity();
+		return guiTransform == null || guiTransform.isIdentity();
 	}
 
 	@Override public boolean useAmbientOcclusion() { return true; }

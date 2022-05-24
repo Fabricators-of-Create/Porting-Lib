@@ -94,7 +94,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
 
 		ModelState transformsFromModel = owner.getCombinedTransform();
 
-		TextureAtlasSprite fluidSprite = fluid != Fluids.EMPTY ? spriteGetter.apply(new Material(TextureAtlas.LOCATION_BLOCKS, ((FluidExtensions) fluid).getAttributes().getStillTexture())) : null;
+		TextureAtlasSprite fluidSprite = fluid != Fluids.EMPTY ? spriteGetter.apply(new Material(TextureAtlas.LOCATION_BLOCKS, fluid.getAttributes().getStillTexture())) : null;
 		TextureAtlasSprite coverSprite = (coverLocation != null && (!coverIsMask || baseLocation != null)) ? spriteGetter.apply(coverLocation) : null;
 
 		ImmutableMap<TransformType, Transformation> transformMap =
@@ -106,10 +106,10 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
 		if (particleSprite == null && !coverIsMask) particleSprite = coverSprite;
 
 		// if the fluid is lighter than air, will manipulate the initial state to be rotated 180deg to turn it upside down
-		if (flipGas && fluid != Fluids.EMPTY && ((FluidExtensions) fluid).getAttributes().isLighterThanAir()) {
+		if (flipGas && fluid != Fluids.EMPTY && fluid.getAttributes().isLighterThanAir()) {
 			modelTransform = new SimpleModelState(
-					((TransformationExtensions)(Object)modelTransform.getRotation()).blockCornerToCenter().compose(
-							((TransformationExtensions)(Object)new Transformation(null, new Quaternion(0, 0, 1, 0), null, null)).blockCenterToCorner()));
+					modelTransform.getRotation().blockCornerToCenter().compose(
+							new Transformation(null, new Quaternion(0, 0, 1, 0), null, null).blockCenterToCorner()));
 		}
 
 		Transformation transform = modelTransform.getRotation();
@@ -125,8 +125,8 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
 			TextureAtlasSprite templateSprite = spriteGetter.apply(fluidMaskLocation);
 			if (templateSprite != null) {
 				// build liquid layer (inside)
-				int luminosity = applyFluidLuminosity ? ((FluidExtensions) fluid).getAttributes().getLuminosity() : 0;
-				int color = tint ? ((FluidExtensions) fluid).getAttributes().getColor() : 0xFFFFFFFF;
+				int luminosity = applyFluidLuminosity ? fluid.getAttributes().getLuminosity() : 0;
+				int color = tint ? fluid.getAttributes().getColor() : 0xFFFFFFFF;
 				builder.addQuads(ItemLayerModel.getLayerRenderType(luminosity > 0), ItemTextureQuadConverter.convertTexture(transform, templateSprite, fluidSprite, NORTH_Z_FLUID, Direction.NORTH, color, 1, luminosity));
 				builder.addQuads(ItemLayerModel.getLayerRenderType(luminosity > 0), ItemTextureQuadConverter.convertTexture(transform, templateSprite, fluidSprite, SOUTH_Z_FLUID, Direction.SOUTH, color, 1, luminosity));
 			}
@@ -225,7 +225,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
 			return TransferUtil.getFluidContained(stack)
 					.map(fluidStack -> {
 						Fluid fluid = fluidStack.getFluid();
-						String name = ((RegistryNameProvider) fluid).getRegistryName().toString();
+						String name = fluid.getRegistryName().toString();
 
 						if (!cache.containsKey(name)) {
 							DynamicBucketModel unbaked = this.parent.withFluid(fluid);

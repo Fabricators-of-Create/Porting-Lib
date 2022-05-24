@@ -187,7 +187,7 @@ public final class TransformationHelper
 			if (!ORIGIN_CENTER.equals(origin)) {
 				Vector3f originFromCenter = origin.copy();
 				originFromCenter.sub(ORIGIN_CENTER);
-				matrix = ((TransformationExtensions)(Object)matrix).applyOrigin(originFromCenter);
+				matrix = matrix.applyOrigin(originFromCenter);
 			}
 			return matrix;
 		}
@@ -242,7 +242,7 @@ public final class TransformationHelper
 				}
 			}
 			Matrix4f matrix4f = new Matrix4f();
-			((Matrix4fExtensions)(Object)matrix4f).fromFloatArray(values);
+			matrix4f.fromFloatArray(values);
 			return matrix4f;
 		}
 

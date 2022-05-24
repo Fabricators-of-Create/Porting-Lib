@@ -10,15 +10,12 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Transformation;
 
-import io.github.fabricators_of_create.porting_lib.extensions.ModelStateExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.TransformationExtensions;
 import io.github.fabricators_of_create.porting_lib.render.TransformTypeDependentItemBakedModel;
 import io.github.fabricators_of_create.porting_lib.util.TransformationHelper;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelState;
@@ -44,8 +41,8 @@ public class PerspectiveMapWrapper implements BakedModel, TransformTypeDependent
 	public static ImmutableMap<ItemTransforms.TransformType, Transformation> getTransforms(ModelState state) {
 		EnumMap<ItemTransforms.TransformType, Transformation> map = new EnumMap<>(ItemTransforms.TransformType.class);
 		for (ItemTransforms.TransformType type : ItemTransforms.TransformType.values()) {
-			Transformation tr = ((ModelStateExtensions) state).getPartTransformation(type);
-			if (!((TransformationExtensions) (Object) tr).isIdentity()) {
+			Transformation tr = state.getPartTransformation(type);
+			if (!tr.isIdentity()) {
 				map.put(type, tr);
 			}
 		}
@@ -56,8 +53,8 @@ public class PerspectiveMapWrapper implements BakedModel, TransformTypeDependent
 	public static ImmutableMap<ItemTransforms.TransformType, Transformation> getTransformsWithFallback(ModelState state, ItemTransforms transforms) {
 		EnumMap<ItemTransforms.TransformType, Transformation> map = new EnumMap<>(ItemTransforms.TransformType.class);
 		for (ItemTransforms.TransformType type : ItemTransforms.TransformType.values()) {
-			Transformation tr = ((ModelStateExtensions) state).getPartTransformation(type);
-			if (!((TransformationExtensions) (Object) tr).isIdentity()) {
+			Transformation tr = state.getPartTransformation(type);
+			if (!tr.isIdentity()) {
 				map.put(type, tr);
 			} else if (transforms.hasTransform(type)) {
 				map.put(type, TransformationHelper.toTransformation(transforms.getTransform(type)));
@@ -79,16 +76,16 @@ public class PerspectiveMapWrapper implements BakedModel, TransformTypeDependent
 
 	public static BakedModel handlePerspective(BakedModel model, ImmutableMap<ItemTransforms.TransformType, Transformation> transforms, ItemTransforms.TransformType cameraTransformType, PoseStack mat) {
 		Transformation tr = transforms.getOrDefault(cameraTransformType, Transformation.identity());
-		if (!((TransformationExtensions) (Object) tr).isIdentity()) {
-			((TransformationExtensions) (Object) tr).push(mat);
+		if (!tr.isIdentity()) {
+			tr.push(mat);
 		}
 		return model;
 	}
 
 	public static BakedModel handlePerspective(BakedModel model, ModelState state, ItemTransforms.TransformType cameraTransformType, PoseStack mat) {
-		Transformation tr = ((ModelStateExtensions) state).getPartTransformation(cameraTransformType);
-		if (!((TransformationExtensions) (Object) tr).isIdentity()) {
-			((TransformationExtensions) (Object) tr).push(mat);
+		Transformation tr = state.getPartTransformation(cameraTransformType);
+		if (!tr.isIdentity()) {
+			tr.push(mat);
 		}
 		return model;
 	}

@@ -7,8 +7,9 @@ import java.util.stream.StreamSupport;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import io.github.fabricators_of_create.porting_lib.extensions.ResourceLocationExtensions;
 import net.minecraft.data.BuiltinRegistries;
+
+import net.minecraft.resources.ResourceLocation;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -330,7 +331,7 @@ public class BiomeDictionary {
 					buf.append("    ").append(type.name).append(": ")
 							.append(type.biomes.stream()
 									.map(ResourceKey::location)
-									.sorted((a, b) -> ((ResourceLocationExtensions) a).compareNamespaced(b))
+									.sorted(ResourceLocation::compareNamespaced)
 									.map(Object::toString)
 									.collect(Collectors.joining(", "))
 							)

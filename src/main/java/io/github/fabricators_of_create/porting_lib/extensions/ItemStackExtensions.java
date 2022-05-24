@@ -21,6 +21,6 @@ public interface ItemStackExtensions {
 	 * @return True to prevent harvesting, false to continue as normal
 	 */
 	default boolean onBlockStartBreak(BlockPos pos, Player player) {
-		return !((ItemStack)(Object)this).isEmpty() && ((ItemExtensions)((ItemStack)(Object)this).getItem()).onBlockStartBreak(((ItemStack)(Object)this), pos, player);
+		return !((ItemStack) this).isEmpty() && ((ItemStack) this).getItem().onBlockStartBreak(((ItemStack) this), pos, player);
 	}
 }

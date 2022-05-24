@@ -1,11 +1,32 @@
 package io.github.fabricators_of_create.porting_lib.model.obj;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
+import com.mojang.math.Transformation;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 
-import io.github.fabricators_of_create.porting_lib.extensions.TransformationExtensions;
 import io.github.fabricators_of_create.porting_lib.model.BakedQuadBuilder;
 import io.github.fabricators_of_create.porting_lib.model.IModelBuilder;
 import io.github.fabricators_of_create.porting_lib.model.IModelConfiguration;
@@ -16,30 +37,16 @@ import io.github.fabricators_of_create.porting_lib.model.ModelLoaderRegistry;
 import io.github.fabricators_of_create.porting_lib.model.SimpleRenderable;
 import io.github.fabricators_of_create.porting_lib.util.client.UnitSprite;
 import joptsimple.internal.Strings;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import com.mojang.blaze3d.vertex.VertexFormatElement;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import com.mojang.math.Transformation;
-import net.minecraft.world.phys.Vec2;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
-import org.apache.commons.lang3.tuple.Pair;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec2;
 
 public class OBJModel implements IMultipartModelGeometry<OBJModel> {
 	private static Vector4f COLOR_WHITE = new Vector4f(1, 1, 1, 1);
@@ -324,9 +331,9 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel> {
 			builder.setApplyDiffuseLighting(diffuseLighting);
 		}
 
-		boolean hasTransform = !((TransformationExtensions)(Object)transform).isIdentity();
+		boolean hasTransform = !transform.isIdentity();
 		// The incoming transform is referenced on the center of the block, but our coords are referenced on the corner
-		Transformation transformation = hasTransform ? ((TransformationExtensions)(Object)transform).blockCenterToCorner() : transform;
+		Transformation transformation = hasTransform ? transform.blockCenterToCorner() : transform;
 
 		for(int i=0;i<4;i++) {
 			int[] index = indices[Math.min(i,indices.length-1)];
@@ -338,8 +345,8 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel> {
 			Vector4f color = index.length >= 4 && colors.size() > 0 ? colors.get(index[3]) : COLOR_WHITE;
 			if (hasTransform) {
 				normal = norm0.copy();
-				((TransformationExtensions)(Object)transformation).transformPosition(position);
-				((TransformationExtensions)(Object)transformation).transformNormal(normal);
+				transformation.transformPosition(position);
+				transformation.transformNormal(normal);
 			};
 			Vector4f tintedColor = new Vector4f(
 					color.x() * colorTint.x(),

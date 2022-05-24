@@ -70,7 +70,7 @@ public interface ItemExtensions {
 	@Nullable
 	default String getCreatorModId(ItemStack itemStack) {
 		Item item = itemStack.getItem();
-		ResourceLocation registryName = ((RegistryNameProvider)item).getRegistryName();
+		ResourceLocation registryName = item.getRegistryName();
 		String modId = registryName == null ? null : registryName.getNamespace();
 		if ("minecraft".equals(modId)) {
 			if (item instanceof EnchantedBookItem) {

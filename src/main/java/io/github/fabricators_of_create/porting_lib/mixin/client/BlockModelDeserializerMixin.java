@@ -34,18 +34,18 @@ public abstract class BlockModelDeserializerMixin {
 		List<BlockElement> elements = model.getElements();
 		if (geometry != null) {
 			elements.clear();
-			((BlockModelExtensions) model).getGeometry().setCustomGeometry(geometry);
+			model.getGeometry().setCustomGeometry(geometry);
 		}
 
 		ModelState modelState = ModelLoaderRegistry.deserializeModelTransforms(deserializationContext, jsonobject);
 		if (modelState != null) {
-			((BlockModelExtensions) model).getGeometry().setCustomModelState(modelState);
+			model.getGeometry().setCustomModelState(modelState);
 		}
 
 		if (jsonobject.has("visibility")) {
 			JsonObject visibility = GsonHelper.getAsJsonObject(jsonobject, "visibility");
 			for (Map.Entry<String, JsonElement> part : visibility.entrySet()) {
-				((BlockModelExtensions) model).getGeometry().visibilityData.setVisibilityState(part.getKey(), part.getValue().getAsBoolean());
+				model.getGeometry().visibilityData.setVisibilityState(part.getKey(), part.getValue().getAsBoolean());
 			}
 		}
 	}

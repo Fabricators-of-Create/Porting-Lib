@@ -1,20 +1,18 @@
 package io.github.fabricators_of_create.porting_lib.model;
 
-import com.google.common.collect.Lists;
-
-import io.github.fabricators_of_create.porting_lib.extensions.TransformationExtensions;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormatElement;
-import net.minecraft.core.Direction;
-import com.mojang.math.Transformation;
 import java.util.List;
 
-public final class ItemTextureQuadConverter
-{
-	private ItemTextureQuadConverter()
-	{
+import com.google.common.collect.Lists;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
+import com.mojang.math.Transformation;
+
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.Direction;
+
+public final class ItemTextureQuadConverter {
+	private ItemTextureQuadConverter() {
 		// non-instantiable
 	}
 
@@ -30,12 +28,10 @@ public final class ItemTextureQuadConverter
 	 * @param sprite   The texture whose UVs shall be used
 	 * @return The generated quads.
 	 */
-	public static List<BakedQuad> convertTexture(Transformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint)
-	{
+	public static List<BakedQuad> convertTexture(Transformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint) {
 		return convertTexture(transform, template, sprite, z, facing, color, tint, 0);
 	}
-	public static List<BakedQuad> convertTexture(Transformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint, int luminosity)
-	{
+	public static List<BakedQuad> convertTexture(Transformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint, int luminosity) {
 		List<BakedQuad> horizontal = convertTextureHorizontal(transform, template, sprite, z, facing, color, tint, luminosity);
 		List<BakedQuad> vertical = convertTextureVertical(transform, template, sprite, z, facing, color, tint, luminosity);
 
@@ -46,12 +42,10 @@ public final class ItemTextureQuadConverter
 	 * Scans a texture and converts it into a list of horizontal strips stacked on top of each other.
 	 * The height of the strips is as big as possible.
 	 */
-	public static List<BakedQuad> convertTextureHorizontal(Transformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint)
-	{
+	public static List<BakedQuad> convertTextureHorizontal(Transformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint) {
 		return convertTextureHorizontal(transform, template, sprite, z, facing, color, tint, 0);
 	}
-	public static List<BakedQuad> convertTextureHorizontal(Transformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint, int luminosity)
-	{
+	public static List<BakedQuad> convertTextureHorizontal(Transformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint, int luminosity) {
 		int w = template.getWidth();
 		int h = template.getHeight();
 		float wScale = 16f / (float)w;
@@ -60,17 +54,13 @@ public final class ItemTextureQuadConverter
 
 		// the y-position of the current batch of quads
 		int startY = 0;
-		for (int y = 1; y <= h; y++)
-		{
-			if (y < h)
-			{
+		for (int y = 1; y <= h; y++) {
+			if (y < h) {
 				// we check if the visibility of the next row matches the one for the current row
 				// if they are, we can extend the quad downwards
 				boolean sameRow = true;
-				for (int x = 0; x < w; x++)
-				{
-					if (template.isTransparent(0, x, y) != template.isTransparent(0, x, startY))
-					{
+				for (int x = 0; x < w; x++) {
+					if (template.isTransparent(0, x, y) != template.isTransparent(0, x, startY)) {
 						sameRow = false;
 						break;
 					}
@@ -84,16 +74,13 @@ public final class ItemTextureQuadConverter
 			// create a batch of quads
 			// the upper left x-position of the current quad
 			int startX = -1;
-			for (int x = 0; x <= w; x++)
-			{
-				if (x < w)
-				{
+			for (int x = 0; x <= w; x++) {
+				if (x < w) {
 					// current pixel
 					boolean isVisible = !template.isTransparent(0, x, startY);
 
 					// no current quad but found a new one
-					if (startX < 0 && isVisible)
-					{
+					if (startX < 0 && isVisible) {
 						startX = x;
 					}
 
@@ -102,8 +89,7 @@ public final class ItemTextureQuadConverter
 				}
 
 				// got a current quad, but it ends here
-				if (startX >= 0)
-				{
+				if (startX >= 0) {
 					// create the quad
 					quads.add(genQuad(transform,
 							(float)startX * wScale,
@@ -128,12 +114,10 @@ public final class ItemTextureQuadConverter
 	 * Scans a texture and converts it into a list of vertical strips stacked next to each other from left to right.
 	 * The width of the strips is as big as possible.
 	 */
-	public static List<BakedQuad> convertTextureVertical(Transformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint)
-	{
+	public static List<BakedQuad> convertTextureVertical(Transformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint) {
 		return convertTextureVertical(transform, template, sprite, z, facing, color, tint, 0);
 	}
-	public static List<BakedQuad> convertTextureVertical(Transformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint, int luminosity)
-	{
+	public static List<BakedQuad> convertTextureVertical(Transformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint, int luminosity) {
 		int w = template.getWidth();
 		int h = template.getHeight();
 		float wScale = 16f / (float)w;
@@ -142,17 +126,13 @@ public final class ItemTextureQuadConverter
 
 		// the x-position of the current batch of quads
 		int startX = 0;
-		for (int x = 1; x <= w; x++)
-		{
-			if (x < w)
-			{
+		for (int x = 1; x <= w; x++) {
+			if (x < w) {
 				// we check if the visibility of the next column matches the one for the current row
 				// if they are, we can extend the quad downwards
 				boolean sameColumn = true;
-				for (int y = 0; y < h; y++)
-				{
-					if (template.isTransparent(0, x, y) != template.isTransparent(0, startX, y))
-					{
+				for (int y = 0; y < h; y++) {
+					if (template.isTransparent(0, x, y) != template.isTransparent(0, startX, y)) {
 						sameColumn = false;
 						break;
 					}
@@ -166,16 +146,13 @@ public final class ItemTextureQuadConverter
 			// create a batch of quads
 			// the upper left y-position of the current quad
 			int startY = -1;
-			for (int y = 0; y <= h; y++)
-			{
-				if (y < h)
-				{
+			for (int y = 0; y <= h; y++) {
+				if (y < h) {
 					// current pixel
 					boolean isVisible = !template.isTransparent(0, startX, y);
 
 					// no current quad but found a new one
-					if (startY < 0 && isVisible)
-					{
+					if (startY < 0 && isVisible) {
 						startY = y;
 					}
 
@@ -184,8 +161,7 @@ public final class ItemTextureQuadConverter
 				}
 
 				// got a current quad, but it ends here
-				if (startY >= 0)
-				{
+				if (startY >= 0) {
 					// create the quad
 					quads.add(genQuad(transform,
 							(float)startX * wScale,
@@ -206,8 +182,7 @@ public final class ItemTextureQuadConverter
 		return quads;
 	}
 
-	private static boolean isVisible(int color)
-	{
+	private static boolean isVisible(int color) {
 		return (color >> 24 & 255) / 255f > 0.1f;
 	}
 
@@ -215,12 +190,10 @@ public final class ItemTextureQuadConverter
 	 * Generates a Front/Back quad for an itemmodel. Therefore only supports facing NORTH and SOUTH.
 	 * Coordinates are [0,16] to match the usual coordinates used in TextureAtlasSprites
 	 */
-	public static BakedQuad genQuad(Transformation transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, Direction facing, int color, int tint)
-	{
+	public static BakedQuad genQuad(Transformation transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, Direction facing, int color, int tint) {
 		return genQuad(transform, x1, y1, x2, y2, z, sprite, facing, color, tint, 0);
 	}
-	public static BakedQuad genQuad(Transformation transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, Direction facing, int color, int tint, int luminosity)
-	{
+	public static BakedQuad genQuad(Transformation transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, Direction facing, int color, int tint, int luminosity) {
 		float u1 = sprite.getU(x1);
 		float v1 = sprite.getV(y1);
 		float u2 = sprite.getU(x2);
@@ -249,18 +222,15 @@ public final class ItemTextureQuadConverter
 		builder.setApplyDiffuseLighting(luminosity == 0);
 
 		// only apply the transform if it's not identity
-		boolean hasTransform = !((TransformationExtensions) (Object) transform).isIdentity();
+		boolean hasTransform = !transform.isIdentity();
 		IVertexConsumer consumer = hasTransform ? new TRSRTransformer(builder, transform) : builder;
 
-		if (side == Direction.SOUTH)
-		{
+		if (side == Direction.SOUTH) {
 			putVertex(consumer, side, x1, y1, z, u1, v2, color, luminosity);
 			putVertex(consumer, side, x2, y1, z, u2, v2, color, luminosity);
 			putVertex(consumer, side, x2, y2, z, u2, v1, color, luminosity);
 			putVertex(consumer, side, x1, y2, z, u1, v1, color, luminosity);
-		}
-		else
-		{
+		} else {
 			putVertex(consumer, side, x1, y1, z, u1, v2, color, luminosity);
 			putVertex(consumer, side, x1, y2, z, u1, v1, color, luminosity);
 			putVertex(consumer, side, x2, y2, z, u2, v1, color, luminosity);
@@ -273,11 +243,9 @@ public final class ItemTextureQuadConverter
 								  float x, float y, float z, float u, float v, int color, int luminosity)
 	{
 		VertexFormat format = consumer.getVertexFormat();
-		for (int e = 0; e < format.getElements().size(); e++)
-		{
+		for (int e = 0; e < format.getElements().size(); e++) {
 			VertexFormatElement element = format.getElements().get(e);
-			switch (element.getUsage())
-			{
+			switch (element.getUsage()) {
 				case POSITION:
 					consumer.put(e, x, y, z, 1f);
 					break;

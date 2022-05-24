@@ -62,7 +62,7 @@ public class CraftingHelper {
 	}
 	public static <T extends Ingredient> void write(FriendlyByteBuf buffer, T ingredient) {
 		@SuppressWarnings("unchecked") //I wonder if there is a better way generic wise...
-		IIngredientSerializer<T> serializer = (IIngredientSerializer<T>)((IngredientExtensions)ingredient).getSerializer();
+		IIngredientSerializer<T> serializer = (IIngredientSerializer<T>) ingredient.getSerializer();
 		ResourceLocation key = ingredients.inverse().get(serializer);
 		if (key == null)
 			throw new IllegalArgumentException("Tried to serialize unregistered Ingredient: " + ingredient + " " + serializer);

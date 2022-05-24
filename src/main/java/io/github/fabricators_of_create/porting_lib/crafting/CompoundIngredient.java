@@ -37,7 +37,7 @@ public class CompoundIngredient extends AbstractIngredient {
 	protected CompoundIngredient(List<Ingredient> children)
 	{
 		this.children = Collections.unmodifiableList(children);
-		this.isSimple = children.stream().allMatch(ingredient -> ((IngredientExtensions)ingredient).isSimple());
+		this.isSimple = children.stream().allMatch(IngredientExtensions::isSimple);
 	}
 
 	/** Creates a compound ingredient from the given list of ingredients */
@@ -52,7 +52,7 @@ public class CompoundIngredient extends AbstractIngredient {
 		List<Ingredient> vanillaIngredients = new ArrayList<>();
 		List<Ingredient> allIngredients = new ArrayList<>();
 		for (Ingredient child : children) {
-			if (((IngredientExtensions)child).getSerializer() == VanillaIngredientSerializer.INSTANCE)
+			if (child.getSerializer() == VanillaIngredientSerializer.INSTANCE)
 				vanillaIngredients.add(child);
 			else
 				allIngredients.add(child);
@@ -84,7 +84,7 @@ public class CompoundIngredient extends AbstractIngredient {
 	public IntList getStackingIds() {
 		boolean childrenNeedInvalidation = false;
 		for (Ingredient child : children) {
-			childrenNeedInvalidation |= ((IngredientExtensions)child).checkInvalidation();
+			childrenNeedInvalidation |= child.checkInvalidation();
 		}
 		if (childrenNeedInvalidation || this.itemIds == null || checkInvalidation()) {
 			this.markValid();

@@ -41,6 +41,6 @@ public class TagUtil {
 	}
 
 	public static TagKey<Block> getTagFromTier(Tier tier) {
-		return ((TierExtensions) tier).getTag();
+		return tier.getTag();
 	}
 }

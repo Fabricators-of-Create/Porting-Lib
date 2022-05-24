@@ -82,9 +82,9 @@ public abstract class ItemRendererMixin {
 				Matrix3f nMat = stack.last().normal();
 				if (leftHand)
 				{
-					((Matrix4fExtensions)(Object)tMat).multiplyBackward(flipX);
+					tMat.multiplyBackward(flipX);
 					tMat.multiply(flipX);
-					((Matrix3fExtensions)(Object)nMat).multiplyBackward(flipXNormal);
+					nMat.multiplyBackward(flipXNormal);
 					nMat.mul(flipXNormal);
 				}
 				matrixStack.last().pose().multiply(tMat);
