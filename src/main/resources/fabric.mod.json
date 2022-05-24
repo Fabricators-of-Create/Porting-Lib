@@ -48,6 +48,7 @@
       "net/minecraft/class_1077": ["io/github/fabricators_of_create/porting_lib/extensions/LanguageInfoExtensions"],
       "net/minecraft/class_1159": ["io/github/fabricators_of_create/porting_lib/extensions/Matrix4fExtensions"],
       "net/minecraft/class_1160": ["io/github/fabricators_of_create/porting_lib/extensions/Vector3fExtensions"],
+      "net/minecraft/class_1282": ["io/github/fabricators_of_create/porting_lib/mixin/common/accessor/DamageSourceAccessor"],
       "net/minecraft/class_1297": [
         "io/github/fabricators_of_create/porting_lib/extensions/EntityExtensions",
         "io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"

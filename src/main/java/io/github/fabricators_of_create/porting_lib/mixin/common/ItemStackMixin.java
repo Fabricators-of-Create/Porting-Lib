@@ -1,17 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import com.google.common.collect.Multimap;
-
-import io.github.fabricators_of_create.porting_lib.event.common.ItemAttributeModifierCallback;
 import io.github.fabricators_of_create.porting_lib.extensions.ItemStackExtensions;
 
 import io.github.fabricators_of_create.porting_lib.item.ToolActionCheckingItem;
 import io.github.fabricators_of_create.porting_lib.util.DamageableItem;
 import io.github.fabricators_of_create.porting_lib.util.ToolAction;
-
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -75,11 +68,6 @@ public abstract class ItemStackMixin implements INBTSerializable<CompoundTag>, I
 			return checking.canPerformAction((ItemStack) (Object) this, toolAction);
 		}
 		return false;
-	}
-
-	@Inject(method = "getAttributeModifiers", at = @At("RETURN"), cancellable = true)
-	public void port_lib$modifierItem(EquipmentSlot slot, CallbackInfoReturnable<Multimap<Attribute, AttributeModifier>> cir) {
-		ItemAttributeModifierCallback.EVENT.invoker().onItemStackModifiers((ItemStack) (Object) this, slot, cir.getReturnValue());
 	}
 
 	@Inject(method = "setDamageValue", at = @At("HEAD"), cancellable = true)
