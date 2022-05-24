@@ -429,22 +429,28 @@ public class TransferUtil {
 		try (Transaction t = getTransaction()) {
 			Iterator<? extends StorageView<T>> itr = storage.iterator(t);
 			StorageView<T> currentView = itr.hasNext() ? itr.next() : null;
+			int attempts = 0;
 			while (currentView != null) {
-				if (currentView.isResourceBlank()) {
+				if (currentView.isResourceBlank() || // noting to extract
+						attempts >= 10) { // or it's probably infinite - skip
 					currentView = itr.hasNext() ? itr.next() : null;
+					attempts = 0;
 					continue;
 				}
 				long contained = currentView.getAmount();
 				if (contained == 0) {
 					currentView = itr.hasNext() ? itr.next() : null;
+					attempts = 0;
 					continue;
 				}
 				T variant = currentView.getResource();
 				long extracted = currentView.extract(variant, contained, t);
 				if (extracted == 0) {
 					success = false;
+					attempts = 0;
 					currentView = itr.hasNext() ? itr.next() : null;
 				}
+				attempts++;
 			}
 			t.commit();
 		}
