@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.extensions;
 
-// TODO: Implement
+// TODO: Implement requires asm
 public interface ParticleExtensions {
 	/**
 	 * Forge added method that controls if a particle should be culled to it's bounding box.

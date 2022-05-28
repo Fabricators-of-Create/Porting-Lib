@@ -12,6 +12,7 @@
     "BlockModelMixin",
     "BufferBuilderMixin",
     "ChestRendererMixin",
+    "ClientLanguageAccessor",
     "ClientLevel$EntityCallbacksMixin",
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
@@ -47,7 +48,6 @@
     "TextureAtlasSpriteMixin",
     "TextureManagerMixin",
     "VertexFormatMixin",
-    "ClientLanguageAccessor",
     "accessor.AbstractContainerScreenAccessor",
     "accessor.AbstractSelectionList$EntryAccessor",
     "accessor.AbstractSelectionListAccessor",
@@ -75,5 +75,8 @@
   "injectors": {
     "defaultRequire": 1,
     "maxShiftBy": 999999
-  }
+  },
+  "mixins": [
+    "ParticleMixin"
+  ]
 }

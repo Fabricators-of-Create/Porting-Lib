@@ -44,6 +44,7 @@
       "net/minecraft/class_293": ["io/github/fabricators_of_create/porting_lib/extensions/VertexFormatExtensions"],
       "net/minecraft/class_276": ["io/github/fabricators_of_create/porting_lib/extensions/RenderTargetExtensions"],
       "net/minecraft/class_638": ["io/github/fabricators_of_create/porting_lib/extensions/ClientLevelExtensions"],
+      "net/minecraft/class_703": ["io/github/fabricators_of_create/porting_lib/extensions/ParticleExtensions"],
       "net/minecraft/class_793": ["io/github/fabricators_of_create/porting_lib/extensions/BlockModelExtensions"],
       "net/minecraft/class_1044": ["io/github/fabricators_of_create/porting_lib/extensions/AbstractTextureExtensions"],
       "net/minecraft/class_1058": ["io/github/fabricators_of_create/porting_lib/extensions/TextureAtlasSpriteExtensions"],
@@ -60,6 +61,7 @@
       "net/minecraft/class_1473": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
       "net/minecraft/class_1688": ["io/github/fabricators_of_create/porting_lib/extensions/AbstractMinecartExtensions"],
       "net/minecraft/class_1735": ["io/github/fabricators_of_create/porting_lib/extensions/SlotExtensions"],
+      "net/minecraft/class_1747": ["io/github/fabricators_of_create/porting_lib/extensions/BlockItemExtensions"],
       "net/minecraft/class_1792": [
         "io/github/fabricators_of_create/porting_lib/extensions/ItemExtensions",
         "io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"
@@ -67,6 +69,7 @@
       "net/minecraft/class_1799": ["io/github/fabricators_of_create/porting_lib/extensions/ItemStackExtensions"],
       "net/minecraft/class_1832": ["io/github/fabricators_of_create/porting_lib/extensions/TierExtensions"],
       "net/minecraft/class_1856": ["io/github/fabricators_of_create/porting_lib/extensions/IngredientExtensions"],
+      "net/minecraft/class_1887": ["io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"],
       "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/extensions/LevelExtensions"],
       "net/minecraft/class_2211": ["io/github/fabricators_of_create/porting_lib/util/IPlantable"],
       "net/minecraft/class_2241": ["io/github/fabricators_of_create/porting_lib/extensions/BaseRailBlockExtensions"],
