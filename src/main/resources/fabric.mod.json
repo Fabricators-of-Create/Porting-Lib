@@ -70,7 +70,10 @@
       "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/extensions/LevelExtensions"],
       "net/minecraft/class_2211": ["io/github/fabricators_of_create/porting_lib/util/IPlantable"],
       "net/minecraft/class_2241": ["io/github/fabricators_of_create/porting_lib/extensions/BaseRailBlockExtensions"],
-      "net/minecraft/class_2248": ["io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"],
+      "net/minecraft/class_2248": [
+        "io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider",
+        "io/github/fabricators_of_create/porting_lib/extensions/BlockExtensions"
+      ],
       "net/minecraft/class_2266": ["io/github/fabricators_of_create/porting_lib/util/IPlantable"],
       "net/minecraft/class_2311": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
       "net/minecraft/class_2396": ["io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"],
