@@ -77,7 +77,6 @@
     "maxShiftBy": 999999
   },
   "mixins": [
-    "ModelBlockRendererMixin",
     "ParticleMixin"
   ]
 }
