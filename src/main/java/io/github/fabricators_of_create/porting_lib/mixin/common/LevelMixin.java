@@ -8,22 +8,26 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import io.github.fabricators_of_create.porting_lib.PortingLib;
+import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.BlockEntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.entity.EntityTypeTest;
 
 import net.minecraft.world.phys.AABB;
 
 import org.jetbrains.annotations.Nullable;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -88,6 +92,9 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	@Shadow
 	private boolean tickingBlockEntities;
 
+	@Shadow
+	public abstract ProfilerFiller getProfiler();
+
 	@Override
 	public SnapshotParticipant<LevelSnapshotData> snapshotParticipant() {
 		return port_lib$snapshotParticipant;
@@ -123,6 +130,21 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		if (port_lib$modifiedStates != null) {
 			port_lib$modifiedStates.add(new ChangedPosData(pos, state, flags));
 			cir.setReturnValue(true);
+		}
+	}
+
+	@Inject(method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z", at = @At(value = "JUMP", opcode = Opcodes.IF_ACMPEQ), locals = LocalCapture.CAPTURE_FAILHARD)
+	public void port_lib$lightBlock(BlockPos pos, BlockState state, int flags, int recursionLeft, CallbackInfoReturnable<Boolean> cir, LevelChunk levelChunk, Block block, BlockState blockstate, BlockState blockstate1) {
+		BlockState old = getBlockState(pos);
+		if (old.getBlock() instanceof LightEmissiveBlock lightEmissiveBlock) {
+
+			int oldLight = lightEmissiveBlock.getLightEmission(old, this, pos);
+			int oldOpacity = old.getLightBlock(this, pos);
+			if (blockstate1 != blockstate && (blockstate1.getLightBlock(this, pos) != oldOpacity || (blockstate1.getBlock() instanceof LightEmissiveBlock lm ? lm.getLightEmission(blockstate1, this, pos) : blockstate1.getLightEmission()) != oldLight || blockstate1.useShapeForLightOcclusion() || blockstate.useShapeForLightOcclusion())) {
+				this.getProfiler().push("queueCheckLight");
+				this.getChunkSource().getLightEngine().checkBlock(pos);
+				this.getProfiler().pop();
+			}
 		}
 	}
 

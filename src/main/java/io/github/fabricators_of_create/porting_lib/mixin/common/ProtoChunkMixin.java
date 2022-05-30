@@ -50,13 +50,13 @@ public abstract class ProtoChunkMixin extends ChunkAccess {
 			int i = pos.getX();
 			int j = pos.getY();
 			int k = pos.getZ();
-			if (state.getLightEmission() > 0) {
+			if (lightEmissiveBlock.getLightEmission(state, this, pos) > 0) {
 				this.lights.add(new BlockPos((i & 15) + this.getPos().getMinBlockX(), j, (k & 15) + this.getPos().getMinBlockZ()));
 			}
 
 			LevelChunkSection levelChunkSection = this.getSection(this.getSectionIndex(j));
 			BlockState blockState = levelChunkSection.setBlockState(i & 15, j & 15, k & 15, state);
-			if (this.status.isOrAfter(ChunkStatus.FEATURES) && state != blockState && (state.getLightBlock(this, pos) != blockState.getLightBlock(this, pos) || state.getLightEmission() != blockState.getLightEmission() || state.useShapeForLightOcclusion() || blockState.useShapeForLightOcclusion())) {
+			if (this.status.isOrAfter(ChunkStatus.FEATURES) && state != blockState && (state.getLightBlock(this, pos) != blockState.getLightBlock(this, pos) || lightEmissiveBlock.getLightEmission(state, this, pos) != blockState.getLightEmission() || state.useShapeForLightOcclusion() || blockState.useShapeForLightOcclusion())) {
 				this.lightEngine.checkBlock(pos);
 			}
 		}

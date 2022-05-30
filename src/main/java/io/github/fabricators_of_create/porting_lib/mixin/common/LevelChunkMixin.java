@@ -2,10 +2,13 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.PortingLib;
 import io.github.fabricators_of_create.porting_lib.block.ChunkUnloadListeningBlockEntity;
+import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
 import io.github.fabricators_of_create.porting_lib.extensions.BlockEntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
 
 import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.block.state.BlockState;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -14,6 +17,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomUpdateTagHandlingBlockEntity;
@@ -32,12 +36,20 @@ import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.UpgradeData;
 import net.minecraft.world.level.levelgen.blending.BlendingData;
 
+import java.util.stream.Stream;
+
 
 @Mixin(LevelChunk.class)
 public abstract class LevelChunkMixin extends ChunkAccess {
 	@Shadow
 	@Final
 	Level level;
+
+	@Shadow
+	public abstract BlockState getBlockState(BlockPos pos);
+
+	@Shadow
+	public abstract Level getLevel();
 
 	public LevelChunkMixin(ChunkPos chunkPos, UpgradeData upgradeData, LevelHeightAccessor levelHeightAccessor, Registry<Biome> registry, long l, @Nullable LevelChunkSection[] levelChunkSections, @Nullable BlendingData blendingData) {
 		super(chunkPos, upgradeData, levelHeightAccessor, registry, l, levelChunkSections, blendingData);
@@ -71,5 +83,13 @@ public abstract class LevelChunkMixin extends ChunkAccess {
 	@Inject(method = "registerAllBlockEntitiesAfterLevelLoad", at = @At("HEAD"))
 	public void port_lib$addPendingBlockEntities(CallbackInfo ci) {
 		this.level.addFreshBlockEntities(this.blockEntities.values());
+	}
+
+	@Inject(method = "method_12217", at = @At("HEAD"), cancellable = true)
+	public void port_lib$lightBlock(BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
+		BlockState state = getBlockState(blockPos);
+		if (state.getBlock() instanceof LightEmissiveBlock lightEmissiveBlock) {
+			cir.setReturnValue(lightEmissiveBlock.getLightEmission(state, getLevel(), blockPos) != 0);
+		}
 	}
 }
