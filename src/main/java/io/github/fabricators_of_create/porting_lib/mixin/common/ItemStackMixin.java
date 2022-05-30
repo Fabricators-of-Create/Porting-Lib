@@ -2,7 +2,6 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.extensions.ItemStackExtensions;
 
-import io.github.fabricators_of_create.porting_lib.item.ToolActionCheckingItem;
 import io.github.fabricators_of_create.porting_lib.util.DamageableItem;
 import io.github.fabricators_of_create.porting_lib.util.ToolAction;
 
@@ -64,10 +63,7 @@ public abstract class ItemStackMixin implements INBTSerializable<CompoundTag>, I
 	@Unique
 	@Override
 	public boolean canPerformAction(ToolAction toolAction) {
-		if (this.getItem() instanceof ToolActionCheckingItem checking) {
-			return checking.canPerformAction((ItemStack) (Object) this, toolAction);
-		}
-		return false;
+		return getItem().canPerformAction((ItemStack) (Object) this, toolAction);
 	}
 
 	@Inject(method = "setDamageValue", at = @At("HEAD"), cancellable = true)

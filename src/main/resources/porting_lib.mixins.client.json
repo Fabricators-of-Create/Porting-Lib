@@ -38,6 +38,7 @@
     "ModelStateMixin",
     "MouseHandlerMixin",
     "MultiPlayerGameModeMixin",
+    "ParticleMixin",
     "ParticleEngineMixin",
     "PostChainMixin",
     "RemotePlayerMixin",
@@ -75,8 +76,5 @@
   "injectors": {
     "defaultRequire": 1,
     "maxShiftBy": 999999
-  },
-  "mixins": [
-    "ParticleMixin"
-  ]
+  }
 }

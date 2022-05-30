@@ -46,7 +46,7 @@ public class CanToolPerformAction implements LootItemCondition {
 
 	public boolean test(LootContext lootContext) {
 		ItemStack itemstack = lootContext.getParamOrNull(LootContextParams.TOOL);
-		return itemstack != null && (((ItemStackExtensions) (Object) itemstack)).canPerformAction(this.action);
+		return itemstack != null && itemstack.canPerformAction(this.action);
 	}
 
 	public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<CanToolPerformAction> {
