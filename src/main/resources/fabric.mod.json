@@ -97,6 +97,7 @@
       ],
       "net/minecraft/class_3665": ["io/github/fabricators_of_create/porting_lib/extensions/ModelStateExtensions"],
       "net/minecraft/class_3727": ["io/github/fabricators_of_create/porting_lib/extensions/EntityCollisionContextExtensions"],
+      "net/minecraft/class_4184": ["io/github/fabricators_of_create/porting_lib/extensions/CameraExtensions"],
       "net/minecraft/class_4590": ["io/github/fabricators_of_create/porting_lib/extensions/TransformationExtensions"],
       "net/minecraft/class_4581": ["io/github/fabricators_of_create/porting_lib/extensions/Matrix3fExtensions"]
     }

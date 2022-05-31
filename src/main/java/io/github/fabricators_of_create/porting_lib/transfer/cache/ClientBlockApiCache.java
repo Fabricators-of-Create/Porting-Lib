@@ -8,8 +8,8 @@ public interface ClientBlockApiCache {
 
 	static void init() {
 		ClientBlockEntityEvents.BLOCK_ENTITY_LOAD.register((be, level) ->
-				((ClientLevelExtensions) level).port_lib$invalidateCache(be.getBlockPos()));
+				level.port_lib$invalidateCache(be.getBlockPos()));
 		ClientBlockEntityEvents.BLOCK_ENTITY_UNLOAD.register((be, level) ->
-				((ClientLevelExtensions) level).port_lib$invalidateCache(be.getBlockPos()));
+				level.port_lib$invalidateCache(be.getBlockPos()));
 	}
 }
