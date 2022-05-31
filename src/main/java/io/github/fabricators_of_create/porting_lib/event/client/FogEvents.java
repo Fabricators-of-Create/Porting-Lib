@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.event.client;
 
+import com.mojang.blaze3d.shaders.FogShape;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.Event;
@@ -28,6 +30,14 @@ public class FogEvents {
 		}
 	});
 
+	public static final Event<ActualRenderFog> ACTUAL_RENDER_FOG = EventFactory.createArrayBacked(ActualRenderFog.class, callbacks -> (type, info, fogData) -> {
+		for (ActualRenderFog callback : callbacks) {
+			if (callback.onFogRender(type, info, fogData))
+				return true;
+		}
+		return false;
+	});
+
 	private FogEvents() {
 	}
 
@@ -44,6 +54,55 @@ public class FogEvents {
 	@FunctionalInterface
 	public interface RenderFog {
 		void onFogRender(FogRenderer.FogMode type, Camera info, float partial, float distance);
+	}
+
+	@FunctionalInterface
+	public interface ActualRenderFog {
+		boolean onFogRender(FogRenderer.FogMode type, Camera info, FogData fogData);
+	}
+
+	public static class FogData {
+		private float farPlaneDistance;
+		private float nearPlaneDistance;
+		private FogShape fogShape;
+
+		public FogData(float nearPlaneDistance, float farPlaneDistance, FogShape fogShape) {
+			setFarPlaneDistance(farPlaneDistance);
+			setNearPlaneDistance(nearPlaneDistance);
+			setFogShape(fogShape);
+		}
+
+		public float getFarPlaneDistance() {
+			return farPlaneDistance;
+		}
+
+		public float getNearPlaneDistance() {
+			return nearPlaneDistance;
+		}
+
+		public FogShape getFogShape() {
+			return fogShape;
+		}
+
+		public void setFarPlaneDistance(float distance) {
+			farPlaneDistance = distance;
+		}
+
+		public void setNearPlaneDistance(float distance) {
+			nearPlaneDistance = distance;
+		}
+
+		public void setFogShape(FogShape shape) {
+			fogShape = shape;
+		}
+
+		public void scaleFarPlaneDistance(float factor) {
+			farPlaneDistance *= factor;
+		}
+
+		public void scaleNearPlaneDistance(float factor) {
+			nearPlaneDistance *= factor;
+		}
 	}
 
 	public static class ColorData {
