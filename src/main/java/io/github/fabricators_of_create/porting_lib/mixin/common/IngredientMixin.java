@@ -2,19 +2,17 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import com.google.gson.JsonElement;
 
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-
 import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
 import io.github.fabricators_of_create.porting_lib.crafting.IIngredientSerializer;
 import io.github.fabricators_of_create.porting_lib.crafting.IngredientInvalidator;
 import io.github.fabricators_of_create.porting_lib.crafting.VanillaIngredientSerializer;
 import io.github.fabricators_of_create.porting_lib.extensions.IngredientExtensions;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient.Value;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -47,7 +45,7 @@ public abstract class IngredientMixin implements IngredientExtensions {
 
 	@Shadow
 	@Final
-	private Value[] values;
+	public Value[] values;
 
 	@Unique
 	private boolean port_lib$simple;
@@ -70,15 +68,13 @@ public abstract class IngredientMixin implements IngredientExtensions {
 		}
     }
 
-	/**
-	 * @author AlphaMode
-	 * @reason help me...
-	 */
-	@Overwrite
-	public static Ingredient fromNetwork(FriendlyByteBuf p_43941_) {
-		var size = p_43941_.readVarInt();
-		if (size == -1) return CraftingHelper.getIngredient(p_43941_.readResourceLocation(), p_43941_);
-		return Ingredient.fromValues(Stream.generate(() -> new Ingredient.ItemValue(p_43941_.readItem())).limit(size));
+	@Inject(method = "fromNetwork", at = @At("HEAD"), cancellable = true)
+	private static void fromNetwork(FriendlyByteBuf buffer, CallbackInfoReturnable<Ingredient> cir) {
+		ResourceLocation serializerId = buffer.readResourceLocation();
+		IIngredientSerializer<?> serializer = CraftingHelper.getSerializer(serializerId);
+		if (serializer == VanillaIngredientSerializer.INSTANCE || serializer == null)
+			return;
+		cir.setReturnValue(serializer.parse(buffer));
 	}
 
 
@@ -90,8 +86,7 @@ public abstract class IngredientMixin implements IngredientExtensions {
 
     @Override
     public IIngredientSerializer<? extends Ingredient> getSerializer() {
-        if (!port_lib$vanilla) throw new IllegalStateException("Modders must implement Ingredient.getSerializer in their custom Ingredients: " + this);
-            return VanillaIngredientSerializer.INSTANCE;
+		return VanillaIngredientSerializer.INSTANCE;
     }
 
     @Override

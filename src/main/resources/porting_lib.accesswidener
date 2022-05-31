@@ -29,7 +29,6 @@ transitive-accessible field net/minecraft/client/renderer/block/model/BlockModel
 
 transitive-accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/List;
 transitive-accessible field net/minecraft/client/gui/components/CommandSuggestions suggestions Lnet/minecraft/client/gui/components/CommandSuggestions$SuggestionsList;
-transitive-accessible method net/minecraft/client/gui/components/CommandSuggestions$SuggestionsList <init> (IIILjava/util/List;Z)V
 
 transitive-accessible method net/minecraft/client/renderer/block/model/ItemOverrides <init> ()V
 

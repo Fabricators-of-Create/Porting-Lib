@@ -56,20 +56,29 @@ public class CraftingHelper {
 		ingredients.put(key, serializer);
 		return serializer;
 	}
+
 	@Nullable
 	public static ResourceLocation getID(IIngredientSerializer<?> serializer) {
 		return ingredients.inverse().get(serializer);
 	}
+
+	@Nullable
+	public static ResourceLocation getID(Ingredient ingredient) {
+		return getID(ingredient.getSerializer());
+	}
+
+	@Nullable
+	public static IIngredientSerializer<?> getSerializer(ResourceLocation id) {
+		return ingredients.get(id);
+	}
+
 	public static <T extends Ingredient> void write(FriendlyByteBuf buffer, T ingredient) {
 		@SuppressWarnings("unchecked") //I wonder if there is a better way generic wise...
 		IIngredientSerializer<T> serializer = (IIngredientSerializer<T>) ingredient.getSerializer();
 		ResourceLocation key = ingredients.inverse().get(serializer);
 		if (key == null)
 			throw new IllegalArgumentException("Tried to serialize unregistered Ingredient: " + ingredient + " " + serializer);
-		if (serializer != VanillaIngredientSerializer.INSTANCE) {
-			buffer.writeVarInt(-1); //Marker to know there is a custom ingredient
-			buffer.writeResourceLocation(key);
-		}
+		buffer.writeResourceLocation(key);
 		serializer.write(buffer, ingredient);
 	}
 
