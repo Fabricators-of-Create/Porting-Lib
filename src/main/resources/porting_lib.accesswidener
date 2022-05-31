@@ -59,3 +59,5 @@ transitive-accessible class net/minecraft/client/gui/MapRenderer$MapInstance
 transitive-accessible field net/minecraft/client/gui/MapRenderer MAP_ICONS Lnet/minecraft/client/renderer/RenderType;
 
 transitive-accessible class net/minecraft/server/MinecraftServer$ReloadableResources
+
+transitive-accessible field net/minecraft/data/tags/TagsProvider$TagAppender registry Lnet/minecraft/core/Registry;
