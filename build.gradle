@@ -4,7 +4,7 @@ plugins {
 	id "fabric-loom" version "0.12-SNAPSHOT"
 	id "io.github.juuxel.loom-quiltflower" version "1.+" // Quiltflower, a better decompiler
 	id "org.quiltmc.quilt-mappings-on-loom" version "4.2.+" // Quilt Mappings, for parameters and javadoc. Also hashed mojmap.
-//	id "io.github.p03w.machete" version "1.0.6" // automatic jar compressing on build
+	id "io.github.p03w.machete" version "1.+" // automatic jar compressing on build
 	id "org.ajoberstar.grgit" version "4.1.1"
 	id "maven-publish"
 }
@@ -23,6 +23,7 @@ if (grgit != null) {
 }
 
 repositories {
+	mavenLocal()
 	maven { url = "https://api.modrinth.com/maven" }
 	maven { url = "https://maven.bai.lol" }
 	maven { url = "https://maven.terraformersmc.com/releases/" }
@@ -32,7 +33,13 @@ repositories {
 	maven { url = "https://mvn.devos.one/snapshots/" }
 	maven { url = "https://maven.wispforest.io" }
 	maven { url = "https://cursemaven.com" }
-	maven { url = "https://jitpack.io" }
+	maven {
+		url = "https://jitpack.io"
+		content {
+			includeGroup("com.github.Chocohead")
+			includeGroup("com.github.LlamaLad7")
+		}
+	}
 }
 
 dependencies {
@@ -55,6 +62,7 @@ dependencies {
 
 	// dependencies
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
+	modImplementation("io.github.tropheusj:serialization-hooks:0.0.3+1.18.5abdc3c")
 	modApi(include("me.alphamode:ForgeTags:${project.forge_tags_version}"))
 	api(include("com.github.LlamaLad7:MixinExtras:0.0.9"))
 	annotationProcessor(include("com.github.LlamaLad7:MixinExtras:0.0.9"))

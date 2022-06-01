@@ -2,14 +2,10 @@ package io.github.fabricators_of_create.porting_lib;
 
 import com.chocohead.mm.api.ClassTinkerers;
 
-import com.llamalad7.mixinextras.MixinExtrasBootstrap;
-
-import io.github.fabricators_of_create.porting_lib.model.IModelGeometry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
 
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;

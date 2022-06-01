@@ -4,23 +4,31 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import io.github.fabricators_of_create.porting_lib.crafting.CompoundIngredient.Serializer;
+import io.github.tropheusj.serialization_hooks.ingredient.IngredientSerializer;
 import net.minecraft.core.Registry;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.network.FriendlyByteBuf;
 
-/** Ingredient that matches the given stack, performing an exact NBT match. Use {@link PartialNBTIngredient} if you need partial match. */
+/**
+ * Ingredient that matches the given stack, performing an exact NBT match.
+ */
 public class NBTIngredient extends AbstractIngredient {
 	private final ItemStack stack;
+
 	protected NBTIngredient(ItemStack stack) {
 		super(Stream.of(new Ingredient.ItemValue(stack)));
 		this.stack = stack;
 	}
 
-	/** Creates a new ingredient matching the given stack and tag */
+	/**
+	 * Creates a new ingredient matching the given stack and tag
+	 */
 	public static NBTIngredient of(ItemStack stack) {
 		return new NBTIngredient(stack);
 	}
@@ -34,19 +42,9 @@ public class NBTIngredient extends AbstractIngredient {
 	}
 
 	@Override
-	public boolean isSimple() {
-		return false;
-	}
-
-	@Override
-	public IIngredientSerializer<? extends Ingredient> getSerializer() {
-		return Serializer.INSTANCE;
-	}
-
-	@Override
 	public JsonElement toJson() {
 		JsonObject json = new JsonObject();
-		json.addProperty("type", CraftingHelper.getID(Serializer.INSTANCE).toString());
+		json.addProperty("type", IngredientSerializer.REGISTRY.getKey(Serializer.INSTANCE).toString());
 		json.addProperty("item", Registry.ITEM.getKey(stack.getItem()).toString());
 		json.addProperty("count", stack.getCount());
 		if (stack.hasTag())
@@ -54,22 +52,33 @@ public class NBTIngredient extends AbstractIngredient {
 		return json;
 	}
 
-	public static class Serializer implements IIngredientSerializer<NBTIngredient> {
+	@Override
+	public void toNetwork(FriendlyByteBuf buffer) {
+		buffer.writeItem(stack);
+	}
+
+	@Override
+	public IngredientSerializer getSerializer() {
+		return Serializer.INSTANCE;
+	}
+
+	public static class Serializer implements IngredientSerializer {
 		public static final Serializer INSTANCE = new Serializer();
 
 		@Override
-		public NBTIngredient parse(FriendlyByteBuf buffer) {
+		public Ingredient fromPacket(FriendlyByteBuf buffer) {
 			return new NBTIngredient(buffer.readItem());
 		}
 
 		@Override
-		public NBTIngredient parse(JsonObject json) {
-			return new NBTIngredient(CraftingHelper.getItemStack(json, true));
+		public Ingredient fromJsonObject(JsonObject object) {
+			return new NBTIngredient(CraftingHelper.getItemStack(object, true));
 		}
 
+		@Nullable
 		@Override
-		public void write(FriendlyByteBuf buffer, NBTIngredient ingredient) {
-			buffer.writeItem(ingredient.stack);
+		public Ingredient fromJsonArray(JsonArray array) {
+			return null;
 		}
 	}
 }

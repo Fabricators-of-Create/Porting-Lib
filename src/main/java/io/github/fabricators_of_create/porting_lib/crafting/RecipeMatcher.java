@@ -10,10 +10,10 @@ public class RecipeMatcher {
 	/**
 	 * Attempts to match inputs to the specified tests. In the best way that all inputs are used by one test.
 	 * Will return null in any of these cases:
-	 *   input/test lengths don't match. This is only for matching paired outputs.
-	 *   any input doesn't match a test
-	 *   any test doesn't match a input
-	 *   If we are unable to determine a proper pair
+	 * input/test lengths don't match. This is only for matching paired outputs.
+	 * any input doesn't match a test
+	 * any test doesn't match a input
+	 * If we are unable to determine a proper pair
 	 *
 	 * @return An array mapping inputs to tests. ret[x] = y means input[x] = test[y]
 	 */
@@ -74,7 +74,7 @@ public class RecipeMatcher {
 			int used = data.nextSetBit(offset) - offset;
 
 			if (used >= elements || used < 0)
-				throw new IllegalStateException("What? We matched something, but it wasn't set in the range of this test! Test: " + test +  " Used: " + used);
+				throw new IllegalStateException("What? We matched something, but it wasn't set in the range of this test! Test: " + test + " Used: " + used);
 
 			data.set(used);
 			data.set(elements + test);
