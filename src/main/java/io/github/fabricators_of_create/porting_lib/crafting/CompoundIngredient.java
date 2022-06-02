@@ -10,14 +10,14 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-import io.github.fabricators_of_create.porting_lib.extensions.IngredientExtensions;
+import io.github.tropheusj.serialization_hooks.CustomSerializerIngredient;
+import io.github.tropheusj.serialization_hooks.IngredientSerializer;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -25,22 +25,21 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.network.FriendlyByteBuf;
 
-import static io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper.merge;
-
-/** Ingredient that matches if any of the child ingredients match */
+/**
+ * Ingredient that matches if any of the child ingredients match
+ */
 public class CompoundIngredient extends AbstractIngredient {
 	private List<Ingredient> children;
 	private ItemStack[] stacks;
 	private IntList itemIds;
-	private final boolean isSimple;
 
-	protected CompoundIngredient(List<Ingredient> children)
-	{
+	protected CompoundIngredient(List<Ingredient> children) {
 		this.children = Collections.unmodifiableList(children);
-		this.isSimple = children.stream().allMatch(IngredientExtensions::isSimple);
 	}
 
-	/** Creates a compound ingredient from the given list of ingredients */
+	/**
+	 * Creates a compound ingredient from the given list of ingredients
+	 */
 	public static Ingredient of(Ingredient... children) {
 		// if 0 or 1 ingredient, can save effort
 		if (children.length == 0)
@@ -52,13 +51,13 @@ public class CompoundIngredient extends AbstractIngredient {
 		List<Ingredient> vanillaIngredients = new ArrayList<>();
 		List<Ingredient> allIngredients = new ArrayList<>();
 		for (Ingredient child : children) {
-			if (child.getSerializer() == VanillaIngredientSerializer.INSTANCE)
+			if (!(child instanceof CustomSerializerIngredient))
 				vanillaIngredients.add(child);
 			else
 				allIngredients.add(child);
 		}
 		if (!vanillaIngredients.isEmpty())
-			allIngredients.add(merge(vanillaIngredients));
+			allIngredients.add(CraftingHelper.merge(vanillaIngredients));
 		if (allIngredients.size() == 1)
 			return allIngredients.get(0);
 		return new CompoundIngredient(allIngredients);
@@ -66,10 +65,8 @@ public class CompoundIngredient extends AbstractIngredient {
 
 	@Override
 	@Nonnull
-	public ItemStack[] getItems()
-	{
-		if (stacks == null)
-		{
+	public ItemStack[] getItems() {
+		if (stacks == null) {
 			List<ItemStack> tmp = Lists.newArrayList();
 			for (Ingredient child : children)
 				Collections.addAll(tmp, child.getItems());
@@ -82,12 +79,7 @@ public class CompoundIngredient extends AbstractIngredient {
 	@Override
 	@Nonnull
 	public IntList getStackingIds() {
-		boolean childrenNeedInvalidation = false;
-		for (Ingredient child : children) {
-			childrenNeedInvalidation |= child.checkInvalidation();
-		}
-		if (childrenNeedInvalidation || this.itemIds == null || checkInvalidation()) {
-			this.markValid();
+		if (this.itemIds == null) {
 			this.itemIds = new IntArrayList();
 			for (Ingredient child : children)
 				this.itemIds.addAll(child.getStackingIds());
@@ -106,18 +98,7 @@ public class CompoundIngredient extends AbstractIngredient {
 	}
 
 	@Override
-	public void invalidate() {
-		this.itemIds = null;
-		this.stacks = null;
-	}
-
-	@Override
-	public boolean isSimple() {
-		return isSimple;
-	}
-
-	@Override
-	public IIngredientSerializer<? extends Ingredient> getSerializer() {
+	public IngredientSerializer getSerializer() {
 		return Serializer.INSTANCE;
 	}
 
@@ -142,24 +123,49 @@ public class CompoundIngredient extends AbstractIngredient {
 		return children.stream().allMatch(Ingredient::isEmpty);
 	}
 
-	public static class Serializer implements IIngredientSerializer<CompoundIngredient> {
+	@Override
+	public void toNetwork(FriendlyByteBuf buffer) {
+		buffer.writeVarInt(children.size());
+		children.forEach(c -> c.toNetwork(buffer));
+	}
+
+	public static class Serializer implements IngredientSerializer {
 		public static final Serializer INSTANCE = new Serializer();
 
 		@Override
-		public CompoundIngredient parse(FriendlyByteBuf buffer) {
-			return new CompoundIngredient(Stream.generate(() -> Ingredient.fromNetwork(buffer)).limit(buffer.readVarInt()).collect(Collectors.toList()));
-		}
-
-		@Override
-		public CompoundIngredient parse(JsonObject json) {
+		public Ingredient fromJsonObject(JsonObject object) {
 			throw new JsonSyntaxException("CompoundIngredient should not be directly referenced in json, just use an array of ingredients.");
 		}
 
 		@Override
-		public void write(FriendlyByteBuf buffer, CompoundIngredient ingredient) {
-			buffer.writeVarInt(ingredient.children.size());
-			ingredient.children.forEach(c -> c.toNetwork(buffer));
+		public Ingredient fromPacket(FriendlyByteBuf buffer) {
+			return new CompoundIngredient(Stream.generate(() -> Ingredient.fromNetwork(buffer)).limit(buffer.readVarInt()).collect(Collectors.toList()));
 		}
 
+		@Nullable
+		@Override
+		public Ingredient fromJsonArray(JsonArray array) {
+			List<Ingredient> ingredients = Lists.newArrayList();
+			List<Ingredient> vanilla = Lists.newArrayList();
+			array.forEach((ele) -> {
+				Ingredient ing = Ingredient.fromJson(ele);
+
+				if (ing.getClass() == Ingredient.class) //Vanilla, Due to how we read it splits each itemstack, so we pull out to re-merge later
+					vanilla.add(ing);
+				else
+					ingredients.add(ing);
+			});
+
+			if (!vanilla.isEmpty())
+				ingredients.add(CraftingHelper.merge(vanilla));
+
+			if (ingredients.size() == 0)
+				throw new JsonSyntaxException("Item array cannot be empty, at least one item must be defined");
+
+			if (ingredients.size() == 1)
+				return ingredients.get(0);
+
+			return new CompoundIngredient(ingredients);
+		}
 	}
 }
