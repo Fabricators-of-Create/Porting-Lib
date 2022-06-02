@@ -3,6 +3,7 @@ package io.github.fabricators_of_create.porting_lib.crafting;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -10,6 +11,7 @@ import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import io.github.tropheusj.serialization_hooks.IngredientSerializer;
+import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
@@ -101,5 +103,9 @@ public class CraftingHelper {
 			return shareTagB == null;
 		else
 			return shareTagB != null && shareTagA.equals(shareTagB);
+	}
+
+	public static Predicate<JsonObject> getConditionPredicate(JsonObject json) {
+		return ResourceConditions.get(new ResourceLocation(GsonHelper.getAsString(json, "type")));
 	}
 }

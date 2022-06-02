@@ -4,21 +4,61 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import javax.annotation.Nullable;
-
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
+import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
 import net.fabricmc.fabric.api.resource.conditions.v1.ConditionJsonProvider;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
+import net.minecraft.core.Registry;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
 public class ConditionalRecipe {
+	public static final RecipeSerializer<Recipe<?>> SERIALZIER = Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation("forge:conditional"), new Serializer<>());
 
 	public static Builder builder() {
 		return new Builder();
+	}
+
+	public static class Serializer<T extends Recipe<?>> implements RecipeSerializer<T> {
+		@SuppressWarnings("unchecked") // We return a nested one, so we can't know what type it is.
+		@Override
+		public T fromJson(ResourceLocation recipeId, JsonObject json) {
+			JsonArray items = GsonHelper.getAsJsonArray(json, "recipes");
+			int idx = 0;
+			for (JsonElement ele : items) {
+				if (!ele.isJsonObject())
+					throw new JsonSyntaxException("Invalid recipes entry at index " + idx + " Must be JsonObject");
+				if (processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions")))
+					return (T)RecipeManager.fromJson(recipeId, GsonHelper.getAsJsonObject(ele.getAsJsonObject(), "recipe"));
+				idx++;
+			}
+			return null;
+		}
+
+		public static boolean processConditions(JsonArray conditions) {
+			for (int x = 0; x < conditions.size(); x++) {
+				if (!conditions.get(x).isJsonObject())
+					throw new JsonSyntaxException("Conditions must be an array of JsonObjects");
+
+				JsonObject json = conditions.get(x).getAsJsonObject();
+				if (!CraftingHelper.getConditionPredicate(json).test(json))
+					return false;
+			}
+			return true;
+		}
+
+		//Should never get here as we return one of the recipes we wrap.
+		@Override public T fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) { return null; }
+		@Override public void toNetwork(FriendlyByteBuf buffer, T recipe) {}
 	}
 
 	public static class Builder {
@@ -46,7 +86,8 @@ public class ConditionalRecipe {
 			return this;
 		}
 
-		public void build(Consumer<FinishedRecipe> consumer, String namespace, String path) {
+		public void build(Consumer<FinishedRecipe> consumer, String namespace, String path)
+		{
 			build(consumer, new ResourceLocation(namespace, path));
 		}
 
@@ -93,15 +134,14 @@ public class ConditionalRecipe {
 			return id;
 		}
 
-		@Nullable
 		@Override
-		public JsonObject serializeAdvancement() {
-			return null;
+		public RecipeSerializer<?> getType() {
+			return SERIALZIER;
 		}
 
 		@Override
-		public RecipeSerializer<?> getType() {
-			return RecipeSerializer.SHAPED_RECIPE;
+		public JsonObject serializeAdvancement() {
+			return null;
 		}
 
 		@Override
@@ -109,4 +149,6 @@ public class ConditionalRecipe {
 			return null;
 		}
 	}
+
+	public static void init() {}
 }
