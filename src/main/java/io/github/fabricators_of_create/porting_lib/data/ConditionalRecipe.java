@@ -37,7 +37,7 @@ public class ConditionalRecipe {
 			for (JsonElement ele : items) {
 				if (!ele.isJsonObject())
 					throw new JsonSyntaxException("Invalid recipes entry at index " + idx + " Must be JsonObject");
-				if (processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions")))
+				if (processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), ResourceConditions.CONDITIONS_KEY)))
 					return (T)RecipeManager.fromJson(recipeId, GsonHelper.getAsJsonObject(ele.getAsJsonObject(), "recipe"));
 				idx++;
 			}
