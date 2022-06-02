@@ -31,7 +31,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-@Mixin(value = Ingredient.class, priority = 2340) // magic random number to make sure we apply in the correct order
+@Mixin(value = Ingredient.class, priority = 390) // magic random number to make sure we apply in the correct order
 public abstract class IngredientMixin implements IngredientExtensions {
 
     @Shadow
@@ -64,6 +64,7 @@ public abstract class IngredientMixin implements IngredientExtensions {
 
     @Inject(method = "toNetwork", at = @At(value = "INVOKE", shift = Shift.AFTER, target = "Lnet/minecraft/world/item/crafting/Ingredient;dissolve()V"), cancellable = true)
     private void port_lib$toNetwork(FriendlyByteBuf buffer, CallbackInfo ci) {
+		buffer.writeBoolean(isVanilla());
 		if (!this.isVanilla()) {
 			CraftingHelper.write(buffer, (Ingredient) (Object) this);
 			ci.cancel();
@@ -74,11 +75,13 @@ public abstract class IngredientMixin implements IngredientExtensions {
 	 * @author AlphaMode
 	 * @reason help me...
 	 */
-	@Overwrite
-	public static Ingredient fromNetwork(FriendlyByteBuf p_43941_) {
-		var size = p_43941_.readVarInt();
-		if (size == -1) return CraftingHelper.getIngredient(p_43941_.readResourceLocation(), p_43941_);
-		return Ingredient.fromValues(Stream.generate(() -> new Ingredient.ItemValue(p_43941_.readItem())).limit(size));
+	@Inject(method = "fromNetwork", at = @At("HEAD"), cancellable = true)
+	private static void fromNetwork(FriendlyByteBuf p_43941_, CallbackInfoReturnable<Ingredient> cir) {
+		if (!p_43941_.readBoolean()) {
+			var size = p_43941_.readVarInt();
+			if (size == -1) cir.setReturnValue(CraftingHelper.getIngredient(p_43941_.readResourceLocation(), p_43941_));
+			cir.setReturnValue(Ingredient.fromValues(Stream.generate(() -> new Ingredient.ItemValue(p_43941_.readItem())).limit(size)));
+		}
 	}
 
 
