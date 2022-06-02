@@ -4,16 +4,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import io.github.tropheusj.serialization_hooks.ingredient.IngredientSerializer;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import io.github.tropheusj.serialization_hooks.IngredientSerializer;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;

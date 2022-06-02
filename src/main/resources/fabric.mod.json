@@ -68,7 +68,6 @@
       ],
       "net/minecraft/class_1799": ["io/github/fabricators_of_create/porting_lib/extensions/ItemStackExtensions"],
       "net/minecraft/class_1832": ["io/github/fabricators_of_create/porting_lib/extensions/TierExtensions"],
-      "net/minecraft/class_1856": ["io/github/fabricators_of_create/porting_lib/extensions/IngredientExtensions"],
       "net/minecraft/class_1887": ["io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"],
       "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/extensions/LevelExtensions"],
       "net/minecraft/class_2211": ["io/github/fabricators_of_create/porting_lib/util/IPlantable"],

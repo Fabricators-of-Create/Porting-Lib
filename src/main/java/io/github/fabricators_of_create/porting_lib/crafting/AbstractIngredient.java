@@ -2,7 +2,7 @@ package io.github.fabricators_of_create.porting_lib.crafting;
 
 import com.google.gson.JsonElement;
 
-import io.github.tropheusj.serialization_hooks.ingredient.CustomSerializerIngredient;
+import io.github.tropheusj.serialization_hooks.CustomSerializerIngredient;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;

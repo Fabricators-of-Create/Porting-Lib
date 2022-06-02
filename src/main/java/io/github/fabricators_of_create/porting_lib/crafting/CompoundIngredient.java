@@ -16,8 +16,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-import io.github.tropheusj.serialization_hooks.ingredient.CustomSerializerIngredient;
-import io.github.tropheusj.serialization_hooks.ingredient.IngredientSerializer;
+import io.github.tropheusj.serialization_hooks.CustomSerializerIngredient;
+import io.github.tropheusj.serialization_hooks.IngredientSerializer;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.ints.IntList;

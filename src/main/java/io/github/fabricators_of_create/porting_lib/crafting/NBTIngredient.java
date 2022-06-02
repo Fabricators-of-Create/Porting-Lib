@@ -8,8 +8,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import io.github.fabricators_of_create.porting_lib.crafting.CompoundIngredient.Serializer;
-import io.github.tropheusj.serialization_hooks.ingredient.IngredientSerializer;
+import io.github.tropheusj.serialization_hooks.IngredientSerializer;
 import net.minecraft.core.Registry;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
