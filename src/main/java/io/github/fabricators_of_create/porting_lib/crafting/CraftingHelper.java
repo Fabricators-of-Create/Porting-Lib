@@ -106,6 +106,6 @@ public class CraftingHelper {
 	}
 
 	public static Predicate<JsonObject> getConditionPredicate(JsonObject json) {
-		return ResourceConditions.get(new ResourceLocation(GsonHelper.getAsString(json, "type")));
+		return ResourceConditions.get(new ResourceLocation(GsonHelper.getAsString(json, ResourceConditions.CONDITION_ID_KEY)));
 	}
 }
