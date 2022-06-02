@@ -101,7 +101,7 @@ public class ConditionalRecipe {
 
 		@Override
 		public RecipeSerializer<?> getType() {
-			return RecipeSerializer.SHAPELESS_RECIPE;
+			return RecipeSerializer.SHAPED_RECIPE;
 		}
 
 		@Override
