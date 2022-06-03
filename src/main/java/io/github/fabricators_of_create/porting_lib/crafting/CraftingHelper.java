@@ -9,7 +9,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import io.github.tropheusj.serialization_hooks.IngredientSerializer;
+import io.github.fabricators_of_create.porting_lib.crafting.NbtItemValue.NbtItemValueDeserializer;
+import io.github.tropheusj.serialization_hooks.ingredient.IngredientDeserializer;
+import io.github.tropheusj.serialization_hooks.value.ValueDeserializer;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
@@ -20,19 +22,26 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 
+import javax.annotation.Nullable;
+
 import static net.fabricmc.fabric.api.datagen.v1.provider.FabricLootTableProvider.GSON;
 
 public class CraftingHelper {
 	public static void init() {
 		Registry.register(
-				IngredientSerializer.REGISTRY,
+				IngredientDeserializer.REGISTRY,
 				new ResourceLocation("forge", "compound"),
 				CompoundIngredient.Serializer.INSTANCE
 		);
 		Registry.register(
-				IngredientSerializer.REGISTRY,
+				IngredientDeserializer.REGISTRY,
 				new ResourceLocation("forge", "nbt"),
 				NBTIngredient.Serializer.INSTANCE
+		);
+		Registry.register(
+				ValueDeserializer.REGISTRY,
+				NbtItemValueDeserializer.ID,
+				NbtItemValueDeserializer.INSTANCE
 		);
 	}
 
@@ -41,14 +50,26 @@ public class CraftingHelper {
 	}
 
 	public static Item getItem(String itemName, boolean disallowsAirInRecipe) {
+		Item item = tryGetItem(itemName, disallowsAirInRecipe);
+		if (item == null) {
+			if (!Registry.ITEM.containsKey(new ResourceLocation(itemName)))
+				throw new JsonSyntaxException("Unknown item '" + itemName + "'");
+			if (disallowsAirInRecipe && item == Items.AIR)
+				throw new JsonSyntaxException("Invalid item: " + itemName);
+		}
+		return Objects.requireNonNull(item);
+	}
+
+	@Nullable
+	public static Item tryGetItem(String itemName, boolean disallowsAirInRecipe) {
 		ResourceLocation itemKey = new ResourceLocation(itemName);
 		if (!Registry.ITEM.containsKey(itemKey))
-			throw new JsonSyntaxException("Unknown item '" + itemName + "'");
+			return null;
 
 		Item item = Registry.ITEM.get(itemKey);
 		if (disallowsAirInRecipe && item == Items.AIR)
-			throw new JsonSyntaxException("Invalid item: " + itemName);
-		return Objects.requireNonNull(item);
+			return null;
+		return item;
 	}
 
 	public static CompoundTag getNBT(JsonElement element) {
@@ -62,11 +83,50 @@ public class CraftingHelper {
 		}
 	}
 
+	@Nullable
+	public static CompoundTag tryGetNBT(JsonElement element) {
+		try {
+			if (element.isJsonObject())
+				return TagParser.parseTag(GSON.toJson(element));
+			else
+				return TagParser.parseTag(GsonHelper.convertToString(element, "nbt"));
+		} catch (CommandSyntaxException e) {
+			return null;
+		}
+	}
+
 	public static ItemStack getItemStack(JsonObject json, boolean readNBT, boolean disallowsAirInRecipe) {
 		String itemName = GsonHelper.getAsString(json, "item");
 		Item item = getItem(itemName, disallowsAirInRecipe);
 		if (readNBT && json.has("nbt")) {
 			CompoundTag nbt = getNBT(json.get("nbt"));
+			CompoundTag tmp = new CompoundTag();
+			if (nbt.contains("ForgeCaps")) { // TODO: should we keep this?
+				tmp.put("ForgeCaps", nbt.get("ForgeCaps"));
+				nbt.remove("ForgeCaps");
+			}
+
+			tmp.put("tag", nbt);
+			tmp.putString("id", itemName);
+			tmp.putInt("Count", GsonHelper.getAsInt(json, "count", 1));
+
+			return ItemStack.of(tmp);
+		}
+
+		return new ItemStack(item, GsonHelper.getAsInt(json, "count", 1));
+	}
+
+	@Nullable
+	public static ItemStack tryGetItemStack(JsonObject json, boolean readNBT, boolean disallowsAirInRecipe) {
+		JsonElement nameElement = json.get("name");
+		if (nameElement == null || !nameElement.isJsonPrimitive())
+			return null;
+		String itemName = nameElement.getAsString();
+		Item item = tryGetItem(itemName, disallowsAirInRecipe);
+		if (readNBT && json.has("nbt")) {
+			CompoundTag nbt = tryGetNBT(json.get("nbt"));
+			if (nbt == null)
+				return null;
 			CompoundTag tmp = new CompoundTag();
 			if (nbt.contains("ForgeCaps")) { // TODO: should we keep this?
 				tmp.put("ForgeCaps", nbt.get("ForgeCaps"));

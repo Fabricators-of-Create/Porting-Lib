@@ -4,11 +4,10 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import io.github.tropheusj.serialization_hooks.IngredientSerializer;
+import io.github.tropheusj.serialization_hooks.ingredient.IngredientDeserializer;
 import net.minecraft.core.Registry;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -19,10 +18,12 @@ import net.minecraft.network.FriendlyByteBuf;
  */
 public class NBTIngredient extends AbstractIngredient {
 	private final ItemStack stack;
+	private final Value[] values;
 
 	protected NBTIngredient(ItemStack stack) {
 		super(Stream.of(new Ingredient.ItemValue(stack)));
 		this.stack = stack;
+		this.values = new Value[] { new NbtItemValue(stack) };
 	}
 
 	/**
@@ -43,7 +44,7 @@ public class NBTIngredient extends AbstractIngredient {
 	@Override
 	public JsonElement toJson() {
 		JsonObject json = new JsonObject();
-		json.addProperty("type", IngredientSerializer.REGISTRY.getKey(Serializer.INSTANCE).toString());
+		json.addProperty("type", IngredientDeserializer.REGISTRY.getKey(Serializer.INSTANCE).toString());
 		json.addProperty("item", Registry.ITEM.getKey(stack.getItem()).toString());
 		json.addProperty("count", stack.getCount());
 		if (stack.hasTag())
@@ -57,27 +58,27 @@ public class NBTIngredient extends AbstractIngredient {
 	}
 
 	@Override
-	public IngredientSerializer getSerializer() {
+	public IngredientDeserializer getDeserializer() {
 		return Serializer.INSTANCE;
 	}
 
-	public static class Serializer implements IngredientSerializer {
+	@Override
+	public Value[] getValues() {
+		return values;
+	}
+
+	public static class Serializer implements IngredientDeserializer {
 		public static final Serializer INSTANCE = new Serializer();
 
 		@Override
-		public Ingredient fromPacket(FriendlyByteBuf buffer) {
+		public Ingredient fromNetwork(FriendlyByteBuf buffer) {
 			return new NBTIngredient(buffer.readItem());
-		}
-
-		@Override
-		public Ingredient fromJsonObject(JsonObject object) {
-			return new NBTIngredient(CraftingHelper.getItemStack(object, true));
 		}
 
 		@Nullable
 		@Override
-		public Ingredient fromJsonArray(JsonArray array) {
-			return null;
+		public Ingredient fromJson(JsonObject object) {
+			return new NBTIngredient(CraftingHelper.getItemStack(object.getAsJsonObject(), true));
 		}
 	}
 }
