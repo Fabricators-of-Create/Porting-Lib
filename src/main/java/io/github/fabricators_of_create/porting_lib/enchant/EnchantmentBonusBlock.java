@@ -5,7 +5,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
-// TODO: implement
 public interface EnchantmentBonusBlock {
 	/**
 	 * Determines the amount of enchanting power this block can provide to an enchanting table.
