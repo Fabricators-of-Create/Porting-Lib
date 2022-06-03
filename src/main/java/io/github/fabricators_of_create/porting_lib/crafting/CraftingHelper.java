@@ -30,21 +30,18 @@ import static net.fabricmc.fabric.api.datagen.v1.provider.FabricLootTableProvide
 
 public class CraftingHelper {
 	public static void init() {
-		Registry.register(
-				IngredientDeserializer.REGISTRY,
-				new ResourceLocation("forge", "compound"),
-				CompoundIngredient.Serializer.INSTANCE
-		);
-		Registry.register(
-				IngredientDeserializer.REGISTRY,
-				new ResourceLocation("forge", "nbt"),
-				NBTIngredient.Serializer.INSTANCE
-		);
-		Registry.register(
-				ValueDeserializer.REGISTRY,
-				NbtItemValueDeserializer.ID,
-				NbtItemValueDeserializer.INSTANCE
-		);
+		register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
+		register(new ResourceLocation("forge", "nbt"), NBTIngredient.Serializer.INSTANCE);
+		Registry.register(ValueDeserializer.REGISTRY, NbtItemValueDeserializer.ID, NbtItemValueDeserializer.INSTANCE);
+	}
+
+	public static IngredientDeserializer register(ResourceLocation key, IngredientDeserializer serializer) {
+		return Registry.register(IngredientDeserializer.REGISTRY, key, serializer);
+	}
+
+	@Nullable
+	public static ResourceLocation getID(IngredientDeserializer serializer) {
+		return IngredientDeserializer.REGISTRY.getKey(serializer);
 	}
 
 	public static ItemStack getItemStack(JsonObject json, boolean readNBT) {
