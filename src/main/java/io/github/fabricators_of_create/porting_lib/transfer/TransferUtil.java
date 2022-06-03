@@ -36,6 +36,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nullable;
 
 /**
@@ -507,6 +509,13 @@ public class TransferUtil {
 			}
 			t.commit();
 			return stack;
+		}
+	}
+
+	/** Less clunky way of simulating extraction on a {@link StorageView<T>} */
+	public static <T> long simulateExtractView(@NotNull StorageView<T> view, T variant, long amount) {
+		try (Transaction t = getTransaction()) {
+			return view.extract(variant, amount, t);
 		}
 	}
 
