@@ -2,7 +2,7 @@ package io.github.fabricators_of_create.porting_lib.crafting;
 
 import com.google.gson.JsonElement;
 
-import io.github.tropheusj.serialization_hooks.CustomSerializerIngredient;
+import io.github.tropheusj.serialization_hooks.ingredient.CustomIngredient;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -18,7 +18,7 @@ import java.util.stream.Stream;
  * Extension of {@link Ingredient} which makes most methods custom ingredients need to implement abstract, and removes the static constructors
  * Mods are encouraged to extend this class for their custom ingredients
  */
-public abstract class AbstractIngredient extends Ingredient implements CustomSerializerIngredient {
+public abstract class AbstractIngredient extends Ingredient implements CustomIngredient {
 	/**
 	 * Empty constructor, for the sake of dynamic ingredients
 	 */

@@ -13,11 +13,12 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-import io.github.tropheusj.serialization_hooks.CustomSerializerIngredient;
-import io.github.tropheusj.serialization_hooks.IngredientSerializer;
+import io.github.tropheusj.serialization_hooks.ingredient.CustomIngredient;
+import io.github.tropheusj.serialization_hooks.ingredient.IngredientDeserializer;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -25,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.network.FriendlyByteBuf;
 
+// todo reevaluate existence, is likely unnecessary
 /**
  * Ingredient that matches if any of the child ingredients match
  */
@@ -32,6 +34,7 @@ public class CompoundIngredient extends AbstractIngredient {
 	private List<Ingredient> children;
 	private ItemStack[] stacks;
 	private IntList itemIds;
+	private Value[] values;
 
 	protected CompoundIngredient(List<Ingredient> children) {
 		this.children = Collections.unmodifiableList(children);
@@ -51,7 +54,7 @@ public class CompoundIngredient extends AbstractIngredient {
 		List<Ingredient> vanillaIngredients = new ArrayList<>();
 		List<Ingredient> allIngredients = new ArrayList<>();
 		for (Ingredient child : children) {
-			if (!(child instanceof CustomSerializerIngredient))
+			if (!(child instanceof CustomIngredient))
 				vanillaIngredients.add(child);
 			else
 				allIngredients.add(child);
@@ -98,8 +101,20 @@ public class CompoundIngredient extends AbstractIngredient {
 	}
 
 	@Override
-	public IngredientSerializer getSerializer() {
+	public IngredientDeserializer getDeserializer() {
 		return Serializer.INSTANCE;
+	}
+
+	@Override
+	public Value[] getValues() {
+		if (values == null) {
+			List<Value> values = new ArrayList<>();
+			for (Ingredient child : children) {
+				Collections.addAll(values, CustomIngredient.getValues(child));
+			}
+			this.values = values.toArray(Value[]::new);
+		}
+		return values;
 	}
 
 	@Nonnull
@@ -129,43 +144,18 @@ public class CompoundIngredient extends AbstractIngredient {
 		children.forEach(c -> c.toNetwork(buffer));
 	}
 
-	public static class Serializer implements IngredientSerializer {
+	public static class Serializer implements IngredientDeserializer {
 		public static final Serializer INSTANCE = new Serializer();
 
 		@Override
-		public Ingredient fromJsonObject(JsonObject object) {
-			throw new JsonSyntaxException("CompoundIngredient should not be directly referenced in json, just use an array of ingredients.");
-		}
-
-		@Override
-		public Ingredient fromPacket(FriendlyByteBuf buffer) {
+		public Ingredient fromNetwork(FriendlyByteBuf buffer) {
 			return new CompoundIngredient(Stream.generate(() -> Ingredient.fromNetwork(buffer)).limit(buffer.readVarInt()).collect(Collectors.toList()));
 		}
 
 		@Nullable
 		@Override
-		public Ingredient fromJsonArray(JsonArray array) {
-			List<Ingredient> ingredients = Lists.newArrayList();
-			List<Ingredient> vanilla = Lists.newArrayList();
-			array.forEach((ele) -> {
-				Ingredient ing = Ingredient.fromJson(ele);
-
-				if (ing.getClass() == Ingredient.class) //Vanilla, Due to how we read it splits each itemstack, so we pull out to re-merge later
-					vanilla.add(ing);
-				else
-					ingredients.add(ing);
-			});
-
-			if (!vanilla.isEmpty())
-				ingredients.add(CraftingHelper.merge(vanilla));
-
-			if (ingredients.size() == 0)
-				throw new JsonSyntaxException("Item array cannot be empty, at least one item must be defined");
-
-			if (ingredients.size() == 1)
-				return ingredients.get(0);
-
-			return new CompoundIngredient(ingredients);
+		public Ingredient fromJson(JsonObject object) {
+			throw new JsonSyntaxException("CompoundIngredient should not be directly referenced in json, just use an array of ingredients.");
 		}
 	}
 }
