@@ -3,6 +3,7 @@ package io.github.fabricators_of_create.porting_lib;
 import io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes;
 import io.github.fabricators_of_create.porting_lib.biome.BiomeDictionary;
 import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
+import io.github.fabricators_of_create.porting_lib.data.ConditionalRecipe;
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemItemStorages;
 import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
@@ -22,9 +23,10 @@ public class PortingLib implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		TierSortingRegistry.init();
 		ServerLifecycleHooks.init();
 		PortingLibAttributes.init();
+		TierSortingRegistry.init();
+		ConditionalRecipe.init();
 		ItemItemStorages.init();
 		BiomeDictionary.init();
 		TransferUtil.initApi();
