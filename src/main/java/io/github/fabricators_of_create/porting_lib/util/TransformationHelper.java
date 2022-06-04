@@ -146,7 +146,7 @@ public final class TransformationHelper
 			Quaternion rightRot = null;
 			// TODO: Default origin is opposing corner, due to a mistake.
 			// This should probably be replaced with center in future versions.
-			Vector3f origin = ORIGIN_OPPOSING_CORNER; // TODO: Changing this to ORIGIN_CENTER breaks models, function content needs changing too -C
+			Vector3f origin = ORIGIN_OPPOSING_CORNER;
 			if (obj.has("translation")) {
 				float[] vec = parseFloatArray(obj.get("translation"), 3, "Translation");
 				translation = new Vector3f(vec[0], vec[1], vec[2]);
