@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import net.minecraft.world.level.block.state.BlockState;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,23 +17,16 @@ import net.minecraft.world.level.block.EnchantmentTableBlock;
 
 @Mixin(EnchantmentMenu.class)
 public class EnchantmentMenuMixin {
-	@Group(name = "enchantValue", min = 1, max = 2)
-	@ModifyVariable(method = "m_mpsetdhw", at = @At(value = "STORE", ordinal = 0), ordinal = 0, require = 0, remap = false)
-	private int port_lib$modifyEnchantValueHashed(int obj, ItemStack stack, Level level, BlockPos pos) {
-		return port_lib$modifyEnchantValueImpl(obj, stack, level, pos);
-	}
-
-	@Group(name = "enchantValue", min = 1, max = 2)
-	@ModifyVariable(method = "method_17411", at = @At(value = "STORE", ordinal = 0), ordinal = 0, require = 0, remap = false)
-	private int port_lib$modifyEnchantValueIntermediary(int obj, ItemStack stack, Level level, BlockPos pos) {
-		return port_lib$modifyEnchantValueImpl(obj, stack, level, pos);
-	}
-
-	@Unique
-	private int port_lib$modifyEnchantValueImpl(int obj, ItemStack stack, Level level, BlockPos pos) {
+	@ModifyVariable(
+			method = { "m_mpsetdhw", "method_17411", "lambda$slotsChanged$0" },
+			at = @At(value = "STORE", ordinal = 0), ordinal = 0, remap = false
+	)
+	private int port_lib$modifyEnchantValue(int obj, ItemStack stack, Level level, BlockPos pos) {
 		for (BlockPos blockPos : EnchantmentTableBlock.BOOKSHELF_OFFSETS) {
-			if (level.getBlockState(pos.offset(blockPos)).getBlock() instanceof EnchantmentBonusBlock bonusBlock)
-				obj += bonusBlock.getEnchantPowerBonus(level.getBlockState(pos.offset(blockPos)), level, pos.offset(blockPos));
+			BlockPos actualPos = pos.offset(blockPos);
+			BlockState state = level.getBlockState(actualPos);
+			if (state.getBlock() instanceof EnchantmentBonusBlock bonusBlock)
+				obj += bonusBlock.getEnchantPowerBonus(state, level, actualPos);
 		}
 		return obj;
 	}
