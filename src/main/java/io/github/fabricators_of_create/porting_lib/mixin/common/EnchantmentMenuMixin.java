@@ -14,19 +14,19 @@ import net.minecraft.world.level.block.EnchantmentTableBlock;
 
 @Mixin(EnchantmentMenu.class)
 public class EnchantmentMenuMixin {
-	@Group(name = "enchantValue", min = 1, max = 1)
+	@Group(name = "enchantValue", min = 1, max = 2)
 	@ModifyVariable(method = "m_mpsetdhw", at = @At(value = "STORE", ordinal = 0), ordinal = 0, require = 0, remap = false)
 	private int port_lib$modifyEnchantValueHashed(int obj, ItemStack stack, Level level, BlockPos pos) {
 		return port_lib$modifyEnchantValueImpl(obj, stack, level, pos);
 	}
 
-	@Group(name = "enchantValue", min = 1, max = 1)
+	@Group(name = "enchantValue", min = 1, max = 2)
 	@ModifyVariable(method = "method_17411", at = @At(value = "STORE", ordinal = 0), ordinal = 0, require = 0, remap = false)
 	private int port_lib$modifyEnchantValueIntermediary(int obj, ItemStack stack, Level level, BlockPos pos) {
 		return port_lib$modifyEnchantValueImpl(obj, stack, level, pos);
 	}
 
-	@Group(name = "enchantValue", min = 1, max = 1)
+	@Group(name = "enchantValue", min = 1, max = 2)
 	@ModifyVariable(method = "lambda$slotsChanged$0", at = @At(value = "STORE", ordinal = 0), ordinal = 0, require = 0, remap = false)
 	private int port_lib$modifyEnchantValueMojang(int obj, ItemStack stack, Level level, BlockPos pos) {
 		return port_lib$modifyEnchantValueImpl(obj, stack, level, pos);
