@@ -57,12 +57,13 @@ dependencies {
 	modLocalRuntime("maven.modrinth:suggestionproviderfabric:1.0.1")
 //	modLocalRuntime("mcjty.theoneprobe:theoneprobe-fabric:${top_version}")
 	modLocalRuntime("maven.modrinth:lithium:${project.lithium_version}")
+	modLocalRuntime("maven.modrinth:vmp-fabric:${project.vmp_version}")
 //	modLocalRuntime("maven.modrinth:iris:${project.iris_version}")
 	modLocalRuntime("com.terraformersmc:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
 
 	// dependencies
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
-	modImplementation("io.github.tropheusj:serialization-hooks:0.1.0+1.18.${project.serialization_hooks_hash}")
+	modImplementation(include("io.github.tropheusj:serialization-hooks:0.2.0+1.18.${project.serialization_hooks_hash}"))
 	modApi(include("me.alphamode:ForgeTags:${project.forge_tags_version}"))
 	api(include("com.github.LlamaLad7:MixinExtras:0.0.9"))
 	annotationProcessor(include("com.github.LlamaLad7:MixinExtras:0.0.9"))
