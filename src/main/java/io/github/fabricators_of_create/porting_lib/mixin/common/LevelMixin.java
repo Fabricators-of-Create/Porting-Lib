@@ -13,6 +13,8 @@ import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.BlockEntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.damagesource.DamageSource;
@@ -85,6 +87,9 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 			}
 		}
 	};
+
+	@Unique
+	final Int2ObjectMap<PartEntity<?>> port_lib$multiparts = new Int2ObjectOpenHashMap<>();
 
 	@Shadow
 	public abstract BlockState getBlockState(BlockPos blockPos);
@@ -194,24 +199,16 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		if (ExplosionEvents.START.invoker().onExplosionStart((Level) (Object) this, explosion)) cir.setReturnValue(explosion);
 	}
 
-	// --- adding part entities to getEntities methods ---
-	// inject to tail, capturing the found list of entities.
-	// iterate over them, check if multiparts, add subentities
-
 	@Inject(
 			method = "getEntities(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;",
 			at = @At("TAIL"),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void port_lib$appendPartEntitiesPredicate(@Nullable Entity entity, AABB area, Predicate<? super Entity> predicate, CallbackInfoReturnable<List<Entity>> cir, List<Entity> list) {
-		try {
-			for (PartEntity<?> p : this.getPartEntities()) {
-				if (p != entity && p.getBoundingBox().intersects(area) && predicate.test(p)) {
-					list.add(p);
-				}
+		for (PartEntity<?> p : this.getPartEntities()) {
+			if (p != entity && p.getBoundingBox().intersects(area) && predicate.test(p)) {
+				list.add(p);
 			}
-		} catch (ClassCastException e) {
-			System.out.println("h");
 		}
 	}
 
@@ -221,15 +218,11 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private <T extends Entity> void port_lib$appendPartEntitiesTypeTest(EntityTypeTest<Entity, T> test, AABB area, Predicate<? super T> predicate, CallbackInfoReturnable<List<T>> cir, List<Entity> list) {
-		try {
-			for (PartEntity<?> p : this.getPartEntities()) {
-				T t = test.tryCast(p);
-				if (t != null && t.getBoundingBox().intersects(area) && predicate.test(t)) {
-					list.add(t);
-				}
+		for (PartEntity<?> p : this.getPartEntities()) {
+			T t = test.tryCast(p);
+			if (t != null && t.getBoundingBox().intersects(area) && predicate.test(t)) {
+				list.add(t);
 			}
-		} catch (ClassCastException ex) {
-			System.out.println("h");
 		}
 	}
 
@@ -259,4 +252,8 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		}
 	}
 
+	@Override
+	public Int2ObjectMap<PartEntity<?>> getPartEntityMap() {
+		return port_lib$multiparts;
+	}
 }
