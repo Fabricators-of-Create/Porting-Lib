@@ -12,9 +12,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(RemotePlayer.class)
-public class RemotePlayerMixin {
+public abstract class RemotePlayerMixin {
 	@Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
 	public void port_lib$attackEvent(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-		if(LivingEntityEvents.ATTACK.invoker().onAttack((LivingEntity) (Object) this, source, amount)) cir.setReturnValue(false);
+		if (LivingEntityEvents.ATTACK.invoker().onAttack((LivingEntity) (Object) this, source, amount))
+			cir.setReturnValue(false);
 	}
 }

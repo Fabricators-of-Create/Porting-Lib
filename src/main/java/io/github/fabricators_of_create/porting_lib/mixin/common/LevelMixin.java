@@ -7,6 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
 import io.github.fabricators_of_create.porting_lib.PortingLib;
 import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
@@ -100,6 +103,9 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	@Shadow
 	public abstract ProfilerFiller getProfiler();
 
+	@Shadow
+	public abstract int getDirectSignalTo(BlockPos pos);
+
 	@Override
 	public SnapshotParticipant<LevelSnapshotData> snapshotParticipant() {
 		return port_lib$snapshotParticipant;
@@ -153,17 +159,13 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		}
 	}
 
-	@Inject(method = "getSignal", at = @At("RETURN"), cancellable = true)
-	public void port_lib$getRedstoneSignal(BlockPos blockPos, Direction direction, CallbackInfoReturnable<Integer> cir) {
-		BlockState port_lib$blockstate = MixinHelper.<Level>cast(this).getBlockState(blockPos);
-		int port_lib$i = port_lib$blockstate.getSignal(MixinHelper.<Level>cast(this), blockPos, direction);
-
-		if (port_lib$blockstate.getBlock() instanceof WeakPowerCheckingBlock) {
-			cir.setReturnValue(
-					((WeakPowerCheckingBlock) port_lib$blockstate.getBlock()).shouldCheckWeakPower(port_lib$blockstate, MixinHelper.<Level>cast(this), blockPos, direction)
-							? Math.max(port_lib$i, MixinHelper.<Level>cast(this).getDirectSignalTo(blockPos))
-							: port_lib$i);
-		}
+	@ModifyExpressionValue(method = "getSignal", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;isRedstoneConductor(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z"))
+	public boolean port_lib$getRedstoneSignal(boolean conductor, BlockPos pos, Direction facing) {
+		if (conductor)
+			return true;
+		BlockState state = getBlockState(pos);
+		return state.getBlock() instanceof WeakPowerCheckingBlock checking
+				&& checking.shouldCheckWeakPower(state, this, pos, facing);
 	}
 
 	@Inject(

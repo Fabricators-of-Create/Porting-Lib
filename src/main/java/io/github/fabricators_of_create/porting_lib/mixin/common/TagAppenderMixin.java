@@ -6,5 +6,5 @@ import net.minecraft.data.tags.TagsProvider;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(TagsProvider.TagAppender.class)
-public class TagAppenderMixin<T> implements TagAppenderExtensions<T> {
+public abstract class TagAppenderMixin<T> implements TagAppenderExtensions<T> {
 }

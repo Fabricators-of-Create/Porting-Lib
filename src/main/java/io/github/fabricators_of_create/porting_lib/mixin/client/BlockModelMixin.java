@@ -55,10 +55,6 @@ public abstract class BlockModelMixin implements BlockModelExtensions {
 	public String name;
 
 	@Shadow
-	@Nullable
-	public ResourceLocation parentLocation;
-
-	@Shadow
 	@Final
 	private List<ItemOverride> overrides;
 
@@ -67,9 +63,6 @@ public abstract class BlockModelMixin implements BlockModelExtensions {
 
 	@Shadow
 	public abstract Material getMaterial(String name);
-
-	@Shadow
-	public abstract List<BlockElement> getElements();
 
 	@Unique
 	@Override

@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(SugarCaneBlock.class)
-public class SugarCaneBlockMixin extends Block implements IPlantable {
+public abstract class SugarCaneBlockMixin extends Block implements IPlantable {
 	public SugarCaneBlockMixin(Properties properties) {
 		super(properties);
 	}

@@ -6,5 +6,5 @@ import net.minecraft.client.particle.Particle;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(Particle.class)
-public class ParticleMixin implements ParticleExtensions {
+public abstract class ParticleMixin implements ParticleExtensions {
 }

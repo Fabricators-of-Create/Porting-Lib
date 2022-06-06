@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(PersistentEntitySectionManager.Callback.class)
-public class PersistentEntitySectionManager$CallbackMixin {
+public abstract class PersistentEntitySectionManager$CallbackMixin {
 	@Shadow
 	private long currentSectionKey;
 

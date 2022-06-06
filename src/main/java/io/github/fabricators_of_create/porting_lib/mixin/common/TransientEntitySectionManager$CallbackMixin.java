@@ -1,7 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import net.minecraft.world.level.entity.PersistentEntitySectionManager;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -18,7 +16,7 @@ import net.minecraft.world.level.entity.EntitySection;
 import net.minecraft.world.level.entity.TransientEntitySectionManager;
 
 @Mixin(TransientEntitySectionManager.Callback.class)
-public class TransientEntitySectionManager$CallbackMixin {
+public abstract class TransientEntitySectionManager$CallbackMixin {
 	@Shadow
 	private long currentSectionKey;
 

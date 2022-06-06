@@ -12,9 +12,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(BowItem.class)
-public class BowItemMixin {
+public abstract class BowItemMixin {
 	@ModifyVariable(method = "releaseUsing", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/item/ArrowItem;createArrow(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/entity/projectile/AbstractArrow;"))
-	public AbstractArrow customArrowTest(AbstractArrow oldArrow){
+	public AbstractArrow customArrowTest(AbstractArrow oldArrow) {
 		Item bowItem = oldArrow.getOwner() instanceof Player owner ? owner.getMainHandItem().getItem() : null;
 
 		if(bowItem != null) {

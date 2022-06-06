@@ -17,10 +17,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Optional;
 
 @Mixin(ExplosionDamageCalculator.class)
-public class ExplosionDamageCalculatorMixin {
+public abstract class ExplosionDamageCalculatorMixin {
 	@Inject(method = "getBlockExplosionResistance", at = @At("HEAD"), cancellable = true)
 	public void port_lib$explosionBlock(Explosion explosion, BlockGetter reader, BlockPos pos, BlockState state, FluidState fluid, CallbackInfoReturnable<Optional<Float>> cir) {
 		if (state.getBlock() instanceof ExplosionResistanceBlock resistanceBlock)
-			cir.setReturnValue(state.isAir() && fluid.isEmpty() ? Optional.empty() : Optional.of(Math.max(resistanceBlock.getExplosionResistance(state, reader, pos, explosion), fluid.getExplosionResistance())));
+			cir.setReturnValue(state.isAir() && fluid.isEmpty()
+					? Optional.empty()
+					: Optional.of(Math.max(resistanceBlock.getExplosionResistance(state, reader, pos, explosion), fluid.getExplosionResistance())));
 	}
 }
