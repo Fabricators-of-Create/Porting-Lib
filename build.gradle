@@ -16,6 +16,11 @@ archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
+ext.buildNumber = System.getenv('GITHUB_RUN_NUMBER')
+def patch = buildNumber != null ? buildNumber : '99999'
+
+version = version.replace("<patch>", patch)
+
 if (grgit != null) {
 	version += "+${grgit.getBranch().current().name}.${grgit.head().abbreviatedId}"
 } else {
