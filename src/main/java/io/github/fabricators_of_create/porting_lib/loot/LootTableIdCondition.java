@@ -12,7 +12,6 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
 public class LootTableIdCondition implements LootItemCondition {
-	// TODO Forge Registry at some point?
 	public static final LootItemConditionType LOOT_TABLE_ID = new LootItemConditionType(new Serializer());
 	public static final ResourceLocation UNKNOWN_LOOT_TABLE = PortingLib.id("unknown_loot_table");
 
