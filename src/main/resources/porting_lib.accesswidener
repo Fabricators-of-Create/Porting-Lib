@@ -60,3 +60,5 @@ transitive-accessible field net/minecraft/client/gui/MapRenderer MAP_ICONS Lnet/
 transitive-accessible class net/minecraft/server/MinecraftServer$ReloadableResources
 
 transitive-accessible field net/minecraft/data/tags/TagsProvider$TagAppender registry Lnet/minecraft/core/Registry;
+
+transitive-accessible field net/minecraft/world/entity/LivingEntity effectsDirty Z

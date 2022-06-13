@@ -4,6 +4,8 @@ import net.minecraft.core.BlockPos;
 
 import net.minecraft.sounds.SoundEvent;
 
+import net.minecraft.world.effect.MobEffectInstance;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
@@ -24,4 +26,7 @@ public interface LivingEntityAccessor {
 
 	@Invoker("getDeathSound")
 	SoundEvent port_lib$getDeathSound();
+
+	@Invoker("onEffectRemoved")
+	void port_lib$onEffectRemoved(MobEffectInstance effect);
 }
