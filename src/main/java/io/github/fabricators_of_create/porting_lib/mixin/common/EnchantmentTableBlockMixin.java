@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.EnchantmentTableBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 @Mixin(EnchantmentTableBlock.class)
-public class EnchantmentTableBlockMixin {
+public abstract class EnchantmentTableBlockMixin {
 
 	@Inject(method = "animateTick", at = @At(value = "INVOKE", target = "Ljava/util/Random;nextInt(I)I"), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void port_lib$particles(BlockState state, Level level, BlockPos pos, Random random, CallbackInfo ci, Iterator var5, BlockPos blockPos) {

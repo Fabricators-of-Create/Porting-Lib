@@ -1,5 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import net.minecraft.world.level.block.Blocks;
+
+import net.minecraft.world.level.block.state.BlockState;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -11,7 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 
 @Mixin(Camera.class)
-public class CameraMixin implements CameraExtensions {
+public abstract class CameraMixin implements CameraExtensions {
 	@Shadow
 	private float yRot;
 
@@ -37,9 +41,9 @@ public class CameraMixin implements CameraExtensions {
 
 	@Unique
 	@Override
-	public net.minecraft.world.level.block.state.BlockState getBlockAtCamera() {
+	public BlockState getBlockAtCamera() {
 		if (!this.initialized)
-			return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
+			return Blocks.AIR.defaultBlockState();
 		else
 			return this.level.getBlockState(this.blockPosition);
 	}

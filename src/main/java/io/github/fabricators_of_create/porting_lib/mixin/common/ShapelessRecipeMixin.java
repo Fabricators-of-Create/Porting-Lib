@@ -20,7 +20,7 @@ import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.level.Level;
 
 @Mixin(ShapelessRecipe.class)
-public class ShapelessRecipeMixin {
+public abstract class ShapelessRecipeMixin {
 // todo: reevaluate existence
 //	@Shadow
 //	@Final

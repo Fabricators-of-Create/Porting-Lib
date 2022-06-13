@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 @Mixin(FireBlock.class)
-public class FireBlockMixin {
+public abstract class FireBlockMixin {
 	@Inject(
 			method = "checkBurnOut",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getBlock()Lnet/minecraft/world/level/block/Block;"),

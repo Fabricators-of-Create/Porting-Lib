@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(I18n.class)
-public class I18nMixin {
+public abstract class I18nMixin {
 	@Inject(method = "setLanguage", at = @At("TAIL"))
 	private static void port_lib$setLanguage(Language language, CallbackInfo ci) {
 		if (language instanceof ClientLanguage clientLanguage)

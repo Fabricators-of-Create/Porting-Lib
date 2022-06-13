@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EnchantmentTableBlock;
 
 @Mixin(EnchantmentMenu.class)
-public class EnchantmentMenuMixin {
+public abstract class EnchantmentMenuMixin {
 	@ModifyVariable(
 			method = { "m_mpsetdhw", "method_17411", "lambda$slotsChanged$0" },
 			at = @At(value = "STORE", ordinal = 0), ordinal = 0, remap = false

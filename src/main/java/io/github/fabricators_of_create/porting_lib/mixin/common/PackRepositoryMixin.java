@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Set;
 
 @Mixin(PackRepository.class)
-public class PackRepositoryMixin {
+public abstract class PackRepositoryMixin {
 	@Shadow
 	@Final
 	private Set<RepositorySource> sources;

@@ -1,11 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
-import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
 import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientBlockApiCache;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.minecraft.core.BlockPos;
 
@@ -41,9 +38,6 @@ public abstract class ClientLevelMixin implements ClientLevelExtensions, LevelEx
 	public void port_lib$init(CallbackInfo ci) {
 		ClientWorldEvents.LOAD.invoker().onWorldLoad(minecraft, MixinHelper.cast(this));
 	}
-
-	@Unique
-	private final Int2ObjectMap<PartEntity<?>> port_lib$partEntities = new Int2ObjectOpenHashMap<>();
 
 	// lookup stuff, from FAPI
 
@@ -91,10 +85,5 @@ public abstract class ClientLevelMixin implements ClientLevelExtensions, LevelEx
 		caches.removeIf(weakReference -> weakReference.get() == null);
 		caches.add(new WeakReference<>(cache));
 		port_lib$apiLookupAccessesWithoutCleanup++;
-	}
-
-	@Override
-	public Int2ObjectMap<PartEntity<?>> getPartEntityMap() {
-		return port_lib$partEntities;
 	}
 }

@@ -7,12 +7,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
 import io.github.fabricators_of_create.porting_lib.PortingLib;
 import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.BlockEntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.damagesource.DamageSource;
@@ -86,6 +91,9 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		}
 	};
 
+	@Unique
+	final Int2ObjectMap<PartEntity<?>> port_lib$multiparts = new Int2ObjectOpenHashMap<>();
+
 	@Shadow
 	public abstract BlockState getBlockState(BlockPos blockPos);
 
@@ -94,6 +102,9 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 
 	@Shadow
 	public abstract ProfilerFiller getProfiler();
+
+	@Shadow
+	public abstract int getDirectSignalTo(BlockPos pos);
 
 	@Override
 	public SnapshotParticipant<LevelSnapshotData> snapshotParticipant() {
@@ -148,17 +159,13 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		}
 	}
 
-	@Inject(method = "getSignal", at = @At("RETURN"), cancellable = true)
-	public void port_lib$getRedstoneSignal(BlockPos blockPos, Direction direction, CallbackInfoReturnable<Integer> cir) {
-		BlockState port_lib$blockstate = MixinHelper.<Level>cast(this).getBlockState(blockPos);
-		int port_lib$i = port_lib$blockstate.getSignal(MixinHelper.<Level>cast(this), blockPos, direction);
-
-		if (port_lib$blockstate.getBlock() instanceof WeakPowerCheckingBlock) {
-			cir.setReturnValue(
-					((WeakPowerCheckingBlock) port_lib$blockstate.getBlock()).shouldCheckWeakPower(port_lib$blockstate, MixinHelper.<Level>cast(this), blockPos, direction)
-							? Math.max(port_lib$i, MixinHelper.<Level>cast(this).getDirectSignalTo(blockPos))
-							: port_lib$i);
-		}
+	@ModifyExpressionValue(method = "getSignal", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;isRedstoneConductor(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z"))
+	public boolean port_lib$getRedstoneSignal(boolean conductor, BlockPos pos, Direction facing) {
+		if (conductor)
+			return true;
+		BlockState state = getBlockState(pos);
+		return state.getBlock() instanceof WeakPowerCheckingBlock checking
+				&& checking.shouldCheckWeakPower(state, this, pos, facing);
 	}
 
 	@Inject(
@@ -194,24 +201,16 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		if (ExplosionEvents.START.invoker().onExplosionStart((Level) (Object) this, explosion)) cir.setReturnValue(explosion);
 	}
 
-	// --- adding part entities to getEntities methods ---
-	// inject to tail, capturing the found list of entities.
-	// iterate over them, check if multiparts, add subentities
-
 	@Inject(
 			method = "getEntities(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;",
 			at = @At("TAIL"),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void port_lib$appendPartEntitiesPredicate(@Nullable Entity entity, AABB area, Predicate<? super Entity> predicate, CallbackInfoReturnable<List<Entity>> cir, List<Entity> list) {
-		try {
-			for (PartEntity<?> p : this.getPartEntities()) {
-				if (p != entity && p.getBoundingBox().intersects(area) && predicate.test(p)) {
-					list.add(p);
-				}
+		for (PartEntity<?> p : this.getPartEntities()) {
+			if (p != entity && p.getBoundingBox().intersects(area) && predicate.test(p)) {
+				list.add(p);
 			}
-		} catch (ClassCastException e) {
-			System.out.println("h");
 		}
 	}
 
@@ -221,15 +220,11 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private <T extends Entity> void port_lib$appendPartEntitiesTypeTest(EntityTypeTest<Entity, T> test, AABB area, Predicate<? super T> predicate, CallbackInfoReturnable<List<T>> cir, List<Entity> list) {
-		try {
-			for (PartEntity<?> p : this.getPartEntities()) {
-				T t = test.tryCast(p);
-				if (t != null && t.getBoundingBox().intersects(area) && predicate.test(t)) {
-					list.add(t);
-				}
+		for (PartEntity<?> p : this.getPartEntities()) {
+			T t = test.tryCast(p);
+			if (t != null && t.getBoundingBox().intersects(area) && predicate.test(t)) {
+				list.add(t);
 			}
-		} catch (ClassCastException ex) {
-			System.out.println("h");
 		}
 	}
 
@@ -259,4 +254,8 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		}
 	}
 
+	@Override
+	public Int2ObjectMap<PartEntity<?>> getPartEntityMap() {
+		return port_lib$multiparts;
+	}
 }

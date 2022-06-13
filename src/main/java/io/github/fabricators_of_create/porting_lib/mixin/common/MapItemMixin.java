@@ -12,7 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 @Mixin(MapItem.class)
-public class MapItemMixin {
+public abstract class MapItemMixin {
 	@Inject(
 			method = "getSavedData(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;)Lnet/minecraft/world/level/saveddata/maps/MapItemSavedData;",
 			at = @At("HEAD"),

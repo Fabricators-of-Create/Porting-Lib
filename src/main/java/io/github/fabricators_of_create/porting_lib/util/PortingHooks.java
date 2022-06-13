@@ -102,6 +102,5 @@ public class PortingHooks {
 				blockItem.removeFromBlockToItemMap(Item.BY_BLOCK, item);
 			}
 		});
-		Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:can_tool_perform_action"), CanToolPerformAction.LOOT_CONDITION_TYPE);
 	}
 }

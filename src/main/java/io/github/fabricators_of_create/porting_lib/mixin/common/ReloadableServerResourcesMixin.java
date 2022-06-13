@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ReloadableServerResources.class)
-public class ReloadableServerResourcesMixin {
+public abstract class ReloadableServerResourcesMixin {
 	@Inject(method = "updateRegistryTags(Lnet/minecraft/core/RegistryAccess;)V", at = @At("TAIL"))
 	public void port_lib$updateTags(RegistryAccess dynamicRegistryManager, CallbackInfo ci) {
 		TagsUpdatedCallback.EVENT.invoker().onTagsUpdated(dynamicRegistryManager);

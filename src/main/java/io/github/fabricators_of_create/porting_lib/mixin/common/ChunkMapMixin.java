@@ -18,10 +18,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ChunkMap.class)
-public class ChunkMapMixin {
+public abstract class ChunkMapMixin {
 	@Shadow
 	@Final
-	private ServerLevel level;
+	ServerLevel level;
 
 	@Inject(method = "updateChunkTracking", at = @At(value = "JUMP", opcode = Opcodes.IFEQ))
 	public void port_lib$startTrackingChunk(ServerPlayer player, ChunkPos chunkPos, MutableObject<ClientboundLevelChunkWithLightPacket> packetCache, boolean wasLoaded, boolean load, CallbackInfo ci) {

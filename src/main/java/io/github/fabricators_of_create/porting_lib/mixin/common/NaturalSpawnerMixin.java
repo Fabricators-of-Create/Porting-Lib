@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(NaturalSpawner.class)
-public class NaturalSpawnerMixin {
+public abstract class NaturalSpawnerMixin {
 	@Inject(
 			method = "isSpawnPositionOk",
 			at = @At(

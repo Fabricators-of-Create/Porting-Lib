@@ -6,5 +6,5 @@ import net.minecraft.world.level.saveddata.maps.MapDecoration;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(MapDecoration.class)
-public class MapDecorationMixin implements MapDecorationExtensions {
+public abstract class MapDecorationMixin implements MapDecorationExtensions {
 }

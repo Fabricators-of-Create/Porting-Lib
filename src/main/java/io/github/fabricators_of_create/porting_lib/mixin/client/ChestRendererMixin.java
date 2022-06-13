@@ -25,10 +25,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 
 @Mixin(ChestRenderer.class)
-public class ChestRendererMixin<T extends BlockEntity & LidBlockEntity> {
+public abstract class ChestRendererMixin<T extends BlockEntity & LidBlockEntity> {
 
 	@Unique
-	private Material customMaterial = null;
+	private Material port_lib$customMaterial = null;
 
 	@Inject(
 			method = "render(Lnet/minecraft/world/level/block/entity/BlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
@@ -37,7 +37,7 @@ public class ChestRendererMixin<T extends BlockEntity & LidBlockEntity> {
 	)
 	public void port_lib$customChestMaterial(BlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, CallbackInfo ci, Level level, boolean bl, BlockState blockState, ChestType chestType) {
 		if(this instanceof MaterialChest materialChest)
-			customMaterial = materialChest.getMaterial(blockEntity, chestType);
+			port_lib$customMaterial = materialChest.getMaterial(blockEntity, chestType);
 	}
 
 	@ModifyReceiver(
@@ -45,6 +45,6 @@ public class ChestRendererMixin<T extends BlockEntity & LidBlockEntity> {
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/model/Material;buffer(Lnet/minecraft/client/renderer/MultiBufferSource;Ljava/util/function/Function;)Lcom/mojang/blaze3d/vertex/VertexConsumer;")
 	)
 	public Material port_lib$customMaterial(Material old, MultiBufferSource buffer, Function<ResourceLocation, RenderType> renderTypeGetter) {
-		return customMaterial != null ? customMaterial : old;
+		return port_lib$customMaterial != null ? port_lib$customMaterial : old;
 	}
 }

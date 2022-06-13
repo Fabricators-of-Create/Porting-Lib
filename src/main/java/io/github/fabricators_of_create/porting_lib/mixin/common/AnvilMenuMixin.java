@@ -5,6 +5,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import net.minecraft.world.inventory.AnvilMenu;
 
 @Mixin(AnvilMenu.class)
-public class AnvilMenuMixin {
-
+public abstract class AnvilMenuMixin {
+	// thank you alpha very cool
 }
