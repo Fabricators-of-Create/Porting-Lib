@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.model;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -35,8 +36,7 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 
-public class CompositeModel implements BakedModel, FabricBakedModel, TransformTypeDependentItemBakedModel
-{
+public class CompositeModel implements BakedModel, FabricBakedModel, TransformTypeDependentItemBakedModel {
 	private final ImmutableMap<String, BakedModel> bakedParts;
 	private final boolean isAmbientOcclusion;
 	private final boolean isGui3d;
@@ -45,8 +45,7 @@ public class CompositeModel implements BakedModel, FabricBakedModel, TransformTy
 	private final ItemOverrides overrides;
 	private final ModelState transforms;
 
-	public CompositeModel(boolean isGui3d, boolean isSideLit, boolean isAmbientOcclusion, TextureAtlasSprite particle, ImmutableMap<String, BakedModel> bakedParts, ModelState combinedTransform, ItemOverrides overrides)
-	{
+	public CompositeModel(boolean isGui3d, boolean isSideLit, boolean isAmbientOcclusion, TextureAtlasSprite particle, ImmutableMap<String, BakedModel> bakedParts, ModelState combinedTransform, ItemOverrides overrides) {
 		this.bakedParts = bakedParts;
 		this.isAmbientOcclusion = isAmbientOcclusion;
 		this.isGui3d = isGui3d;
@@ -70,7 +69,7 @@ public class CompositeModel implements BakedModel, FabricBakedModel, TransformTy
 
 	@Override
 	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand) {
-		return null;
+		return Lists.newArrayList();
 	}
 
 	@Override
