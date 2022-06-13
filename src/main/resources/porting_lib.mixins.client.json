@@ -45,6 +45,7 @@
     "RemotePlayerMixin",
     "RenderTargetMixin",
     "ScreenMixin",
+    "SkullBlockRendererMixin",
     "ShaderInstanceMixin",
     "TextureAtlasMixin",
     "TextureAtlasSpriteMixin",
