@@ -4,9 +4,14 @@ import javax.annotation.Nullable;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 
+/**
+ * Use {@link ServerLifecycleEvents.SyncDataPackContents}
+ * */
+@Deprecated(forRemoval = true)
 @FunctionalInterface
 public interface OnDatapackSyncCallback {
 	Event<OnDatapackSyncCallback> EVENT = EventFactory.createArrayBacked(OnDatapackSyncCallback.class, callbacks -> ((playerList, player) -> {
