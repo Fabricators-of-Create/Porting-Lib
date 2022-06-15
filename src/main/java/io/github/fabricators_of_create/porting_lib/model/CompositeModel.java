@@ -69,7 +69,7 @@ public class CompositeModel implements BakedModel, FabricBakedModel, TransformTy
 
 	@Override
 	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand) {
-		return Lists.newArrayList();
+		return List.of();
 	}
 
 	@Override
