@@ -464,15 +464,14 @@ public class TransferUtil {
 	 * Try to extract any FluidStack possible from a Storage.
 	 * @return the extracted FluidStack, or EMPTY if none.
 	 */
-	public static FluidStack extractAnyFluid(Storage<FluidVariant> storage, long maxAmount) {
+	public static FluidStack extractAnyFluid(Storage<FluidVariant> storage, long maxAmount, Transaction tx) {
 		FluidStack fluid = FluidStack.EMPTY;
 		if (!storage.supportsExtraction()) return fluid;
-		try (Transaction t = getTransaction()) {
-			for (StorageView<FluidVariant> view : storage.iterable(t)) {
+			for (StorageView<FluidVariant> view : storage.iterable(tx)) {
 				if (!view.isResourceBlank()) {
 					FluidVariant var = view.getResource();
 					long amount = Math.min(maxAmount, view.getAmount());
-					long extracted = view.extract(var, amount, t);
+					long extracted = view.extract(var, amount, tx);
 					maxAmount -= extracted;
 					if (fluid.isEmpty()) {
 						fluid = new FluidStack(var, extracted);
@@ -483,7 +482,17 @@ public class TransferUtil {
 						break;
 				}
 			}
-			t.commit();
+			return fluid;
+	}
+
+	/**
+	 * Try to extract any FluidStack possible from a Storage.
+	 * @return the extracted FluidStack, or EMPTY if none.
+	 */
+	public static FluidStack extractAnyFluid(Storage<FluidVariant> storage, long maxAmount) {
+		try (Transaction tx = getTransaction()) {
+			FluidStack fluid = extractAnyFluid(storage, maxAmount, tx);
+			tx.commit();
 			return fluid;
 		}
 	}
@@ -493,75 +502,47 @@ public class TransferUtil {
 	 * @return the extracted FluidStack, or EMPTY if none.
 	 */
 	public static FluidStack simulateExtractAnyFluid(Storage<FluidVariant> storage, long maxAmount) {
-		FluidStack fluid = FluidStack.EMPTY;
-		if (!storage.supportsExtraction()) return fluid;
 		try (Transaction t = getTransaction()) {
-			for (StorageView<FluidVariant> view : storage.iterable(t)) {
-				if (!view.isResourceBlank()) {
-					FluidVariant var = view.getResource();
-					long amount = Math.min(maxAmount, view.getAmount());
-					long extracted = view.extract(var, amount, t);
-					maxAmount -= extracted;
-					if (fluid.isEmpty()) {
-						fluid = new FluidStack(var, extracted);
-					} else if (fluid.canFill(var)) {
-						fluid.grow(extracted);
-					}
-					if (maxAmount == 0)
-						break;
-				}
-			}
-			return fluid;
+			return extractAnyFluid(storage, maxAmount, t);
 		}
 	}
 
 	/** @see TransferUtil#extractAnyFluid(Storage, long) */
-	public static ItemStack extractAnyItem(Storage<ItemVariant> storage, long maxAmount) {
+	public static ItemStack extractAnyItem(Storage<ItemVariant> storage, long maxAmount, Transaction tx) {
 		ItemStack stack = ItemStack.EMPTY;
 		if (!storage.supportsExtraction()) return stack;
-		try (Transaction t = getTransaction()) {
-			for (StorageView<ItemVariant> view : storage.iterable(t)) {
-				if (!view.isResourceBlank()) {
-					ItemVariant var = view.getResource();
-					long amount = Math.min(var.getItem().getMaxStackSize(), Math.min(maxAmount, view.getAmount()));
-					long extracted = view.extract(var, amount, t);
-					maxAmount -= extracted;
-					if (stack.isEmpty()) {
-						stack = var.toStack((int) extracted);
-					} else if (var.matches(stack)) {
-						stack.grow((int) extracted);
-					}
-					if (maxAmount == 0)
-						break;
+		for (StorageView<ItemVariant> view : storage.iterable(tx)) {
+			if (!view.isResourceBlank()) {
+				ItemVariant var = view.getResource();
+				long amount = Math.min(var.getItem().getMaxStackSize(), Math.min(maxAmount, view.getAmount()));
+				long extracted = view.extract(var, amount, tx);
+				maxAmount -= extracted;
+				if (stack.isEmpty()) {
+					stack = var.toStack((int) extracted);
+				} else if (var.matches(stack)) {
+					stack.grow((int) extracted);
 				}
+				if (maxAmount == 0)
+					break;
 			}
-			t.commit();
+		}
+		tx.commit();
+		return stack;
+	}
+
+	/** @see TransferUtil#extractAnyFluid(Storage, long) */
+	public static ItemStack extractAnyItem(Storage<ItemVariant> storage, long maxAmount) {
+		try (Transaction tx = getTransaction()) {
+			ItemStack stack = extractAnyItem(storage, maxAmount, tx);
+			tx.commit();
 			return stack;
 		}
 	}
 
 	/** @see TransferUtil#simulateExtractAnyFluid(Storage, long) (Storage, long) */
 	public static ItemStack simulateExtractAnyItem(Storage<ItemVariant> storage, long maxAmount) {
-		ItemStack stack = ItemStack.EMPTY;
-		if (!storage.supportsExtraction()) return stack;
-		try (Transaction t = getTransaction()) {
-			for (StorageView<ItemVariant> view : storage.iterable(t)) {
-				if (!view.isResourceBlank()) {
-					ItemVariant var = view.getResource();
-					long amount = Math.min(var.getItem().getMaxStackSize(), Math.min(maxAmount, view.getAmount()));
-					long extracted = view.extract(var, amount, t);
-					maxAmount -= extracted;
-					if (stack.isEmpty()) {
-						stack = var.toStack((int) extracted);
-					} else if (var.matches(stack)) {
-						stack.grow((int) extracted);
-					}
-					if (maxAmount == 0)
-						break;
-				}
-			}
-			t.commit();
-			return stack;
+		try (Transaction tx = getTransaction()) {
+			return extractAnyItem(storage, maxAmount, tx);
 		}
 	}
 
