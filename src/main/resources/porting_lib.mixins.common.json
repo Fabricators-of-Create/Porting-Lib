@@ -106,6 +106,7 @@
     "accessor.AbstractMinecartAccessor",
     "accessor.AbstractProjectileDispenseBehaviorAccessor",
     "accessor.ArrayVoxelShapeAccessor",
+    "accessor.AxeItemAccessor",
     "accessor.BaseSpawnerAccessor",
     "accessor.BeaconBlockEntityAccessor",
     "accessor.BiomeManagerAccessor",
