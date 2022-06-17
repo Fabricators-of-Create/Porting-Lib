@@ -64,3 +64,6 @@ transitive-accessible field net/minecraft/data/tags/TagsProvider$TagAppender reg
 transitive-accessible field net/minecraft/world/entity/LivingEntity effectsDirty Z
 
 transitive-accessible field net/minecraft/world/item/AxeItem STRIPPABLES Ljava/util/Map;
+
+transitive-accessible class net/minecraft/client/gui/components/CommandSuggestions$SuggestionsList
+transitive-accessible method net/minecraft/client/gui/components/CommandSuggestions$SuggestionsList <init> (IIILjava/util/List;Z)V
