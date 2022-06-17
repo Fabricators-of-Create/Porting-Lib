@@ -488,8 +488,60 @@ public class TransferUtil {
 		}
 	}
 
+	/**
+	 * Try to extract any FluidStack possible from a Storage without affecting the actual storage contents.
+	 * @return the extracted FluidStack, or EMPTY if none.
+	 */
+	public static FluidStack simulateExtractAnyFluid(Storage<FluidVariant> storage, long maxAmount) {
+		FluidStack fluid = FluidStack.EMPTY;
+		if (!storage.supportsExtraction()) return fluid;
+		try (Transaction t = getTransaction()) {
+			for (StorageView<FluidVariant> view : storage.iterable(t)) {
+				if (!view.isResourceBlank()) {
+					FluidVariant var = view.getResource();
+					long amount = Math.min(maxAmount, view.getAmount());
+					long extracted = view.extract(var, amount, t);
+					maxAmount -= extracted;
+					if (fluid.isEmpty()) {
+						fluid = new FluidStack(var, extracted);
+					} else if (fluid.canFill(var)) {
+						fluid.grow(extracted);
+					}
+					if (maxAmount == 0)
+						break;
+				}
+			}
+			return fluid;
+		}
+	}
+
 	/** @see TransferUtil#extractAnyFluid(Storage, long) */
 	public static ItemStack extractAnyItem(Storage<ItemVariant> storage, long maxAmount) {
+		ItemStack stack = ItemStack.EMPTY;
+		if (!storage.supportsExtraction()) return stack;
+		try (Transaction t = getTransaction()) {
+			for (StorageView<ItemVariant> view : storage.iterable(t)) {
+				if (!view.isResourceBlank()) {
+					ItemVariant var = view.getResource();
+					long amount = Math.min(var.getItem().getMaxStackSize(), Math.min(maxAmount, view.getAmount()));
+					long extracted = view.extract(var, amount, t);
+					maxAmount -= extracted;
+					if (stack.isEmpty()) {
+						stack = var.toStack((int) extracted);
+					} else if (var.matches(stack)) {
+						stack.grow((int) extracted);
+					}
+					if (maxAmount == 0)
+						break;
+				}
+			}
+			t.commit();
+			return stack;
+		}
+	}
+
+	/** @see TransferUtil#simulateExtractAnyFluid(Storage, long) (Storage, long) */
+	public static ItemStack simulateExtractAnyItem(Storage<ItemVariant> storage, long maxAmount) {
 		ItemStack stack = ItemStack.EMPTY;
 		if (!storage.supportsExtraction()) return stack;
 		try (Transaction t = getTransaction()) {
