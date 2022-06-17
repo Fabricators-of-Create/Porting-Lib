@@ -335,7 +335,8 @@ public class TransferUtil {
 	public static <T> List<Long> capacities(Storage<T> storage, int cutoff) {
 		List<Long> capacities = new ArrayList<>();
 		try (Transaction t = getTransaction()) {
-			for (StorageView<T> view : storage.iterable(t)) {
+			for (Iterator<StorageView<T>> it = storage.iterator(); it.hasNext(); ) {
+				StorageView<T> view = it.next();
 				capacities.add(view.getCapacity());
 				if (capacities.size() == cutoff)
 					break;
@@ -375,7 +376,8 @@ public class TransferUtil {
 	public static List<FluidStack> getFluids(Storage<FluidVariant> storage, int cutoff) {
 		List<FluidStack> stacks = new ArrayList<>();
 		try (Transaction t = getTransaction()) {
-			for (StorageView<FluidVariant> view : storage.iterable(t)) {
+			for (Iterator<StorageView<FluidVariant>> it = storage.iterator(); it.hasNext(); ) {
+				StorageView<FluidVariant> view = it.next();
 				if (!view.isResourceBlank()) {
 					stacks.add(new FluidStack(view));
 				}
@@ -400,7 +402,8 @@ public class TransferUtil {
 	public static List<ItemStack> getItems(Storage<ItemVariant> storage, int cutoff) {
 		List<ItemStack> stacks = new ArrayList<>();
 		try (Transaction t = getTransaction()) {
-			for (StorageView<ItemVariant> view : storage.iterable(t)) {
+			for (Iterator<StorageView<ItemVariant>> it = storage.iterator(); it.hasNext(); ) {
+				StorageView<ItemVariant> view = it.next();
 				if (!view.isResourceBlank()) {
 					long contained = view.getAmount();
 					ItemVariant item = view.getResource();
@@ -430,7 +433,7 @@ public class TransferUtil {
 		}
 		boolean success = true;
 		try (Transaction t = getTransaction()) {
-			Iterator<? extends StorageView<T>> itr = storage.iterator(t);
+			Iterator<? extends StorageView<T>> itr = storage.iterator();
 			StorageView<T> currentView = itr.hasNext() ? itr.next() : null;
 			int attempts = 0;
 			while (currentView != null) {
@@ -467,7 +470,8 @@ public class TransferUtil {
 	public static FluidStack extractAnyFluid(Storage<FluidVariant> storage, long maxAmount, Transaction tx) {
 		FluidStack fluid = FluidStack.EMPTY;
 		if (!storage.supportsExtraction()) return fluid;
-		for (StorageView<FluidVariant> view : storage.iterable(tx)) {
+		for (Iterator<StorageView<FluidVariant>> it = storage.iterator(); it.hasNext(); ) {
+			StorageView<FluidVariant> view = it.next();
 			if (!view.isResourceBlank()) {
 				FluidVariant var = view.getResource();
 				long amount = Math.min(maxAmount, view.getAmount());
@@ -511,7 +515,8 @@ public class TransferUtil {
 	public static ItemStack extractAnyItem(Storage<ItemVariant> storage, long maxAmount, Transaction tx) {
 		ItemStack stack = ItemStack.EMPTY;
 		if (!storage.supportsExtraction()) return stack;
-		for (StorageView<ItemVariant> view : storage.iterable(tx)) {
+		for (Iterator<StorageView<ItemVariant>> it = storage.iterator(); it.hasNext(); ) {
+			StorageView<ItemVariant> view = it.next();
 			if (!view.isResourceBlank()) {
 				ItemVariant var = view.getResource();
 				long amount = Math.min(var.getItem().getMaxStackSize(), Math.min(maxAmount, view.getAmount()));
@@ -617,7 +622,7 @@ public class TransferUtil {
 		List<ItemStack> stacks = new ArrayList<>();
 		if (!storage.supportsExtraction()) return stacks;
 		try (Transaction t = getTransaction()) {
-			Iterator<? extends StorageView<ItemVariant>> itr = storage.iterator(t);
+			Iterator<? extends StorageView<ItemVariant>> itr = storage.iterator();
 			StorageView<ItemVariant> currentView = itr.hasNext() ? itr.next() : null;
 			while (currentView != null) {
 				if (currentView.isResourceBlank()) {

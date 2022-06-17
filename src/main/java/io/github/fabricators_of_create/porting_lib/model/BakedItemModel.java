@@ -1,7 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.model;
 
 import java.util.List;
-import java.util.Random;
 
 import javax.annotation.Nullable;
 
@@ -19,6 +18,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class BakedItemModel implements BakedModel, TransformTypeDependentItemBakedModel {
@@ -59,7 +59,7 @@ public class BakedItemModel implements BakedModel, TransformTypeDependentItemBak
 	@Override public ItemOverrides getOverrides() { return overrides; }
 
 	@Override
-	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
+	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand)
 	{
 		if (side == null)
 		{
@@ -92,7 +92,7 @@ public class BakedItemModel implements BakedModel, TransformTypeDependentItemBak
 		}
 
 		@Override
-		public List<BakedQuad> getQuads (@Nullable BlockState state, @Nullable Direction side, Random rand) {
+		public List<BakedQuad> getQuads (@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
 			if(side == null) {
 				return quads;
 			}

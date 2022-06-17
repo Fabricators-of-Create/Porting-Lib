@@ -1,29 +1,30 @@
 package io.github.fabricators_of_create.porting_lib.model;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.math.Transformation;
 
 import io.github.fabricators_of_create.porting_lib.render.LayeredBakedModel;
 import io.github.fabricators_of_create.porting_lib.render.TransformTypeDependentItemBakedModel;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
-import com.mojang.math.Transformation;
-
-import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class ItemMultiLayerBakedModel implements BakedModel, TransformTypeDependentItemBakedModel, LayeredBakedModel {
 	private final boolean smoothLighting;
@@ -49,7 +50,7 @@ public class ItemMultiLayerBakedModel implements BakedModel, TransformTypeDepend
 	}
 
 	@Override
-	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
+	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand)
 	{
 		List<BakedQuad> quads = Lists.newArrayList();
 		layerModels.forEach(lm -> quads.addAll(lm.getFirst().getQuads(state, side, rand)));

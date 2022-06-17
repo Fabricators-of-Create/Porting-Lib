@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
+import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import io.github.fabricators_of_create.porting_lib.transfer.callbacks.TransactionCallback;
 import io.github.fabricators_of_create.porting_lib.transfer.callbacks.TransactionSuccessCallback;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler.SnapshotData;
@@ -102,8 +103,8 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 	}
 
 	@Override
-	public Iterator<StorageView<ItemVariant>> iterator(TransactionContext transaction) {
-		return new ItemStackHandlerIterator(this, transaction);
+	public Iterator<StorageView<ItemVariant>> iterator() {
+		return new ItemStackHandlerIterator(this, TransferUtil.getTransaction());
 	}
 
 	@Override

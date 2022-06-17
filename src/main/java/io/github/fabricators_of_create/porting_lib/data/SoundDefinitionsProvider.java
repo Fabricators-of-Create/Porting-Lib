@@ -16,9 +16,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import net.minecraft.core.Registry;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.sounds.SoundEvent;
@@ -56,7 +56,7 @@ public abstract class SoundDefinitionsProvider implements DataProvider {
 	public abstract void registerSounds();
 
 	@Override
-	public void run(HashCache cache) throws IOException {
+	public void run(CachedOutput cache) throws IOException {
 		this.sounds.clear();
 		this.registerSounds();
 		this.validate();
@@ -206,7 +206,7 @@ public abstract class SoundDefinitionsProvider implements DataProvider {
 		// Differently from all the other errors, this is not a 'missing sound' but rather something completely different
 		// that has broken the invariants of this sound definitions provider. In fact, a sound may only be either of
 		// SOUND or EVENT type. Any other values is somebody messing with the internals, reflectively adding something
-		// to an enum or passing `null` to a parameter annotated with `@Nonnull`.
+		// to an enum or passing `null` to a parameter annotated with `@NotNull`.
 		throw new IllegalArgumentException("The given sound '" + sound.name() + "' does not have a valid type: expected either SOUND or EVENT, but found " + sound.type());
 	}
 
@@ -227,8 +227,8 @@ public abstract class SoundDefinitionsProvider implements DataProvider {
 		return valid;
 	}
 
-	private void save(final HashCache cache, final Path targetFile) throws IOException {
-		DataProvider.save(GSON, cache, this.mapToJson(this.sounds), targetFile);
+	private void save(final CachedOutput cache, final Path targetFile) throws IOException {
+		DataProvider.saveStable(cache, this.mapToJson(this.sounds), targetFile);
 	}
 
 	private JsonObject mapToJson(final Map<String, SoundDefinition> map) {

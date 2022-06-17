@@ -16,8 +16,8 @@ public class LineReader implements AutoCloseable {
 	InputStreamReader lineStream;
 	BufferedReader lineReader;
 
-	public LineReader(Resource resource) {
-		this.lineStream = new InputStreamReader(resource.getInputStream(), Charsets.UTF_8);
+	public LineReader(Resource resource) throws IOException {
+		this.lineStream = new InputStreamReader(resource.open(), Charsets.UTF_8);
 		this.lineReader = new BufferedReader(lineStream);
 	}
 

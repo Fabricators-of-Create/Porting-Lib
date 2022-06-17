@@ -1,7 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
 import com.google.common.base.Joiner;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.AbstractPackResources;
 import net.minecraft.server.packs.PackType;
@@ -15,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -90,21 +90,20 @@ public class PathResourcePack extends AbstractPackResources {
 	}
 
 	@Override
-	public Collection<ResourceLocation> getResources(PackType type, String resourceNamespace, String pathIn, int maxDepth, Predicate<String> filter) {
+	public Collection<ResourceLocation> getResources(PackType type, String resourceNamespace, String pathIn, Predicate<ResourceLocation> filter) {
 		try {
 			Path root = resolve(type.getDirectory(), resourceNamespace).toAbsolutePath();
 			Path inputPath = root.getFileSystem().getPath(pathIn);
 
 			return Files.walk(root)
 					.map(root::relativize)
-					.filter(path -> path.getNameCount() <= maxDepth && !path.toString().endsWith(".mcmeta") && path.startsWith(inputPath))
-					.filter(path -> filter.test(path.getFileName().toString()))
+					.filter(path -> !path.toString().endsWith(".mcmeta") && path.startsWith(inputPath))
 					// It is VERY IMPORTANT that we do not rely on Path.toString as this is inconsistent between operating systems
 					// Join the path names ourselves to force forward slashes
 					.map(path -> new ResourceLocation(resourceNamespace, Joiner.on('/').join(path)))
+					.filter(filter)
 					.collect(Collectors.toList());
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			return Collections.emptyList();
 		}
 	}
@@ -119,12 +118,10 @@ public class PathResourcePack extends AbstractPackResources {
 					.map(p->p.toString().replaceAll("/$","")) // remove the trailing slash, if present
 					.filter(s -> !s.isEmpty()) //filter empty strings, otherwise empty strings default to minecraft in ResourceLocations
 					.collect(Collectors.toSet());
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			if (type == PackType.SERVER_DATA) { //We still have to add the resource namespace if client resources exist, as we load langs (which are in assets) on server
 				return this.getNamespaces(PackType.CLIENT_RESOURCES);
-			}
-			else {
+			} else {
 				return Collections.emptySet();
 			}
 		}
@@ -153,6 +150,6 @@ public class PathResourcePack extends AbstractPackResources {
 
 	@Override
 	public String toString() {
-		return String.format("%s: %s", getClass().getName(), getSource());
+		return String.format(Locale.ROOT, "%s: %s", getClass().getName(), getSource());
 	}
 }

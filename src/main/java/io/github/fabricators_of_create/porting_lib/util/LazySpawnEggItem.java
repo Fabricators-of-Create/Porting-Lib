@@ -24,7 +24,7 @@ public class LazySpawnEggItem extends SpawnEggItem {
 	private static final Map<EntityType<? extends Mob>, LazySpawnEggItem> TYPE_MAP = new IdentityHashMap<>();
 	private static final DispenseItemBehavior DEFAULT_DISPENSE_BEHAVIOR = (source, stack) -> {
 		Direction face = source.getBlockState().getValue(DispenserBlock.FACING);
-		EntityType<?> type = ((SpawnEggItem) stack.getItem()).getType(stack.getTag());
+		EntityType<?> type = ((SpawnEggItem)stack.getItem()).getType(stack.getTag());
 
 		try {
 			type.spawn(source.getLevel(), stack, null, source.getPos().relative(face), MobSpawnType.DISPENSER, face != Direction.UP, false);
@@ -34,7 +34,7 @@ public class LazySpawnEggItem extends SpawnEggItem {
 		}
 
 		stack.shrink(1);
-		source.getLevel().gameEvent(GameEvent.ENTITY_PLACE, source.getPos());
+		source.getLevel().gameEvent(GameEvent.ENTITY_PLACE, source.getPos(), GameEvent.Context.of(source.getBlockState()));
 		return stack;
 	};
 	private final Supplier<? extends EntityType<? extends Mob>> typeSupplier;

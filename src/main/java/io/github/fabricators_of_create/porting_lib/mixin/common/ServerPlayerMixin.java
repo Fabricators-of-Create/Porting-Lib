@@ -17,6 +17,7 @@ import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 
+import net.minecraft.world.entity.player.ProfilePublicKey;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.portal.PortalInfo;
 import net.minecraft.world.level.storage.LevelData;
@@ -44,6 +45,10 @@ import javax.annotation.Nullable;
 
 @Mixin(ServerPlayer.class)
 public abstract class ServerPlayerMixin extends Player implements EntityExtensions {
+
+	public ServerPlayerMixin(Level level, BlockPos blockPos, float f, GameProfile gameProfile, @org.jetbrains.annotations.Nullable ProfilePublicKey profilePublicKey) {
+		super(level, blockPos, f, gameProfile, profilePublicKey);
+	}
 
 	@Shadow
 	public abstract ServerLevel getLevel();
@@ -90,12 +95,8 @@ public abstract class ServerPlayerMixin extends Player implements EntityExtensio
 	@Shadow
 	private int lastSentFood;
 
-	public ServerPlayerMixin(Level level, BlockPos blockPos, float f, GameProfile gameProfile) {
-		super(level, blockPos, f, gameProfile);
-	}
-
 	@Inject(method = "<init>", at = @At("RETURN"))
-	private void port_lib$init(MinecraftServer minecraftServer, ServerLevel serverLevel, GameProfile gameProfile, CallbackInfo ci) {
+	private void port_lib$init(MinecraftServer minecraftServer, ServerLevel serverLevel, GameProfile gameProfile, ProfilePublicKey profilePublicKey, CallbackInfo ci) {
 		ServerPlayerCreationCallback.EVENT.invoker().onCreate((ServerPlayer) (Object) this);
 	}
 
@@ -128,7 +129,7 @@ public abstract class ServerPlayerMixin extends Player implements EntityExtensio
 			return this;
 		} else {
 			LevelData leveldata = p_9180_.getLevelData();
-			this.connection.send(new ClientboundRespawnPacket(p_9180_.dimensionTypeRegistration(), p_9180_.dimension(), BiomeManager.obfuscateSeed(p_9180_.getSeed()), this.gameMode.getGameModeForPlayer(), this.gameMode.getPreviousGameModeForPlayer(), p_9180_.isDebug(), p_9180_.isFlat(), true));
+			this.connection.send(new ClientboundRespawnPacket(p_9180_.dimensionTypeId(), p_9180_.dimension(), BiomeManager.obfuscateSeed(p_9180_.getSeed()), this.gameMode.getGameModeForPlayer(), this.gameMode.getPreviousGameModeForPlayer(), p_9180_.isDebug(), p_9180_.isFlat(), true, this.getLastDeathLocation()));
 			this.connection.send(new ClientboundChangeDifficultyPacket(leveldata.getDifficulty(), leveldata.isDifficultyLocked()));
 			PlayerList playerlist = this.server.getPlayerList();
 			playerlist.sendPlayerPermissionLevel((ServerPlayer) (Object) this);

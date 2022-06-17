@@ -73,13 +73,13 @@ public abstract class MultiPlayerGameModeMixin {
 		return result;
 	}
 
-	@Inject(method = "useItemOn",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getMainHandItem()Lnet/minecraft/world/item/ItemStack;"), cancellable = true)
-	public void port_lib$useItemOn(LocalPlayer clientPlayerEntity, ClientLevel clientWorld, InteractionHand hand, BlockHitResult blockRayTraceResult, CallbackInfoReturnable<InteractionResult> cir) {
+	@Inject(method = "performUseItemOn",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getMainHandItem()Lnet/minecraft/world/item/ItemStack;"), cancellable = true)
+	public void port_lib$useItemOn(LocalPlayer clientPlayerEntity, InteractionHand hand, BlockHitResult blockRayTraceResult, CallbackInfoReturnable<InteractionResult> cir) {
 		if (clientPlayerEntity.getItemInHand(hand).getItem() instanceof UseFirstBehaviorItem first) {
 			UseOnContext ctx = new UseOnContext(clientPlayerEntity, hand, blockRayTraceResult);
 			InteractionResult result = first.onItemUseFirst(clientPlayerEntity.getItemInHand(hand), ctx);
 			if (result != InteractionResult.PASS) {
-				this.connection.send(new ServerboundUseItemOnPacket(hand, blockRayTraceResult));
+//				this.connection.send(new ServerboundUseItemOnPacket(hand, blockRayTraceResult)); TODO: PORT 1.19
 				cir.setReturnValue(result);
 			}
 		}

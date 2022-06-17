@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Predicate;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
@@ -26,9 +28,10 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 import javax.annotation.Nullable;
 
-import static net.fabricmc.fabric.api.datagen.v1.provider.FabricLootTableProvider.GSON;
-
 public class CraftingHelper {
+
+	private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+
 	public static void init() {
 		register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
 		register(new ResourceLocation("forge", "nbt"), NBTIngredient.Serializer.INSTANCE);

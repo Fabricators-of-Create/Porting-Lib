@@ -59,7 +59,7 @@ public final class RegistryObject<T> implements Supplier<T> {
 				registry = (Registry<T>) BuiltinRegistries.REGISTRY.get(registryName);
 
 			if (registry != null)
-				this.holder = registry.getOrCreateHolder(this.key);
+				this.holder = registry.getOrCreateHolder(this.key).result().get();
 		}
 
 		return Optional.ofNullable(this.holder);

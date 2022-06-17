@@ -46,13 +46,8 @@ public class WrappedStorage<T> implements Storage<T> {
 	}
 
 	@Override
-	public Iterator<? extends StorageView<T>> iterator(TransactionContext transaction) {
-		return wrapped.iterator(transaction);
-	}
-
-	@Override
-	public Iterable<? extends StorageView<T>> iterable(TransactionContext transaction) {
-		return wrapped.iterable(transaction);
+	public Iterator<StorageView<T>> iterator() {
+		return wrapped.iterator();
 	}
 
 	@Override

@@ -95,8 +95,8 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
-	public Iterator<StorageView<ItemVariant>> iterator(TransactionContext transaction) {
-		return handler.iterator(transaction);
+	public Iterator<StorageView<ItemVariant>> iterator() {
+		return handler.iterator();
 	}
 
 	@Override
@@ -172,11 +172,6 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	@Override
 	public boolean supportsInsertion() {
 		return handler.supportsInsertion();
-	}
-
-	@Override
-	public Iterable<? extends StorageView<ItemVariant>> iterable(TransactionContext transaction) {
-		return handler.iterable(transaction);
 	}
 
 	@Override

@@ -12,7 +12,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -44,6 +43,7 @@ import net.minecraft.world.phys.BlockHitResult;
  * The default values can be used as a reference point for mods adding fluids such as oil or heavy
  * water.
  */
+@Deprecated(forRemoval = true) // Handled by new system in 1.19
 public class FluidAttributes {
 	public static final long BUCKET_VOLUME = FluidConstants.BUCKET;
 	private final ResourceLocation stillTexture;
@@ -187,7 +187,7 @@ public class FluidAttributes {
 	 * Returns the localized name of this fluid.
 	 */
 	public Component getDisplayName(FluidStack stack) {
-		return new TranslatableComponent(getTranslationKey());
+		return Component.translatable(getTranslationKey());
 	}
 
 	/**

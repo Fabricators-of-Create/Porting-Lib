@@ -1,19 +1,18 @@
 package io.github.fabricators_of_create.porting_lib.util.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-
 import javax.annotation.Nullable;
 
-import net.minecraft.client.gui.components.Button.OnPress;
+import com.mojang.blaze3d.vertex.PoseStack;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 
 /**
  * This class is blatantly stolen from iChunUtils with permission.
  *
  * @author iChun
  */
+@Deprecated(forRemoval = true) // This class doesn't appear to be in forge 1.19
 public class Slider extends ExtendedButton {
 	/** The value of this slider control. */
 	public double sliderValue = 1.0F;
@@ -58,15 +57,15 @@ public class Slider extends ExtendedButton {
 			precision = 0;
 		}
 
-		setMessage(new TextComponent("").append(dispString).append(val).append(suffix));
+		setMessage(Component.literal("").append(dispString).append(val).append(suffix));
 
 		drawString = drawStr;
 		if(!drawString)
-			setMessage(new TextComponent(""));
+			setMessage(Component.literal(""));
 	}
 
 	public Slider(int xPos, int yPos, Component displayStr, double minVal, double maxVal, double currentVal, OnPress handler, ISlider par) {
-		this(xPos, yPos, 150, 20, displayStr, new TextComponent(""), minVal, maxVal, currentVal, true, true, handler, par);
+		this(xPos, yPos, 150, 20, displayStr, Component.literal(""), minVal, maxVal, currentVal, true, true, handler, par);
 	}
 
 	/**
@@ -134,7 +133,7 @@ public class Slider extends ExtendedButton {
 		}
 
 		if(drawString) {
-			setMessage(new TextComponent("").append(dispString).append(val).append(suffix));
+			setMessage(Component.literal("").append(dispString).append(val).append(suffix));
 		}
 
 		if (parent != null) {
