@@ -32,6 +32,8 @@ public class CraftingHelper {
 	public static void init() {
 		register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
 		register(new ResourceLocation("forge", "nbt"), NBTIngredient.Serializer.INSTANCE);
+		register(new ResourceLocation("forge", "difference"), DifferenceIngredient.Serializer.INSTANCE);
+		register(new ResourceLocation("forge", "intersection"), IntersectionIngredient.Serializer.INSTANCE);
 		Registry.register(ValueDeserializer.REGISTRY, NbtItemValueDeserializer.ID, NbtItemValueDeserializer.INSTANCE);
 	}
 

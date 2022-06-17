@@ -30,6 +30,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -559,14 +560,14 @@ public class TransferUtil {
 		return insert(storage, stack.getType(), stack.getAmount());
 	}
 
-	/** Insert the given variant and amount into the given Player's inventory, excluding the hotbar. */
-	public static long insertToNotHotbar(Player player, ItemVariant variant, long amount) {
+	/** Insert the given variant and amount into the given Player's inventory, excluding the hotbar, offhand, and armor. */
+	public static long insertToMainInv(Player player, ItemVariant variant, long amount) {
 		long inserted = 0;
 		try (Transaction t = getTransaction()) {
 			PlayerInventoryStorage inv = PlayerInventoryStorage.of(player);
 			if (!inv.supportsInsertion()) return 0;
 			List<SingleSlotStorage<ItemVariant>> slots = inv.getSlots();
-			for (int i = 9; i < slots.size(); i++) { // start at 9 and skip hotbar
+			for (int i = 9; i < Inventory.INVENTORY_SIZE; i++) { // start at 9 and skip hotbar, end before armor and offhand
 				SingleSlotStorage<ItemVariant> slot = slots.get(i);
 				inserted += slot.insert(variant, amount - inserted, t);
 				if (amount == 0) break;
