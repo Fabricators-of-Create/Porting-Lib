@@ -52,24 +52,24 @@ dependencies {
 	minecraft("com.mojang:minecraft:${project.minecraft_version}")
 	mappings loom.layered {
 		it.addLayer(quiltMappings.mappings("org.quiltmc:quilt-mappings:${minecraft_version}+build.${quilt_mappings}:v2")) // https://lambdaurora.dev/tools/import_quilt.html
-		it.parchment("org.parchmentmc.data:parchment-1.18.2:BLEEDING-20220313.132143-1@zip") // https://ldtteam.jfrog.io/ui/native/parchmentmc-public/org/parchmentmc/data/parchment-1.18.1/BLEEDING-SNAPSHOT
+//		it.parchment("org.parchmentmc.data:parchment-1.18.2:BLEEDING-20220313.132143-1@zip") // https://ldtteam.jfrog.io/ui/native/parchmentmc-public/org/parchmentmc/data/parchment-1.18.1/BLEEDING-SNAPSHOT
 		it.officialMojangMappings {
 			setNameSyntheticMembers(false)
 		}
 	}
 	modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
-	modLocalRuntime("maven.modrinth:lazydfu:0.1.2")
+	modLocalRuntime("maven.modrinth:lazydfu:0.1.3")
 //	modLocalRuntime("maven.modrinth:suggestionproviderfabric:1.0.1") not on 1.19 yet
 //	modLocalRuntime("mcjty.theoneprobe:theoneprobe-fabric:${top_version}")
 	modLocalRuntime("maven.modrinth:lithium:${project.lithium_version}")
-	modLocalRuntime("maven.modrinth:vmp-fabric:${project.vmp_version}")
+//	modLocalRuntime("maven.modrinth:vmp-fabric:${project.vmp_version}")
 //	modLocalRuntime("maven.modrinth:iris:${project.iris_version}")
 	modLocalRuntime("com.terraformersmc:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
 
 	// dependencies
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
 	modImplementation(include("io.github.tropheusj:serialization-hooks:0.2.0+1.18.${project.serialization_hooks_hash}"))
-	modApi(include("me.alphamode:ForgeTags:${project.forge_tags_version}"))
+	modImplementation(include("me.alphamode:ForgeTags:${project.forge_tags_version}"))
 	api(include("com.github.LlamaLad7:MixinExtras:0.0.11"))
 	annotationProcessor(include("com.github.LlamaLad7:MixinExtras:0.0.11"))
 

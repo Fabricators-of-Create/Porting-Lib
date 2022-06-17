@@ -3,6 +3,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.util.RandomSource;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -51,7 +53,7 @@ public abstract class StructureTemplateMixin implements StructureTemplateExtensi
 			),
 			cancellable = true
 	)
-	public void port_lib$place(ServerLevelAccessor iServerWorld, BlockPos blockPos, BlockPos blockPos2, StructurePlaceSettings placementSettings, Random random, int i, CallbackInfoReturnable<Boolean> cir) {
+	public void port_lib$place(ServerLevelAccessor iServerWorld, BlockPos blockPos, BlockPos pivot, StructurePlaceSettings placementSettings, RandomSource random, int flags, CallbackInfoReturnable<Boolean> cir) {
 		addEntitiesToWorld(iServerWorld, blockPos, placementSettings);
 		cir.setReturnValue(true);
 	}
