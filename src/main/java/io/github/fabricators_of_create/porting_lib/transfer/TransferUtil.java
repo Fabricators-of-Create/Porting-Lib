@@ -611,6 +611,11 @@ public class TransferUtil {
 		}
 	}
 
+	/** Less clunky way to convert a {@link StorageView<FluidVariant>} to a {@link FluidStack}. */
+	public static FluidStack convertViewToFluidStack(StorageView<FluidVariant> view) {
+		return new FluidStack(view.getResource(), view.getAmount());
+	}
+
 	/**
 	 * Get a BlockApiCache for ItemStorage.SIDED. If on client, will return a client-side cache,
 	 * which can only interact with BlockEntities using the ItemTransferable interface.
