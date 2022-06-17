@@ -73,13 +73,11 @@
     "accessor.SheetsAccessor",
     "accessor.SimpleBakedModel$BuilderAccessor",
     "accessor.TextureAtlasSprite$AnimatedTextureAccessor",
+    "accessor.TextureSheetParticleAccessor",
     "accessor.TitleScreenAccessor"
   ],
   "injectors": {
     "defaultRequire": 1,
     "maxShiftBy": 999999
-  },
-  "mixins": [
-    "accessor.TextureSheetParticleAccessor"
-  ]
+  }
 }
