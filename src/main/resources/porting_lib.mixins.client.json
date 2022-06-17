@@ -45,8 +45,8 @@
     "RemotePlayerMixin",
     "RenderTargetMixin",
     "ScreenMixin",
-    "SkullBlockRendererMixin",
     "ShaderInstanceMixin",
+    "SkullBlockRendererMixin",
     "TextureAtlasMixin",
     "TextureAtlasSpriteMixin",
     "TextureManagerMixin",
@@ -78,5 +78,8 @@
   "injectors": {
     "defaultRequire": 1,
     "maxShiftBy": 999999
-  }
+  },
+  "mixins": [
+    "accessor.TextureSheetParticleAccessor"
+  ]
 }
