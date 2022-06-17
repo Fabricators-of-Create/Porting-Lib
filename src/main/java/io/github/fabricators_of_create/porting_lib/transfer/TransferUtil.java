@@ -467,22 +467,22 @@ public class TransferUtil {
 	public static FluidStack extractAnyFluid(Storage<FluidVariant> storage, long maxAmount, Transaction tx) {
 		FluidStack fluid = FluidStack.EMPTY;
 		if (!storage.supportsExtraction()) return fluid;
-			for (StorageView<FluidVariant> view : storage.iterable(tx)) {
-				if (!view.isResourceBlank()) {
-					FluidVariant var = view.getResource();
-					long amount = Math.min(maxAmount, view.getAmount());
-					long extracted = view.extract(var, amount, tx);
-					maxAmount -= extracted;
-					if (fluid.isEmpty()) {
-						fluid = new FluidStack(var, extracted);
-					} else if (fluid.canFill(var)) {
-						fluid.grow(extracted);
-					}
-					if (maxAmount == 0)
-						break;
+		for (StorageView<FluidVariant> view : storage.iterable(tx)) {
+			if (!view.isResourceBlank()) {
+				FluidVariant var = view.getResource();
+				long amount = Math.min(maxAmount, view.getAmount());
+				long extracted = view.extract(var, amount, tx);
+				maxAmount -= extracted;
+				if (fluid.isEmpty()) {
+					fluid = new FluidStack(var, extracted);
+				} else if (fluid.canFill(var)) {
+					fluid.grow(extracted);
 				}
+				if (maxAmount == 0)
+					break;
 			}
-			return fluid;
+		}
+		return fluid;
 	}
 
 	/**
@@ -526,7 +526,6 @@ public class TransferUtil {
 					break;
 			}
 		}
-		tx.commit();
 		return stack;
 	}
 
