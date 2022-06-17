@@ -62,3 +62,5 @@ transitive-accessible class net/minecraft/server/MinecraftServer$ReloadableResou
 transitive-accessible field net/minecraft/data/tags/TagsProvider$TagAppender registry Lnet/minecraft/core/Registry;
 
 transitive-accessible field net/minecraft/world/entity/LivingEntity effectsDirty Z
+
+transitive-accessible field net/minecraft/world/item/AxeItem STRIPPABLES Ljava/util/Map;
