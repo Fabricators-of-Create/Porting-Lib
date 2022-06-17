@@ -62,7 +62,7 @@ public abstract class ServerPlayerGameModeMixin {
 	}
 
 	@Inject(method = "handleBlockBreakAction", at = @At("HEAD"))
-	public void port_lib$blockBreak(BlockPos pos, ServerboundPlayerActionPacket.Action action, Direction direction, int worldHeight, CallbackInfo ci) {
+	public void port_lib$blockBreak(BlockPos pos, ServerboundPlayerActionPacket.Action action, Direction direction, int worldHeight, int i, CallbackInfo ci) {
 		BlockEvents.LEFT_CLICK_BLOCK.invoker().onLeftClickBlock(player, pos, direction);
 	}
 }

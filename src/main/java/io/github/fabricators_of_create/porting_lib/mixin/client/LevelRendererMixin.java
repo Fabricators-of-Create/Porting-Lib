@@ -97,20 +97,4 @@ public abstract class LevelRendererMixin {
 			cir.setReturnValue(i << 20 | j << 4);
 		}
 	}
-
-	@Inject(method = "renderSky", at = @At(value = "INVOKE", target = "Ljava/lang/Runnable;run()V", shift = At.Shift.AFTER))
-	public void port_lib$fogRender(PoseStack poseStack, Matrix4f projectionMatrix, float partialTick, Camera camera, boolean bl, Runnable skyFogSetup, CallbackInfo ci) {
-		FogEvents.RENDER_FOG.invoker().onFogRender(FogRenderer.FogMode.FOG_SKY, camera, partialTick, Minecraft.getInstance().gameRenderer.getRenderDistance());
-	}
-
-	@Inject(
-			method = "renderLevel",
-			at = @At(value = "INVOKE",
-					target = "Lnet/minecraft/client/renderer/FogRenderer;setupFog(Lnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/FogRenderer$FogMode;FZ)V",
-					shift = At.Shift.AFTER
-			)
-	)
-	public void port_lib$fogRenderAfter(PoseStack poseStack, float partialTick, long finishNanoTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f projectionMatrix, CallbackInfo ci) {
-		FogEvents.RENDER_FOG.invoker().onFogRender(FogRenderer.FogMode.FOG_TERRAIN, camera, partialTick, Math.max(gameRenderer.getRenderDistance(), 32.0F));
-	}
 }

@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 public abstract class SpawnerBlockMixin implements CustomExpBlock {
 
 	@Override
-	public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader world, BlockPos pos, int fortune, int silktouch) {
-		return 15 + ((Level)world).getRandom().nextInt(15) + ((Level)world).getRandom().nextInt(15);
+	public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader world, net.minecraft.util.RandomSource randomSource, BlockPos pos, int fortune, int silktouch) {
+		return 15 + randomSource.nextInt(15) + randomSource.nextInt(15);
 	}
 }

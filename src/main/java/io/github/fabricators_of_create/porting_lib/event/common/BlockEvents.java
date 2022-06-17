@@ -71,7 +71,7 @@ public abstract class BlockEvents extends BaseEvent {
 			} else{
 				int bonusLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, player.getMainHandItem());
 				int silklevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getMainHandItem());
-				this.exp = state.getBlock() instanceof CustomExpBlock exp ? exp.getExpDrop(state, world, pos, bonusLevel, silklevel) : 0;
+				this.exp = state.getBlock() instanceof CustomExpBlock exp ? exp.getExpDrop(state, world, world.getRandom(), pos, bonusLevel, silklevel) : 0;
 			}
 		}
 

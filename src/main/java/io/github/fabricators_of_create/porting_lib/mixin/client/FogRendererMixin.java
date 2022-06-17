@@ -1,10 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
-import com.mojang.blaze3d.shaders.FogShape;
-
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.material.FogType;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,14 +10,16 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import io.github.fabricators_of_create.porting_lib.event.client.FogEvents;
 import io.github.fabricators_of_create.porting_lib.event.client.FogEvents.ColorData;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.material.FogType;
 
 @Environment(EnvType.CLIENT)
 @Mixin(FogRenderer.class)
@@ -46,8 +43,8 @@ public abstract class FogRendererMixin {
 	}
 
 	@Inject(method = "setupFog", at = @At("HEAD"), cancellable = true)
-	private static void port_lib$setupFog(Camera activeRenderInfo, FogRenderer.FogMode fogType, float f, boolean bl, CallbackInfo ci) {
-		float density = FogEvents.SET_DENSITY.invoker().setDensity(activeRenderInfo, 0.1f);
+	private static void port_lib$setupFog(Camera camera, FogRenderer.FogMode fogType, float viewDistance, boolean thickFog, float tickDelta, CallbackInfo ci) {
+		float density = FogEvents.SET_DENSITY.invoker().setDensity(camera, 0.1f);
 		if (density != 0.1f) {
 			RenderSystem.setShaderFogStart(-8.0F);
 			RenderSystem.setShaderFogEnd(density * 0.5F);
@@ -56,9 +53,9 @@ public abstract class FogRendererMixin {
 	}
 
 	@Inject(method = "setupFog", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	private static void port_lib$fogRenderEvent(Camera activeRenderInfo, FogRenderer.FogMode fogType, float farPlaneDistance, boolean nearFog, CallbackInfo ci, FogType fogType2, Entity entity, FogShape fogShape, float f, float g) {
-		FogEvents.FogData data = new FogEvents.FogData(f, g, fogShape);
-		if (FogEvents.ACTUAL_RENDER_FOG.invoker().onFogRender(fogType, activeRenderInfo, data)) {
+	private static void port_lib$fogRenderEvent(Camera camera, FogRenderer.FogMode fogMode, float viewDistance, boolean thickFog, float partialTick, CallbackInfo ci, FogType fogType, Entity entity, FogRenderer.FogData fogData) {
+		FogEvents.FogData data = new FogEvents.FogData(fogData.end, fogData.start, fogData.shape);
+		if (FogEvents.RENDER_FOG.invoker().onFogRender(fogMode, fogType, camera, partialTick, viewDistance, fogData.start, fogData.end, fogData.shape, data)) {
 			RenderSystem.setShaderFogStart(data.getNearPlaneDistance());
 			RenderSystem.setShaderFogEnd(data.getFarPlaneDistance());
 			RenderSystem.setShaderFogShape(data.getFogShape());

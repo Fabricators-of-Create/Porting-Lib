@@ -19,7 +19,7 @@ public abstract class ThrownEnderpearlMixin extends ThrowableItemProjectile {
 		super(entityType, level);
 	}
 
-	@Inject(method = "onHit", at = @At(value = "INVOKE", target = "Ljava/util/Random;nextFloat()F", ordinal = 0), cancellable = true)
+	@Inject(method = "onHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/RandomSource;nextFloat()F"), cancellable = true)
 	private void port_lib$onHit(HitResult result, CallbackInfo ci) {
 		EntityTeleportEvent event = new EntityTeleportEvent(getOwner(), getX(), getY(), getZ());
 		event.sendEvent();

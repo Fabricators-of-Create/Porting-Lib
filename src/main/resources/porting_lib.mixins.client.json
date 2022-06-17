@@ -10,7 +10,6 @@
     "BlockColorsMixin",
     "BlockModelDeserializerMixin",
     "BlockModelMixin",
-    "BufferBuilderMixin",
     "CameraMixin",
     "ChestRendererMixin",
     "ClientLanguageAccessor",

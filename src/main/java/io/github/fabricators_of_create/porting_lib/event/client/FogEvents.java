@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.FogRenderer;
+import net.minecraft.world.level.material.FogType;
 
 @Environment(EnvType.CLIENT)
 public class FogEvents {
@@ -24,15 +25,9 @@ public class FogEvents {
 		}
 	});
 
-	public static final Event<RenderFog> RENDER_FOG = EventFactory.createArrayBacked(RenderFog.class, callbacks -> (type, info, partialTicks, distance) -> {
+	public static final Event<RenderFog> RENDER_FOG = EventFactory.createArrayBacked(RenderFog.class, callbacks -> (mode, type, camera, partialTick, renderDistance, nearDistance, farDistance, shape, fogData) -> {
 		for (RenderFog callback : callbacks) {
-			callback.onFogRender(type, info, partialTicks, distance);
-		}
-	});
-
-	public static final Event<ActualRenderFog> ACTUAL_RENDER_FOG = EventFactory.createArrayBacked(ActualRenderFog.class, callbacks -> (type, info, fogData) -> {
-		for (ActualRenderFog callback : callbacks) {
-			if (callback.onFogRender(type, info, fogData))
+			if (callback.onFogRender(mode, type, camera, partialTick, renderDistance, nearDistance, farDistance, shape, fogData))
 				return true;
 		}
 		return false;
@@ -53,12 +48,7 @@ public class FogEvents {
 
 	@FunctionalInterface
 	public interface RenderFog {
-		void onFogRender(FogRenderer.FogMode type, Camera info, float partial, float distance);
-	}
-
-	@FunctionalInterface
-	public interface ActualRenderFog {
-		boolean onFogRender(FogRenderer.FogMode type, Camera info, FogData fogData);
+		boolean onFogRender(FogRenderer.FogMode mode, FogType type, Camera camera, float partialTick, float renderDistance, float nearDistance, float farDistance, FogShape shape, FogData fogData);
 	}
 
 	public static class FogData {
