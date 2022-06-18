@@ -60,6 +60,7 @@
     "accessor.BlockModelAccessor",
     "accessor.BlockRenderDispatcherAccessor",
     "accessor.ClientPacketListenerAccessor",
+    "accessor.CommandSuggestions$SuggestionsListAccessor",
     "accessor.FontAccessor",
     "accessor.GameRendererAccessor",
     "accessor.ItemInHandRendererAccessor",

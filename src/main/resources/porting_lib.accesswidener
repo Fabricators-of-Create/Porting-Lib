@@ -66,4 +66,3 @@ transitive-accessible field net/minecraft/world/entity/LivingEntity effectsDirty
 transitive-accessible field net/minecraft/world/item/AxeItem STRIPPABLES Ljava/util/Map;
 
 transitive-accessible class net/minecraft/client/gui/components/CommandSuggestions$SuggestionsList
-transitive-accessible method net/minecraft/client/gui/components/CommandSuggestions$SuggestionsList <init> (IIILjava/util/List;Z)V
