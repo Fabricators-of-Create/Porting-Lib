@@ -91,7 +91,6 @@
     "StructureProcessorMixin",
     "StructureTemplateMixin",
     "SugarCaneBlockMixin",
-    "SuggestionsListAccessor",
     "TagAppenderMixin",
     "TallGrassBlockMixin",
     "TeleportCommandMixin",
