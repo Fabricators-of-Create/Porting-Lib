@@ -18,7 +18,6 @@ public class PortingLibClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(FluidTextUtil.NUMBER_FORMAT);
-		ClientLifecycleEvents.CLIENT_STARTED.register((minecraft) -> ModelLoaderRegistry.init());
 		ExtraSpawnDataEntity.initClientNetworking();
 		ClientEntityEvents.ENTITY_LOAD.register((entity, world) -> {
 			if (entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
