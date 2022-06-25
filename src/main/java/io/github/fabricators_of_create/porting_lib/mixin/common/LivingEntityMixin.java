@@ -261,7 +261,9 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 	@ModifyVariable(method = "travel", at = @At(value = "STORE", ordinal = 0)) // double d = 0.08;
 	private double port_lib$modifyGravity(double original) {
 		if (original == 0.08) { // only apply gravity if other mods haven't changed it
-			return this.getAttribute(PortingLibAttributes.ENTITY_GRAVITY).getValue();
+			AttributeInstance attribute = this.getAttribute(PortingLibAttributes.ENTITY_GRAVITY);
+			if (attribute != null)
+				return attribute.getValue();
 		}
 		return original;
 	}
