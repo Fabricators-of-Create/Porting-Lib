@@ -13,9 +13,12 @@ import net.minecraft.world.item.Item;
 
 import net.minecraft.world.item.ItemStack;
 
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(ItemFrameRenderer.class)
@@ -34,5 +37,17 @@ public abstract class ItemFrameRendererMixin<T extends ItemFrame> extends Entity
 		if (item instanceof CustomMapItem) {
 			args.set(0, item);
 		}
+	}
+
+	@ModifyVariable(
+			method = "render(Lnet/minecraft/world/entity/decoration/ItemFrame;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+			at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/item/MapItem;getSavedData(Ljava/lang/Integer;Lnet/minecraft/world/level/Level;)Lnet/minecraft/world/level/saveddata/maps/MapItemSavedData;")
+	)
+	private MapItemSavedData port_lib$getCorrectMapData(MapItemSavedData original, T entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
+		ItemStack stack = entity.getItem();
+		if (stack.getItem() instanceof CustomMapItem custom) {
+			return custom.getCustomMapData(stack, entity.level);
+		}
+		return original;
 	}
 }
