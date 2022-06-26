@@ -31,8 +31,19 @@ public abstract class ItemFrameRendererMixin<T extends ItemFrame> extends Entity
 			method = "render(Lnet/minecraft/world/entity/decoration/ItemFrame;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z")
 	)
-	private void port_lib$renderCustomMaps(Args args, T entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
+	private void port_lib$customMapsAreMaps(Args args, T entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
 		ItemStack stack = entity.getItem();
+		Item item = stack.getItem();
+		if (item instanceof CustomMapItem) {
+			args.set(0, item);
+		}
+	}
+
+	@ModifyArgs(
+			method = "getFrameModelResourceLoc",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z")
+	)
+	private void port_lib$customMapsAreMaps2(Args args, T entity, ItemStack stack) {
 		Item item = stack.getItem();
 		if (item instanceof CustomMapItem) {
 			args.set(0, item);
