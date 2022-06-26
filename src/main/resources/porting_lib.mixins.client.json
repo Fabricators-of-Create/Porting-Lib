@@ -25,6 +25,7 @@
     "HumanoidArmorLayerMixin",
     "I18nMixin",
     "ItemColorsMixin",
+    "ItemFrameRendererMixin",
     "ItemInHandRendererMixin",
     "ItemRendererMixin",
     "KeyboardHandlerMixin",
