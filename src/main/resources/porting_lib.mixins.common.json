@@ -46,6 +46,7 @@
     "LeavesBlockMixin",
     "LevelChunkMixin",
     "LevelMixin",
+    "LevelReaderMixin",
     "LiquidBlockMixin",
     "LivingEntityMixin",
     "MapDecorationMixin",

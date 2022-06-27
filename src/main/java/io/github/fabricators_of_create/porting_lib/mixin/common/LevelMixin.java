@@ -19,6 +19,7 @@ import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
+import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -33,6 +34,7 @@ import net.minecraft.world.phys.AABB;
 
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -105,6 +107,22 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 
 	@Shadow
 	public abstract int getDirectSignalTo(BlockPos pos);
+
+	@Shadow
+	public abstract void setBlocksDirty(BlockPos pos, BlockState old, BlockState updated);
+
+	@Shadow
+	@Final
+	public boolean isClientSide;
+
+	@Shadow
+	public abstract void sendBlockUpdated(BlockPos pos, BlockState oldState, BlockState newState, int flags);
+
+	@Shadow
+	public abstract void updateNeighbourForOutputSignal(BlockPos pos, Block block);
+
+	@Shadow
+	public abstract void onBlockStateChange(BlockPos pos, BlockState oldBlock, BlockState newBlock);
 
 	@Override
 	public SnapshotParticipant<LevelSnapshotData> snapshotParticipant() {
@@ -257,5 +275,41 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	@Override
 	public Int2ObjectMap<PartEntity<?>> getPartEntityMap() {
 		return port_lib$multiparts;
+	}
+
+	@Unique
+	@Override
+	public void markAndNotifyBlock(BlockPos pos, @Nullable LevelChunk levelchunk, BlockState oldState, BlockState newState, int flags, int recursionLeft) {
+		Block block = newState.getBlock();
+		BlockState blockstate1 = getBlockState(pos);
+		{
+			{
+				if (blockstate1 == newState) {
+					if (oldState != blockstate1) {
+						this.setBlocksDirty(pos, oldState, blockstate1);
+					}
+
+					if ((flags & 2) != 0 && (!this.isClientSide || (flags & 4) == 0) && (this.isClientSide || levelchunk.getFullStatus() != null && levelchunk.getFullStatus().isOrAfter(ChunkHolder.FullChunkStatus.TICKING))) {
+						this.sendBlockUpdated(pos, oldState, newState, flags);
+					}
+
+					if ((flags & 1) != 0) {
+						this.blockUpdated(pos, oldState.getBlock());
+						if (!this.isClientSide && newState.hasAnalogOutputSignal()) {
+							this.updateNeighbourForOutputSignal(pos, block);
+						}
+					}
+
+					if ((flags & 16) == 0 && recursionLeft > 0) {
+						int i = flags & -34;
+						oldState.updateIndirectNeighbourShapes(this, pos, i, recursionLeft - 1);
+						newState.updateNeighbourShapes(this, pos, i, recursionLeft - 1);
+						newState.updateIndirectNeighbourShapes(this, pos, i, recursionLeft - 1);
+					}
+
+					this.onBlockStateChange(pos, oldState, blockstate1);
+				}
+			}
+		}
 	}
 }

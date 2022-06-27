@@ -7,6 +7,9 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
+
+import javax.annotation.Nullable;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -45,6 +48,10 @@ public interface LevelExtensions {
 	}
 
 	default void addFreshBlockEntities(Collection<BlockEntity> beList) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
+
+	default void markAndNotifyBlock(BlockPos pos, @Nullable LevelChunk levelchunk, BlockState oldState, BlockState newState, int flags, int p_46608_) {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 }
