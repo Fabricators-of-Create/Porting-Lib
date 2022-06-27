@@ -65,12 +65,12 @@ public interface ItemExtensions {
 	 *
 	 * @param itemStack the ItemStack to check
 	 * @return the Mod ID for the ItemStack, or null when there is no specially
-	 *         associated mod and {@link RegistryNameProvider#getRegistryName()} would return null.
+	 *         associated mod and {@link Registry#getKey(Object)} would return null.
 	 */
 	@Nullable
 	default String getCreatorModId(ItemStack itemStack) {
 		Item item = itemStack.getItem();
-		ResourceLocation registryName = item.getRegistryName();
+		ResourceLocation registryName = Registry.ITEM.getKey(item);
 		String modId = registryName == null ? null : registryName.getNamespace();
 		if ("minecraft".equals(modId)) {
 			if (item instanceof EnchantedBookItem) {
@@ -78,21 +78,18 @@ public interface ItemExtensions {
 				if (enchantmentsNbt.size() == 1) {
 					CompoundTag nbttagcompound = enchantmentsNbt.getCompound(0);
 					ResourceLocation resourceLocation = ResourceLocation.tryParse(nbttagcompound.getString("id"));
-					if (resourceLocation != null && Registry.ENCHANTMENT.containsKey(resourceLocation))
-					{
+					if (resourceLocation != null && Registry.ENCHANTMENT.containsKey(resourceLocation)) {
 						return resourceLocation.getNamespace();
 					}
 				}
-			}
-			else if (item instanceof PotionItem || item instanceof TippedArrowItem) {
+			} else if (item instanceof PotionItem || item instanceof TippedArrowItem) {
 				Potion potionType = PotionUtils.getPotion(itemStack);
 				ResourceLocation resourceLocation = Registry.POTION.getKey(potionType);
 				if (resourceLocation != null) {
 					return resourceLocation.getNamespace();
 				}
-			}
-			else if (item instanceof SpawnEggItem) {
-				ResourceLocation resourceLocation = ((RegistryNameProvider)((SpawnEggItem)item).getType(null)).getRegistryName();
+			} else if (item instanceof SpawnEggItem) {
+				ResourceLocation resourceLocation = Registry.ENTITY_TYPE.getKey(((SpawnEggItem) item).getType(null));
 				if (resourceLocation != null) {
 					return resourceLocation.getNamespace();
 				}

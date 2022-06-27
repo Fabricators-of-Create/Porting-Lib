@@ -8,7 +8,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import io.github.fabricators_of_create.porting_lib.extensions.RegistryNameProvider;
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 
 import org.apache.logging.log4j.LogManager;
@@ -22,8 +21,6 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 
-import io.github.fabricators_of_create.porting_lib.extensions.FluidExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.TransformationExtensions;
 import net.minecraft.client.multiplayer.ClientLevel;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
@@ -225,7 +222,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
 			return TransferUtil.getFluidContained(stack)
 					.map(fluidStack -> {
 						Fluid fluid = fluidStack.getFluid();
-						String name = fluid.getRegistryName().toString();
+						String name = Registry.FLUID.getKey(fluid).toString();
 
 						if (!cache.containsKey(name)) {
 							DynamicBucketModel unbaked = this.parent.withFluid(fluid);

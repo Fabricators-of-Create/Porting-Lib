@@ -59,7 +59,6 @@
     "MushroomCowMixin",
     "NaturalSpawnerMixin",
     "PackRepositoryMixin",
-    "ParticleTypeMixin",
     "PersistentEntitySectionManager$CallbackMixin",
     "PiglinAiMixin",
     "PlayerAdvancementsMixin",

@@ -1,5 +1,23 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import java.util.Collection;
+
+import io.github.fabricators_of_create.porting_lib.entity.StepHeightEntity;
+import net.minecraft.world.phys.Vec3;
+
+import org.jetbrains.annotations.Nullable;
+import org.objectweb.asm.Opcodes;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
 import io.github.fabricators_of_create.porting_lib.block.CustomRunningEffectsBlock;
 import io.github.fabricators_of_create.porting_lib.event.common.EntityEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.EntityReadExtraDataCallback;
@@ -7,39 +25,23 @@ import io.github.fabricators_of_create.porting_lib.event.common.MinecartEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.MountEntityCallback;
 import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.ITeleporter;
-import io.github.fabricators_of_create.porting_lib.extensions.RegistryNameProvider;
 import io.github.fabricators_of_create.porting_lib.util.EntityHelper;
 import io.github.fabricators_of_create.porting_lib.util.INBTSerializable;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
-import net.minecraft.world.level.block.state.BlockState;
-
-import net.minecraft.world.level.portal.PortalInfo;
-
-import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import java.util.Collection;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.portal.PortalInfo;
 
 @Mixin(Entity.class)
-public abstract class EntityMixin implements EntityExtensions, INBTSerializable<CompoundTag>, RegistryNameProvider {
+public abstract class EntityMixin implements EntityExtensions, INBTSerializable<CompoundTag> {
 	@Shadow
 	public Level level;
 	@Shadow
@@ -48,8 +50,6 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializable<
 	private CompoundTag port_lib$extraCustomData;
 	@Unique
 	private Collection<ItemEntity> port_lib$captureDrops = null;
-	@Unique
-	private ResourceLocation port_lib$registryName = null;
 
 	@Shadow
 	protected abstract void readAdditionalSaveData(CompoundTag compoundTag);
@@ -76,6 +76,9 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializable<
 
 	@Shadow
 	public abstract void unRide();
+
+	@Shadow
+	public float maxUpStep;
 
 	@Inject(at = @At("TAIL"), method = "<init>")
 	public void port_lib$entityInit(EntityType<?> entityType, Level world, CallbackInfo ci) {
@@ -214,15 +217,6 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializable<
 
 	@Unique
 	@Override
-	public ResourceLocation getRegistryName() {
-		if (port_lib$registryName == null) {
-			port_lib$registryName = Registry.ENTITY_TYPE.getKey(getType());
-		}
-		return port_lib$registryName;
-	}
-
-	@Unique
-	@Override
 	public Entity changeDimension(ServerLevel p_20118_, ITeleporter teleporter) {
 		if (this.level instanceof ServerLevel && !this.isRemoved()) {
 			this.level.getProfiler().push("changeDimension");
@@ -256,6 +250,13 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializable<
 			}
 		} else {
 			return null;
+		}
+	}
+
+	@Inject(method = "collide", at = @At(value = "JUMP", opcode = Opcodes.IFGE))
+	public void port_lib$modifyStepHeight(Vec3 movement, CallbackInfoReturnable<Vec3> cir) {
+		if (this instanceof StepHeightEntity stepHeightEntity) {
+			this.maxUpStep = stepHeightEntity.getStepHeight();
 		}
 	}
 }

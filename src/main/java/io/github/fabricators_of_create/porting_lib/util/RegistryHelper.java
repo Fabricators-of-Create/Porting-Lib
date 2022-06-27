@@ -1,6 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
-import io.github.fabricators_of_create.porting_lib.extensions.RegistryNameProvider;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -14,8 +13,6 @@ import net.minecraft.world.level.gameevent.GameEvent;
 
 public class RegistryHelper {
 	public static ResourceLocation getRegistryKey(Object obj) {
-		if (obj instanceof RegistryNameProvider provider)
-			return provider.getRegistryName();
 		if (obj instanceof RecipeSerializer serializer)
 			return Registry.RECIPE_SERIALIZER.getKey(serializer);
 		if (obj instanceof Enchantment enchantment)
