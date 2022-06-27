@@ -130,6 +130,7 @@
     "accessor.LivingEntityAccessor",
     "accessor.MinecraftServerAccessor",
     "accessor.MobAccessor",
+    "accessor.PaintingAccessor",
     "accessor.PlayerAccessor",
     "accessor.PotionBrewing$MixAccessor",
     "accessor.PotionBrewingAccessor",
