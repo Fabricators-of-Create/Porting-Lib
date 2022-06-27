@@ -6,19 +6,24 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class LazyRegistrar<T> {
 	public final String mod_id;
 	private final Registry<T> registry;
-	private final List<RegistryObject<? extends T>> entires;
+	private final Map<RegistryObject<T>, Supplier<? extends T>> entries = new LinkedHashMap<>();
+	private final Set<RegistryObject<T>> entriesView = Collections.unmodifiableSet(entries.keySet());
 
 	LazyRegistrar(Registry<T> registry, String modid) {
 		this.registry = registry;
 		this.mod_id = modid;
-		this.entires = new ArrayList<>();
 	}
 
 //    public <U extends T> RegistryObject<U> register(String id, Supplier<U> entry) {
@@ -35,30 +40,24 @@ public class LazyRegistrar<T> {
 
 	public <R extends T> RegistryObject<R> register(ResourceLocation id, Supplier<R> entry) {
 		RegistryObject<R> obj = new RegistryObject<>(id, entry, ResourceKey.create(registry.key(), id));
-		entires.add(obj);
+		if (entries.putIfAbsent((RegistryObject<T>) obj, entry) != null) {
+			throw new IllegalArgumentException("Duplicate registration " + id);
+		}
 		return obj;
 	}
 
-	private Consumer<RegistryObject<? extends T>> callback;
-
 	public void register() {
-		entires.forEach(entry -> {
+		entries.forEach((entry, sup) -> {
 			Registry.register(registry, entry.getId(), entry.get());
-			if(callback != null)
-				callback.accept(entry);
 		});
-		entires.forEach(entry -> entry.setWrappedEntry(() -> registry.get(entry.getId())));
+		entries.forEach((entry, sup) -> entry.setWrappedEntry(() -> registry.get(entry.getId())));
 	}
 
-	public void setRegistryCallback(Consumer<RegistryObject<? extends T>> callback) {
-		this.callback = callback;
-	}
-
-	public <B extends Block> RegistryObject register(String name, T b) {
+	public <B extends Block> RegistryObject<T> register(String name, T b) {
 		return register(name, () -> b);
 	}
 
-	public List<RegistryObject<? extends T>> getEntires() {
-		return entires;
+	public Collection<RegistryObject<T>> getEntries() {
+		return entriesView;
 	}
 }
