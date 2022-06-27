@@ -15,12 +15,11 @@ import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 
 @Mixin(WalkNodeEvaluator.class)
 public abstract class WalkNodeEvaluatorMixin {
-	//TODO: This might not be correct
 	@Inject(method = "getBlockPathTypeRaw", at = @At("HEAD"), cancellable = true)
 	private static void port_lib$getCommonNodeType(BlockGetter iBlockReader, BlockPos blockPos, CallbackInfoReturnable<BlockPathTypes> cir) {
 		Block block = iBlockReader.getBlockState(blockPos).getBlock();
 		if (block instanceof CustomPathNodeTypeBlock customPathBlock) {
-			BlockPathTypes pathType = customPathBlock.getAiPathNodeType(iBlockReader.getBlockState(blockPos), iBlockReader, blockPos, null);
+			BlockPathTypes pathType = customPathBlock.getBlockPathType(iBlockReader.getBlockState(blockPos), iBlockReader, blockPos, null);
 			if (pathType != null)
 				cir.setReturnValue(pathType);
 		}
