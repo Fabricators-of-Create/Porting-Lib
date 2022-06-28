@@ -3,7 +3,7 @@
 plugins {
 	id "fabric-loom" version "0.12-SNAPSHOT"
 	id "io.github.juuxel.loom-quiltflower" version "1.+" // Quiltflower, a better decompiler
-	id "org.quiltmc.quilt-mappings-on-loom" version "4.2.+" // Quilt Mappings, for parameters and javadoc. Also hashed mojmap.
+//	id "org.quiltmc.quilt-mappings-on-loom" version "4.2.+" // Quilt Mappings, for parameters and javadoc. Also hashed mojmap.
 	id "maven-publish"
 }
 
@@ -14,8 +14,8 @@ archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
-ext.buildNumber = System.getenv('GITHUB_RUN_NUMBER')
-def patch = buildNumber != null ? buildNumber : '99999'
+ext.buildNumber = System.getenv("GITHUB_RUN_NUMBER")
+def patch = buildNumber != null ? buildNumber : "99999"
 
 version = version.replace("<patch>", patch)
 
@@ -43,7 +43,7 @@ dependencies {
     // dev environment
 	minecraft("com.mojang:minecraft:${project.minecraft_version}")
 	mappings loom.layered {
-		it.addLayer(quiltMappings.mappings("org.quiltmc:quilt-mappings:${minecraft_version}+build.${quilt_mappings}:v2")) // https://lambdaurora.dev/tools/import_quilt.html
+//		it.addLayer(quiltMappings.mappings("org.quiltmc:quilt-mappings:${minecraft_version}+build.${quilt_mappings}:v2")) // https://lambdaurora.dev/tools/import_quilt.html
 		it.officialMojangMappings { setNameSyntheticMembers(false) }
 	}
 	modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
