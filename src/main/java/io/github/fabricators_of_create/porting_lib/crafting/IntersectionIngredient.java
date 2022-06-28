@@ -10,6 +10,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
@@ -81,18 +82,6 @@ public class IntersectionIngredient extends AbstractIngredient {
 	}
 
 	@Override
-	public Value[] getValues() {
-		if (values == null) {
-			if (intersectedMatchingStacks == null)
-				getItems();
-			values = new Value[intersectedMatchingStacks.length];
-			for (int i = 0; i < values.length; i++)
-				values[i] = new ItemValue(intersectedMatchingStacks[i]);
-		}
-		return values;
-	}
-
-	@Override
 	public boolean isEmpty() {
 		return children.stream().anyMatch(Ingredient::isEmpty);
 	}
@@ -128,12 +117,14 @@ public class IntersectionIngredient extends AbstractIngredient {
 
 	@Override
 	public void toNetwork(FriendlyByteBuf buffer) {
+		buffer.writeResourceLocation(Serializer.ID);
 		buffer.writeVarInt(children.size());
 		for (Ingredient ingredient : children)
 			ingredient.toNetwork(buffer);
 	}
 
 	public static class Serializer implements IngredientDeserializer {
+		public static final ResourceLocation ID = new ResourceLocation("forge", "intersection");
 		public static final Serializer INSTANCE = new Serializer();
 
 		@Override

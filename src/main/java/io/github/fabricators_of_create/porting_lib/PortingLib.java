@@ -11,6 +11,7 @@ import io.github.fabricators_of_create.porting_lib.util.TierSortingRegistry;
 import io.github.fabricators_of_create.porting_lib.util.TrueCondition;
 import net.fabricmc.api.ModInitializer;
 
+import net.minecraft.client.gui.components.CommandSuggestions;
 import net.minecraft.resources.ResourceLocation;
 
 import org.slf4j.Logger;

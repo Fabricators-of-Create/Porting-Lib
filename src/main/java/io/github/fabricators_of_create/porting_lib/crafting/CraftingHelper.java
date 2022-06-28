@@ -12,9 +12,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import io.github.fabricators_of_create.porting_lib.crafting.NbtItemValue.NbtItemValueDeserializer;
+import io.github.tropheusj.serialization_hooks.ingredient.CombinedIngredient;
 import io.github.tropheusj.serialization_hooks.ingredient.IngredientDeserializer;
-import io.github.tropheusj.serialization_hooks.value.ValueDeserializer;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
@@ -33,11 +32,11 @@ public class CraftingHelper {
 	private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
 	public static void init() {
-		register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
-		register(new ResourceLocation("forge", "nbt"), NBTIngredient.Serializer.INSTANCE);
-		register(new ResourceLocation("forge", "difference"), DifferenceIngredient.Serializer.INSTANCE);
-		register(new ResourceLocation("forge", "intersection"), IntersectionIngredient.Serializer.INSTANCE);
-		Registry.register(ValueDeserializer.REGISTRY, NbtItemValueDeserializer.ID, NbtItemValueDeserializer.INSTANCE);
+		// forge's Compound defers to Serialization Hooks' Combined		// can't register more than once so construct a new one
+		register(new ResourceLocation("forge", "compound"), new CombinedIngredient.Deserializer());
+		register(NBTIngredient.Serializer.ID, NBTIngredient.Serializer.INSTANCE);
+		register(DifferenceIngredient.Serializer.ID, DifferenceIngredient.Serializer.INSTANCE);
+		register(IntersectionIngredient.Serializer.ID, IntersectionIngredient.Serializer.INSTANCE);
 	}
 
 	public static IngredientDeserializer register(ResourceLocation key, IngredientDeserializer serializer) {
