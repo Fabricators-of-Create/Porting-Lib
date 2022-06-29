@@ -39,59 +39,304 @@
     "java": ">=${java_version}"
   },
   "custom": {
-    "loom:injected_interfaces": {
-      "net/minecraft/class_20": ["io/github/fabricators_of_create/porting_lib/extensions/MapDecorationExtensions"],
-      "net/minecraft/class_293": ["io/github/fabricators_of_create/porting_lib/extensions/VertexFormatExtensions"],
-      "net/minecraft/class_276": ["io/github/fabricators_of_create/porting_lib/extensions/RenderTargetExtensions"],
-      "net/minecraft/class_638": ["io/github/fabricators_of_create/porting_lib/extensions/ClientLevelExtensions"],
-      "net/minecraft/class_703": ["io/github/fabricators_of_create/porting_lib/extensions/ParticleExtensions"],
-      "net/minecraft/class_793": ["io/github/fabricators_of_create/porting_lib/extensions/BlockModelExtensions"],
-      "net/minecraft/class_1044": ["io/github/fabricators_of_create/porting_lib/extensions/AbstractTextureExtensions"],
-      "net/minecraft/class_1058": ["io/github/fabricators_of_create/porting_lib/extensions/TextureAtlasSpriteExtensions"],
-      "net/minecraft/class_1077": ["io/github/fabricators_of_create/porting_lib/extensions/LanguageInfoExtensions"],
-      "net/minecraft/class_1159": ["io/github/fabricators_of_create/porting_lib/extensions/Matrix4fExtensions"],
-      "net/minecraft/class_1160": ["io/github/fabricators_of_create/porting_lib/extensions/Vector3fExtensions"],
-      "net/minecraft/class_1282": ["io/github/fabricators_of_create/porting_lib/mixin/common/accessor/DamageSourceAccessor"],
-      "net/minecraft/class_1291": ["io/github/fabricators_of_create/porting_lib/extensions/MobEffectExtensions"],
-      "net/minecraft/class_1293": ["io/github/fabricators_of_create/porting_lib/extensions/MobEffectInstanceExtensions"],
-      "net/minecraft/class_1297": ["io/github/fabricators_of_create/porting_lib/extensions/EntityExtensions"],
-      "net/minecraft/class_1438": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
-      "net/minecraft/class_1472": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
-      "net/minecraft/class_1473": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
-      "net/minecraft/class_1688": ["io/github/fabricators_of_create/porting_lib/extensions/AbstractMinecartExtensions"],
-      "net/minecraft/class_1735": ["io/github/fabricators_of_create/porting_lib/extensions/SlotExtensions"],
-      "net/minecraft/class_1747": ["io/github/fabricators_of_create/porting_lib/extensions/BlockItemExtensions"],
-      "net/minecraft/class_1792": ["io/github/fabricators_of_create/porting_lib/extensions/ItemExtensions"],
-      "net/minecraft/class_1799": ["io/github/fabricators_of_create/porting_lib/extensions/ItemStackExtensions"],
-      "net/minecraft/class_1832": ["io/github/fabricators_of_create/porting_lib/extensions/TierExtensions"],
-      "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/extensions/LevelExtensions"],
-      "net/minecraft/class_2211": ["io/github/fabricators_of_create/porting_lib/util/IPlantable"],
-      "net/minecraft/class_2241": ["io/github/fabricators_of_create/porting_lib/extensions/BaseRailBlockExtensions"],
-      "net/minecraft/class_2248": ["io/github/fabricators_of_create/porting_lib/extensions/BlockExtensions"],
-      "net/minecraft/class_2266": ["io/github/fabricators_of_create/porting_lib/util/IPlantable"],
-      "net/minecraft/class_2311": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
-      "net/minecraft/class_2397": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
-      "net/minecraft/class_2474$class_5124": ["io/github/fabricators_of_create/porting_lib/extensions/TagAppenderExtensions"],
-      "net/minecraft/class_2476": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
-      "net/minecraft/class_2523": ["io/github/fabricators_of_create/porting_lib/util/IPlantable"],
-      "net/minecraft/class_2526": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
-      "net/minecraft/class_2541": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
-      "net/minecraft/class_2560": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
-      "net/minecraft/class_2586": ["io/github/fabricators_of_create/porting_lib/extensions/BlockEntityExtensions"],
-      "net/minecraft/class_2261": ["io/github/fabricators_of_create/porting_lib/util/IPlantable"],
-      "net/minecraft/class_2960": ["io/github/fabricators_of_create/porting_lib/extensions/ResourceLocationExtensions"],
-      "net/minecraft/class_3491": ["io/github/fabricators_of_create/porting_lib/extensions/StructureProcessorExtensions"],
-      "net/minecraft/class_3499": ["io/github/fabricators_of_create/porting_lib/extensions/StructureTemplateExtensions"],
-      "net/minecraft/class_3611": ["io/github/fabricators_of_create/porting_lib/extensions/FluidExtensions"],
-      "net/minecraft/class_3665": ["io/github/fabricators_of_create/porting_lib/extensions/ModelStateExtensions"],
-      "net/minecraft/class_3727": ["io/github/fabricators_of_create/porting_lib/extensions/EntityCollisionContextExtensions"],
-      "net/minecraft/class_4184": ["io/github/fabricators_of_create/porting_lib/extensions/CameraExtensions"],
-      "net/minecraft/class_4538": ["io/github/fabricators_of_create/porting_lib/extensions/LevelReaderExtensions"],
-      "net/minecraft/class_4581": ["io/github/fabricators_of_create/porting_lib/extensions/Matrix3fExtensions"],
-      "net/minecraft/class_4590": ["io/github/fabricators_of_create/porting_lib/extensions/TransformationExtensions"]
-    },
     "modmenu": {
       "badges": [ "library" ]
+    },
+    "loom:injected_interfaces": {
+      "net/minecraft/class_793$class_795": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/BlockModel$DeserializerAccessor"
+      ],
+      "net/minecraft/class_1282": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/DamageSourceAccessor"
+      ],
+      "net/minecraft/class_293": [
+        "io/github/fabricators_of_create/porting_lib/extensions/VertexFormatExtensions"
+      ],
+      "net/minecraft/class_4592": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/AgeableListModelAccessor"
+      ],
+      "net/minecraft/class_1160": [
+        "io/github/fabricators_of_create/porting_lib/extensions/Vector3fExtensions"
+      ],
+      "net/minecraft/class_4590": [
+        "io/github/fabricators_of_create/porting_lib/extensions/TransformationExtensions"
+      ],
+      "net/minecraft/class_572": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/HumanoidModelAccessor"
+      ],
+      "net/minecraft/class_1688": [
+        "io/github/fabricators_of_create/porting_lib/extensions/AbstractMinecartExtensions",
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/AbstractMinecartAccessor"
+      ],
+      "net/minecraft/class_1845$class_1846": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/PotionBrewing$MixAccessor"
+      ],
+      "net/minecraft/class_2696": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/ClientboundPlayerAbilitiesPacketAccessor"
+      ],
+      "net/minecraft/class_3665": [
+        "io/github/fabricators_of_create/porting_lib/extensions/ModelStateExtensions"
+      ],
+      "net/minecraft/class_776": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/BlockRenderDispatcherAccessor"
+      ],
+      "net/minecraft/class_1088": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/ModelBakeryAccessor"
+      ],
+      "net/minecraft/class_2452": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/RailStateAccessor"
+      ],
+      "net/minecraft/class_1044": [
+        "io/github/fabricators_of_create/porting_lib/extensions/AbstractTextureExtensions"
+      ],
+      "net/minecraft/class_1917": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/BaseSpawnerAccessor"
+      ],
+      "net/minecraft/server/MinecraftServer": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/MinecraftServerAccessor"
+      ],
+      "net/minecraft/class_2526": [
+        "io/github/fabricators_of_create/porting_lib/extensions/IShearable"
+      ],
+      "net/minecraft/class_1438": [
+        "io/github/fabricators_of_create/porting_lib/extensions/IShearable"
+      ],
+      "net/minecraft/class_1293": [
+        "io/github/fabricators_of_create/porting_lib/extensions/MobEffectInstanceExtensions"
+      ],
+      "net/minecraft/class_2580": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/BeaconBlockEntityAccessor"
+      ],
+      "net/minecraft/class_1291": [
+        "io/github/fabricators_of_create/porting_lib/extensions/MobEffectExtensions"
+      ],
+      "net/minecraft/class_1534": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/PaintingAccessor"
+      ],
+      "net/minecraft/class_442": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/TitleScreenAccessor"
+      ],
+      "net/minecraft/class_245": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/ArrayVoxelShapeAccessor"
+      ],
+      "net/minecraft/class_5537": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/BundleItemAccessor"
+      ],
+      "net/minecraft/class_4722": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/SheetsAccessor"
+      ],
+      "net/minecraft/class_2586": [
+        "io/github/fabricators_of_create/porting_lib/extensions/BlockEntityExtensions",
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/BlockEntityAccessor"
+      ],
+      "net/minecraft/class_1058": [
+        "io/github/fabricators_of_create/porting_lib/extensions/TextureAtlasSpriteExtensions"
+      ],
+      "net/minecraft/class_1297": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/EntityAccessor",
+        "io/github/fabricators_of_create/porting_lib/extensions/EntityExtensions"
+      ],
+      "net/minecraft/class_249": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/CubeVoxelShapeAccessor"
+      ],
+      "net/minecraft/class_4003": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/TextureSheetParticleAccessor"
+      ],
+      "net/minecraft/class_327": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/FontAccessor"
+      ],
+      "net/minecraft/class_2541": [
+        "io/github/fabricators_of_create/porting_lib/extensions/IShearable"
+      ],
+      "net/minecraft/class_757": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/GameRendererAccessor"
+      ],
+      "net/minecraft/class_638": [
+        "io/github/fabricators_of_create/porting_lib/extensions/ClientLevelExtensions"
+      ],
+      "net/minecraft/class_759": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/ItemInHandRendererAccessor"
+      ],
+      "net/minecraft/class_2814": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/HashMapPaletteAccessor"
+      ],
+      "net/minecraft/class_1921": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/RenderTypeAccessor"
+      ],
+      "net/minecraft/class_1845": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/PotionBrewingAccessor"
+      ],
+      "net/minecraft/class_918": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/ItemRendererAccessor"
+      ],
+      "net/minecraft/class_350": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/AbstractSelectionListAccessor"
+      ],
+      "net/minecraft/class_1743": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/AxeItemAccessor"
+      ],
+      "net/minecraft/class_793": [
+        "io/github/fabricators_of_create/porting_lib/extensions/BlockModelExtensions",
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/BlockModelAccessor"
+      ],
+      "net/minecraft/class_4538": [
+        "io/github/fabricators_of_create/porting_lib/extensions/LevelReaderExtensions"
+      ],
+      "net/minecraft/class_276": [
+        "io/github/fabricators_of_create/porting_lib/extensions/RenderTargetExtensions"
+      ],
+      "net/minecraft/class_310": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/MinecraftAccessor"
+      ],
+      "net/minecraft/class_630": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/ModelPartAccessor"
+      ],
+      "net/minecraft/class_1863": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/RecipeManagerAccessor"
+      ],
+      "net/minecraft/class_2311": [
+        "io/github/fabricators_of_create/porting_lib/extensions/IShearable"
+      ],
+      "net/minecraft/class_2476": [
+        "io/github/fabricators_of_create/porting_lib/extensions/IShearable"
+      ],
+      "net/minecraft/class_1058$class_5790": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/TextureAtlasSprite$AnimatedTextureAccessor"
+      ],
+      "net/minecraft/class_2510": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/StairBlockAccessor"
+      ],
+      "net/minecraft/class_634": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/ClientPacketListenerAccessor"
+      ],
+      "net/minecraft/class_2397": [
+        "io/github/fabricators_of_create/porting_lib/extensions/IShearable"
+      ],
+      "net/minecraft/class_3244": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/ServerGamePacketListenerImplAccessor"
+      ],
+      "net/minecraft/class_437": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/ScreenAccessor"
+      ],
+      "net/minecraft/class_702": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/ParticleEngineAccessor"
+      ],
+      "net/minecraft/class_703": [
+        "io/github/fabricators_of_create/porting_lib/extensions/ParticleExtensions",
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/ParticleAccessor"
+      ],
+      "net/minecraft/class_1937": [
+        "io/github/fabricators_of_create/porting_lib/extensions/LevelExtensions"
+      ],
+      "net/minecraft/class_1657": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/PlayerAccessor"
+      ],
+      "net/minecraft/class_1735": [
+        "io/github/fabricators_of_create/porting_lib/extensions/SlotExtensions",
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/SlotAccessor"
+      ],
+      "net/minecraft/class_20": [
+        "io/github/fabricators_of_create/porting_lib/extensions/MapDecorationExtensions"
+      ],
+      "net/minecraft/class_1856$class_1858": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/TagValueAccessor"
+      ],
+      "net/minecraft/class_1856$class_1857": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/ItemValueAccessor"
+      ],
+      "net/minecraft/class_2241": [
+        "io/github/fabricators_of_create/porting_lib/extensions/BaseRailBlockExtensions"
+      ],
+      "net/minecraft/class_2560": [
+        "io/github/fabricators_of_create/porting_lib/extensions/IShearable"
+      ],
+      "net/minecraft/class_1472": [
+        "io/github/fabricators_of_create/porting_lib/extensions/IShearable"
+      ],
+      "net/minecraft/class_1093$class_1094": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/SimpleBakedModel$BuilderAccessor"
+      ],
+      "net/minecraft/class_4581": [
+        "io/github/fabricators_of_create/porting_lib/extensions/Matrix3fExtensions"
+      ],
+      "net/minecraft/class_4184": [
+        "io/github/fabricators_of_create/porting_lib/extensions/CameraExtensions"
+      ],
+      "net/minecraft/class_3491": [
+        "io/github/fabricators_of_create/porting_lib/extensions/StructureProcessorExtensions"
+      ],
+      "net/minecraft/class_2474$class_5124": [
+        "io/github/fabricators_of_create/porting_lib/extensions/TagAppenderExtensions"
+      ],
+      "net/minecraft/class_1832": [
+        "io/github/fabricators_of_create/porting_lib/extensions/TierExtensions"
+      ],
+      "net/minecraft/class_1799": [
+        "io/github/fabricators_of_create/porting_lib/extensions/ItemStackExtensions"
+      ],
+      "net/minecraft/class_2965": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/AbstractProjectileDispenseBehaviorAccessor"
+      ],
+      "net/minecraft/class_2404": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/LiquidBlockAccessor"
+      ],
+      "net/minecraft/class_1755": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/BucketItemAccessor"
+      ],
+      "net/minecraft/class_465": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/AbstractContainerScreenAccessor"
+      ],
+      "net/minecraft/class_3611": [
+        "io/github/fabricators_of_create/porting_lib/extensions/FluidExtensions"
+      ],
+      "net/minecraft/class_2248": [
+        "io/github/fabricators_of_create/porting_lib/extensions/BlockExtensions",
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/BlockAccessor"
+      ],
+      "net/minecraft/class_1159": [
+        "io/github/fabricators_of_create/porting_lib/extensions/Matrix4fExtensions"
+      ],
+      "net/minecraft/class_2960": [
+        "io/github/fabricators_of_create/porting_lib/extensions/ResourceLocationExtensions"
+      ],
+      "net/minecraft/class_3499": [
+        "io/github/fabricators_of_create/porting_lib/extensions/StructureTemplateExtensions",
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/StructureTemplateAccessor"
+      ],
+      "net/minecraft/class_304": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/KeyMappingAccessor"
+      ],
+      "net/minecraft/class_1077": [
+        "io/github/fabricators_of_create/porting_lib/extensions/LanguageInfoExtensions"
+      ],
+      "net/minecraft/class_1473": [
+        "io/github/fabricators_of_create/porting_lib/extensions/IShearable"
+      ],
+      "net/minecraft/class_4543": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/BiomeManagerAccessor"
+      ],
+      "net/minecraft/class_1792": [
+        "io/github/fabricators_of_create/porting_lib/extensions/ItemExtensions",
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/ItemAccessor"
+      ],
+      "net/minecraft/class_339": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/AbstractWidgetAccessor"
+      ],
+      "net/minecraft/class_1309": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/LivingEntityAccessor"
+      ],
+      "net/minecraft/class_1747": [
+        "io/github/fabricators_of_create/porting_lib/extensions/BlockItemExtensions"
+      ],
+      "net/minecraft/class_3727": [
+        "io/github/fabricators_of_create/porting_lib/extensions/EntityCollisionContextExtensions"
+      ],
+      "net/minecraft/class_1308": [
+        "io/github/fabricators_of_create/porting_lib/mixin/common/accessor/MobAccessor"
+      ],
+      "net/minecraft/class_350$class_351": [
+        "io/github/fabricators_of_create/porting_lib/mixin/client/accessor/AbstractSelectionList$EntryAccessor"
+      ]
     }
   }
 }

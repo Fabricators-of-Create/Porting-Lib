@@ -111,7 +111,8 @@ processResources {
 	properties.put("fabric_version", project.fabric_version)
 	properties.put("minecraft_version", project.minecraft_version)
 	properties.put("java_version", sourceCompatibility)
-	properties.put("class_5124", project.wtf_gradle)
+	whyGradle(properties)
+
 
 	properties.forEach((k, v) -> inputs.property(k, v))
 
@@ -119,6 +120,42 @@ processResources {
 		expand properties
 	}
 }
+
+// since referencing inner classes uses $, which gradle interprets as a placeholder, we need to replace everything with itself.
+static def whyGradle(Map<String, String> properties) {
+	for (int i = 0; i < 6000; i++) {
+		String name = "class_$i"
+		properties.put(name, name)
+	}
+	properties.put("DeserializerAccessor", "DeserializerAccessor")
+	properties.put("MixAccessor", "MixAccessor")
+	properties.put("AnimatedTextureAccessor", "AnimatedTextureAccessor")
+	properties.put("BuilderAccessor", "BuilderAccessor")
+	properties.put("EntryAccessor", "EntryAccessor")
+}
+
+// maybe one day...
+// since loom directly reads the fmj we can't do this
+//String injectedInterfacesJson() {
+//	def file = file("src/main/resources/injected_interfaces.json")
+//	BufferedReader reader = new BufferedReader(new FileReader(file))
+//	StringBuilder content = new StringBuilder()
+//	// input: "ignore_this": "placeholder"
+//	// we can add text to replace the placeholder.
+//	// break out of the placeholder and add the loom entry
+//	content.append('   ",\n   '.trim())
+//	// result: "ignore_this": "","
+//	List<String> lines = reader.lines().toList()
+//	// json has padding brackets from export, skip first and last line
+//	lines = lines.subList(1, lines.size() - 1)
+//	// add our interface injection
+//	lines.forEach(content::append)
+//	// result: "ignore_this": "", "loom:injected_interfaces": {...}"
+//	// since we broke out, we need to break back in to make a valid json
+//	content.append('   ,\n"ignore_this_too":"   '.trim())
+//	// result: "ignore_this": "", "loom:injected_interfaces": {...}, "ignore_this_too":""
+//	return content
+//}
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.release = Integer.parseInt(sourceCompatibility)

@@ -8,13 +8,13 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import io.github.fabricators_of_create.porting_lib.util.ArmorTextureItem;
 
-import io.github.fabricators_of_create.porting_lib.util.ArmorTextureRegistry;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -46,9 +46,6 @@ public abstract class HumanoidArmorLayerMixin {
 	@Final
 	private static Map<String, ResourceLocation> ARMOR_LOCATION_CACHE;
 
-	@Shadow
-	protected abstract boolean usesInnerModel(EquipmentSlot slot);
-
 	@Inject(method = "getArmorLocation", at = @At("HEAD"), cancellable = true)
 	private void port_lib$getArmorLocation(ArmorItem armorItem, boolean bl, String string, CallbackInfoReturnable<ResourceLocation> cir) {
 		ResourceLocation id = ArmorTextureRegistry.get(armorItem.getMaterial());
@@ -71,7 +68,7 @@ public abstract class HumanoidArmorLayerMixin {
 	}
 
 	@Unique
-	private ResourceLocation port_lib$getArmorResource(net.minecraft.world.entity.Entity entity, ItemStack stack, EquipmentSlot slot, @Nullable String type) {
+	private ResourceLocation port_lib$getArmorResource(Entity entity, ItemStack stack, EquipmentSlot slot, @Nullable String type) {
 		if (stack.getItem() instanceof ArmorTextureItem armorTextureItem) {
 			String s1 = armorTextureItem.getArmorTexture(stack, entity, slot, type);
 			ResourceLocation resourcelocation = ARMOR_LOCATION_CACHE.get(s1);

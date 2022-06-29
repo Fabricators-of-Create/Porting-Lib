@@ -8,6 +8,9 @@ import javax.annotation.Nullable;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
+/**
+ * A Map of ArmorMaterials to ResourceLocations for armor textures.
+ */
 public class ArmorTextureRegistry {
 	private static final Map<ArmorMaterial, ResourceLocation> TEXTURES = new IdentityHashMap<>();
 
