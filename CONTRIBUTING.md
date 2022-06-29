@@ -1,12 +1,12 @@
-# Library Package Guidelines
+# Porting Lib Contributing Guidelines
 
 1. **Mixin Naming**
-	- **Class Names**
+    - **Class Names:**
 	All mixin classes should be named after the class that they mixin to followed by either `Mixin` if the class is a regular mixin, or `Accessor` if it is an accessor mixin. When mixing into inner classes, use a `$` symbol to separate the outer and inner class names. For example, when making a regular mixin for the class `ClassA.ClassB`, the mixin class name would be `ClassA$ClassBMixin`.
-	- **Field and Method Names**
-	All non-shadowed fields and methods, including those in extension interfaces, should be prefixed with `port_lib$`. Accessor and invoker methods' base name should be the same as the method that is being accessed or invoked. For example, the invoker method name for `renderBakedItemModel` would be `port_lib$renderBakedItemModel`.
+	- **Field and Method Names:**
+	All non-shadowed fields and methods, including those in extension interfaces, should be prefixed with `port_lib$`. Accessor and invoker methods' base name should be the same as their target, plus the prefix. For example, the invoker method name for `renderBakedItemModel` would be `port_lib$renderBakedItemModel`.
 
-2. **Mixin Misc**
+2. **Mixin Misc:**
 	- Mixins that mixin to a class that only exists in a certain environment type should have an `@Environment(EnvType.{type})` annotation. This annotation should go above the `@Mixin` annotation.
 	- All mixin classes should be abstract. Regular mixins should have the `abstract` modifier. Accessors should be interfaces, which are already technically abstract.
 	- Shadowed methods should always be abstract.
@@ -14,11 +14,12 @@
 	- `@Accessor` methods should always go before `@Invoker` methods.
 	- The mixin config JSON file should have all mixins in alphabetical order, with accessor mixins being listed before regular mixins.
 
-3. **Utility Classes**
+3. **Utility Classes:**
 	- All utility classes should be final and have a private nullary (empty) constructor. This constructor should go at the very end before inner classes, if there are any.
 
-4. **Organization**
-	- Regular mixins should go into the `io.github.fabricators_of_create.porting_lib.mixin` package.
-	- Accessor mixins should go into the `io.github.fabricators_of_create.porting_lib.mixin.accessor` package.
-	- Extension interfaces should go into the `io.github.fabricators_of_create.porting_lib.extensions` package.
-	- Helper/utility classes should go into the `io.github.fabricators_of_create.porting_lib.util` package.
+4. **Organization:**
+    - Regular common mixins should go into the `io.github.fabricators_of_create.porting_lib.mixin.common` package.
+    - Regular client-only mixins should go into the `io.github.fabricators_of_create.porting_lib.mixin.client` package.
+    - Accessor mixins should go into the `io.github.fabricators_of_create.porting_lib.mixin.[client/common].accessor` packages.
+    - Extension interfaces should go into the `io.github.fabricators_of_create.porting_lib.extensions` package.
+    - Helper/utility classes should go into the `io.github.fabricators_of_create.porting_lib.util` package.
