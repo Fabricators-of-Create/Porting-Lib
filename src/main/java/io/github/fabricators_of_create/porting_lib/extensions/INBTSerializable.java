@@ -4,7 +4,11 @@ import net.minecraft.nbt.Tag;
 
 // can't inject this because generics
 public interface INBTSerializable<T extends Tag> {
-	T serializeNBT();
+	default T serializeNBT() {
+		throw new RuntimeException("override serializeNBT!");
+	}
 
-	void deserializeNBT(T nbt);
+	default void deserializeNBT(T nbt) {
+		throw new RuntimeException("override deserializeNBT!");
+	}
 }
