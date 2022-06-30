@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import io.github.fabricators_of_create.porting_lib.util.ArmorTextureItem;
+import io.github.fabricators_of_create.porting_lib.item.ArmorTextureItem;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;

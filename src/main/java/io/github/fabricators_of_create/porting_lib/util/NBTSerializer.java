@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
+import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 

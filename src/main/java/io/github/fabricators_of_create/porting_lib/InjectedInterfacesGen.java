@@ -32,6 +32,9 @@ import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensi
 import io.github.fabricators_of_create.porting_lib.extensions.EntityCollisionContextExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.FluidExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializable;
+import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializableCompound;
+import io.github.fabricators_of_create.porting_lib.extensions.IPlantable;
 import io.github.fabricators_of_create.porting_lib.extensions.IShearable;
 import io.github.fabricators_of_create.porting_lib.extensions.ItemExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.ItemStackExtensions;
@@ -84,11 +87,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.BambooBlock;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.CactusBlock;
 import net.minecraft.world.level.block.DeadBushBlock;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.SeagrassBlock;
+import net.minecraft.world.level.block.StemBlock;
+import net.minecraft.world.level.block.SugarCaneBlock;
 import net.minecraft.world.level.block.TallGrassBlock;
 import net.minecraft.world.level.block.VineBlock;
 import net.minecraft.world.level.block.WebBlock;
@@ -155,6 +163,8 @@ public class InjectedInterfacesGen {
 		builder.inject(EntityCollisionContext.class, EntityCollisionContextExtensions.class);
 		builder.inject(Entity.class, EntityExtensions.class);
 		builder.inject(Fluid.class, FluidExtensions.class);
+		builder.injectReversed(INBTSerializableCompound.class, Entity.class, BlockEntity.class, ItemStack.class);
+		builder.injectReversed(IPlantable.class, BambooBlock.class, BushBlock.class, CactusBlock.class, StemBlock.class, SugarCaneBlock.class);
 		builder.injectReversed(IShearable.class, DeadBushBlock.class, LeavesBlock.class, MushroomCow.class, SeagrassBlock.class, Sheep.class, SnowGolem.class, TallGrassBlock.class, VineBlock.class, WebBlock.class);
 		// note: ITeleporter has no impl
 		builder.inject(Item.class, ItemExtensions.class);

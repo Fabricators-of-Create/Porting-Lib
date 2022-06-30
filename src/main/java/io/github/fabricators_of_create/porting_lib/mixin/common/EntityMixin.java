@@ -3,6 +3,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 import java.util.Collection;
 
 import io.github.fabricators_of_create.porting_lib.entity.StepHeightEntity;
+import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializableCompound;
 import net.minecraft.world.phys.Vec3;
 
 import org.jetbrains.annotations.Nullable;
@@ -12,8 +13,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
@@ -26,7 +25,7 @@ import io.github.fabricators_of_create.porting_lib.event.common.MountEntityCallb
 import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.ITeleporter;
 import io.github.fabricators_of_create.porting_lib.util.EntityHelper;
-import io.github.fabricators_of_create.porting_lib.util.INBTSerializable;
+import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -41,7 +40,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.PortalInfo;
 
 @Mixin(Entity.class)
-public abstract class EntityMixin implements EntityExtensions, INBTSerializable<CompoundTag> {
+public abstract class EntityMixin implements EntityExtensions, INBTSerializableCompound {
 	@Shadow
 	public Level level;
 	@Shadow

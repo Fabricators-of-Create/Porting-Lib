@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
-import io.github.fabricators_of_create.porting_lib.util.ContinueUsingItem;
-import io.github.fabricators_of_create.porting_lib.util.UsingTickItem;
+import io.github.fabricators_of_create.porting_lib.item.ContinueUsingItem;
+import io.github.fabricators_of_create.porting_lib.item.UsingTickItem;
 
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;

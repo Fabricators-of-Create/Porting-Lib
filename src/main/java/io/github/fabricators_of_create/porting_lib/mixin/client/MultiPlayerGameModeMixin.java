@@ -4,8 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyReceiver;
 
 import io.github.fabricators_of_create.porting_lib.event.common.EntityInteractCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
-import io.github.fabricators_of_create.porting_lib.extensions.ItemStackExtensions;
-import io.github.fabricators_of_create.porting_lib.util.PlayerDestroyBlock;
+import io.github.fabricators_of_create.porting_lib.block.PlayerDestroyBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,11 +29,9 @@ import io.github.fabricators_of_create.porting_lib.item.UseFirstBehaviorItem;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;

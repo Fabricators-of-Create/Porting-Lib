@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.util.CustomArrowItem;
+import io.github.fabricators_of_create.porting_lib.item.CustomArrowItem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.BowItem;
