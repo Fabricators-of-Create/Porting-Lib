@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
+import io.github.fabricators_of_create.porting_lib.block.CustomDestroyEffectsBlock;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -11,6 +15,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.fabricmc.api.EnvType;
@@ -47,6 +52,15 @@ public abstract class ParticleEngineMixin {
 	private static void port_lib$addCustomRenderTypes(ParticleRenderType particleRenderType, CallbackInfoReturnable<Queue<Particle>> cir) {
 		if (!RENDER_ORDER.contains(particleRenderType)) {
 			port_lib$addRenderType(particleRenderType);
+		}
+	}
+
+	@Inject(method = "destroy", at = @At("HEAD"), cancellable = true)
+	private void port_lib$customDestroyEffects(BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
+		if (blockState.getBlock() instanceof CustomDestroyEffectsBlock custom) {
+			if (custom.applyCustomDestroyEffects(blockState, level, blockPos, (ParticleEngine) (Object) this)) {
+				ci.cancel();
+			}
 		}
 	}
 }
