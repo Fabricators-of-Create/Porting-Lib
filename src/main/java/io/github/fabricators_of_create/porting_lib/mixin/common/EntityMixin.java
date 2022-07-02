@@ -77,6 +77,16 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializable<
 	@Shadow
 	public abstract void unRide();
 
+	@Shadow
+	@Nullable
+	protected abstract String getEncodeId();
+
+	@Shadow
+	public abstract CompoundTag saveWithoutId(CompoundTag compoundTag);
+
+	@Shadow
+	public abstract void load(CompoundTag compoundTag);
+
 	@Inject(at = @At("TAIL"), method = "<init>")
 	public void port_lib$entityInit(EntityType<?> entityType, Level world, CallbackInfo ci) {
 		eyeHeight = EntityEvents.EYE_HEIGHT.invoker().onEntitySize((Entity) (Object) this, eyeHeight);
@@ -196,20 +206,18 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializable<
 	@Unique
 	@Override
 	public CompoundTag serializeNBT() {
-		CompoundTag nbt = new CompoundTag();
-		String id = EntityHelper.getEntityString((Entity) (Object) this);
-
+		CompoundTag ret = new CompoundTag();
+		String id = getEncodeId();
 		if (id != null) {
-			nbt.putString("id", id);
+			ret.putString("id", id);
 		}
-
-		return nbt;
+		return saveWithoutId(ret);
 	}
 
 	@Unique
 	@Override
 	public void deserializeNBT(CompoundTag nbt) {
-		readAdditionalSaveData(nbt);
+		load(nbt);
 	}
 
 	@Unique
