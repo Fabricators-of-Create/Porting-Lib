@@ -2,7 +2,9 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import java.util.Iterator;
 
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 
 import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
@@ -15,6 +17,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
@@ -54,6 +57,10 @@ public abstract class LevelRendererMixin {
 	@Final
 	private RenderBuffers renderBuffers;
 
+	@Shadow
+	@Final
+	private Minecraft minecraft;
+
 	@ModifyVariable(
 		method = "renderLevel(Lcom/mojang/blaze3d/vertex/PoseStack;FJZLnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/GameRenderer;Lnet/minecraft/client/renderer/LightTexture;Lcom/mojang/math/Matrix4f;)V",
 		slice = @Slice(
@@ -68,13 +75,21 @@ public abstract class LevelRendererMixin {
 		),
 		at = @At("STORE")
 	)
-	private Iterator<BlockEntity> wrapBlockEntityIterator(Iterator<BlockEntity> iterator) {
+	private Iterator<BlockEntity> port_lib$wrapBlockEntityIterator(Iterator<BlockEntity> iterator) {
 		return new CullingBlockEntityIterator(iterator, capturedFrustum != null ? capturedFrustum : cullingFrustum);
 	}
 
+	@WrapWithCondition(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;renderHitOutline(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/world/entity/Entity;DDDLnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V"))
+	private boolean port_lib$renderBlockOutline(LevelRenderer self, PoseStack poseStack, VertexConsumer vertexConsumer, Entity entity,
+										double d, double e, double f, BlockPos blockPos, BlockState blockState,
+										/* enclosing args */ PoseStack p, float partialTicks, long l, boolean bl, Camera camera,
+										GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f) {
+		return !DrawSelectionEvents.BLOCK.invoker().onHighlightBlock(self, camera, minecraft.hitResult, partialTicks, poseStack, renderBuffers.bufferSource());
+	}
+
 	@Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;getModelViewStack()Lcom/mojang/blaze3d/vertex/PoseStack;", shift = At.Shift.BEFORE))
-	public void renderOutline(PoseStack poseStack, float partialTick, long finishNanoTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f projectionMatrix, CallbackInfo ci) {
-		HitResult hitresult = Minecraft.getInstance().hitResult;
+	private void port_lib$renderEntityOutline(PoseStack poseStack, float partialTick, long finishNanoTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f projectionMatrix, CallbackInfo ci) {
+		HitResult hitresult = minecraft.hitResult;
 		if (hitresult != null && hitresult.getType() == HitResult.Type.ENTITY) {
 			DrawSelectionEvents.ENTITY.invoker().onHighlightEntity((LevelRenderer) (Object) this, camera, hitresult, partialTick, poseStack, this.renderBuffers.bufferSource());
 		}
@@ -99,7 +114,7 @@ public abstract class LevelRendererMixin {
 	}
 
 	@Inject(method = "renderSky", at = @At(value = "INVOKE", target = "Ljava/lang/Runnable;run()V", shift = At.Shift.AFTER))
-	public void port_lib$fogRender(PoseStack poseStack, Matrix4f projectionMatrix, float partialTick, Camera camera, boolean bl, Runnable skyFogSetup, CallbackInfo ci) {
+	private void port_lib$fogRender(PoseStack poseStack, Matrix4f projectionMatrix, float partialTick, Camera camera, boolean bl, Runnable skyFogSetup, CallbackInfo ci) {
 		FogEvents.RENDER_FOG.invoker().onFogRender(FogRenderer.FogMode.FOG_SKY, camera, partialTick, Minecraft.getInstance().gameRenderer.getRenderDistance());
 	}
 
@@ -110,7 +125,7 @@ public abstract class LevelRendererMixin {
 					shift = At.Shift.AFTER
 			)
 	)
-	public void port_lib$fogRenderAfter(PoseStack poseStack, float partialTick, long finishNanoTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f projectionMatrix, CallbackInfo ci) {
+	private void port_lib$fogRenderAfter(PoseStack poseStack, float partialTick, long finishNanoTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f projectionMatrix, CallbackInfo ci) {
 		FogEvents.RENDER_FOG.invoker().onFogRender(FogRenderer.FogMode.FOG_TERRAIN, camera, partialTick, Math.max(gameRenderer.getRenderDistance(), 32.0F));
 	}
 }
