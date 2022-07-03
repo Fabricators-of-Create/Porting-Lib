@@ -181,7 +181,7 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializable<
 
 	@Inject(method = "removeVehicle", at = @At(value = "CONSTANT", args = "nullValue=true"), cancellable = true)
 	public void port_lib$removeRidingEntity(CallbackInfo ci) {
-		if (MountEntityCallback.EVENT.invoker().onStartRiding(this.vehicle, (Entity) (Object) this, true) == InteractionResult.FAIL) {
+		if (MountEntityCallback.EVENT.invoker().onStartRiding(this.vehicle, (Entity) (Object) this, false) == InteractionResult.FAIL) {
 			ci.cancel();
 		}
 	}
