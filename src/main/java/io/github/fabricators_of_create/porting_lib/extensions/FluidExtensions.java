@@ -8,6 +8,10 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.LavaFluid;
 import net.minecraft.world.level.material.WaterFluid;
 
+/**
+ * FluidAttributes should not be used and will be removed in the future
+ */
+@Deprecated(forRemoval = true)
 public interface FluidExtensions {
 	static FluidAttributes createVanillaFluidAttributes(Fluid fluid) {
 		if (fluid instanceof EmptyFluid)

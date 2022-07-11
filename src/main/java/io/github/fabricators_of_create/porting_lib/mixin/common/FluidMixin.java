@@ -10,6 +10,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 
+@Deprecated(forRemoval = true)
 @Mixin(Fluid.class)
 public abstract class FluidMixin implements FluidExtensions, RegistryNameProvider {
 	@Unique
