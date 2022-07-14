@@ -136,7 +136,6 @@
     "accessor.RailStateAccessor",
     "accessor.RecipeManagerAccessor",
     "accessor.ServerGamePacketListenerImplAccessor",
-    "accessor.SlimeAccessor",
     "accessor.SlotAccessor",
     "accessor.StairBlockAccessor",
     "accessor.StructureTemplateAccessor",
