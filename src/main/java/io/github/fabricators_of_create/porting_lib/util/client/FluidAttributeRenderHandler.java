@@ -22,6 +22,7 @@ public class FluidAttributeRenderHandler implements FluidRenderHandler {
 
 	public FluidAttributeRenderHandler(FluidAttributes attributes) {
 		this.attributes = attributes;
+		this.sprites = new TextureAtlasSprite[attributes.getOverlayTexture() == null ? 2 : 3];
 	}
 
 	@Override
