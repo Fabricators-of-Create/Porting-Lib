@@ -7,6 +7,7 @@ import io.github.fabricators_of_create.porting_lib.event.client.MinecraftTailCal
 
 import io.github.fabricators_of_create.porting_lib.event.client.PickBlockCallback;
 
+import io.github.fabricators_of_create.porting_lib.event.common.ModsLoadedCallback;
 import io.github.fabricators_of_create.porting_lib.model.ModelLoaderRegistry;
 
 import org.jetbrains.annotations.Nullable;
@@ -65,6 +66,12 @@ public abstract class MinecraftMixin {
 	@Inject(method = "<init>", at = @At("TAIL"))
 	public void port_lib$mcTail(GameConfig gameConfiguration, CallbackInfo ci) {
 		MinecraftTailCallback.EVENT.invoker().onMinecraftTail((Minecraft) (Object) this);
+	}
+
+	// Inject right after the fabric entrypoint
+	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Ljava/lang/Thread;currentThread()Ljava/lang/Thread;"))
+	public void port_lib$modsLoaded(GameConfig gameConfig, CallbackInfo ci) {
+		ModsLoadedCallback.EVENT.invoker().onAllModsLoaded(EnvType.CLIENT);
 	}
 
 	@Inject(method = "setLevel", at = @At("HEAD"))

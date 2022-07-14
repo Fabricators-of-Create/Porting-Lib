@@ -50,6 +50,7 @@
     "LevelMixin",
     "LiquidBlockMixin",
     "LivingEntityMixin",
+    "MainMixin",
     "MapDecorationMixin",
     "MapItemMixin",
     "Matrix3fMixin",
