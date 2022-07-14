@@ -18,7 +18,10 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import net.minecraft.world.level.portal.PortalInfo;
 
+import net.minecraft.world.phys.Vec3;
+
 import org.jetbrains.annotations.Nullable;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -86,6 +89,9 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializable<
 
 	@Shadow
 	public abstract void load(CompoundTag compoundTag);
+
+	@Shadow
+	public float maxUpStep;
 
 	@Inject(at = @At("TAIL"), method = "<init>")
 	public void port_lib$entityInit(EntityType<?> entityType, Level world, CallbackInfo ci) {
@@ -265,5 +271,10 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializable<
 		} else {
 			return null;
 		}
+	}
+
+	@Inject(method = "collide", at = @At(value = "JUMP", opcode = Opcodes.IFGE))
+	public void port_lib$modifyStepHeight(Vec3 movement, CallbackInfoReturnable<Vec3> cir) {
+		this.maxUpStep = this.getStepHeight();
 	}
 }
