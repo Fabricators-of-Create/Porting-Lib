@@ -5,9 +5,12 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import io.github.fabricators_of_create.porting_lib.util.client.ClientHooks;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributeHandler;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.core.BlockPos;
@@ -123,6 +126,8 @@ public class FluidAttributes {
 		this.density = builder.density;
 		this.isGaseous = builder.isGaseous;
 		this.rarity = builder.rarity;
+		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+			ClientHooks.registerFluidVariantsFromAttributes(fluid, this);
 	}
 
 	public static Builder builder(ResourceLocation stillTexture, ResourceLocation flowingTexture) {
