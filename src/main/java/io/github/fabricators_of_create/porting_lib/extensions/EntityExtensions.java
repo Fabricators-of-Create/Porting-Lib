@@ -2,12 +2,13 @@ package io.github.fabricators_of_create.porting_lib.extensions;
 
 import java.util.Collection;
 
+import io.github.fabricators_of_create.porting_lib.entity.StepHeightEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 
-public interface EntityExtensions {
+public interface EntityExtensions extends StepHeightEntity {
 	default CompoundTag getExtraCustomData() {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}

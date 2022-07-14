@@ -5,6 +5,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 
+@Deprecated(forRemoval = true)
 public interface StepHeightEntity {
 	/**
 	 * @return Return the height in blocks the Entity can step up without needing to jump

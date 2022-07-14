@@ -254,8 +254,6 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializableC
 
 	@Inject(method = "collide", at = @At(value = "JUMP", opcode = Opcodes.IFGE))
 	public void port_lib$modifyStepHeight(Vec3 movement, CallbackInfoReturnable<Vec3> cir) {
-		if (this instanceof StepHeightEntity stepHeightEntity) {
-			this.maxUpStep = stepHeightEntity.getStepHeight();
-		}
+		this.maxUpStep = this.getStepHeight();
 	}
 }
