@@ -10,6 +10,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryRemovedCallback;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.fabricmc.loader.api.FabricLoader;
@@ -107,7 +108,7 @@ public class PortingHooks {
 				blockItem.removeFromBlockToItemMap(Item.BY_BLOCK, item);
 			}
 		});
-		RegistryEntryRemovedCallback.event(Registry.FLUID).register((rawId, id, fluid) -> {
+		RegistryEntryAddedCallback.event(Registry.FLUID).register((rawId, id, fluid) -> {
 			registerFluidVariantAttributesFromFluidAttributes(fluid, fluid.getAttributes());
 		});
 	}
