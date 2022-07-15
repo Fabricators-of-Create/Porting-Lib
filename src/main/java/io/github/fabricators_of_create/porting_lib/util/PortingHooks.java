@@ -5,10 +5,14 @@ import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.BlockItemExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
+import io.github.fabricators_of_create.porting_lib.util.client.ClientHooks;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryRemovedCallback;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.protocol.Packet;
@@ -25,6 +29,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+import net.minecraft.world.level.material.Fluid;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -103,7 +108,13 @@ public class PortingHooks {
 			}
 		});
 		RegistryEntryRemovedCallback.event(Registry.FLUID).register((rawId, id, fluid) -> {
-			fluid.getAttributes();
+			registerFluidVariantAttributesFromFluidAttributes(fluid, fluid.getAttributes());
 		});
+	}
+
+	public static void registerFluidVariantAttributesFromFluidAttributes(Fluid fluid, FluidAttributes attributes) {
+		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+			ClientHooks.registerFluidVariantsFromAttributes(fluid, attributes);
+		FluidVariantAttributes.register(fluid, new FluidVariantFluidAttributesHandler(attributes));
 	}
 }
