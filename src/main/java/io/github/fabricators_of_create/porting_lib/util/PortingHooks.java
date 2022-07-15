@@ -35,6 +35,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -127,7 +128,7 @@ public class PortingHooks {
 	public static FluidAttributes getFluidAttributesFromVariant(Fluid fluid) {
 		FluidVariantAttributeHandler handler = FluidVariantAttributes.getHandler(fluid);
 		if (handler == null)
-			return null;
+			handler = FluidVariantAttributes.getHandler(Fluids.WATER); // Default to water
 		FluidVariant variant = FluidVariant.of(fluid);
 		ResourceLocation stillTexture = null;
 		ResourceLocation flowingTexture = null;
