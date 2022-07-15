@@ -17,19 +17,13 @@ import net.minecraft.world.level.material.FluidState;
 @SuppressWarnings("removal")
 public class FluidAttributeRenderHandler implements FluidRenderHandler {
 	protected final FluidAttributes attributes;
-	private boolean invalidate = false;
+	private boolean invalidate = true;
 	private TextureAtlasSprite[] sprites;
 	private TextureAtlas atlas;
 
 	public FluidAttributeRenderHandler(FluidAttributes attributes) {
 		this.attributes = attributes;
-		this.atlas = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS);
-		sprites = new TextureAtlasSprite[attributes.getOverlayTexture() == null ? 2 : 3];
-		sprites[0] = atlas.getSprite(attributes.getStillTexture());
-		sprites[1] = atlas.getSprite(attributes.getFlowingTexture());
-
-		if (attributes.getOverlayTexture() != null)
-			sprites[3] = atlas.getSprite(attributes.getOverlayTexture());
+		this.sprites = new TextureAtlasSprite[attributes.getOverlayTexture() == null ? 2 : 3];
 	}
 
 	@Override
@@ -46,6 +40,8 @@ public class FluidAttributeRenderHandler implements FluidRenderHandler {
 	@Override
 	public TextureAtlasSprite[] getFluidSprites(@Nullable BlockAndTintGetter view, @Nullable BlockPos pos, FluidState state) {
 		if (invalidate) {
+			if (this.atlas == null)
+				this.atlas = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS);
 			sprites[0] = atlas.getSprite(attributes.getStillTexture());
 			sprites[1] = atlas.getSprite(attributes.getFlowingTexture());
 
