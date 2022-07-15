@@ -114,9 +114,6 @@ public class PortingHooks {
 				blockItem.removeFromBlockToItemMap(Item.BY_BLOCK, item);
 			}
 		});
-		RegistryEntryAddedCallback.event(Registry.FLUID).register((rawId, id, fluid) -> {
-			registerFluidVariantAttributesFromFluidAttributes(fluid, fluid.getAttributes());
-		});
 	}
 
 	public static void registerFluidVariantAttributesFromFluidAttributes(Fluid fluid, FluidAttributes attributes) {
