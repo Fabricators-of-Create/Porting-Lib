@@ -1,28 +1,23 @@
 package io.github.fabricators_of_create.porting_lib.util.client;
 
+import org.jetbrains.annotations.Nullable;
+
 import io.github.fabricators_of_create.porting_lib.util.FluidAttributes;
-import io.github.fabricators_of_create.porting_lib.util.FluidStack;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandler;
-import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRenderHandler;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.BlockAndTintGetter;
-
 import net.minecraft.world.level.material.FluidState;
 
-import org.jetbrains.annotations.Nullable;
-
+@SuppressWarnings("removal")
 public class FluidAttributeRenderHandler implements FluidRenderHandler {
 	protected final FluidAttributes attributes;
-	private TextureAtlasSprite[] sprites;
+	private TextureAtlas atlas;
 
 	public FluidAttributeRenderHandler(FluidAttributes attributes) {
 		this.attributes = attributes;
-		this.sprites = new TextureAtlasSprite[attributes.getOverlayTexture() == null ? 2 : 3];
+
 	}
 
 	@Override
@@ -32,15 +27,17 @@ public class FluidAttributeRenderHandler implements FluidRenderHandler {
 
 	@Override
 	public void reloadTextures(TextureAtlas textureAtlas) {
-		sprites[0] = textureAtlas.getSprite(attributes.getStillTexture());
-		sprites[1] = textureAtlas.getSprite(attributes.getFlowingTexture());
-
-		if (attributes.getOverlayTexture() != null)
-			sprites[3] = textureAtlas.getSprite(attributes.getOverlayTexture());
+		this.atlas = textureAtlas;
 	}
 
 	@Override
 	public TextureAtlasSprite[] getFluidSprites(@Nullable BlockAndTintGetter view, @Nullable BlockPos pos, FluidState state) {
+		TextureAtlasSprite[] sprites = new TextureAtlasSprite[attributes.getOverlayTexture() == null ? 2 : 3];
+		sprites[0] = atlas.getSprite(attributes.getStillTexture());
+		sprites[1] = atlas.getSprite(attributes.getFlowingTexture());
+
+		if (attributes.getOverlayTexture() != null)
+			sprites[3] = atlas.getSprite(attributes.getOverlayTexture());
 		return sprites;
 	}
 }
