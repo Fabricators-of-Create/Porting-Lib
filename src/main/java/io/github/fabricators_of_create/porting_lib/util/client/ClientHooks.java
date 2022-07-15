@@ -3,7 +3,6 @@ package io.github.fabricators_of_create.porting_lib.util.client;
 import io.github.fabricators_of_create.porting_lib.util.ArmorTextureItem;
 import io.github.fabricators_of_create.porting_lib.util.FluidAttributes;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
-import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;

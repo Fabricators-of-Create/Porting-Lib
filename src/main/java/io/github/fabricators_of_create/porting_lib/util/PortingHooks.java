@@ -102,5 +102,8 @@ public class PortingHooks {
 				blockItem.removeFromBlockToItemMap(Item.BY_BLOCK, item);
 			}
 		});
+		RegistryEntryRemovedCallback.event(Registry.FLUID).register((rawId, id, fluid) -> {
+			fluid.getAttributes();
+		});
 	}
 }

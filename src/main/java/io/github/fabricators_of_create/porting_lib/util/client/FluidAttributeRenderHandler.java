@@ -1,9 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.util.client;
 
-import net.minecraft.client.Minecraft;
-
-import net.minecraft.world.inventory.InventoryMenu;
-
 import org.jetbrains.annotations.Nullable;
 
 import io.github.fabricators_of_create.porting_lib.util.FluidAttributes;
@@ -17,9 +13,7 @@ import net.minecraft.world.level.material.FluidState;
 @SuppressWarnings("removal")
 public class FluidAttributeRenderHandler implements FluidRenderHandler {
 	protected final FluidAttributes attributes;
-	private boolean invalidate = true;
 	private TextureAtlasSprite[] sprites;
-	private TextureAtlas atlas;
 
 	public FluidAttributeRenderHandler(FluidAttributes attributes) {
 		this.attributes = attributes;
@@ -33,22 +27,15 @@ public class FluidAttributeRenderHandler implements FluidRenderHandler {
 
 	@Override
 	public void reloadTextures(TextureAtlas textureAtlas) {
-		this.atlas = textureAtlas;
-		this.invalidate = true;
+		sprites[0] = textureAtlas.getSprite(attributes.getStillTexture());
+		sprites[1] = textureAtlas.getSprite(attributes.getFlowingTexture());
+
+		if (attributes.getOverlayTexture() != null)
+			sprites[3] = textureAtlas.getSprite(attributes.getOverlayTexture());
 	}
 
 	@Override
 	public TextureAtlasSprite[] getFluidSprites(@Nullable BlockAndTintGetter view, @Nullable BlockPos pos, FluidState state) {
-		if (invalidate) {
-			if (this.atlas == null)
-				this.atlas = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS);
-			sprites[0] = atlas.getSprite(attributes.getStillTexture());
-			sprites[1] = atlas.getSprite(attributes.getFlowingTexture());
-
-			if (attributes.getOverlayTexture() != null)
-				sprites[3] = atlas.getSprite(attributes.getOverlayTexture());
-			invalidate = false;
-		}
 		return sprites;
 	}
 }
