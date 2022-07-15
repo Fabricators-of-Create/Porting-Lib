@@ -12,8 +12,12 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryRemovedCallback;
+import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributeHandler;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.protocol.Packet;
@@ -35,6 +39,7 @@ import net.minecraft.world.level.material.Fluid;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings({"removal", "UnstableApiUsage"})
 public class PortingHooks {
 	public static int onBlockBreakEvent(Level world, GameType gameType, ServerPlayer entityPlayer, BlockPos pos) {
 		// Logic from tryHarvestBlock for pre-canceling the event
@@ -117,5 +122,34 @@ public class PortingHooks {
 		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
 			ClientHooks.registerFluidVariantsFromAttributes(fluid, attributes);
 		FluidVariantAttributes.register(fluid, new FluidVariantFluidAttributesHandler(attributes));
+	}
+
+	public static FluidAttributes getFluidAttributesFromVariant(Fluid fluid) {
+		FluidVariantAttributeHandler handler = FluidVariantAttributes.getHandler(fluid);
+		if (handler == null)
+			return null;
+		FluidVariant variant = FluidVariant.of(fluid);
+		ResourceLocation stillTexture = null;
+		ResourceLocation flowingTexture = null;
+		ResourceLocation overlayTexture = null;
+		int color = -1;
+		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+			TextureAtlasSprite[] sprites = FluidVariantRendering.getSprites(variant);
+			stillTexture = sprites[0].getName();
+			flowingTexture = sprites[1].getName();
+			if (sprites[2] != null)
+				overlayTexture = sprites[2].getName();
+			color = FluidVariantRendering.getColor(variant);
+		}
+		FluidAttributes.Builder builder = FluidAttributes.builder(stillTexture, flowingTexture);
+		builder.sound(handler.getFillSound(variant).orElse(null), handler.getEmptySound(variant).orElse(null));
+		builder.overlay(overlayTexture);
+		builder.viscosity(handler.getViscosity(variant, null));
+		builder.luminosity(handler.getLuminance(variant));
+		builder.temperature(handler.getTemperature(variant));
+		if (handler.isLighterThanAir(variant))
+			builder.gaseous();
+		builder.color(color);
+		return builder.build(fluid);
 	}
 }
