@@ -126,8 +126,6 @@ public class FluidAttributes {
 		this.density = builder.density;
 		this.isGaseous = builder.isGaseous;
 		this.rarity = builder.rarity;
-		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
-			ClientHooks.registerFluidVariantsFromAttributes(fluid, this);
 	}
 
 	public static Builder builder(ResourceLocation stillTexture, ResourceLocation flowingTexture) {
