@@ -136,6 +136,8 @@ public class PortingHooks {
 		int color = -1;
 		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
 			TextureAtlasSprite[] sprites = FluidVariantRendering.getSprites(variant);
+			if (sprites == null)
+				sprites = FluidVariantRendering.getSprites(FluidVariant.of(Fluids.WATER));
 			stillTexture = sprites[0].getName();
 			flowingTexture = sprites[1].getName();
 			if (sprites[2] != null)
