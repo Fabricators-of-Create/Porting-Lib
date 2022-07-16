@@ -132,7 +132,7 @@ public class PortingHooks {
 			stillTexture = sprites[0] == null ? SimpleFluidRenderHandler.WATER_STILL : sprites[0].getName();
 			flowingTexture = sprites[1] == null ? SimpleFluidRenderHandler.WATER_FLOWING : sprites[1].getName();
 			if (sprites.length == 3)
-				overlayTexture = sprites[2].getName();
+				overlayTexture = sprites[2] == null ? SimpleFluidRenderHandler.WATER_OVERLAY : sprites[2].getName();
 			color = FluidVariantRendering.getColor(variant);
 		}
 		FluidAttributes.Builder builder = FluidAttributes.builder(stillTexture, flowingTexture);
