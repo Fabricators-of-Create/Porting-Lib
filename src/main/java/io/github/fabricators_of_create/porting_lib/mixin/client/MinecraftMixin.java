@@ -67,6 +67,10 @@ public abstract class MinecraftMixin {
 	@Inject(method = "<init>", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;resourceManager:Lnet/minecraft/server/packs/resources/ReloadableResourceManager;", ordinal = 0, shift = Shift.AFTER))
 	public void port_lib$initModelRegistry(GameConfig gameConfig, CallbackInfo ci) {
 		ModelLoaderRegistry.init();
+	}
+
+	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/resources/ReloadableResourceManager;registerReloadListener(Lnet/minecraft/server/packs/resources/PreparableReloadListener;)V", ordinal = 7, shift = Shift.AFTER))
+	public void port_lib$fluids(GameConfig gameConfig, CallbackInfo ci) {
 		Registry.FLUID.forEach(fluid -> {
 			ClientHooks.registerFluidVariantsFromAttributes(fluid, fluid.getAttributes());
 			if (FluidVariantAttributes.getHandler(fluid) == null)
