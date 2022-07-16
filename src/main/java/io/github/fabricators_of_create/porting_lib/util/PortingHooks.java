@@ -29,6 +29,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
@@ -117,6 +118,8 @@ public class PortingHooks {
 	}
 
 	public static FluidAttributes getFluidAttributesFromVariant(Fluid fluid) {
+		if (!fluid.isSource(fluid.defaultFluidState()))
+			return ((FlowingFluid)fluid).getSource().getAttributes();
 		FluidVariantAttributeHandler handler = FluidVariantAttributes.getHandler(fluid);
 		if (handler == null)
 			handler = FluidVariantAttributes.getHandler(Fluids.WATER); // Default to water
@@ -127,16 +130,11 @@ public class PortingHooks {
 		int color = -1;
 		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
 			TextureAtlasSprite[] sprites = FluidVariantRendering.getSprites(variant);
-			if (sprites == null) {
-				stillTexture = SimpleFluidRenderHandler.WATER_STILL;
-				flowingTexture = SimpleFluidRenderHandler.WATER_FLOWING;
-				overlayTexture = SimpleFluidRenderHandler.WATER_OVERLAY;
-			} else {
-				stillTexture = sprites[0].getName();
-				flowingTexture = sprites[1].getName();
-				if (sprites[2] != null)
-					overlayTexture = sprites[2].getName();
-			}
+
+			stillTexture = sprites[0] == null ? SimpleFluidRenderHandler.WATER_STILL : sprites[0].getName();
+			flowingTexture = sprites[1] == null ? SimpleFluidRenderHandler.WATER_FLOWING : sprites[1].getName();
+			if (sprites.length == 3)
+				overlayTexture = sprites[2].getName();
 			color = FluidVariantRendering.getColor(variant);
 		}
 		FluidAttributes.Builder builder = FluidAttributes.builder(stillTexture, flowingTexture);

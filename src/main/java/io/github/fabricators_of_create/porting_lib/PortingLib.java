@@ -10,6 +10,7 @@ import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import io.github.fabricators_of_create.porting_lib.util.ServerLifecycleHooks;
 import io.github.fabricators_of_create.porting_lib.util.TierSortingRegistry;
 import io.github.fabricators_of_create.porting_lib.util.TrueCondition;
+import io.github.tropheusj.milk.Milk;
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.resources.ResourceLocation;
@@ -23,6 +24,7 @@ public class PortingLib implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		Milk.enableMilkFluid();
 		ServerLifecycleHooks.init();
 		PortingLibAttributes.init();
 		TierSortingRegistry.init();
