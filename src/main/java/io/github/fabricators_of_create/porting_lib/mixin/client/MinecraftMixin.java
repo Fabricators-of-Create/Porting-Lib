@@ -10,10 +10,6 @@ import io.github.fabricators_of_create.porting_lib.event.client.PickBlockCallbac
 import io.github.fabricators_of_create.porting_lib.event.common.ModsLoadedCallback;
 import io.github.fabricators_of_create.porting_lib.model.ModelLoaderRegistry;
 
-import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
-import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
-import net.minecraft.core.Registry;
-
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -76,13 +72,6 @@ public abstract class MinecraftMixin {
 	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Ljava/lang/Thread;currentThread()Ljava/lang/Thread;"))
 	public void port_lib$modsLoaded(GameConfig gameConfig, CallbackInfo ci) {
 		ModsLoadedCallback.EVENT.invoker().onAllModsLoaded(EnvType.CLIENT);
-	}
-
-	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/datafix/DataFixers;getDataFixer()Lcom/mojang/datafixers/DataFixer;"))
-	public void port_lib$fluidsss(GameConfig gameConfig, CallbackInfo ci) {
-		RegistryEntryAddedCallback.event(Registry.FLUID).register((rawId, id, fluid) -> {
-			PortingHooks.registerFluidVariantAttributesFromFluidAttributes(fluid, fluid.getAttributes());
-		});
 	}
 
 	@Inject(method = "setLevel", at = @At("HEAD"))
