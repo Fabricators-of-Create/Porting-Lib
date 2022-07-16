@@ -17,6 +17,7 @@ public class ClientHooks {
 	}
 
 	public static void registerFluidVariantsFromAttributes(Fluid fluid, FluidAttributes attributes) {
-		FluidRenderHandlerRegistry.INSTANCE.register(fluid, new FluidAttributeRenderHandler(attributes));
+		if (FluidRenderHandlerRegistry.INSTANCE.get(fluid) == null)
+			FluidRenderHandlerRegistry.INSTANCE.register(fluid, new FluidAttributeRenderHandler(attributes));
 	}
 }

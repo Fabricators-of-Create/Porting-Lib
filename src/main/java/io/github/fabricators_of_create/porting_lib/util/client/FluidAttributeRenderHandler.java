@@ -31,7 +31,7 @@ public class FluidAttributeRenderHandler implements FluidRenderHandler {
 		sprites[1] = textureAtlas.getSprite(attributes.getFlowingTexture());
 
 		if (attributes.getOverlayTexture() != null)
-			sprites[3] = textureAtlas.getSprite(attributes.getOverlayTexture());
+			sprites[2] = textureAtlas.getSprite(attributes.getOverlayTexture());
 	}
 
 	@Override

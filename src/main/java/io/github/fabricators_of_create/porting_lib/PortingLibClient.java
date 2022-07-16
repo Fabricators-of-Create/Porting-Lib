@@ -3,15 +3,15 @@ package io.github.fabricators_of_create.porting_lib;
 import io.github.fabricators_of_create.porting_lib.entity.ExtraSpawnDataEntity;
 import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
-import io.github.fabricators_of_create.porting_lib.event.client.MinecraftTailCallback;
-import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
-import io.github.fabricators_of_create.porting_lib.model.ModelLoaderRegistry;
+import io.github.fabricators_of_create.porting_lib.event.client.ModelsBakedCallback;
 import io.github.fabricators_of_create.porting_lib.util.FluidTextUtil;
+import io.github.fabricators_of_create.porting_lib.util.FluidVariantFluidAttributesHandler;
+import io.github.fabricators_of_create.porting_lib.util.client.ClientHooks;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.minecraft.client.multiplayer.ClientLevel;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
+import net.minecraft.core.Registry;
 import net.minecraft.server.packs.PackType;
 
 public class PortingLibClient implements ClientModInitializer {
@@ -32,6 +32,14 @@ public class PortingLibClient implements ClientModInitializer {
 					world.getPartEntityMap().remove(part.getId());
 				}
 			}
+		});
+
+		ModelsBakedCallback.EVENT.register((manager, models, loader) -> {
+			Registry.FLUID.forEach(fluid -> {
+				ClientHooks.registerFluidVariantsFromAttributes(fluid, fluid.getAttributes());
+				if (FluidVariantAttributes.getHandler(fluid) == null)
+					FluidVariantAttributes.register(fluid, new FluidVariantFluidAttributesHandler(fluid.getAttributes()));
+			});
 		});
 	}
 }
