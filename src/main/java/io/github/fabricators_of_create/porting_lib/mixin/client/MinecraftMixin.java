@@ -10,6 +10,12 @@ import io.github.fabricators_of_create.porting_lib.event.client.PickBlockCallbac
 import io.github.fabricators_of_create.porting_lib.event.common.ModsLoadedCallback;
 import io.github.fabricators_of_create.porting_lib.model.ModelLoaderRegistry;
 
+import io.github.fabricators_of_create.porting_lib.util.FluidVariantFluidAttributesHandler;
+import io.github.fabricators_of_create.porting_lib.util.client.ClientHooks;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
+
+import net.minecraft.core.Registry;
+
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -61,6 +67,11 @@ public abstract class MinecraftMixin {
 	@Inject(method = "<init>", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;resourceManager:Lnet/minecraft/server/packs/resources/ReloadableResourceManager;", ordinal = 0, shift = Shift.AFTER))
 	public void port_lib$initModelRegistry(GameConfig gameConfig, CallbackInfo ci) {
 		ModelLoaderRegistry.init();
+		Registry.FLUID.forEach(fluid -> {
+			ClientHooks.registerFluidVariantsFromAttributes(fluid, fluid.getAttributes());
+			if (FluidVariantAttributes.getHandler(fluid) == null)
+				FluidVariantAttributes.register(fluid, new FluidVariantFluidAttributesHandler(fluid.getAttributes()));
+		});
 	}
 
 	@Inject(method = "<init>", at = @At("TAIL"))

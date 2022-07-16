@@ -109,9 +109,7 @@ public class PortingHooks {
 		});
 		ModsLoadedCallback.EVENT.register(envType -> {
 			Registry.FLUID.forEach(fluid -> {
-				if (envType == EnvType.CLIENT)
-					ClientHooks.registerFluidVariantsFromAttributes(fluid, fluid.getAttributes());
-				if (FluidVariantAttributes.getHandler(fluid) == null)
+				if (envType == EnvType.SERVER && FluidVariantAttributes.getHandler(fluid) == null)
 					FluidVariantAttributes.register(fluid, new FluidVariantFluidAttributesHandler(fluid.getAttributes()));
 			});
 		});
