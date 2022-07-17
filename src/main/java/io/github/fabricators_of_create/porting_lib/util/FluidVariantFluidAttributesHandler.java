@@ -26,12 +26,12 @@ public class FluidVariantFluidAttributesHandler implements FluidVariantAttribute
 
 	@Override
 	public Optional<SoundEvent> getFillSound(FluidVariant variant) {
-		return Optional.of(attributes.getFillSound(new FluidStack(variant, FluidConstants.BUCKET)));
+		return Optional.ofNullable(attributes.getFillSound(new FluidStack(variant, FluidConstants.BUCKET)));
 	}
 
 	@Override
 	public Optional<SoundEvent> getEmptySound(FluidVariant variant) {
-		return Optional.of(attributes.getEmptySound(new FluidStack(variant, FluidConstants.BUCKET)));
+		return Optional.ofNullable(attributes.getEmptySound(new FluidStack(variant, FluidConstants.BUCKET)));
 	}
 
 	@Override
