@@ -24,6 +24,7 @@ public class PortingLibER implements Runnable {
 	public void run() {
 		MappingResolver remapper = FabricLoader.getInstance().getMappingResolver();
 		String attributesClass = remapper.mapClassName("intermediary", "net.minecraft.class_5134").replace('.', '/');
+		String attributeClass = remapper.mapClassName("intermediary", "net.minecraft.class_1320").replace('.', '/');
 		ClassTinkerers.addTransformation(remapper.mapClassName("intermediary", "net.minecraft.class_1657"), classNode -> {
 			classNode.methods.forEach(methodNode -> {
 				if(methodNode.name.equals("attack")) {
@@ -42,8 +43,8 @@ public class PortingLibER implements Runnable {
 								if (istore == 0) {
 									InsnList list = new InsnList();
 									list.add(new VarInsnNode(Opcodes.ALOAD, 0));
-									list.add(new FieldInsnNode(Opcodes.GETSTATIC, attributesClass, FabricLoader.getInstance().isDevelopmentEnvironment() ? "ATTACK_KNOCKBACK" : "field_23722", "L" + attributesClass +";"));
-									list.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, remapper.mapClassName("intermediary", "net.minecraft.class_1657").replace('.', '/'), FabricLoader.getInstance().isDevelopmentEnvironment() ? "getAttributeValue" : "method_27739", "(L" + attributesClass + ";)D"));
+									list.add(new FieldInsnNode(Opcodes.GETSTATIC, attributesClass, FabricLoader.getInstance().isDevelopmentEnvironment() ? "ATTACK_KNOCKBACK" : "field_23722", "L" + attributeClass +";"));
+									list.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, remapper.mapClassName("intermediary", "net.minecraft.class_1657").replace('.', '/'), FabricLoader.getInstance().isDevelopmentEnvironment() ? "getAttributeValue" : "method_27739", "(L" + attributeClass + ";)D"));
 									list.add(new InsnNode(Opcodes.D2F));
 									list.add(new VarInsnNode(Opcodes.FSTORE, 7));
 									methodNode.instructions.insert(insnNode, list);
