@@ -22,8 +22,12 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -32,6 +36,8 @@ import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+
+import javax.annotation.Nullable;
 
 @SuppressWarnings({"removal", "UnstableApiUsage"})
 public class PortingHooks {
@@ -145,5 +151,11 @@ public class PortingHooks {
 			builder.gaseous();
 		builder.color(color);
 		return builder.build(fluid);
+	}
+
+	public static int getLootingLevel(Entity target, @Nullable Entity killer, @Nullable DamageSource cause) {
+		if (killer instanceof LivingEntity)
+			return EnchantmentHelper.getMobLooting((LivingEntity)killer);
+		return 0;
 	}
 }
