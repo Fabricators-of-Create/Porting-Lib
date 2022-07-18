@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 import java.util.Map;
 
 public class ClientHooks {
-	private static final Map<String, ResourceLocation> ARMOR_LOCATION_CACHE = Maps.newHashMap();
+	public static final Map<String, ResourceLocation> ARMOR_LOCATION_CACHE = Maps.newHashMap();
 
 	public static String getArmorTexture(Entity entity, ItemStack armor, String _default, EquipmentSlot slot, String type) {
 		String result = null;
