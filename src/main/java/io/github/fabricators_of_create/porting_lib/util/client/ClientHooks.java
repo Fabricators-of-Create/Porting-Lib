@@ -35,7 +35,7 @@ public class ClientHooks {
 	 * @param type Subtype, can be null or "overlay"
 	 * @return ResourceLocation pointing at the armor's texture
 	 */
-	public ResourceLocation getArmorResource(net.minecraft.world.entity.Entity entity, ItemStack stack, EquipmentSlot slot, @Nullable String type) {
+	public static ResourceLocation getArmorResource(net.minecraft.world.entity.Entity entity, ItemStack stack, EquipmentSlot slot, @Nullable String type) {
 		ArmorItem item = (ArmorItem)stack.getItem();
 		String texture = item.getMaterial().getName();
 		String domain = "minecraft";
