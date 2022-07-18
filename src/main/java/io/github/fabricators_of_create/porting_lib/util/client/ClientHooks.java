@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import io.github.fabricators_of_create.porting_lib.util.ArmorTextureItem;
 import io.github.fabricators_of_create.porting_lib.util.FluidAttributes;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -55,6 +56,29 @@ public class ClientHooks {
 		}
 
 		return resourcelocation;
+	}
+
+	public static void setPartVisibility(HumanoidModel<?> armorModel, EquipmentSlot slot) {
+		armorModel.setAllVisible(false);
+		switch(slot) {
+			case HEAD:
+				armorModel.head.visible = true;
+				armorModel.hat.visible = true;
+				break;
+			case CHEST:
+				armorModel.body.visible = true;
+				armorModel.rightArm.visible = true;
+				armorModel.leftArm.visible = true;
+				break;
+			case LEGS:
+				armorModel.body.visible = true;
+				armorModel.rightLeg.visible = true;
+				armorModel.leftLeg.visible = true;
+				break;
+			case FEET:
+				armorModel.rightLeg.visible = true;
+				armorModel.leftLeg.visible = true;
+		}
 	}
 
 	public static void registerFluidVariantsFromAttributes(Fluid fluid, FluidAttributes attributes) {
