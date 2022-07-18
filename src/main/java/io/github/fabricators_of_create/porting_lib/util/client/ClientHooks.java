@@ -45,7 +45,7 @@ public class ClientHooks {
 			domain = texture.substring(0, idx);
 			texture = texture.substring(idx + 1);
 		}
-		String s1 = String.format(java.util.Locale.ROOT, "%s:textures/models/armor/%s_layer_%d%s.png", domain, texture, 2, type == null ? "" : String.format(java.util.Locale.ROOT, "_%s", type));
+		String s1 = String.format(java.util.Locale.ROOT, "%s:textures/models/armor/%s_layer_%d%s.png", domain, texture, slot == EquipmentSlot.LEGS ? 2 : 1, type == null ? "" : String.format(java.util.Locale.ROOT, "_%s", type));
 
 		s1 = getArmorTexture(entity, stack, s1, slot, type);
 		ResourceLocation resourcelocation = ARMOR_LOCATION_CACHE.get(s1);
