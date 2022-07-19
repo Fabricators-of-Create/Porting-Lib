@@ -5,7 +5,12 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import io.github.fabricators_of_create.porting_lib.util.client.ClientHooks;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributeHandler;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.core.BlockPos;
@@ -42,8 +47,9 @@ import net.minecraft.world.phys.BlockHitResult;
  * <p>
  * The default values can be used as a reference point for mods adding fluids such as oil or heavy
  * water.
+ * @deprecated use FluidVariantAttributes
  */
-@Deprecated(forRemoval = true) // Handled by new system in 1.19
+@Deprecated(forRemoval = true)
 public class FluidAttributes {
 	public static final long BUCKET_VOLUME = FluidConstants.BUCKET;
 	private final ResourceLocation stillTexture;

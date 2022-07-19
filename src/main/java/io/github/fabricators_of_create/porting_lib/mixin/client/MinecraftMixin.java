@@ -3,10 +3,6 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 import static net.minecraft.world.InteractionResult.PASS;
 import static net.minecraft.world.InteractionResult.SUCCESS;
 
-import io.github.fabricators_of_create.porting_lib.event.client.MinecraftTailCallback;
-
-import io.github.fabricators_of_create.porting_lib.event.client.PickBlockCallback;
-
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,12 +14,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import io.github.fabricators_of_create.porting_lib.event.common.AttackAirCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.ClientWorldEvents;
+import io.github.fabricators_of_create.porting_lib.event.client.MinecraftTailCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.OnStartUseItemCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.ParticleManagerRegistrationCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.PickBlockCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.RenderTickStartCallback;
-
+import io.github.fabricators_of_create.porting_lib.event.common.AttackAirCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.ModsLoadedCallback;
+import io.github.fabricators_of_create.porting_lib.model.ModelLoaderRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -55,9 +54,20 @@ public abstract class MinecraftMixin {
 		ParticleManagerRegistrationCallback.EVENT.invoker().onParticleManagerRegistration();
 	}
 
+	@Inject(method = "<init>", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;resourceManager:Lnet/minecraft/server/packs/resources/ReloadableResourceManager;", ordinal = 0, shift = Shift.AFTER))
+	public void port_lib$initModelRegistry(GameConfig gameConfig, CallbackInfo ci) {
+		ModelLoaderRegistry.init();
+	}
+
 	@Inject(method = "<init>", at = @At("TAIL"))
 	public void port_lib$mcTail(GameConfig gameConfiguration, CallbackInfo ci) {
 		MinecraftTailCallback.EVENT.invoker().onMinecraftTail((Minecraft) (Object) this);
+	}
+
+	// Inject right after the fabric entrypoint
+	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Ljava/lang/Thread;currentThread()Ljava/lang/Thread;"))
+	public void port_lib$modsLoaded(GameConfig gameConfig, CallbackInfo ci) {
+		ModsLoadedCallback.EVENT.invoker().onAllModsLoaded(EnvType.CLIENT);
 	}
 
 	@Inject(method = "setLevel", at = @At("HEAD"))

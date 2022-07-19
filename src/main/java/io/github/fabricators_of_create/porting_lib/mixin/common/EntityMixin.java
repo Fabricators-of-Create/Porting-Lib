@@ -6,6 +6,8 @@ import io.github.fabricators_of_create.porting_lib.entity.StepHeightEntity;
 import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializableCompound;
 import net.minecraft.world.phys.Vec3;
 
+import net.minecraft.world.phys.Vec3;
+
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -75,6 +77,16 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializableC
 
 	@Shadow
 	public abstract void unRide();
+
+	@Shadow
+	@Nullable
+	protected abstract String getEncodeId();
+
+	@Shadow
+	public abstract CompoundTag saveWithoutId(CompoundTag compoundTag);
+
+	@Shadow
+	public abstract void load(CompoundTag compoundTag);
 
 	@Shadow
 	public float maxUpStep;
@@ -166,14 +178,14 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializableC
 			cancellable = true
 	)
 	public void port_lib$startRiding(Entity entity, boolean bl, CallbackInfoReturnable<Boolean> cir) {
-		if (MountEntityCallback.EVENT.invoker().onStartRiding((Entity) (Object) this, entity, true) == InteractionResult.FAIL) {
+		if (MountEntityCallback.EVENT.invoker().onStartRiding(entity, (Entity) (Object) this, true) == InteractionResult.FAIL) {
 			cir.setReturnValue(false);
 		}
 	}
 
 	@Inject(method = "removeVehicle", at = @At(value = "CONSTANT", args = "nullValue=true"), cancellable = true)
 	public void port_lib$removeRidingEntity(CallbackInfo ci) {
-		if (MountEntityCallback.EVENT.invoker().onStartRiding((Entity) (Object) this, this.vehicle, true) == InteractionResult.FAIL) {
+		if (MountEntityCallback.EVENT.invoker().onStartRiding(this.vehicle, (Entity) (Object) this, false) == InteractionResult.FAIL) {
 			ci.cancel();
 		}
 	}
@@ -198,20 +210,18 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializableC
 	@Unique
 	@Override
 	public CompoundTag serializeNBT() {
-		CompoundTag nbt = new CompoundTag();
-		String id = EntityHelper.getEntityString((Entity) (Object) this);
-
+		CompoundTag ret = new CompoundTag();
+		String id = getEncodeId();
 		if (id != null) {
-			nbt.putString("id", id);
+			ret.putString("id", id);
 		}
-
-		return nbt;
+		return saveWithoutId(ret);
 	}
 
 	@Unique
 	@Override
 	public void deserializeNBT(CompoundTag nbt) {
-		readAdditionalSaveData(nbt);
+		load(nbt);
 	}
 
 	@Unique

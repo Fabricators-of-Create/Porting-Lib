@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
 import io.github.fabricators_of_create.porting_lib.event.common.EntityInteractCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.PlayerTickEvents;
@@ -9,6 +11,10 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 
 import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+
+import net.minecraft.world.entity.ai.attributes.Attributes;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -75,5 +81,10 @@ public abstract class PlayerMixin extends LivingEntity {
 	@Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
 	public void port_lib$attackEvent(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
 		if(LivingEntityEvents.ATTACK.invoker().onAttack(this, source, amount)) cir.setReturnValue(false);
+	}
+
+	@Inject(method = "createAttributes", at = @At("RETURN"))
+	private static void port_lib$addKnockback(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
+		cir.getReturnValue().add(Attributes.ATTACK_KNOCKBACK);
 	}
 }

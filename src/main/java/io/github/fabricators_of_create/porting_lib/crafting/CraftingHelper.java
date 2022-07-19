@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Predicate;
 
+import com.google.gson.JsonArray;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -168,5 +169,17 @@ public class CraftingHelper {
 
 	public static Predicate<JsonObject> getConditionPredicate(JsonObject json) {
 		return ResourceConditions.get(new ResourceLocation(GsonHelper.getAsString(json, ResourceConditions.CONDITION_ID_KEY)));
+	}
+
+	public static boolean processConditions(JsonArray conditions) {
+		for (int x = 0; x < conditions.size(); x++) {
+			if (!conditions.get(x).isJsonObject())
+				throw new JsonSyntaxException("Conditions must be an array of JsonObjects");
+
+			JsonObject json = conditions.get(x).getAsJsonObject();
+			if (!CraftingHelper.getConditionPredicate(json).test(json))
+				return false;
+		}
+		return true;
 	}
 }

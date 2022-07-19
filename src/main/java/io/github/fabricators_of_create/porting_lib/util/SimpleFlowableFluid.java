@@ -1,8 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
-import io.github.fabricators_of_create.porting_lib.extensions.FluidExtensions;
-
-import io.github.fabricators_of_create.porting_lib.util.FluidAttributes;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.Item;
@@ -30,6 +28,10 @@ public abstract class SimpleFlowableFluid extends FlowingFluid {
 	private final Supplier<? extends Item> bucket;
 	@Nullable
 	private final Supplier<? extends LiquidBlock> block;
+	/**
+	 * @deprecated Use FluidVariantAttributes
+	 */
+	@Deprecated(forRemoval = true)
 	private final FluidAttributes.Builder builder;
 	private final boolean infinite;
 	private final int flowSpeed;
@@ -109,6 +111,10 @@ public abstract class SimpleFlowableFluid extends FlowingFluid {
 		return Blocks.AIR.defaultBlockState();
 	}
 
+	/**
+	 * @deprecated Use FluidVariantAttributes
+	 */
+	@Deprecated(forRemoval = true)
 	@Override
 	public FluidAttributes createAttributes() {
 		return builder.build(this);

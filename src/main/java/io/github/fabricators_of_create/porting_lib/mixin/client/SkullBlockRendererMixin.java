@@ -18,7 +18,7 @@ import java.util.Map;
 
 @Mixin(SkullBlockRenderer.class)
 public class SkullBlockRendererMixin {
-	@Inject(method = "createSkullRenderers", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "createSkullRenderers", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap$Builder;put(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMap$Builder;", ordinal = 5), locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void port_lib$createSkullModels(EntityModelSet entityModelSet, CallbackInfoReturnable<Map<SkullBlock.Type, SkullModelBase>> cir, ImmutableMap.Builder<SkullBlock.Type, SkullModelBase> builder) {
 		CreateSkullModelsCallback.EVENT.invoker().onSkullModelsCreated(builder, entityModelSet);
 	}

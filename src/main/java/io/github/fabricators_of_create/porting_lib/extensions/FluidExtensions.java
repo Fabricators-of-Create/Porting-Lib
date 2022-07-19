@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.extensions;
 
 import io.github.fabricators_of_create.porting_lib.util.FluidAttributes;
+import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.material.EmptyFluid;
@@ -8,6 +9,10 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.LavaFluid;
 import net.minecraft.world.level.material.WaterFluid;
 
+/**
+ * FluidAttributes should not be used and will be removed in the future
+ */
+@Deprecated(forRemoval = true)
 public interface FluidExtensions {
 	static FluidAttributes createVanillaFluidAttributes(Fluid fluid) {
 		if (fluid instanceof EmptyFluid)
@@ -31,6 +36,9 @@ public interface FluidExtensions {
 					.luminosity(15).density(3000).viscosity(6000).temperature(1300)
 					.sound(SoundEvents.BUCKET_FILL_LAVA, SoundEvents.BUCKET_EMPTY_LAVA)
 					.build(fluid);
+		FluidAttributes attributes = PortingHooks.getFluidAttributesFromVariant(fluid);
+		if (attributes != null)
+			return attributes;
 		throw new RuntimeException("Mod fluids must override createAttributes.");
 	}
 

@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.util;
 import java.util.Objects;
 import java.util.Optional;
 
-import io.github.fabricators_of_create.porting_lib.extensions.FluidExtensions;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.minecraft.network.chat.Component;
 
@@ -211,7 +211,7 @@ public class FluidStack {
     }
 
 	public Component getDisplayName() {
-		return ((FluidExtensions) this.getFluid()).getAttributes().getDisplayName(this);
+		return FluidVariantAttributes.getName(this.type);
 	}
 
 	public boolean hasTag() {
@@ -238,6 +238,8 @@ public class FluidStack {
 	}
 
 	public FluidStack copy() {
-		return new FluidStack(FluidVariant.of(getFluid(), getType().copyNbt()), getAmount(), getTag());
+		CompoundTag tag = getTag();
+		if (tag != null) tag = tag.copy();
+		return new FluidStack(getType(), getAmount(), tag);
 	}
 }
