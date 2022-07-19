@@ -39,7 +39,6 @@
     "ExperienceOrbMixin",
     "ExplosionDamageCalculatorMixin",
     "FireBlockMixin",
-    "FluidMixin",
     "FlyingMobMixin",
     "ItemEntityMixin",
     "ItemMixin",

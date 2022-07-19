@@ -8,13 +8,11 @@ import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
 import io.github.fabricators_of_create.porting_lib.data.ConditionalRecipe;
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemItemStorages;
-import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import io.github.fabricators_of_create.porting_lib.util.ServerLifecycleHooks;
 import io.github.fabricators_of_create.porting_lib.util.TierSortingRegistry;
 import io.github.fabricators_of_create.porting_lib.util.TrueCondition;
+import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import net.fabricmc.api.ModInitializer;
-
-import net.minecraft.client.gui.components.CommandSuggestions;
 import net.minecraft.resources.ResourceLocation;
 
 public class PortingLib implements ModInitializer {

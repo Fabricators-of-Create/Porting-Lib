@@ -2,8 +2,7 @@ package io.github.fabricators_of_create.porting_lib.util.client;
 
 import com.google.common.collect.Maps;
 
-import io.github.fabricators_of_create.porting_lib.util.ArmorTextureItem;
-import io.github.fabricators_of_create.porting_lib.util.FluidAttributes;
+import io.github.fabricators_of_create.porting_lib.item.ArmorTextureItem;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.resources.ResourceLocation;
@@ -79,10 +78,5 @@ public class ClientHooks {
 				armorModel.rightLeg.visible = true;
 				armorModel.leftLeg.visible = true;
 		}
-	}
-
-	public static void registerFluidVariantsFromAttributes(Fluid fluid, FluidAttributes attributes) {
-		if (FluidRenderHandlerRegistry.INSTANCE.get(fluid) == null)
-			FluidRenderHandlerRegistry.INSTANCE.register(fluid, new FluidAttributeRenderHandler(attributes));
 	}
 }

@@ -31,8 +31,6 @@ import io.github.fabricators_of_create.porting_lib.extensions.CameraExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.EntityCollisionContextExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.FluidExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializable;
 import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializableCompound;
 import io.github.fabricators_of_create.porting_lib.extensions.IPlantable;
 import io.github.fabricators_of_create.porting_lib.extensions.IShearable;
@@ -162,7 +160,6 @@ public class InjectedInterfacesGen {
 		builder.inject(ClientLevel.class, ClientLevelExtensions.class);
 		builder.inject(EntityCollisionContext.class, EntityCollisionContextExtensions.class);
 		builder.inject(Entity.class, EntityExtensions.class);
-		builder.inject(Fluid.class, FluidExtensions.class);
 		builder.injectReversed(INBTSerializableCompound.class, Entity.class, BlockEntity.class, ItemStack.class);
 		builder.injectReversed(IPlantable.class, BambooBlock.class, BushBlock.class, CactusBlock.class, StemBlock.class, SugarCaneBlock.class);
 		builder.injectReversed(IShearable.class, DeadBushBlock.class, LeavesBlock.class, MushroomCow.class, SeagrassBlock.class, Sheep.class, SnowGolem.class, TallGrassBlock.class, VineBlock.class, WebBlock.class);
