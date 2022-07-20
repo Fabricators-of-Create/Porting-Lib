@@ -27,6 +27,7 @@
     "ChunkSerializerMixin",
     "ChunkStatusMixin",
     "ClipContextMixin",
+    "ConnectionMixin",
     "DeadBushBlockMixin",
     "DropExperienceBlockMixin",
     "EnchantmentHelperMixin",
