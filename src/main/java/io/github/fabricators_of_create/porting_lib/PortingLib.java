@@ -30,6 +30,8 @@ public class PortingLib implements ModInitializer {
 		CraftingHelper.init();
 		TrueCondition.init();
 		PortingHooks.init();
+		// can be used to force all mixins to apply
+		// MixinEnvironment.getCurrentEnvironment().audit();
 	}
 
 	public static ResourceLocation id(String path) {

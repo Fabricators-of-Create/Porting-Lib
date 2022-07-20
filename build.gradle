@@ -69,7 +69,7 @@ dependencies {
 	// dependencies
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
 	modImplementation(include("io.github.tropheusj:serialization-hooks:${project.serialization_hooks_version}"))
-	modApi(include("me.alphamode:ForgeTags:${project.forge_tags_version}"))
+	modApi(include("me.alphamode:ForgeTags:${project.forge_tags_version}")) { transitive = false }
 	api(include("com.github.LlamaLad7:MixinExtras:0.0.11"))
 	annotationProcessor(include("com.github.LlamaLad7:MixinExtras:0.0.11"))
 
