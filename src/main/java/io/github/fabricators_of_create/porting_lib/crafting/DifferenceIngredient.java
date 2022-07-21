@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -23,7 +24,6 @@ public class DifferenceIngredient extends AbstractIngredient {
 	private final Ingredient base;
 	private final Ingredient subtracted;
 	private ItemStack[] filteredMatchingStacks;
-	private Value[] values;
 	private IntList packedMatchingStacks;
 
 	protected DifferenceIngredient(Ingredient base, Ingredient subtracted) {
@@ -56,18 +56,6 @@ public class DifferenceIngredient extends AbstractIngredient {
 					.filter(stack -> !subtracted.test(stack))
 					.toArray(ItemStack[]::new);
 		return filteredMatchingStacks;
-	}
-
-	@Override
-	public Value[] getValues() {
-		if (values == null) {
-			if (filteredMatchingStacks == null)
-				getItems();
-			values = new Value[filteredMatchingStacks.length];
-			for (int i = 0; i < filteredMatchingStacks.length; i++)
-				values[i] = new ItemValue(filteredMatchingStacks[i]);
-		}
-		return values;
 	}
 
 	@Override
@@ -104,11 +92,13 @@ public class DifferenceIngredient extends AbstractIngredient {
 
 	@Override
 	public void toNetwork(FriendlyByteBuf buffer) {
+		buffer.writeResourceLocation(Serializer.ID);
 		base.toNetwork(buffer);
 		subtracted.toNetwork(buffer);
 	}
 
 	public static class Serializer implements IngredientDeserializer {
+		public static final ResourceLocation ID = new ResourceLocation("forge", "difference");
 		public static final Serializer INSTANCE = new Serializer();
 
 		@Override
