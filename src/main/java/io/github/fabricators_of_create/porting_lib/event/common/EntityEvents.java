@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 public class EntityEvents {
@@ -16,6 +17,13 @@ public class EntityEvents {
 		}
 
 		return height;
+	});
+
+	public static final Event<JoinWorld> ON_JOIN_WORLD = EventFactory.createArrayBacked(JoinWorld.class, callbacks -> (entity, world, loadedFromDisk) -> {
+		for (JoinWorld callback : callbacks)
+			if (!callback.onJoinWorld(entity, world, loadedFromDisk))
+				return true;
+		return false;
 	});
 
 	public static final Event<Remove> ON_REMOVE = EventFactory.createArrayBacked(Remove.class, callbacks -> ((entity, reason) -> {
@@ -45,6 +53,11 @@ public class EntityEvents {
 	@FunctionalInterface
 	public interface EnteringSection {
 		void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos);
+	}
+
+	@FunctionalInterface
+	public interface JoinWorld {
+		boolean onJoinWorld(Entity entity, Level world, boolean loadedFromDisk);
 	}
 
 	@FunctionalInterface
