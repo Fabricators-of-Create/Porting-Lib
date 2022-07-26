@@ -5,14 +5,20 @@ import java.util.Collection;
 import io.github.fabricators_of_create.porting_lib.event.common.EntityEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BaseSpawner;
+import net.minecraft.world.level.LevelAccessor;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class LivingEntityEvents {
 	public static final Event<ExperienceDrop> EXPERIENCE_DROP = EventFactory.createArrayBacked(ExperienceDrop.class, callbacks -> (i, player) -> {
@@ -83,6 +89,14 @@ public class LivingEntityEvents {
 		return amount;
 	});
 
+	// TOOD: Fully implement with asm
+	public static final Event<CheckSpawn> CHECK_SPAWN = EventFactory.createArrayBacked(CheckSpawn.class, callbacks -> ((entity, world, x, y, z, spawner, spawnReason) -> {
+		for (CheckSpawn callback : callbacks)
+			if (!callback.onCheckSpawn(entity, world, x, y, z, spawner, spawnReason))
+				return true;
+		return false;
+	}));
+
 	public static final Event<Jump> JUMP = EventFactory.createArrayBacked(Jump.class, callbacks -> (entity) -> {
 		for (Jump callback : callbacks) {
 			callback.onLivingEntityJump(entity);
@@ -121,6 +135,11 @@ public class LivingEntityEvents {
 	@FunctionalInterface
 	public interface ActuallyHurt {
 		float onHurt(DamageSource source, LivingEntity damaged, float amount);
+	}
+
+	@FunctionalInterface
+	public interface CheckSpawn {
+		boolean onCheckSpawn(Mob entity, LevelAccessor world, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason);
 	}
 
 	@FunctionalInterface
