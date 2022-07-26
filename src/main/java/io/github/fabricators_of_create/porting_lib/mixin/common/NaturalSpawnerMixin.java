@@ -17,7 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.NaturalSpawner;
 
-import net.minecraft.world.level.StructureFeatureManager;
+import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -69,7 +69,7 @@ public abstract class NaturalSpawnerMixin {
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private static void port_lib$captureLocals(MobCategory mobCategory, ServerLevel serverLevel, ChunkAccess chunkAccess, BlockPos blockPos, NaturalSpawner.SpawnPredicate spawnPredicate, NaturalSpawner.AfterSpawnCallback afterSpawnCallback, CallbackInfo ci, StructureFeatureManager structureFeatureManager, ChunkGenerator chunkGenerator, int i, BlockState blockState, BlockPos.MutableBlockPos mutableBlockPos, int j, int k, int l, int m, int n, MobSpawnSettings.SpawnerData spawnerData, SpawnGroupData spawnGroupData, int o, int p, int q, double d, double e, Player player, double f, Mob capturedMob) {
+	private static void port_lib$captureLocals(MobCategory mobCategory, ServerLevel serverLevel, ChunkAccess chunkAccess, BlockPos blockPos, NaturalSpawner.SpawnPredicate spawnPredicate, NaturalSpawner.AfterSpawnCallback afterSpawnCallback, CallbackInfo ci, StructureManager structureManager, ChunkGenerator chunkGenerator, int i, BlockState blockState, BlockPos.MutableBlockPos mutableBlockPos, int j, int k, int l, int m, int n, MobSpawnSettings.SpawnerData spawnerData, SpawnGroupData spawnGroupData, int o, int p, int q, double d, double e, Player player, double f, Mob capturedMob) {
 		mob = capturedMob;
 		level = serverLevel;
 		x = d;

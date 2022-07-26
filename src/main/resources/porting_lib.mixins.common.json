@@ -65,7 +65,6 @@
     "MushroomCowMixin",
     "NaturalSpawnerMixin",
     "PackRepositoryMixin",
-    "ParticleTypeMixin",
     "PatrolSpawnerMixin",
     "PersistentEntitySectionManager$CallbackMixin",
     "PersistentEntitySectionManagerMixin",
