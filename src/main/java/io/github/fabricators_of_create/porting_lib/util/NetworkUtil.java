@@ -14,7 +14,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class NetworkUtil {
 
-	public static void openGui(ServerPlayer player, MenuProvider containerProvider, Consumer<FriendlyByteBuf> extraDataWriter) {
+	public static void openScreen(ServerPlayer player, MenuProvider containerProvider, Consumer<FriendlyByteBuf> extraDataWriter) {
 		player.openMenu(new ExtendedScreenHandlerFactory() {
 			@Override
 			public Component getDisplayName() {
@@ -33,7 +33,7 @@ public class NetworkUtil {
 		});
 	}
 
-	public static void openGui(ServerPlayer player, MenuProvider containerProvider, BlockPos pos) {
+	public static void openScreen(ServerPlayer player, MenuProvider containerProvider, BlockPos pos) {
 		player.openMenu(new ExtendedScreenHandlerFactory() {
 			@Override
 			public Component getDisplayName() {
