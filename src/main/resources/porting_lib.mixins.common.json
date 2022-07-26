@@ -150,7 +150,8 @@
     "accessor.SlotAccessor",
     "accessor.StairBlockAccessor",
     "accessor.StructureTemplateAccessor",
-    "accessor.TagValueAccessor"
+    "accessor.TagValueAccessor",
+    "accessor.UseOnContextAccessor"
   ],
   "injectors": {
     "defaultRequire": 1,
