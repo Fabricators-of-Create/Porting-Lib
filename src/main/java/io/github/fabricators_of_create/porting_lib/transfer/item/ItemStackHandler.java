@@ -104,7 +104,7 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 
 	@Override
 	public Iterator<StorageView<ItemVariant>> iterator() {
-		return new ItemStackHandlerIterator(this, TransferUtil.getTransaction());
+		return new ItemStackHandlerIterator(this);
 	}
 
 	@Override
