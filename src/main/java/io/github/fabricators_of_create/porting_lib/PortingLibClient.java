@@ -4,6 +4,7 @@ import io.github.fabricators_of_create.porting_lib.entity.ExtraSpawnDataEntity;
 import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.client.ModelsBakedCallback;
+import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientBlockApiCache;
 import io.github.fabricators_of_create.porting_lib.util.FluidTextUtil;
 import io.github.fabricators_of_create.porting_lib.util.FluidVariantFluidAttributesHandler;
 import io.github.fabricators_of_create.porting_lib.util.client.ClientHooks;
@@ -33,7 +34,7 @@ public class PortingLibClient implements ClientModInitializer {
 				}
 			}
 		});
-
+		ClientBlockApiCache.init();
 		ModelsBakedCallback.EVENT.register((manager, models, loader) -> {
 			Registry.FLUID.forEach(fluid -> {
 				ClientHooks.registerFluidVariantsFromAttributes(fluid, fluid.getAttributes());
