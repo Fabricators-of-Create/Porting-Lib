@@ -89,6 +89,8 @@ public class LazyRegistrar<T> {
 		@Override
 		public Registry<V> get() {
 			// Keep looking up the registry until it's not null
+			if (Registry.REGISTRY.containsKey(registryKey.location()))
+				this.registry = (Registry<V>) Registry.REGISTRY.get(registryKey.location());
 			if (this.registry == null)
 				this.registry = (Registry<V>) FabricRegistryBuilder.createSimple(null, registryKey.location()).buildAndRegister();
 
