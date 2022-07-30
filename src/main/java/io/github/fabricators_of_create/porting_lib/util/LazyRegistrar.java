@@ -42,8 +42,12 @@ public class LazyRegistrar<T> {
 		return new LazyRegistrar<>(registryName, id);
 	}
 
+	private Supplier<Registry<T>> cachedHolder;
+
 	public Supplier<Registry<T>> makeRegistry() {
-		return new RegistryHolder<>(ResourceKey.createRegistryKey(registryName));
+		if (cachedHolder == null)
+			cachedHolder = new RegistryHolder<>(ResourceKey.createRegistryKey(registryName));
+		return cachedHolder;
 	}
 
 	public <R extends T> RegistryObject<R> register(String id, Supplier<R> entry) {
@@ -59,7 +63,7 @@ public class LazyRegistrar<T> {
 	}
 
 	public void register() {
-		Registry<T> registry = (Registry<T>) Registry.REGISTRY.get(registryName);
+		Registry<T> registry = makeRegistry().get();
 		entries.forEach((entry, sup) -> {
 			Registry.register(registry, entry.getId(), entry.get());
 		});
