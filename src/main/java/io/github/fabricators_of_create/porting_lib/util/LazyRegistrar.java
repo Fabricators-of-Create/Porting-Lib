@@ -34,6 +34,10 @@ public class LazyRegistrar<T> {
 		return new LazyRegistrar<>(registry.key().registry(), id);
 	}
 
+	public static <R> LazyRegistrar<R> create(ResourceKey<R> registry, String id) {
+		return new LazyRegistrar<>(registry.registry(), id);
+	}
+
 	public static <R> LazyRegistrar<R> create(ResourceLocation registryName, String id) {
 		return new LazyRegistrar<>(registryName, id);
 	}
