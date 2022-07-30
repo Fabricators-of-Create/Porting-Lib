@@ -31,11 +31,11 @@ public class LazyRegistrar<T> {
 //    }
 
 	public static <R> LazyRegistrar<R> create(Registry<R> registry, String id) {
-		return new LazyRegistrar<>(registry.key().registry(), id);
+		return new LazyRegistrar<>(registry.key().location(), id);
 	}
 
 	public static <B> LazyRegistrar<B> create(ResourceKey<? extends Registry<B>> registry, String id) {
-		return new LazyRegistrar<>(registry.registry(), id);
+		return new LazyRegistrar<>(registry.location(), id);
 	}
 
 	public static <B> LazyRegistrar<B> create(ResourceLocation registryName, String id) {
