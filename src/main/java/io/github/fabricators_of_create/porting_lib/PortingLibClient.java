@@ -3,6 +3,7 @@ package io.github.fabricators_of_create.porting_lib;
 import io.github.fabricators_of_create.porting_lib.entity.ExtraSpawnDataEntity;
 import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
+import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientBlockApiCache;
 import io.github.fabricators_of_create.porting_lib.util.FluidTextUtil;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
@@ -28,6 +29,7 @@ public class PortingLibClient implements ClientModInitializer {
 				}
 			}
 		});
+		ClientBlockApiCache.init();
 		InjectedInterfacesGen.run();
 	}
 }

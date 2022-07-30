@@ -1,6 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.transfer.cache;
 
-import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientBlockEntityEvents;
 
 public interface ClientBlockApiCache {
