@@ -61,10 +61,11 @@ public class LazyRegistrar<T> {
 	}
 
 	public void register() {
+		Registry<T> registry = makeRegistry().get();
 		entries.forEach((entry, sup) -> {
-			Registry.register((Registry<? super T>) Registry.REGISTRY.get(registryName), entry.getId(), entry.get());
+			Registry.register(registry, entry.getId(), entry.get());
 		});
-		entries.forEach((entry, sup) -> entry.setWrappedEntry(() -> Registry.REGISTRY.get(registryName).get(entry.getId())));
+		entries.forEach((entry, sup) -> entry.setWrappedEntry(() -> registry.get(entry.getId())));
 	}
 
 	public <B extends Block> RegistryObject<T> register(String name, T b) {
