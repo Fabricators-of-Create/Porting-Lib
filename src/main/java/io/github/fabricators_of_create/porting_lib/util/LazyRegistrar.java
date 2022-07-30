@@ -43,9 +43,7 @@ public class LazyRegistrar<T> {
 	}
 
 	public Supplier<Registry<T>> makeRegistry() {
-		if (Registry.REGISTRY.get(registryName) != null)
-			return () -> (Registry<T>) Registry.REGISTRY.get(registryName);
-		return Suppliers.memoize(() -> (Registry<T>) FabricRegistryBuilder.createSimple(null, registryName).buildAndRegister());
+		return new RegistryHolder<>(ResourceKey.createRegistryKey(registryName));
 	}
 
 	public <R extends T> RegistryObject<R> register(String id, Supplier<R> entry) {
@@ -53,7 +51,7 @@ public class LazyRegistrar<T> {
 	}
 
 	public <R extends T> RegistryObject<R> register(ResourceLocation id, Supplier<R> entry) {
-		RegistryObject<R> obj = new RegistryObject<>(id, entry, ResourceKey.create(ResourceKey.createRegistryKey(registryName), id));
+		RegistryObject<R> obj = new RegistryObject<>(id, entry, ResourceKey.create(registryName, id));
 		if (entries.putIfAbsent((RegistryObject<T>) obj, entry) != null) {
 			throw new IllegalArgumentException("Duplicate registration " + id);
 		}
@@ -61,7 +59,7 @@ public class LazyRegistrar<T> {
 	}
 
 	public void register() {
-		Registry<T> registry = makeRegistry().get();
+		Registry<T> registry = (Registry<T>) Registry.REGISTRY.get(registryName);
 		entries.forEach((entry, sup) -> {
 			Registry.register(registry, entry.getId(), entry.get());
 		});
@@ -74,5 +72,23 @@ public class LazyRegistrar<T> {
 
 	public Collection<RegistryObject<T>> getEntries() {
 		return entriesView;
+	}
+
+	private static class RegistryHolder<V> implements Supplier<Registry<V>> {
+		private final ResourceKey<? extends Registry<V>> registryKey;
+		private Registry<V> registry = null;
+
+		private RegistryHolder(ResourceKey<? extends Registry<V>> registryKey) {
+			this.registryKey = registryKey;
+		}
+
+		@Override
+		public Registry<V> get() {
+			// Keep looking up the registry until it's not null
+			if (this.registry == null)
+				this.registry = (Registry<V>) FabricRegistryBuilder.createSimple(null, registryKey.location()).buildAndRegister();
+
+			return this.registry;
+		}
 	}
 }
