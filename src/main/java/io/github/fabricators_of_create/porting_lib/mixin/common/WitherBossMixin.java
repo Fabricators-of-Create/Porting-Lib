@@ -42,6 +42,7 @@ public abstract class WitherBossMixin extends Entity {
 		if (blockState.getBlock() instanceof EntityDestroyBlock destroyBlock) {
 			customLogic = true;
 			shouldBreak = destroyBlock.canEntityDestroy(blockState, this.level, blockPos, this);
-		}
+		} else
+			customLogic = false;
 	}
 }

@@ -30,7 +30,8 @@ public class WitherSkullMixin {
 		if (blockState.getBlock() instanceof EntityDestroyBlock destroyBlock) {
 			customLogic = true;
 			shouldBreak = destroyBlock.canEntityDestroy(blockState, blockGetter, blockPos, (Entity) (Object) this);
-		}
+		} else
+			customLogic = false;
 	}
 
 	@ModifyExpressionValue(method = "getBlockExplosionResistance", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/WitherSkull;isDangerous()Z"))
