@@ -10,7 +10,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-// TODO: Implement
 public interface EntityDestroyBlock {
 	/**
 	 * Determines if this block is can be destroyed by the specified entities normal behavior.
@@ -21,13 +20,10 @@ public interface EntityDestroyBlock {
 	 * @return True to allow the ender dragon to destroy this block
 	 */
 	default boolean canEntityDestroy(BlockState state, BlockGetter level, BlockPos pos, Entity entity) {
-		if (entity instanceof EnderDragon)
-		{
+		if (entity instanceof EnderDragon) {
 			return !((Block)this).defaultBlockState().is(BlockTags.DRAGON_IMMUNE);
-		}
-		else if ((entity instanceof WitherBoss) ||
-				(entity instanceof WitherSkull))
-		{
+		} else if ((entity instanceof WitherBoss) ||
+				(entity instanceof WitherSkull)) {
 			return state.isAir() || WitherBoss.canDestroy(state);
 		}
 
