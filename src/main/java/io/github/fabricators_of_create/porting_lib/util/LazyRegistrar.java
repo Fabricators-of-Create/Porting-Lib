@@ -34,15 +34,17 @@ public class LazyRegistrar<T> {
 		return new LazyRegistrar<>(registry.key().registry(), id);
 	}
 
-	public static <R> LazyRegistrar<R> create(ResourceKey<R> registry, String id) {
+	public static <B> LazyRegistrar<B> create(ResourceKey<? extends Registry<B>> registry, String id) {
 		return new LazyRegistrar<>(registry.registry(), id);
 	}
 
-	public static <R> LazyRegistrar<R> create(ResourceLocation registryName, String id) {
+	public static <B> LazyRegistrar<B> create(ResourceLocation registryName, String id) {
 		return new LazyRegistrar<>(registryName, id);
 	}
 
 	public Supplier<Registry<T>> makeRegistry() {
+		if (Registry.REGISTRY.get(registryName) != null)
+			return () -> (Registry<T>) Registry.REGISTRY.get(registryName);
 		return Suppliers.memoize(() -> (Registry<T>) FabricRegistryBuilder.createSimple(null, registryName).buildAndRegister());
 	}
 
