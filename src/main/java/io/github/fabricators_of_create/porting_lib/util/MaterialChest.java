@@ -5,6 +5,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.LidBlockEntity;
 import net.minecraft.world.level.block.state.properties.ChestType;
 
-public interface MaterialChest {
-	<T extends BlockEntity & LidBlockEntity> Material getMaterial(T blockEntity, ChestType chestType);
+public interface MaterialChest<T extends BlockEntity & LidBlockEntity> {
+	 Material getMaterial(T blockEntity, ChestType chestType);
 }
