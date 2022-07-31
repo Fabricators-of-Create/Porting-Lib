@@ -5,24 +5,22 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
 import io.github.fabricators_of_create.porting_lib.PortingLib;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.world.level.storage.loot.Serializer;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 
 public class LootTableIdCondition implements LootItemCondition {
-	public static final LootItemConditionType LOOT_TABLE_ID = new LootItemConditionType(new Serializer());
+	// TODO Forge Registry at some point?
+	public static final LootItemConditionType LOOT_TABLE_ID = new LootItemConditionType(new LootTableIdCondition.Serializer());
 	public static final ResourceLocation UNKNOWN_LOOT_TABLE = PortingLib.id("unknown_loot_table");
 
 	private final ResourceLocation targetLootTableId;
 
 	private LootTableIdCondition(final ResourceLocation targetLootTableId) {
 		this.targetLootTableId = targetLootTableId;
-	}
-
-	public static Builder builder(final ResourceLocation targetLootTableId) {
-		return new Builder(targetLootTableId);
 	}
 
 	@Override
@@ -32,7 +30,11 @@ public class LootTableIdCondition implements LootItemCondition {
 
 	@Override
 	public boolean test(LootContext lootContext) {
-		return false;//lootContext.getQueriedLootTableId().equals(this.targetLootTableId); // TODO: PORT
+		return LootTableIdCondition.UNKNOWN_LOOT_TABLE.equals(this.targetLootTableId);
+	}
+
+	public static Builder builder(final ResourceLocation targetLootTableId) {
+		return new Builder(targetLootTableId);
 	}
 
 	public static class Builder implements LootItemCondition.Builder {
