@@ -35,7 +35,7 @@ public abstract class ChestRendererMixin<T extends BlockEntity & LidBlockEntity>
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/Sheets;chooseMaterial(Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/level/block/state/properties/ChestType;Z)Lnet/minecraft/client/resources/model/Material;"),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	public void port_lib$customChestMaterial(BlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, CallbackInfo ci, Level level, boolean bl, BlockState blockState, ChestType chestType) {
+	public void port_lib$customChestMaterial(T blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, CallbackInfo ci, Level level, boolean bl, BlockState blockState, ChestType chestType) {
 		if(this instanceof MaterialChest materialChest)
 			port_lib$customMaterial = materialChest.getMaterial(blockEntity, chestType);
 	}
