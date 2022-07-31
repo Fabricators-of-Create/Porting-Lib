@@ -120,6 +120,7 @@
     "WitherSkullMixin",
     "accessor.AbstractMinecartAccessor",
     "accessor.AbstractProjectileDispenseBehaviorAccessor",
+    "accessor.AdvancementProviderAccessor",
     "accessor.ArrayVoxelShapeAccessor",
     "accessor.AxeItemAccessor",
     "accessor.BaseSpawnerAccessor",

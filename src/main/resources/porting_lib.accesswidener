@@ -75,3 +75,6 @@ transitive-mutable field net/minecraft/world/level/block/FlowerPotBlock content 
 transitive-accessible method net/minecraft/world/entity/SpawnPlacements register (Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/entity/SpawnPlacements$Type;Lnet/minecraft/world/level/levelgen/Heightmap$Types;Lnet/minecraft/world/entity/SpawnPlacements$SpawnPredicate;)V
 
 transitive-accessible method net/minecraft/resources/ResourceKey create (Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/resources/ResourceKey;
+
+transitive-accessible field net/minecraft/data/loot/EntityLoot SPECIAL_LOOT_TABLE_TYPES Ljava/util/Set;
+transitive-accessible field net/minecraft/data/loot/EntityLoot map Ljava/util/Map;
