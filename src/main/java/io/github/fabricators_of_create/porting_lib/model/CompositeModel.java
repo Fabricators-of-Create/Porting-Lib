@@ -172,7 +172,7 @@ public class CompositeModel implements BakedModel, FabricBakedModel, TransformTy
 		}
 
 		@Override
-		public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
+		public void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
 		{
 			throw new UnsupportedOperationException("Attempted to call adQuads on a Submodel instance. Please don't.");
 		}
@@ -184,7 +184,7 @@ public class CompositeModel implements BakedModel, FabricBakedModel, TransformTy
 		}
 
 		@Override
-		public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+		public Collection<Material> getTextures(IGeometryBakingContext owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
 		{
 			return model.getMaterials(modelGetter, missingTextureErrors);
 		}
@@ -212,7 +212,7 @@ public class CompositeModel implements BakedModel, FabricBakedModel, TransformTy
 		}
 
 		@Override
-		public BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
+		public BakedModel bake(IGeometryBakingContext owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
 		{
 			Material particleLocation = owner.resolveTexture("particle");
 			TextureAtlasSprite particle = spriteGetter.apply(particleLocation);
@@ -229,7 +229,7 @@ public class CompositeModel implements BakedModel, FabricBakedModel, TransformTy
 		}
 
 		@Override
-		public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+		public Collection<Material> getTextures(IGeometryBakingContext owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
 		{
 			Set<Material> textures = new HashSet<>();
 			for(Submodel part : parts.values())

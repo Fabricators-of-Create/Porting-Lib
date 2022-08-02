@@ -5,16 +5,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import io.github.fabricators_of_create.porting_lib.PortingLib;
 import io.github.fabricators_of_create.porting_lib.model.CompositeModelState;
 
 import io.github.fabricators_of_create.porting_lib.model.PerspectiveMapWrapper;
 
 import io.github.fabricators_of_create.porting_lib.render.TransformTypeDependentItemBakedModel;
 
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,19 +20,16 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
 
 import io.github.fabricators_of_create.porting_lib.extensions.BlockModelExtensions;
-import io.github.fabricators_of_create.porting_lib.model.BlockModelConfiguration;
-import io.github.fabricators_of_create.porting_lib.model.IModelGeometry;
+import io.github.fabricators_of_create.porting_lib.model.BlockGeometryBakingContext;
+import io.github.fabricators_of_create.porting_lib.model.IUnbakedGeometry;
 import net.minecraft.client.renderer.block.model.BlockElement;
-import net.minecraft.client.renderer.block.model.BlockElementFace;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
 import net.minecraft.client.renderer.block.model.ItemOverride;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
@@ -49,7 +43,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(BlockModel.class)
 public abstract class BlockModelMixin implements BlockModelExtensions {
 	@Unique
-	private final BlockModelConfiguration data = new BlockModelConfiguration((BlockModel) (Object) this);
+	private final BlockGeometryBakingContext data = new BlockGeometryBakingContext((BlockModel) (Object) this);
 
 	@Shadow
 	public String name;
@@ -66,7 +60,7 @@ public abstract class BlockModelMixin implements BlockModelExtensions {
 
 	@Unique
 	@Override
-	public BlockModelConfiguration getGeometry() {
+	public BlockGeometryBakingContext getGeometry() {
 		return data;
 	}
 
@@ -98,7 +92,7 @@ public abstract class BlockModelMixin implements BlockModelExtensions {
 	@Inject(method = "bake(Lnet/minecraft/client/resources/model/ModelBakery;Lnet/minecraft/client/renderer/block/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/resources/model/BakedModel;", at = @At("HEAD"), cancellable = true)
 	public void handleCustomModels(ModelBakery modelBakery, BlockModel otherModel, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation, boolean guiLight3d, CallbackInfoReturnable<BakedModel> cir) {
 		BlockModel blockModel = (BlockModel) (Object) this;
-		IModelGeometry<?> customModel = data.getCustomGeometry();
+		IUnbakedGeometry<?> customModel = data.getCustomGeometry();
 		ModelState customModelState = data.getCustomModelState();
 		ModelState newModelState = modelTransform;
 		if (customModelState != null)

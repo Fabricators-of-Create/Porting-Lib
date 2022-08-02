@@ -79,7 +79,7 @@ public class ModelLoaderRegistry {
 		}
 	}
 
-	public static IModelGeometry<?> getModel(ResourceLocation loaderId, JsonDeserializationContext deserializationContext, JsonObject data) {
+	public static IUnbakedGeometry<?> getModel(ResourceLocation loaderId, JsonDeserializationContext deserializationContext, JsonObject data) {
 		try {
 			if (!loaders.containsKey(loaderId)) {
 				throw new IllegalStateException(String.format("Model loader '%s' not found. Registered loaders: %s", loaderId,
@@ -155,7 +155,7 @@ public class ModelLoaderRegistry {
 	}
 
 	@Nullable
-	public static IModelGeometry<?> deserializeGeometry(JsonDeserializationContext deserializationContext, JsonObject object) {
+	public static IUnbakedGeometry<?> deserializeGeometry(JsonDeserializationContext deserializationContext, JsonObject object) {
 		if (!object.has("loader")) {
 			return null;
 		}
@@ -182,7 +182,7 @@ public class ModelLoaderRegistry {
 
 	public static final String WHITE_TEXTURE = "porting_lib:white";
 
-	public static Material resolveTexture(@Nullable String tex, IModelConfiguration owner) {
+	public static Material resolveTexture(@Nullable String tex, IGeometryBakingContext owner) {
 		if (tex == null)
 			return blockMaterial(WHITE_TEXTURE);
 		if (tex.startsWith("#"))
@@ -220,7 +220,7 @@ public class ModelLoaderRegistry {
 		}
 
 		@Override
-		public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
+		public void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
 			for (BlockElement blockpart : elements) {
 				for (Direction direction : blockpart.faces.keySet()) {
 					BlockElementFace blockpartface = blockpart.faces.get(direction);
@@ -237,7 +237,7 @@ public class ModelLoaderRegistry {
 		}
 
 		@Override
-		public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
+		public Collection<Material> getTextures(IGeometryBakingContext owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
 			Set<Material> textures = Sets.newHashSet();
 
 			for (BlockElement part : elements) {

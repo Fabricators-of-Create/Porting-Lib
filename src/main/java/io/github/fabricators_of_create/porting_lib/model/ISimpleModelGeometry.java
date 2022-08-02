@@ -15,9 +15,9 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 
-public interface ISimpleModelGeometry<T extends ISimpleModelGeometry<T>> extends IModelGeometry<T> {
+public interface ISimpleModelGeometry<T extends ISimpleModelGeometry<T>> extends IUnbakedGeometry<T> {
 	@Override
-	default BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation) {
+	default BakedModel bake(IGeometryBakingContext owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation) {
 		TextureAtlasSprite particle = spriteGetter.apply(owner.resolveTexture("particle"));
 
 		IModelBuilder<?> builder = IModelBuilder.of(owner, overrides, particle);
@@ -27,8 +27,8 @@ public interface ISimpleModelGeometry<T extends ISimpleModelGeometry<T>> extends
 		return builder.build();
 	}
 
-	void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation);
+	void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation);
 
 	@Override
-	Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors);
+	Collection<Material> getTextures(IGeometryBakingContext owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors);
 }

@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 
-import io.github.fabricators_of_create.porting_lib.model.IModelLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;

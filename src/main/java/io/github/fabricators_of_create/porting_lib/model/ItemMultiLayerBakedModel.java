@@ -116,8 +116,8 @@ public class ItemMultiLayerBakedModel implements BakedModel, TransformTypeDepend
 		return layerModels;
 	}
 
-	public static Builder builder(IModelConfiguration owner, TextureAtlasSprite particle, ItemOverrides overrides,
-								  ImmutableMap<ItemTransforms.TransformType, Transformation> cameraTransforms)
+	public static Builder builder(IGeometryBakingContext owner, TextureAtlasSprite particle, ItemOverrides overrides,
+                                  ImmutableMap<ItemTransforms.TransformType, Transformation> cameraTransforms)
 	{
 		return new Builder(owner, particle, overrides, cameraTransforms);
 	}
@@ -128,12 +128,12 @@ public class ItemMultiLayerBakedModel implements BakedModel, TransformTypeDepend
 		private final List<BakedQuad> quads = Lists.newArrayList();
 		private final ItemOverrides overrides;
 		private final ImmutableMap<ItemTransforms.TransformType, Transformation> cameraTransforms;
-		private final IModelConfiguration owner;
+		private final IGeometryBakingContext owner;
 		private TextureAtlasSprite particle;
 		private RenderType lastRt = null;
 
-		private Builder(IModelConfiguration owner, TextureAtlasSprite particle, ItemOverrides overrides,
-						ImmutableMap<ItemTransforms.TransformType, Transformation> cameraTransforms)
+		private Builder(IGeometryBakingContext owner, TextureAtlasSprite particle, ItemOverrides overrides,
+                        ImmutableMap<ItemTransforms.TransformType, Transformation> cameraTransforms)
 		{
 			this.owner = owner;
 			this.particle = particle;

@@ -29,7 +29,7 @@ import com.mojang.math.Vector4f;
 
 import io.github.fabricators_of_create.porting_lib.model.BakedQuadBuilder;
 import io.github.fabricators_of_create.porting_lib.model.IModelBuilder;
-import io.github.fabricators_of_create.porting_lib.model.IModelConfiguration;
+import io.github.fabricators_of_create.porting_lib.model.IGeometryBakingContext;
 import io.github.fabricators_of_create.porting_lib.model.IModelGeometryPart;
 import io.github.fabricators_of_create.porting_lib.model.IMultipartModelGeometry;
 import io.github.fabricators_of_create.porting_lib.model.IVertexConsumer;
@@ -452,7 +452,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel> {
 		}
 	}
 
-	public SimpleRenderable bakeRenderable(IModelConfiguration configuration)
+	public SimpleRenderable bakeRenderable(IGeometryBakingContext configuration)
 	{
 		var builder = SimpleRenderable.builder();
 
@@ -481,20 +481,20 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel> {
 		}
 
 		@Override
-		public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
+		public void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
 			for(ModelMesh mesh : meshes) {
 				mesh.addQuads(owner, modelBuilder, spriteGetter, modelTransform);
 			}
 		}
 
-		public void bake(SimpleRenderable.PartBuilder<?> builder, IModelConfiguration configuration) {
+		public void bake(SimpleRenderable.PartBuilder<?> builder, IGeometryBakingContext configuration) {
 			for (ModelMesh mesh : this.meshes) {
 				mesh.bake(builder, configuration);
 			}
 		}
 
 		@Override
-		public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors) {
+		public Collection<Material> getTextures(IGeometryBakingContext owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors) {
 			return meshes.stream()
 					.flatMap(mesh -> mesh.mat != null
 							? Stream.of(ModelLoaderRegistry.resolveTexture(mesh.mat.diffuseColorMap, owner))
@@ -517,7 +517,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel> {
 		}
 
 		@Override
-		public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
+		public void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
 			super.addQuads(owner, modelBuilder, bakery, spriteGetter, modelTransform, modelLocation);
 
 			getParts().stream().filter(owner::getPartVisibility)
@@ -525,7 +525,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel> {
 		}
 
 		@Override
-		public void bake(SimpleRenderable.PartBuilder<?> builder, IModelConfiguration configuration) {
+		public void bake(SimpleRenderable.PartBuilder<?> builder, IGeometryBakingContext configuration) {
 			super.bake(builder, configuration);
 
 			for(var entry : parts.entrySet()) {
@@ -536,7 +536,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel> {
 		}
 
 		@Override
-		public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors) {
+		public Collection<Material> getTextures(IGeometryBakingContext owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors) {
 			Set<Material> combined = Sets.newHashSet();
 			combined.addAll(super.getTextures(owner, modelGetter, missingTextureErrors));
 			for (IModelGeometryPart part : getParts())
@@ -557,7 +557,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel> {
 			this.smoothingGroup = currentSmoothingGroup;
 		}
 
-		public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform) {
+		public void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform) {
 			if (mat == null)
 				return;
 			TextureAtlasSprite texture = spriteGetter.apply(ModelLoaderRegistry.resolveTexture(mat.diffuseColorMap, owner));
@@ -573,7 +573,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel> {
 			}
 		}
 
-		public void bake(SimpleRenderable.PartBuilder<?> builder, IModelConfiguration configuration) {
+		public void bake(SimpleRenderable.PartBuilder<?> builder, IGeometryBakingContext configuration) {
 			MaterialLibrary.Material mat = this.mat;
 			if (mat == null)
 				return;

@@ -78,3 +78,8 @@ transitive-accessible method net/minecraft/resources/ResourceKey create (Lnet/mi
 
 transitive-accessible field net/minecraft/data/loot/EntityLoot SPECIAL_LOOT_TABLE_TYPES Ljava/util/Set;
 transitive-accessible field net/minecraft/data/loot/EntityLoot map Ljava/util/Map;
+
+transitive-accessible class net/minecraft/client/renderer/RenderStateShard$TextureStateShard
+transitive-accessible field net/minecraft/client/renderer/RenderStateShard$TextureStateShard blur Z
+transitive-accessible field net/minecraft/client/renderer/RenderStateShard$TextureStateShard mipmap Z
+transitive-accessible field net/minecraft/client/renderer/RenderStateShard setupState Ljava/lang/Runnable;

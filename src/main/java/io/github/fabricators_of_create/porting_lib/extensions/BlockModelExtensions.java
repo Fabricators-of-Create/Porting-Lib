@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.extensions;
 
-import io.github.fabricators_of_create.porting_lib.model.BlockModelConfiguration;
+import io.github.fabricators_of_create.porting_lib.model.BlockGeometryBakingContext;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -13,7 +13,7 @@ import java.util.function.Function;
 
 @Environment(EnvType.CLIENT)
 public interface BlockModelExtensions {
-  default BlockModelConfiguration getGeometry() {
+  default BlockGeometryBakingContext getGeometry() {
 	  throw new RuntimeException("this should be overridden via mixin. what?");
   }
 

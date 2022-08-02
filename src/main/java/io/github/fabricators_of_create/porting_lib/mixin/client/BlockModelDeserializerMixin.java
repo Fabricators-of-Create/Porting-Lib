@@ -4,7 +4,9 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-import io.github.fabricators_of_create.porting_lib.extensions.BlockModelExtensions;
+import com.mojang.math.Transformation;
+
+import net.minecraft.resources.ResourceLocation;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,7 +17,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import io.github.fabricators_of_create.porting_lib.model.IModelGeometry;
+import io.github.fabricators_of_create.porting_lib.model.IUnbakedGeometry;
 import io.github.fabricators_of_create.porting_lib.model.ModelLoaderRegistry;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -29,7 +31,7 @@ public abstract class BlockModelDeserializerMixin {
 	public void modelLoading(JsonElement element, Type type, JsonDeserializationContext deserializationContext, CallbackInfoReturnable<BlockModel> cir) {
 		BlockModel model = cir.getReturnValue();
 		JsonObject jsonobject = element.getAsJsonObject();
-		IModelGeometry<?> geometry = ModelLoaderRegistry.deserializeGeometry(deserializationContext, jsonobject);
+		IUnbakedGeometry<?> geometry = ModelLoaderRegistry.deserializeGeometry(deserializationContext, jsonobject);
 
 		List<BlockElement> elements = model.getElements();
 		if (geometry != null) {
@@ -40,6 +42,17 @@ public abstract class BlockModelDeserializerMixin {
 		ModelState modelState = ModelLoaderRegistry.deserializeModelTransforms(deserializationContext, jsonobject);
 		if (modelState != null) {
 			model.getGeometry().setCustomModelState(modelState);
+		}
+
+		if (jsonobject.has("transform")) {
+			JsonObject transform = GsonHelper.getAsJsonObject(jsonobject, "transform");
+			model.getGeometry().setRootTransform(deserializationContext.deserialize(transform, Transformation.class));
+		}
+
+		if (jsonobject.has("render_type"))
+		{
+			var renderTypeHintName = GsonHelper.getAsString(jsonobject, "render_type");
+			model.getGeometry().setRenderTypeHint(new ResourceLocation(renderTypeHintName));
 		}
 
 		if (jsonobject.has("visibility")) {

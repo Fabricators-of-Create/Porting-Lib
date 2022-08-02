@@ -9,7 +9,7 @@ import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.core.Direction;
 
 public interface IModelBuilder<T extends IModelBuilder<T>> {
-	static IModelBuilder<?> of(IModelConfiguration owner, ItemOverrides overrides, TextureAtlasSprite particle) {
+	static IModelBuilder<?> of(IGeometryBakingContext owner, ItemOverrides overrides, TextureAtlasSprite particle) {
 		return new Simple(SimpleBakedModel$BuilderAccessor.port_lib$create(owner.useSmoothLighting(), owner.isSideLit(), owner.isShadedInGui(), owner.getCameraTransforms(), overrides).particle(particle));
 	}
 
