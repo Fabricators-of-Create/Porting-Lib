@@ -1,5 +1,9 @@
 package io.github.fabricators_of_create.porting_lib;
 
+import io.github.fabricators_of_create.porting_lib.loot.LootTableIdCondition;
+import io.github.fabricators_of_create.porting_lib.util.CanToolPerformAction;
+import net.minecraft.core.Registry;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +36,9 @@ public class PortingLib implements ModInitializer {
 		CraftingHelper.init();
 		TrueCondition.init();
 		PortingHooks.init();
+
+		Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
+		Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:can_tool_perform_action"), CanToolPerformAction.LOOT_CONDITION_TYPE);
 	}
 
 	public static ResourceLocation id(String path) {
