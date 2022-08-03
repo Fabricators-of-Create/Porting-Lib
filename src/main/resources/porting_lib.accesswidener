@@ -68,3 +68,4 @@ transitive-accessible field net/minecraft/world/item/AxeItem STRIPPABLES Ljava/u
 transitive-accessible class net/minecraft/client/gui/components/CommandSuggestions$SuggestionsList
 transitive-accessible method net/minecraft/client/gui/components/CommandSuggestions$SuggestionsList <init> (Lnet/minecraft/client/gui/components/CommandSuggestions;IIILjava/util/List;Z)V
 transitive-accessible field net/minecraft/world/item/ShovelItem FLATTENABLES Ljava/util/Map;
+transitive-accessible method net/minecraft/client/gui/screens/MenuScreens getConstructor (Lnet/minecraft/world/inventory/MenuType;)Lnet/minecraft/client/gui/screens/MenuScreens$ScreenConstructor;

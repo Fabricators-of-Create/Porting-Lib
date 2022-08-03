@@ -2,53 +2,44 @@ package io.github.fabricators_of_create.porting_lib.util;
 
 import java.util.function.Consumer;
 
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import io.github.fabricators_of_create.porting_lib.PortingLib;
+import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.ServerPlayerAccessor;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class NetworkUtil {
-
-	public static void openGui(ServerPlayer player, MenuProvider containerProvider, Consumer<FriendlyByteBuf> extraDataWriter) {
-		player.openMenu(new ExtendedScreenHandlerFactory() {
-			@Override
-			public Component getDisplayName() {
-				return containerProvider.getDisplayName();
-			}
-
-			@Override
-			public AbstractContainerMenu createMenu(int arg0, Inventory arg1, Player arg2) {
-				return containerProvider.createMenu(arg0, arg1, arg2);
-			}
-
-			@Override
-			public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
-				extraDataWriter.accept(buf);
-			}
-		});
-	}
+	public static final ResourceLocation OPEN_ID = PortingLib.id("open_screen");
 
 	public static void openGui(ServerPlayer player, MenuProvider containerProvider, BlockPos pos) {
-		player.openMenu(new ExtendedScreenHandlerFactory() {
-			@Override
-			public Component getDisplayName() {
-				return containerProvider.getDisplayName();
-			}
+		openGui(player, containerProvider, buf -> buf.writeBlockPos(pos));
+	}
 
-			@Override
-			public AbstractContainerMenu createMenu(int arg0, Inventory arg1, Player arg2) {
-				return containerProvider.createMenu(arg0, arg1, arg2);
-			}
+	public static void openGui(ServerPlayer player, MenuProvider factory, Consumer<FriendlyByteBuf> extraDataWriter) {
+		player.doCloseContainer();
+		((ServerPlayerAccessor)player).callNextContainerCounter();
+		int openContainerId = ((ServerPlayerAccessor)player).getContainerCounter();
 
-			@Override
-			public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
-				buf.writeBlockPos(pos);
-			}
-		});
+		FriendlyByteBuf extraData = new FriendlyByteBuf(Unpooled.buffer());
+		extraDataWriter.accept(extraData);
+		extraData.readerIndex(0); // reset to beginning in case modders read for whatever reason
+		FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+		AbstractContainerMenu menu = factory.createMenu(openContainerId, player.getInventory(), player);
+		buf.writeVarInt(Registry.MENU.getId(menu.getType()));
+		buf.writeVarInt(openContainerId);
+		buf.writeComponent(factory.getDisplayName());
+		buf.writeVarInt(extraData.readableBytes());
+		buf.writeBytes(extraData);
+
+		ServerPlayNetworking.send(player, OPEN_ID, buf);
+
+		player.containerMenu = menu;
+		((ServerPlayerAccessor)player).callInitMenu(menu);
 	}
 }
