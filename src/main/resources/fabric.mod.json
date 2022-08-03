@@ -93,6 +93,7 @@
       "net/minecraft/class_2541": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
       "net/minecraft/class_2560": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
       "net/minecraft/class_2586": ["io/github/fabricators_of_create/porting_lib/extensions/BlockEntityExtensions"],
+      "net/minecraft/class_2680": ["io/github/fabricators_of_create/porting_lib/extensions/BlockStateExtensions"],
       "net/minecraft/class_2261": ["io/github/fabricators_of_create/porting_lib/util/IPlantable"],
       "net/minecraft/class_2960": ["io/github/fabricators_of_create/porting_lib/extensions/ResourceLocationExtensions"],
       "net/minecraft/class_3491": ["io/github/fabricators_of_create/porting_lib/extensions/StructureProcessorExtensions"],

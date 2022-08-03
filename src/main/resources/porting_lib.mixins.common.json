@@ -15,6 +15,7 @@
     "BlockGetterMixin",
     "BlockItemMixin",
     "BlockMixin",
+    "BlockStateMixin",
     "BoatMixin",
     "BowItemMixin",
     "BrewingStandBlockEntityMixin",
