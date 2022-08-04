@@ -1,22 +1,21 @@
 package io.github.fabricators_of_create.porting_lib;
 
-import io.github.fabricators_of_create.porting_lib.loot.LootTableIdCondition;
-import io.github.fabricators_of_create.porting_lib.util.CanToolPerformAction;
-import net.minecraft.core.Registry;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes;
 import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
 import io.github.fabricators_of_create.porting_lib.data.ConditionalRecipe;
+import io.github.fabricators_of_create.porting_lib.loot.CanToolPerformAction;
+import io.github.fabricators_of_create.porting_lib.loot.LootTableIdCondition;
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemItemStorages;
+import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import io.github.fabricators_of_create.porting_lib.util.ServerLifecycleHooks;
 import io.github.fabricators_of_create.porting_lib.util.TierSortingRegistry;
 import io.github.fabricators_of_create.porting_lib.util.TrueCondition;
-import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 
 public class PortingLib implements ModInitializer {

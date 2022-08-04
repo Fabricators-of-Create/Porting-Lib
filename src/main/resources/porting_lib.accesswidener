@@ -85,3 +85,5 @@ transitive-accessible class net/minecraft/client/renderer/RenderStateShard$Textu
 transitive-accessible field net/minecraft/client/renderer/RenderStateShard$TextureStateShard blur Z
 transitive-accessible field net/minecraft/client/renderer/RenderStateShard$TextureStateShard mipmap Z
 transitive-accessible field net/minecraft/client/renderer/RenderStateShard setupState Ljava/lang/Runnable;
+
+transitive-accessible method net/minecraft/client/gui/screens/MenuScreens getConstructor (Lnet/minecraft/world/inventory/MenuType;)Lnet/minecraft/client/gui/screens/MenuScreens$ScreenConstructor;
