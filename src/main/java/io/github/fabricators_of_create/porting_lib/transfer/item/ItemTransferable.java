@@ -6,6 +6,10 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.minecraft.core.Direction;
 
+/**
+ * Use {@link net.fabricmc.fabric.api.transfer.v1.storage.base.SidedStorageBlockEntity}
+ */
+@Deprecated(forRemoval = true)
 public interface ItemTransferable {
 	@Nullable
 	Storage<ItemVariant> getItemStorage(@Nullable Direction face);

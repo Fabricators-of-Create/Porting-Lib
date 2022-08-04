@@ -6,6 +6,10 @@ import net.minecraft.core.Direction;
 
 import javax.annotation.Nullable;
 
+/**
+ * Use {@link net.fabricmc.fabric.api.transfer.v1.storage.base.SidedStorageBlockEntity}
+ */
+@Deprecated(forRemoval = true)
 public interface FluidTransferable {
 	@Nullable
 	Storage<FluidVariant> getFluidStorage(@Nullable Direction face);
