@@ -1,11 +1,35 @@
 package io.github.fabricators_of_create.porting_lib.extensions;
 
+import io.github.fabricators_of_create.porting_lib.util.IPlantable;
+import io.github.fabricators_of_create.porting_lib.util.ToolAction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
+import javax.annotation.Nullable;
+
 public interface BlockStateExtensions {
+	/**
+	 * Returns the state that this block should transform into when right clicked by a tool.
+	 * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
+	 * Return null if vanilla behavior should be disabled.
+	 *
+	 * @param world The world
+	 * @param pos The block position in world
+	 * @param player The player clicking the block
+	 * @param stack The stack being used by the player
+	 * @param toolAction The tool type to be considered when performing the action
+	 * @return The resulting state after the action has been performed
+	 */
+	@Nullable
+	default BlockState getToolModifiedState(Level world, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction) {
+		return ((BlockState) this).getBlock().getToolModifiedState(((BlockState) this), world, pos, player, stack, toolAction);
+	}
+
 	/**
 	 * Determines if this block can support the passed in plant, allowing it to be planted and grow.
 	 * Some examples:

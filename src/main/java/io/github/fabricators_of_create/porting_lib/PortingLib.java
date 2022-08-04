@@ -1,7 +1,7 @@
 package io.github.fabricators_of_create.porting_lib;
 
-import io.github.fabricators_of_create.porting_lib.loot.CanToolPerformAction;
 import io.github.fabricators_of_create.porting_lib.loot.LootTableIdCondition;
+import io.github.fabricators_of_create.porting_lib.util.CanToolPerformAction;
 import net.minecraft.core.Registry;
 
 import org.slf4j.Logger;
