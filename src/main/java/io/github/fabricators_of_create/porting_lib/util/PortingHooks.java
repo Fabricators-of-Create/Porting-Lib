@@ -122,8 +122,10 @@ public class PortingHooks {
 	}
 
 	public static FluidAttributes getFluidAttributesFromVariant(Fluid fluid) {
-		if (!fluid.isSource(fluid.defaultFluidState()))
-			return ((FlowingFluid)fluid).getSource().getAttributes();
+		if (!fluid.isSource(fluid.defaultFluidState()) && fluid instanceof FlowingFluid flowingFluid)
+			return flowingFluid.getSource().getAttributes();
+		if (!fluid.isSource(fluid.defaultFluidState()) && fluid != Fluids.EMPTY)
+			return Fluids.WATER.getAttributes(); // Return waters attributes if all else fails
 		FluidVariantAttributeHandler handler = FluidVariantAttributes.getHandler(fluid);
 		if (handler == null)
 			handler = FluidVariantAttributes.getHandler(Fluids.WATER); // Default to water
