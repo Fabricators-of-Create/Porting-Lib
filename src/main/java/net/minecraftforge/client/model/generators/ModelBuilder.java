@@ -29,8 +29,6 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -63,6 +61,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
  *
  * @param <T> Self type, for simpler chaining of methods.
  */
+@SuppressWarnings("deprecation")
 public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
     @Nullable
@@ -71,7 +70,6 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     protected final TransformsBuilder transforms = new TransformsBuilder();
     protected final ExistingFileHelper existingFileHelper;
 
-    protected String renderType = null;
     protected boolean ambientOcclusion = true;
     protected GuiLight guiLight = null;
 
@@ -157,47 +155,22 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         return self();
     }
 
-    /**
-	 * DOES NOT ACTUALLY WORK. The property in the model is not used.
-	 * {@link BlockRenderLayerMap} must be used.
-	 *
-     * Set the render type for this model.
-     *
-     * @param renderType the render type.
-     * @return this builder
-     * @throws NullPointerException  if {@code renderType} is {@code null}
-	 * @deprecated does nothing on fabric, use {@link BlockRenderLayerMap}
-     */
-	@Deprecated
-    public T renderType(String renderType) {
-        Preconditions.checkNotNull(renderType, "Render type must not be null");
-        return renderType(new ResourceLocation(renderType));
-    }
-
-    /**
-	 * DOES NOT ACTUALLY WORK. The property in the model is not used.
-	 * {@link BlockRenderLayerMap} must be used.
-	 *
-     * Set the render type for this model.
-     *
-     * @param renderType the render type
-     * @return this builder
-     * @throws NullPointerException  if {@code renderType} is {@code null}
-	 * @deprecated does nothing on fabric, use {@link BlockRenderLayerMap}
-     */
-	@Deprecated
-    public T renderType(ResourceLocation renderType) {
-        Preconditions.checkNotNull(renderType, "Render type must not be null");
-        this.renderType = renderType.toString();
-        return self();
-    }
-
     public TransformsBuilder transforms() {
         return transforms;
     }
 
     public T ao(boolean ao) {
         this.ambientOcclusion = ao;
+        return self();
+    }
+
+    /**
+     * @param gui3d
+     * @return this builder
+     * @deprecated Unused in 1.15, use {@link #guiLight(GuiLight)} instead.
+     */
+    @Deprecated
+    public T gui3d(boolean gui3d) {
         return self();
     }
 
@@ -227,7 +200,8 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     }
 
     /**
-     * {@return the number of elements in this model builder}
+     * Gets the number of elements in this model builder
+     * @return the number of elements in this model builder
      */
     public int getElementCount()
     {
@@ -236,7 +210,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
     /**
      * Use a custom loader instead of the vanilla elements.
-     * @param customLoaderFactory function that returns the custom loader to set, given this and the {@link #existingFileHelper}
+     * @param customLoaderFactory
      * @return the custom loader builder
      */
     public <L extends CustomLoaderBuilder<T>> L customLoader(BiFunction<T, ExistingFileHelper, L> customLoaderFactory)
@@ -264,31 +238,23 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             root.addProperty("gui_light", this.guiLight.name);
         }
 
-        if (this.renderType != null) {
-            root.addProperty("render_type", this.renderType);
-        }
-
-        Map<TransformType, ItemTransform> transforms = this.transforms.build();
+        Map<Perspective, ItemTransform> transforms = this.transforms.build();
         if (!transforms.isEmpty()) {
             JsonObject display = new JsonObject();
-            for (Entry<TransformType, ItemTransform> e : transforms.entrySet()) {
+            for (Entry<Perspective, ItemTransform> e : transforms.entrySet()) {
                 JsonObject transform = new JsonObject();
                 ItemTransform vec = e.getValue();
                 if (vec.equals(ItemTransform.NO_TRANSFORM)) continue;
-                var hasRightRotation = false; // fabric: doesn't exist // !vec.rightRotation.equals(ItemTransform.Deserializer.DEFAULT_ROTATION);
+                if (!vec.rotation.equals(ItemTransform.Deserializer.DEFAULT_ROTATION)) {
+                    transform.add("rotation", serializeVector3f(vec.rotation));
+                }
                 if (!vec.translation.equals(ItemTransform.Deserializer.DEFAULT_TRANSLATION)) {
                     transform.add("translation", serializeVector3f(e.getValue().translation));
-                }
-                if (!vec.rotation.equals(ItemTransform.Deserializer.DEFAULT_ROTATION)) {
-                    transform.add(hasRightRotation ? "left_rotation" : "rotation", serializeVector3f(vec.rotation));
                 }
                 if (!vec.scale.equals(ItemTransform.Deserializer.DEFAULT_SCALE)) {
                     transform.add("scale", serializeVector3f(e.getValue().scale));
                 }
-//                if (hasRightRotation) {
-//                    transform.add("right_rotation", serializeVector3f(vec.rightRotation));
-//                }
-                display.add(serializedName(e.getKey()), transform);
+                display.add(e.getKey().name, transform);
             }
             root.add("display", display);
         }
@@ -342,10 +308,6 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                     if (face.tintIndex != -1) {
                         faceObj.addProperty("tintindex", face.tintIndex);
                     }
-					// fabric: doesn't exist
-//                    if (face.emissivity > 0) {
-//                        faceObj.addProperty("emissivity", face.emissivity);
-//                    }
                     faces.add(dir.getSerializedName(), faceObj);
                 }
                 if (!part.faces.isEmpty()) {
@@ -361,20 +323,6 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
         return root;
     }
-
-	public static String serializedName(TransformType type) {
-		return switch (type) {
-			case NONE -> "none";
-			case THIRD_PERSON_LEFT_HAND -> "thirdperson_lefthand";
-			case THIRD_PERSON_RIGHT_HAND -> "thirdperson_righthand";
-			case FIRST_PERSON_LEFT_HAND -> "firstperson_lefthand";
-			case FIRST_PERSON_RIGHT_HAND -> "firstperson_righthand";
-			case HEAD -> "head";
-			case GUI -> "gui";
-			case GROUND -> "ground";
-			case FIXED -> "fixed";
-		};
-	}
 
     private String serializeLocOrKey(String tex) {
         if (tex.charAt(0) == '#') {
@@ -484,7 +432,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          */
         public ElementBuilder allFaces(BiConsumer<Direction, FaceBuilder> action) {
             Arrays.stream(Direction.values())
-                    .forEach(d -> action.accept(d, face(d)));
+                .forEach(d -> action.accept(d, face(d)));
             return this;
         }
 
@@ -497,7 +445,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          */
         public ElementBuilder faces(BiConsumer<Direction, FaceBuilder> action) {
             faces.entrySet().stream()
-                    .forEach(e -> action.accept(e.getKey(), e.getValue()));
+                .forEach(e -> action.accept(e.getKey(), e.getValue()));
             return this;
         }
 
@@ -543,7 +491,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
         BlockElement build() {
             Map<Direction, BlockElementFace> faces = this.faces.entrySet().stream()
-                    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().build(), (k1, k2) -> { throw new IllegalArgumentException(); }, LinkedHashMap::new));
+                    .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().build(), (k1, k2) -> { throw new IllegalArgumentException(); }, LinkedHashMap::new));
             return new BlockElement(from, to, faces, rotation == null ? null : rotation.build(), shade);
         }
 
@@ -556,7 +504,6 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             private String texture = MissingTextureAtlasSprite.getLocation().toString();
             private float[] uvs;
             private FaceRotation rotation = FaceRotation.ZERO;
-//            private int emissivity = 0;
 
             FaceBuilder(Direction dir) {
                 // param unused for functional match
@@ -601,34 +548,6 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                 Preconditions.checkNotNull(rot, "Rotation must not be null");
                 this.rotation = rot;
                 return this;
-            }
-
-            /**
-			 * UNSUPPORTED ON FABRIC
-			 *
-             * Set the emissivity of the face (0-15).
-             *
-             * @param emissivity the emissivity
-             * @return this builder
-			 * @deprecated does not work on fabric
-             */
-			@Deprecated
-            public FaceBuilder emissivity(int emissivity) {
-//                this.emissivity = emissivity;
-                return this;
-            }
-
-            /**
-			 * UNSUPPORTED ON FABRIC
-			 *
-             * Make the face emissive (emissivity = 15).
-             *
-             * @return this builder
-			 * @deprecated does not work on fabric
-             */
-			@Deprecated
-            public FaceBuilder emissive() {
-                return emissivity(15);
             }
 
             BlockElementFace build() {
@@ -703,9 +622,31 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         }
     }
 
+    // Since vanilla doesn't keep the name in TransformType...
+    public enum Perspective {
+
+        THIRDPERSON_RIGHT(TransformType.THIRD_PERSON_RIGHT_HAND, "thirdperson_righthand"),
+        THIRDPERSON_LEFT(TransformType.THIRD_PERSON_LEFT_HAND, "thirdperson_lefthand"),
+        FIRSTPERSON_RIGHT(TransformType.FIRST_PERSON_RIGHT_HAND, "firstperson_righthand"),
+        FIRSTPERSON_LEFT(TransformType.FIRST_PERSON_LEFT_HAND, "firstperson_lefthand"),
+        HEAD(TransformType.HEAD, "head"),
+        GUI(TransformType.GUI, "gui"),
+        GROUND(TransformType.GROUND, "ground"),
+        FIXED(TransformType.FIXED, "fixed"),
+        ;
+
+        public final TransformType vanillaType;
+        final String name;
+
+        private Perspective(TransformType vanillaType, String name) {
+            this.vanillaType = vanillaType;
+            this.name = name;
+        }
+    }
+
     public class TransformsBuilder {
 
-        private final Map<TransformType, TransformVecBuilder> transforms = new LinkedHashMap<>();
+        private final Map<Perspective, TransformVecBuilder> transforms = new LinkedHashMap<>();
 
         /**
          * Begin building a new transform for the given perspective.
@@ -714,14 +655,14 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @return the builder for the given perspective
          * @throws NullPointerException if {@code type} is {@code null}
          */
-        public TransformVecBuilder transform(TransformType type) {
+        public TransformVecBuilder transform(Perspective type) {
             Preconditions.checkNotNull(type, "Perspective cannot be null");
             return transforms.computeIfAbsent(type, TransformVecBuilder::new);
         }
 
-        Map<TransformType, ItemTransform> build() {
+        Map<Perspective, ItemTransform> build() {
             return this.transforms.entrySet().stream()
-                    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().build(), (k1, k2) -> { throw new IllegalArgumentException(); }, LinkedHashMap::new));
+                    .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().build(), (k1, k2) -> { throw new IllegalArgumentException(); }, LinkedHashMap::new));
         }
 
         public T end() { return self(); }
@@ -731,19 +672,14 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             private Vector3f rotation = ItemTransform.Deserializer.DEFAULT_ROTATION.copy();
             private Vector3f translation = ItemTransform.Deserializer.DEFAULT_TRANSLATION.copy();
             private Vector3f scale = ItemTransform.Deserializer.DEFAULT_SCALE.copy();
-//            private Vector3f rightRotation = ItemTransform.Deserializer.DEFAULT_ROTATION.copy();
 
-            TransformVecBuilder(TransformType type) {
+            TransformVecBuilder(Perspective type) {
                 // param unused for functional match
             }
 
             public TransformVecBuilder rotation(float x, float y, float z) {
                 this.rotation = new Vector3f(x, y, z);
                 return this;
-            }
-
-            public TransformVecBuilder leftRotation(float x, float y, float z) {
-                return rotation(x, y, z);
             }
 
             public TransformVecBuilder translation(float x, float y, float z) {
@@ -757,15 +693,6 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
             public TransformVecBuilder scale(float x, float y, float z) {
                 this.scale = new Vector3f(x, y, z);
-                return this;
-            }
-
-			/**
-			 * @deprecated does nothing on fabric
-			 */
-			@Deprecated
-            public TransformVecBuilder rightRotation(float x, float y, float z) {
-//                this.rightRotation = new Vector3f(x, y, z);
                 return this;
             }
 
