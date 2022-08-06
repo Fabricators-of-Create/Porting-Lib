@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.model;
 
+import java.io.IOException;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -8,16 +10,26 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 
+import io.github.fabricators_of_create.porting_lib.PortingLibClient;
+import io.github.fabricators_of_create.porting_lib.event.client.RegisterShadersCallback.ShaderRegistry;
+import io.github.fabricators_of_create.porting_lib.mixin.client.accessor.RenderStateShardAccessor;
+import io.github.fabricators_of_create.porting_lib.mixin.client.accessor.TextureStateShardAccessor;
+import io.github.fabricators_of_create.porting_lib.util.Lazy;
 import io.github.fabricators_of_create.porting_lib.util.NonNullSupplier;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderStateShard.TextureStateShard;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.util.NonNullLazy;
+
+import net.minecraft.server.packs.resources.ResourceManager;
+
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("deprecation")
 public enum PortingLibRenderTypes {
@@ -144,11 +156,11 @@ public enum PortingLibRenderTypes {
 	//  Implementation details below this line
 	// ----------------------------------------
 
-	private final NonNullSupplier<RenderType> renderTypeSupplier;
+	private final Lazy<RenderType> renderTypeSupplier;
 
 	PortingLibRenderTypes(NonNullSupplier<RenderType> renderTypeSupplier) {
 		// Wrap in a Lazy<> to avoid running the supplier more than once.
-		this.renderTypeSupplier = NonNullLazy.of(renderTypeSupplier);
+		this.renderTypeSupplier =  Lazy.of(renderTypeSupplier);
 	}
 
 	public RenderType get() {
@@ -156,8 +168,23 @@ public enum PortingLibRenderTypes {
 	}
 
 
-	private static class Internal extends RenderType {
-		private static final ShaderStateShard RENDERTYPE_ENTITY_TRANSLUCENT_UNLIT_SHADER = new ShaderStateShard(ForgeHooksClient.ClientEvents::getEntityTranslucentUnlitShader);
+	@ApiStatus.Internal
+	public static class Internal extends RenderType {
+		@Nullable
+		private static ShaderInstance rendertypeEntityTranslucentUnlitShader;
+
+		private static final ShaderStateShard RENDERTYPE_ENTITY_TRANSLUCENT_UNLIT_SHADER = new ShaderStateShard(Internal::getEntityTranslucentUnlitShader);
+
+		public static ShaderInstance getEntityTranslucentUnlitShader() {
+			return Objects.requireNonNull(rendertypeEntityTranslucentUnlitShader,
+					"Attempted to call getEntityTranslucentUnlitShader before shaders have finished loading.");
+		}
+
+		public static void initEntityTranslucentUnlitShader(ResourceManager resourceManager, ShaderRegistry registry) throws IOException {
+			registry.registerShader(new ShaderInstance(resourceManager,
+					"forge:rendertype_entity_unlit_translucent", DefaultVertexFormat.NEW_ENTITY),
+					(shaderInstance) -> rendertypeEntityTranslucentUnlitShader = shaderInstance);
+		}
 
 		private Internal(String name, VertexFormat fmt, VertexFormat.Mode glMode, int size, boolean doCrumbling, boolean depthSorting, Runnable onEnable, Runnable onDisable) {
 			super(name, fmt, glMode, size, doCrumbling, depthSorting, onEnable, onDisable);
@@ -340,14 +367,16 @@ public enum PortingLibRenderTypes {
 	private static class CustomizableTextureState extends TextureStateShard {
 		private CustomizableTextureState(ResourceLocation resLoc, Supplier<Boolean> blur, Supplier<Boolean> mipmap) {
 			super(resLoc, blur.get(), mipmap.get());
-			this.setupState = () -> {
-				this.blur = blur.get();
-				this.mipmap = mipmap.get();
+
+			TextureStateShardAccessor access = (TextureStateShardAccessor) this;
+			((RenderStateShardAccessor) this).port_lib$setupState(() -> {
+				access.port_lib$blur(blur.get());
+				access.port_lib$mipmap(mipmap.get());
 				RenderSystem.enableTexture();
 				TextureManager texturemanager = Minecraft.getInstance().getTextureManager();
 				texturemanager.getTexture(resLoc).setFilter(this.blur, this.mipmap);
 				RenderSystem.setShaderTexture(0, resLoc);
-			};
+			});
 		}
 	}
 }

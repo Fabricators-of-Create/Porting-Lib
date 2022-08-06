@@ -71,12 +71,14 @@
     "accessor.ModelPartAccessor",
     "accessor.ParticleAccessor",
     "accessor.ParticleEngineAccessor",
+    "accessor.RenderStateShardAccessor",
     "accessor.RenderTypeAccessor",
     "accessor.ScreenAccessor",
     "accessor.SheetsAccessor",
     "accessor.SimpleBakedModel$BuilderAccessor",
     "accessor.TextureAtlasSprite$AnimatedTextureAccessor",
     "accessor.TextureSheetParticleAccessor",
+    "accessor.TextureStateShardAccessor",
     "accessor.TitleScreenAccessor"
   ],
   "injectors": {
