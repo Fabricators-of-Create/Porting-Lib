@@ -3,7 +3,7 @@
 plugins {
 	id "fabric-loom" version "0.12-SNAPSHOT"
 	id "io.github.juuxel.loom-quiltflower" version "1.+" // Quiltflower, a better decompiler
-//	id "org.quiltmc.quilt-mappings-on-loom" version "4.2.+" // Quilt Mappings, for parameters and javadoc. Also hashed mojmap.
+	id "org.quiltmc.quilt-mappings-on-loom" version "4.2.0" // Quilt Mappings, for parameters and javadoc. Also hashed mojmap.
 //	id "io.github.p03w.machete" version "1.+" // automatic jar compressing on build
 	id "com.diffplug.spotless" version "6.9.0"
 	id "org.ajoberstar.grgit" version "4.1.1"
@@ -30,6 +30,7 @@ if (grgit != null) {
 
 repositories {
 	mavenLocal()
+	maven { url = "https://hephaestus.dev/release" }
 	maven { url = "https://api.modrinth.com/maven" }
 	maven { url = "https://maven.bai.lol" }
 	maven { url = "https://maven.terraformersmc.com/releases/" }
@@ -51,13 +52,11 @@ repositories {
 dependencies {
     // dev environment
 	minecraft("com.mojang:minecraft:${project.minecraft_version}")
-	mappings loom.layered {
-//		it.addLayer(quiltMappings.mappings("org.quiltmc:quilt-mappings:1.18.2+build.22:v2")) // https://lambdaurora.dev/tools/import_quilt.html
-//		it.parchment("org.parchmentmc.data:parchment-1.18.2:BLEEDING-20220313.132143-1@zip") // https://ldtteam.jfrog.io/ui/native/parchmentmc-public/org/parchmentmc/data/parchment-1.18.1/BLEEDING-SNAPSHOT
-		it.officialMojangMappings {
-			setNameSyntheticMembers(false)
-		}
-	}
+	mappings(loom.layered {
+		it.addLayer(quiltMappings.mappings("org.quiltmc:quilt-mappings:${project.minecraft_version}+build.${project.qm_version}:v2"))
+		it.parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${project.parchment_version}@zip")
+		it.officialMojangMappings { nameSyntheticMembers = false }
+	})
 	modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
 	modLocalRuntime("maven.modrinth:lazydfu:0.1.3")
 //	modLocalRuntime("maven.modrinth:suggestionproviderfabric:1.0.1")
@@ -65,6 +64,7 @@ dependencies {
 //	modLocalRuntime("maven.modrinth:lithium:${project.lithium_version}")
 //	modLocalRuntime("maven.modrinth:vmp-fabric:${project.vmp_version}")
 //	modLocalRuntime("maven.modrinth:iris:${project.iris_version}")
+//	modLocalRuntime("dev.monarkhes:myron:1.6.3+1.18.1") { transitive = false }
 	modLocalRuntime("com.terraformersmc:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
 
 	// dependencies

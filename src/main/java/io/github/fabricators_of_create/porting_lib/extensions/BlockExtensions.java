@@ -83,7 +83,10 @@ public interface BlockExtensions {
 	@Nullable
 	default BlockState getToolModifiedState(BlockState state, Level world, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction) {
 		if (!stack.canPerformAction(toolAction)) return null;
-		if (ToolActions.AXE_STRIP.equals(toolAction)) return AxeItem.STRIPPABLES.get(state.getBlock()).defaultBlockState();
+		if (ToolActions.AXE_STRIP.equals(toolAction)) {
+			Block block = AxeItem.STRIPPABLES.get(state.getBlock());
+			return block != null ? block.defaultBlockState() : null;
+		}
 		else if(ToolActions.AXE_SCRAPE.equals(toolAction)) return WeatheringCopper.getPrevious(state).orElse(null);
 		else if(ToolActions.AXE_WAX_OFF.equals(toolAction)) return Optional.ofNullable(HoneycombItem.WAX_OFF_BY_BLOCK.get().get(state.getBlock())).map((p_150694_) -> {
 			return p_150694_.withPropertiesOf(state);
