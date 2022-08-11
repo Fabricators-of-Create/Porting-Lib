@@ -95,6 +95,7 @@
       "net/minecraft/class_4184": ["io/github/fabricators_of_create/porting_lib/extensions/CameraExtensions"],
       "net/minecraft/class_4538": ["io/github/fabricators_of_create/porting_lib/extensions/LevelReaderExtensions"],
       "net/minecraft/class_4581": ["io/github/fabricators_of_create/porting_lib/extensions/Matrix3fExtensions"],
+      "net/minecraft/class_4588": ["io/github/fabricators_of_create/porting_lib/extensions/VertexConsumerExtension"],
       "net/minecraft/class_4590": ["io/github/fabricators_of_create/porting_lib/extensions/TransformationExtensions"]
     }
   }

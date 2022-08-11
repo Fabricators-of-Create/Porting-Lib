@@ -1,40 +1,31 @@
 package io.github.fabricators_of_create.porting_lib.model;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.math.Transformation;
-
-import io.github.fabricators_of_create.porting_lib.extensions.ModelStateExtensions;
 import net.minecraft.client.resources.model.ModelState;
 
 /**
- * Simple implementation of IModelState via a map and a default value.
+ * Simple implementation of {@link ModelState}.
  */
-public final class SimpleModelState implements ModelState, ModelStateExtensions {
-	public static final SimpleModelState IDENTITY = new SimpleModelState(Transformation.identity());
+public final class SimpleModelState implements ModelState {
+	private final Transformation transformation;
+	private final boolean uvLocked;
 
-	private final ImmutableMap<?, Transformation> map;
-	private final Transformation base;
-
-	public SimpleModelState(ImmutableMap<?, Transformation> map) {
-		this(map, Transformation.identity());
+	public SimpleModelState(Transformation transformation, boolean uvLocked) {
+		this.transformation = transformation;
+		this.uvLocked = uvLocked;
 	}
 
-	public SimpleModelState(Transformation base) {
-		this(ImmutableMap.of(), base);
-	}
-
-	public SimpleModelState(ImmutableMap<?, Transformation> map, Transformation base) {
-		this.map = map;
-		this.base = base;
+	public SimpleModelState(Transformation transformation) {
+		this(transformation, false);
 	}
 
 	@Override
 	public Transformation getRotation() {
-		return base;
+		return transformation;
 	}
 
 	@Override
-	public Transformation getPartTransformation(Object part) {
-		return map.getOrDefault(part, Transformation.identity());
+	public boolean isUvLocked() {
+		return uvLocked;
 	}
 }

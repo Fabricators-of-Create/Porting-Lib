@@ -53,7 +53,7 @@ public class BlockGeometryBakingContext implements IGeometryBakingContext {
 
 	@Nullable
 	public IUnbakedGeometry<?> getCustomGeometry() {
-		return owner.parent != null && customGeometry == null ? owner.parent.customData.getCustomGeometry() : customGeometry;
+		return owner.parent != null && customGeometry == null ? owner.parent.getGeometry().getCustomGeometry() : customGeometry;
 	}
 
 	public void setCustomGeometry(IUnbakedGeometry<?> geometry) {
@@ -63,7 +63,7 @@ public class BlockGeometryBakingContext implements IGeometryBakingContext {
 	@Override
 	public boolean isComponentVisible(String part, boolean fallback) {
 		return owner.parent != null && !visibilityData.hasCustomVisibility(part) ?
-				owner.parent.customData.isComponentVisible(part, fallback) :
+				owner.parent.getGeometry().isComponentVisible(part, fallback) :
 				visibilityData.isVisible(part, fallback);
 	}
 

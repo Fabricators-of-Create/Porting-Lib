@@ -64,7 +64,7 @@ public abstract class LevelChunkMixin extends ChunkAccess {
 		});
 	}
 
-	@Inject(method = "method_31716",
+	@Inject(method = {"method_31716", "lambda$replaceWithPacketData$3", "m_pptwysxt"},
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;load(Lnet/minecraft/nbt/CompoundTag;)V"),
 			locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true
 	)
@@ -85,7 +85,7 @@ public abstract class LevelChunkMixin extends ChunkAccess {
 		this.level.addFreshBlockEntities(this.blockEntities.values());
 	}
 
-	@Inject(method = "method_12217", at = @At("HEAD"), cancellable = true)
+	@Inject(method = {"method_12217", "lambda$getLights$4", "m_eaodltdq"}, at = @At("HEAD"), cancellable = true)
 	public void port_lib$lightBlock(BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
 		BlockState state = getBlockState(blockPos);
 		if (state.getBlock() instanceof LightEmissiveBlock lightEmissiveBlock) {

@@ -2,13 +2,18 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import com.google.gson.JsonParseException;
 import com.mojang.math.Transformation;
 
+import io.github.fabricators_of_create.porting_lib.model.GeometryLoaderManager;
 import net.minecraft.resources.ResourceLocation;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -18,7 +23,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import io.github.fabricators_of_create.porting_lib.model.IUnbakedGeometry;
-import io.github.fabricators_of_create.porting_lib.model.ModelLoaderRegistry;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.ModelState;
@@ -31,7 +35,7 @@ public abstract class BlockModelDeserializerMixin {
 	public void modelLoading(JsonElement element, Type type, JsonDeserializationContext deserializationContext, CallbackInfoReturnable<BlockModel> cir) {
 		BlockModel model = cir.getReturnValue();
 		JsonObject jsonobject = element.getAsJsonObject();
-		IUnbakedGeometry<?> geometry = ModelLoaderRegistry.deserializeGeometry(deserializationContext, jsonobject);
+		IUnbakedGeometry<?> geometry = deserializeGeometry(deserializationContext, jsonobject);
 
 		List<BlockElement> elements = model.getElements();
 		if (geometry != null) {
@@ -39,18 +43,12 @@ public abstract class BlockModelDeserializerMixin {
 			model.getGeometry().setCustomGeometry(geometry);
 		}
 
-		ModelState modelState = ModelLoaderRegistry.deserializeModelTransforms(deserializationContext, jsonobject);
-		if (modelState != null) {
-			model.getGeometry().setCustomModelState(modelState);
-		}
-
 		if (jsonobject.has("transform")) {
 			JsonObject transform = GsonHelper.getAsJsonObject(jsonobject, "transform");
 			model.getGeometry().setRootTransform(deserializationContext.deserialize(transform, Transformation.class));
 		}
 
-		if (jsonobject.has("render_type"))
-		{
+		if (jsonobject.has("render_type")) {
 			var renderTypeHintName = GsonHelper.getAsString(jsonobject, "render_type");
 			model.getGeometry().setRenderTypeHint(new ResourceLocation(renderTypeHintName));
 		}
@@ -61,5 +59,20 @@ public abstract class BlockModelDeserializerMixin {
 				model.getGeometry().visibilityData.setVisibilityState(part.getKey(), part.getValue().getAsBoolean());
 			}
 		}
+
+	}
+
+	@Unique
+	@Nullable
+	private static IUnbakedGeometry<?> deserializeGeometry(JsonDeserializationContext deserializationContext, JsonObject object) throws JsonParseException {
+		if (!object.has("loader"))
+			return null;
+
+		var name = new ResourceLocation(GsonHelper.getAsString(object, "loader"));
+		var loader = GeometryLoaderManager.get(name);
+		if (loader == null)
+			throw new JsonParseException(String.format(Locale.ENGLISH, "Model loader '%s' not found. Registered loaders: %s", name, GeometryLoaderManager.getLoaderList()));
+
+		return loader.read(object, deserializationContext);
 	}
 }

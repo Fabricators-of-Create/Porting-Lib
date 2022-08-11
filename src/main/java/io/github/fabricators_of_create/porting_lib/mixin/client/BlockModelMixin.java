@@ -10,6 +10,7 @@ import io.github.fabricators_of_create.porting_lib.model.CompositeModelState;
 
 import io.github.fabricators_of_create.porting_lib.model.PerspectiveMapWrapper;
 
+import io.github.fabricators_of_create.porting_lib.model.geometry.UnbakedGeometryHelper;
 import io.github.fabricators_of_create.porting_lib.render.TransformTypeDependentItemBakedModel;
 
 import org.spongepowered.asm.mixin.Final;
@@ -92,17 +93,9 @@ public abstract class BlockModelMixin implements BlockModelExtensions {
 	@Inject(method = "bake(Lnet/minecraft/client/resources/model/ModelBakery;Lnet/minecraft/client/renderer/block/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/resources/model/BakedModel;", at = @At("HEAD"), cancellable = true)
 	public void handleCustomModels(ModelBakery modelBakery, BlockModel otherModel, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation, boolean guiLight3d, CallbackInfoReturnable<BakedModel> cir) {
 		BlockModel blockModel = (BlockModel) (Object) this;
-		IUnbakedGeometry<?> customModel = data.getCustomGeometry();
-		ModelState customModelState = data.getCustomModelState();
-		ModelState newModelState = modelTransform;
-		if (customModelState != null)
-			newModelState = new CompositeModelState(modelTransform, customModelState, modelTransform.isUvLocked());
 
-		if (customModel != null) {
-			BakedModel model = customModel.bake(blockModel.getGeometry(), modelBakery, spriteGetter, newModelState, blockModel.getOverrides(modelBakery, otherModel, spriteGetter), modelLocation);
-			if (customModelState != null && !(model instanceof TransformTypeDependentItemBakedModel))
-				model = new PerspectiveMapWrapper(model, customModelState);
-			cir.setReturnValue(model);
+		if (data.getCustomGeometry() != null) {
+			cir.setReturnValue(UnbakedGeometryHelper.bake(blockModel, modelBakery, otherModel, spriteGetter, modelTransform, modelLocation, guiLight3d));
 		}
 	}
 

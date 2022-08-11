@@ -50,6 +50,7 @@
     "TextureAtlasMixin",
     "TextureAtlasSpriteMixin",
     "TextureManagerMixin",
+    "VertexConsumerMixin",
     "VertexFormatMixin",
     "accessor.AbstractContainerScreenAccessor",
     "accessor.AbstractSelectionList$EntryAccessor",

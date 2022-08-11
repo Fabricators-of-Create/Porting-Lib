@@ -10,7 +10,11 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 
+import io.github.fabricators_of_create.porting_lib.model.geometry.StandaloneGeometryBakingContext;
+import io.github.fabricators_of_create.porting_lib.model.geometry.UnbakedGeometryHelper;
+import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import io.github.fabricators_of_create.porting_lib.util.FluidUtil;
+import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.minecraft.client.color.item.ItemColor;
@@ -24,23 +28,13 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.ForgeRenderTypes;
-import net.minecraftforge.client.RenderTypeGroup;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
-import net.minecraftforge.client.model.geometry.IGeometryLoader;
-import net.minecraftforge.client.model.geometry.IUnbakedGeometry;
-import net.minecraftforge.client.model.geometry.StandaloneGeometryBakingContext;
-import net.minecraftforge.client.model.geometry.UnbakedGeometryHelper;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -113,7 +107,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 		Material coverLocation = context.hasMaterial("cover") ? context.getMaterial("cover") : null;
 
 		TextureAtlasSprite baseSprite = baseLocation != null ? spriteGetter.apply(baseLocation) : null;
-		TextureAtlasSprite fluidSprite = fluid != Fluids.EMPTY ? spriteGetter.apply(ForgeHooksClient.getBlockMaterial(IClientFluidTypeExtensions.of(fluid).getStillTexture())) : null;
+		TextureAtlasSprite fluidSprite = FluidVariantRendering.getSprite(FluidVariant.of(fluid));
 		TextureAtlasSprite coverSprite = (coverLocation != null && (!coverIsMask || baseLocation != null)) ? spriteGetter.apply(coverLocation) : null;
 
 		TextureAtlasSprite particleSprite = particleLocation != null ? spriteGetter.apply(particleLocation) : null;
@@ -150,7 +144,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 				var unbaked = UnbakedGeometryHelper.createUnbakedItemMaskElements(1, templateSprite); // Use template as mask
 				var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> fluidSprite, transformedState, modelLocation); // Bake with fluid texture
 
-				var emissive = applyFluidLuminosity && fluid.getFluidType().getLightLevel() > 0;
+				var emissive = applyFluidLuminosity && FluidVariantAttributes.getLuminance(FluidVariant.of(fluid)) > 0;
 				var renderTypes = getLayerRenderTypes(emissive);
 				if (emissive) QuadTransformers.settingMaxEmissivity().processInPlace(quads);
 
@@ -204,7 +198,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 
 			ResourceLocation fluidName = new ResourceLocation(jsonObject.get("fluid").getAsString());
 
-			Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
+			Fluid fluid = Registry.FLUID.get(fluidName);
 
 			boolean flip = GsonHelper.getAsBoolean(jsonObject, "flip_gas", false);
 			boolean coverIsMask = GsonHelper.getAsBoolean(jsonObject, "cover_is_mask", true);
@@ -251,10 +245,10 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 		public BakedModel resolve(BakedModel originalModel, ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed) {
 			BakedModel overridden = nested.resolve(originalModel, stack, level, entity, seed);
 			if (overridden != originalModel) return overridden;
-			return FluidUtil.getFluidContained(stack)
+			return TransferUtil.getFluidContained(stack)
 					.map(fluidStack -> {
 						Fluid fluid = fluidStack.getFluid();
-						String name = ForgeRegistries.FLUIDS.getKey(fluid).toString();
+						String name = Registry.FLUID.getKey(fluid).toString();
 
 						if (!cache.containsKey(name))
 						{
@@ -275,8 +269,8 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 		@Override
 		public int getColor(@NotNull ItemStack stack, int tintIndex) {
 			if (tintIndex != 1) return 0xFFFFFFFF;
-			return FluidUtil.getFluidContained(stack)
-					.map(fluidStack -> IClientFluidTypeExtensions.of(fluidStack.getFluid()).getTintColor(fluidStack))
+			return TransferUtil.getFluidContained(stack)
+					.map(fluidStack -> FluidVariantRendering.getColor(fluidStack.getType()))
 					.orElse(0xFFFFFFFF);
 		}
 	}

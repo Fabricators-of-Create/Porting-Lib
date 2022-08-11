@@ -3,44 +3,97 @@ package io.github.fabricators_of_create.porting_lib.model;
 import io.github.fabricators_of_create.porting_lib.mixin.client.accessor.SimpleBakedModel$BuilderAccessor;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.core.Direction;
 
-public interface IModelBuilder<T extends IModelBuilder<T>> {
-	static IModelBuilder<?> of(IGeometryBakingContext owner, ItemOverrides overrides, TextureAtlasSprite particle) {
-		return new Simple(SimpleBakedModel$BuilderAccessor.port_lib$create(owner.useSmoothLighting(), owner.isSideLit(), owner.isShadedInGui(), owner.getCameraTransforms(), overrides).particle(particle));
+import java.util.List;
+
+/**
+ * Base interface for any object that collects culled and unculled faces and bakes them into a model.
+ * <p>
+ * Provides a generic base implementation via {@link #of(boolean, boolean, boolean, ItemTransforms, ItemOverrides, TextureAtlasSprite, RenderTypeGroup)}
+ * and a quad-collecting alternative via {@link #collecting(List)}.
+ */
+public interface IModelBuilder<T extends IModelBuilder<T>>
+{
+	/**
+	 * Creates a new model builder that uses the provided attributes in the final baked model.
+	 */
+	static IModelBuilder<?> of(boolean hasAmbientOcclusion, boolean usesBlockLight, boolean isGui3d,
+							   ItemTransforms transforms, ItemOverrides overrides, TextureAtlasSprite particle,
+							   RenderTypeGroup renderTypes) {
+		return new Simple(hasAmbientOcclusion, usesBlockLight, isGui3d, transforms, overrides, particle, renderTypes);
 	}
 
-	T addFaceQuad(Direction facing, BakedQuad quad);
+	/**
+	 * Creates a new model builder that collects quads to the provided list, returning
+	 * {@linkplain EmptyModel#BAKED an empty model} if you call {@link #build()}.
+	 */
+	static IModelBuilder<?> collecting(List<BakedQuad> quads) {
+		return new Collecting(quads);
+	}
 
-	T addGeneralQuad(BakedQuad quad);
+	T addCulledFace(Direction facing, BakedQuad quad);
+
+	T addUnculledFace(BakedQuad quad);
 
 	BakedModel build();
 
 	class Simple implements IModelBuilder<Simple> {
-		final SimpleBakedModel.Builder builder;
+		private final SimpleBakedModel.Builder builder;
+		private final RenderTypeGroup renderTypes;
 
-		Simple(SimpleBakedModel.Builder builder) {
-			this.builder = builder;
+		private Simple(boolean hasAmbientOcclusion, boolean usesBlockLight, boolean isGui3d,
+					   ItemTransforms transforms, ItemOverrides overrides, TextureAtlasSprite particle,
+					   RenderTypeGroup renderTypes) {
+			this.builder = SimpleBakedModel$BuilderAccessor.port_lib$create(hasAmbientOcclusion, usesBlockLight, isGui3d, transforms, overrides).particle(particle);
+			this.renderTypes = renderTypes;
 		}
 
 		@Override
-		public Simple addFaceQuad(Direction facing, BakedQuad quad) {
+		public Simple addCulledFace(Direction facing, BakedQuad quad) {
 			builder.addCulledFace(facing, quad);
 			return this;
 		}
 
 		@Override
-		public Simple addGeneralQuad(BakedQuad quad) {
+		public Simple addUnculledFace(BakedQuad quad) {
 			builder.addUnculledFace(quad);
+			return this;
+		}
+
+		@Deprecated
+		@Override
+		public BakedModel build() {
+			return builder.build();
+		}
+	}
+
+	class Collecting implements IModelBuilder<Collecting> {
+		private final List<BakedQuad> quads;
+
+		private Collecting(List<BakedQuad> quads) {
+			this.quads = quads;
+		}
+
+		@Override
+		public Collecting addCulledFace(Direction facing, BakedQuad quad) {
+			quads.add(quad);
+			return this;
+		}
+
+		@Override
+		public Collecting addUnculledFace(BakedQuad quad) {
+			quads.add(quad);
 			return this;
 		}
 
 		@Override
 		public BakedModel build() {
-			return builder.build();
+			return EmptyModel.BAKED;
 		}
 	}
 }

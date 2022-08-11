@@ -1,25 +1,34 @@
 package io.github.fabricators_of_create.porting_lib.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import javax.annotation.Nullable;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemStack;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
+
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Pair;
 
-import io.github.fabricators_of_create.porting_lib.render.TransformTypeDependentItemBakedModel;
+import io.github.fabricators_of_create.porting_lib.model.data.ModelData;
+import io.github.fabricators_of_create.porting_lib.model.data.ModelProperty;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
@@ -34,338 +43,338 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class CompositeModel implements BakedModel, FabricBakedModel, TransformTypeDependentItemBakedModel {
-	private final ImmutableMap<String, BakedModel> bakedParts;
-	private final boolean isAmbientOcclusion;
-	private final boolean isGui3d;
-	private final boolean isSideLit;
-	private final TextureAtlasSprite particle;
-	private final ItemOverrides overrides;
-	private final ModelState transforms;
+/**
+ * A model composed of several named children.
+ * <p>
+ * These respect component visibility as specified in {@link IGeometryBakingContext} and can additionally be provided
+ * with an item-specific render ordering, for multi-pass arrangements.
+ */
+public class CompositeModel implements IUnbakedGeometry<CompositeModel> {
+	private static final Logger LOGGER = LogManager.getLogger();
 
-	public CompositeModel(boolean isGui3d, boolean isSideLit, boolean isAmbientOcclusion, TextureAtlasSprite particle, ImmutableMap<String, BakedModel> bakedParts, ModelState combinedTransform, ItemOverrides overrides) {
-		this.bakedParts = bakedParts;
-		this.isAmbientOcclusion = isAmbientOcclusion;
-		this.isGui3d = isGui3d;
-		this.isSideLit = isSideLit;
-		this.particle = particle;
-		this.overrides = overrides;
-		this.transforms = combinedTransform;
+	private final ImmutableMap<String, BlockModel> children;
+	private final ImmutableList<String> itemPasses;
+	private final boolean logWarning;
+
+	public CompositeModel(ImmutableMap<String, BlockModel> children, ImmutableList<String> itemPasses) {
+		this(children, itemPasses, false);
 	}
 
-//	@Nonnull TODO: PORT?
-//	@Override
-//	public IModelData getModelData(@Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData modelData)
-//	{
-//		CompositeModelData composite = new CompositeModelData();
-//		for(Map.Entry<String, BakedModel> entry : bakedParts.entrySet())
-//		{
-//			composite.putSubmodelData(entry.getKey(), entry.getValue().getModelData(level, pos, state, ModelDataWrapper.wrap(modelData)));
-//		}
-//		return composite;
-//	}
-
-	@Override
-	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
-		return List.of();
+	private CompositeModel(ImmutableMap<String, BlockModel> children, ImmutableList<String> itemPasses, boolean logWarning) {
+		this.children = children;
+		this.itemPasses = itemPasses;
+		this.logWarning = logWarning;
 	}
 
 	@Override
-	public boolean useAmbientOcclusion()
-	{
-		return isAmbientOcclusion;
+	public BakedModel bake(IGeometryBakingContext context, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
+		if (logWarning)
+			LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated \"parts\" field in its composite model instead of \"children\". This field will be removed in 1.20.");
+
+		Material particleLocation = context.getMaterial("particle");
+		TextureAtlasSprite particle = spriteGetter.apply(particleLocation);
+
+		var rootTransform = context.getRootTransform();
+		if (!rootTransform.isIdentity())
+			modelState = new SimpleModelState(modelState.getRotation().compose(rootTransform), modelState.isUvLocked());
+
+		var bakedPartsBuilder = ImmutableMap.<String, BakedModel>builder();
+		for (var entry : children.entrySet()) {
+			var name = entry.getKey();
+			if (!context.isComponentVisible(name, true))
+				continue;
+			var model = entry.getValue();
+			bakedPartsBuilder.put(name, model.bake(bakery, model, spriteGetter, modelState, modelLocation, true));
+		}
+		var bakedParts = bakedPartsBuilder.build();
+
+		var itemPassesBuilder = ImmutableList.<BakedModel>builder();
+		for (String name : this.itemPasses) {
+			var model = bakedParts.get(name);
+			if (model == null)
+				throw new IllegalStateException("Specified \"" + name + "\" in \"item_render_order\", but that is not a child of this model.");
+			itemPassesBuilder.add(model);
+		}
+
+		return new Baked(context.isGui3d(), context.useBlockLight(), context.useAmbientOcclusion(), particle, context.getTransforms(), overrides, bakedParts, itemPassesBuilder.build());
 	}
 
 	@Override
-	public boolean isGui3d()
-	{
-		return isGui3d;
+	public Collection<Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
+		Set<Material> textures = new HashSet<>();
+		if (context.hasMaterial("particle"))
+			textures.add(context.getMaterial("particle"));
+		for (BlockModel part : children.values())
+			textures.addAll(part.getMaterials(modelGetter, missingTextureErrors));
+		return textures;
 	}
 
 	@Override
-	public boolean usesBlockLight()
-	{
-		return isSideLit;
+	public Set<String> getConfigurableComponentNames() {
+		return children.keySet();
 	}
 
-	@Override
-	public boolean isCustomRenderer()
-	{
-		return false;
-	}
+	public static class Baked implements BakedModel, FabricBakedModel {
+		private final boolean isAmbientOcclusion;
+		private final boolean isGui3d;
+		private final boolean isSideLit;
+		private final TextureAtlasSprite particle;
+		private final ItemOverrides overrides;
+		private final ItemTransforms transforms;
+		private final ImmutableMap<String, BakedModel> children;
+		private final ImmutableList<BakedModel> itemPasses;
 
-	@Override
-	public TextureAtlasSprite getParticleIcon()
-	{
-		return particle;
-	}
+		public Baked(boolean isGui3d, boolean isSideLit, boolean isAmbientOcclusion, TextureAtlasSprite particle, ItemTransforms transforms, ItemOverrides overrides, ImmutableMap<String, BakedModel> children, ImmutableList<BakedModel> itemPasses) {
+			this.children = children;
+			this.isAmbientOcclusion = isAmbientOcclusion;
+			this.isGui3d = isGui3d;
+			this.isSideLit = isSideLit;
+			this.particle = particle;
+			this.overrides = overrides;
+			this.transforms = transforms;
+			this.itemPasses = itemPasses;
+		}
 
-	@Override
-	public ItemTransforms getTransforms() {
-		return ItemTransforms.NO_TRANSFORMS;
-	}
+		@Override
+		public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
+			if (blockView instanceof RenderAttachedBlockView renderAttachedBlockView)
+				for (Map.Entry<String, BakedModel> entry : children.entrySet())
+					((FabricBakedModel) entry.getValue()).emitBlockQuads(new CustomDataBlockView(renderAttachedBlockView, CompositeModel.Data.resolve((ModelData) renderAttachedBlockView.getBlockEntityRenderAttachment(pos), entry.getKey())), state, pos, randomSupplier, context);
+		}
 
-	@Override
-	public ItemOverrides getOverrides()
-	{
-		return overrides;
-	}
-
-	@Override
-	public BakedModel handlePerspective(ItemTransforms.TransformType cameraTransformType, PoseStack poseStack)
-	{
-		return PerspectiveMapWrapper.handlePerspective(this, transforms, cameraTransformType, poseStack);
-	}
-
-	@Nullable
-	public BakedModel getPart(String name)
-	{
-		return bakedParts.get(name);
-	}
-
-	@Override
-	public boolean isVanillaAdapter() {
-		return false;
-	}
-
-	@Override
-	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
-		if (blockView instanceof RenderAttachedBlockView renderAttachedBlockView) {
-			for (Map.Entry<String, BakedModel> entry : bakedParts.entrySet()) {
-				((FabricBakedModel) entry.getValue()).emitBlockQuads(new CustomDataBlockView(renderAttachedBlockView, CompositeModelData.get((IModelData) renderAttachedBlockView.getBlockEntityRenderAttachment(pos), entry.getKey())), state, pos, randomSupplier, context);
+		@Override
+		public void emitItemQuads(ItemStack stack, Supplier<RandomSource> randomSupplier, RenderContext context) {
+			for (Map.Entry<String, BakedModel> entry : children.entrySet()) {
+				((FabricBakedModel) entry.getValue()).emitItemQuads(stack, randomSupplier, context);
 			}
 		}
-	}
 
-	@Override
-	public void emitItemQuads(ItemStack stack, Supplier<RandomSource> randomSupplier, RenderContext context) {
-		for (Map.Entry<String, BakedModel> entry : bakedParts.entrySet()) {
-			((FabricBakedModel) entry.getValue()).emitItemQuads(stack, randomSupplier, context);
-		}
-	}
-
-	private static class Submodel implements IModelGeometryPart
-	{
-		private final String name;
-		private final BlockModel model;
-		private final ModelState modelTransform;
-
-		private Submodel(String name, BlockModel model, ModelState modelTransform)
-		{
-			this.name = name;
-			this.model = model;
-			this.modelTransform = modelTransform;
+		@Override
+		public boolean isVanillaAdapter() {
+			return false;
 		}
 
 		@Override
-		public String name()
-		{
-			return name;
+		public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction face, RandomSource random) {
+			return Collections.emptyList();
 		}
 
 		@Override
-		public void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
-		{
-			throw new UnsupportedOperationException("Attempted to call adQuads on a Submodel instance. Please don't.");
-		}
-
-		public BakedModel bakeModel(ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
-		{
-			return model.bake(bakery, spriteGetter, new CompositeModelState(this.modelTransform, modelTransform,
-					this.modelTransform.isUvLocked() || modelTransform.isUvLocked()), modelLocation);
+		public boolean useAmbientOcclusion() {
+			return isAmbientOcclusion;
 		}
 
 		@Override
-		public Collection<Material> getTextures(IGeometryBakingContext owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
-		{
-			return model.getMaterials(modelGetter, missingTextureErrors);
-		}
-	}
-
-	public static class Geometry implements IMultipartModelGeometry<Geometry>
-	{
-		private final ImmutableMap<String, Submodel> parts;
-
-		Geometry(ImmutableMap<String, Submodel> parts)
-		{
-			this.parts = parts;
+		public boolean isGui3d() {
+			return isGui3d;
 		}
 
 		@Override
-		public Collection<? extends IModelGeometryPart> getParts()
-		{
-			return parts.values();
+		public boolean usesBlockLight() {
+			return isSideLit;
 		}
 
 		@Override
-		public Optional<? extends IModelGeometryPart> getPart(String name)
-		{
-			return Optional.ofNullable(parts.get(name));
+		public boolean isCustomRenderer() {
+			return false;
 		}
 
 		@Override
-		public BakedModel bake(IGeometryBakingContext owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
-		{
-			Material particleLocation = owner.resolveTexture("particle");
-			TextureAtlasSprite particle = spriteGetter.apply(particleLocation);
+		public TextureAtlasSprite getParticleIcon() {
+			return particle;
+		}
 
-			ImmutableMap.Builder<String, BakedModel> bakedParts = ImmutableMap.builder();
-			for(Map.Entry<String, Submodel> part : parts.entrySet())
-			{
-				Submodel submodel = part.getValue();
-				if (!owner.getPartVisibility(submodel))
-					continue;
-				bakedParts.put(part.getKey(), submodel.bakeModel(bakery, spriteGetter, modelTransform, modelLocation));
+		@Override
+		public ItemOverrides getOverrides() {
+			return overrides;
+		}
+
+		@Override
+		public ItemTransforms getTransforms() {
+			return transforms;
+		}
+
+		@Nullable
+		public BakedModel getPart(String name) {
+			return children.get(name);
+		}
+
+		public static Builder builder(IGeometryBakingContext owner, TextureAtlasSprite particle, ItemOverrides overrides, ItemTransforms cameraTransforms) {
+			return builder(owner.useAmbientOcclusion(), owner.isGui3d(), owner.useBlockLight(), particle, overrides, cameraTransforms);
+		}
+
+		public static Builder builder(boolean isAmbientOcclusion, boolean isGui3d, boolean isSideLit, TextureAtlasSprite particle, ItemOverrides overrides, ItemTransforms cameraTransforms) {
+			return new Builder(isAmbientOcclusion, isGui3d, isSideLit, particle, overrides, cameraTransforms);
+		}
+
+		public static class Builder {
+			private final boolean isAmbientOcclusion;
+			private final boolean isGui3d;
+			private final boolean isSideLit;
+			private final List<BakedModel> children = new ArrayList<>();
+			private final List<BakedQuad> quads = new ArrayList<>();
+			private final ItemOverrides overrides;
+			private final ItemTransforms transforms;
+			private TextureAtlasSprite particle;
+			private RenderTypeGroup lastRenderTypes = RenderTypeGroup.EMPTY;
+
+			private Builder(boolean isAmbientOcclusion, boolean isGui3d, boolean isSideLit, TextureAtlasSprite particle, ItemOverrides overrides, ItemTransforms transforms) {
+				this.isAmbientOcclusion = isAmbientOcclusion;
+				this.isGui3d = isGui3d;
+				this.isSideLit = isSideLit;
+				this.particle = particle;
+				this.overrides = overrides;
+				this.transforms = transforms;
 			}
-			return new CompositeModel(owner.isShadedInGui(), owner.isSideLit(), owner.useSmoothLighting(), particle, bakedParts.build(), owner.getCombinedTransform(), overrides);
-		}
 
-		@Override
-		public Collection<Material> getTextures(IGeometryBakingContext owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
-		{
-			Set<Material> textures = new HashSet<>();
-			for(Submodel part : parts.values())
-			{
-				textures.addAll(part.getTextures(owner, modelGetter, missingTextureErrors));
+			public void addLayer(BakedModel model) {
+				flushQuads(null);
+				children.add(model);
 			}
-			return textures;
-		}
-	}
 
-	public static class Loader implements IModelLoader<Geometry>
-	{
-		public static final Loader INSTANCE = new Loader();
-
-		private Loader() {}
-
-		@Override
-		public void onResourceManagerReload(ResourceManager resourceManager)
-		{
-
-		}
-
-		@Override
-		public Geometry read(JsonDeserializationContext deserializationContext, JsonObject modelContents)
-		{
-			if (!modelContents.has("parts"))
-				throw new RuntimeException("Composite model requires a \"parts\" element.");
-			ImmutableMap.Builder<String, Submodel> parts = ImmutableMap.builder();
-			for(Map.Entry<String, JsonElement> part : modelContents.get("parts").getAsJsonObject().entrySet())
-			{
-				// TODO: Allow customizing state? If so, how?
-				ModelState modelTransform = SimpleModelState.IDENTITY;
-				parts.put(part.getKey(), new Submodel(
-						part.getKey(),
-						deserializationContext.deserialize(part.getValue(), BlockModel.class),
-						modelTransform));
+			private void addLayer(RenderTypeGroup renderTypes, List<BakedQuad> quads) {
+				var modelBuilder = IModelBuilder.of(isAmbientOcclusion, isSideLit, isGui3d, transforms, overrides, particle, renderTypes);
+				quads.forEach(modelBuilder::addUnculledFace);
+				children.add(modelBuilder.build());
 			}
-			return new Geometry(parts.build());
+
+			private void flushQuads(RenderTypeGroup renderTypes) {
+				if (!Objects.equals(renderTypes, lastRenderTypes)) {
+					if (quads.size() > 0) {
+						addLayer(lastRenderTypes, quads);
+						quads.clear();
+					}
+					lastRenderTypes = renderTypes;
+				}
+			}
+
+			public Builder setParticle(TextureAtlasSprite particleSprite) {
+				this.particle = particleSprite;
+				return this;
+			}
+
+			public Builder addQuads(RenderTypeGroup renderTypes, BakedQuad... quadsToAdd) {
+				flushQuads(renderTypes);
+				Collections.addAll(quads, quadsToAdd);
+				return this;
+			}
+
+			public Builder addQuads(RenderTypeGroup renderTypes, Collection<BakedQuad> quadsToAdd) {
+				flushQuads(renderTypes);
+				quads.addAll(quadsToAdd);
+				return this;
+			}
+
+			public BakedModel build() {
+				if (quads.size() > 0) {
+					addLayer(lastRenderTypes, quads);
+				}
+				var childrenBuilder = ImmutableMap.<String, BakedModel>builder();
+				var itemPassesBuilder = ImmutableList.<BakedModel>builder();
+				int i = 0;
+				for (var model : this.children) {
+					childrenBuilder.put("model_" + (i++), model);
+					itemPassesBuilder.add(model);
+				}
+				return new Baked(isGui3d, isSideLit, isAmbientOcclusion, particle, transforms, overrides, childrenBuilder.build(), itemPassesBuilder.build());
+			}
 		}
+
 	}
 
 	/**
 	 * A model data container which stores data for child components.
 	 */
-	public static class CompositeModelData extends ModelDataMap {
-		public static final ModelProperty<CompositeModelData> SUBMODEL_DATA = new ModelProperty<>();
+	public static class Data {
+		public static final ModelProperty<Data> PROPERTY = new ModelProperty<>();
+
+		private final Map<String, ModelData> partData;
+
+		private Data(Map<String, ModelData> partData) {
+			this.partData = partData;
+		}
+
+		@Nullable
+		public ModelData get(String name) {
+			return partData.get(name);
+		}
 
 		/**
-		 * Helper to get the CompositeModelData from an unknown IModelData instance.
-		 * @param modelData The undetermined instance to get data from
-		 * @return An optional representing the composite data, if present.
+		 * Helper to get the data from a {@link ModelData} instance.
+		 *
+		 * @param modelData The object to get data from
+		 * @param name      The name of the part to get data for
+		 * @return The data for the part, or the one passed in if not found
 		 */
-		public static Optional<CompositeModelData> get(IModelData modelData) {
-			return Optional.ofNullable(modelData.getData(SUBMODEL_DATA));
+		public static ModelData resolve(ModelData modelData, String name) {
+			var compositeData = modelData.get(PROPERTY);
+			if (compositeData == null)
+				return modelData;
+			var partData = compositeData.get(name);
+			return partData != null ? partData : modelData;
 		}
 
-		/**
-		 * Helper to get child data from an unknown IModelData instance.
-		 * @param modelData The undetermined instance to get data from
-		 * @param name The name of the child part to get data for.
-		 * @return The data for the child, or empty if not available.
-		 */
-		public static IModelData get(IModelData modelData, String name) {
-			return get(modelData).map(data -> data.getSubmodelData(name))
-					.orElse(EmptyModelData.INSTANCE);
+		public static Builder builder() {
+			return new Builder();
 		}
 
-		// Implementation
+		public static final class Builder {
+			private final Map<String, ModelData> partData = new IdentityHashMap<>();
 
-		private final Map<String, IModelData> parts = new HashMap<>();
+			public Builder with(String name, ModelData data) {
+				partData.put(name, data);
+				return this;
+			}
 
-		public IModelData getSubmodelData(String name) {
-			if (parts.containsKey(name))
-				return parts.get(name);
-			return EmptyModelData.INSTANCE;
-		}
-
-		public void putSubmodelData(String name, IModelData data) {
-			parts.put(name, data);
-		}
-
-		@Override
-		public boolean hasProperty(ModelProperty<?> prop) {
-			return prop == SUBMODEL_DATA ||super.hasProperty(prop);
-		}
-
-		@SuppressWarnings("unchecked")
-		@Nullable
-		@Override
-		public <T> T getData(ModelProperty<T> prop) {
-			if (prop == SUBMODEL_DATA)
-				return (T)this;
-			return super.getData(prop);
-		}
-
-		@SuppressWarnings("unchecked")
-		@Nullable
-		@Override
-		public <T> T setData(ModelProperty<T> prop, T data) {
-			if (prop == SUBMODEL_DATA)
-				return (T)this;
-			return super.setData(prop, data);
+			public Data build() {
+				return new Data(partData);
+			}
 		}
 	}
 
-	/**
-	 * Wrapper for an IModelData instance which allows forwarding queries to the parent,
-	 * but stores any new/modified values itself, avoiding modifications to the parent.
-	 */
-	private static class ModelDataWrapper extends ModelDataMap {
-		private final IModelData parent;
+	public static final class Loader implements IGeometryLoader<CompositeModel> {
+		public static final Loader INSTANCE = new Loader();
 
-		public static IModelData wrap(IModelData parent) {
-			return new ModelDataWrapper(parent);
-		}
-
-		private ModelDataWrapper(IModelData parent) {
-			this.parent = parent;
-		}
+		private Loader() {}
 
 		@Override
-		public boolean hasProperty(ModelProperty<?> prop) {
-			return super.hasProperty(prop) || parent.hasProperty(prop);
+		public CompositeModel read(JsonObject jsonObject, JsonDeserializationContext deserializationContext) {
+			List<String> itemPasses = new ArrayList<>();
+			ImmutableMap.Builder<String, BlockModel> childrenBuilder = ImmutableMap.builder();
+			readChildren(jsonObject, "children", deserializationContext, childrenBuilder, itemPasses, false);
+			boolean logWarning = readChildren(jsonObject, "parts", deserializationContext, childrenBuilder, itemPasses, true);
+
+			var children = childrenBuilder.build();
+			if (children.isEmpty())
+				throw new JsonParseException("Composite model requires a \"children\" element with at least one element.");
+
+			if (jsonObject.has("item_render_order")) {
+				itemPasses.clear();
+				for (var element : jsonObject.getAsJsonArray("item_render_order")) {
+					var name = element.getAsString();
+					if (!children.containsKey(name))
+						throw new JsonParseException("Specified \"" + name + "\" in \"item_render_order\", but that is not a child of this model.");
+					itemPasses.add(name);
+				}
+			}
+
+			return new CompositeModel(children, ImmutableList.copyOf(itemPasses), logWarning);
 		}
 
-		@Nullable
-		@Override
-		public <T> T getData(ModelProperty<T> prop) {
-			return super.hasProperty(prop) ? super.getData(prop) : parent.getData(prop);
-		}
-
-		@Nullable
-		@Override
-		public <T> T setData(ModelProperty<T> prop, T data) {
-			// We do not want to delegate setting to the parent
-			return super.setData(prop, data);
+		private boolean readChildren(JsonObject jsonObject, String name, JsonDeserializationContext deserializationContext, ImmutableMap.Builder<String, BlockModel> children, List<String> itemPasses, boolean logWarning) {
+			if (!jsonObject.has(name))
+				return false;
+			var childrenJsonObject = jsonObject.getAsJsonObject(name);
+			for (Map.Entry<String, JsonElement> entry : childrenJsonObject.entrySet()) {
+				children.put(entry.getKey(), deserializationContext.deserialize(entry.getValue(), BlockModel.class));
+				itemPasses.add(entry.getKey()); // We can do this because GSON preserves ordering during deserialization
+			}
+			return logWarning;
 		}
 	}
 }
