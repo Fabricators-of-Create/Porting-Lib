@@ -121,11 +121,11 @@ public class PortingHooks {
 						entity.discard();
 						var executor = LogicalSidedProvider.WORKQUEUE.get(world.isClientSide ? EnvType.CLIENT : EnvType.SERVER);
 						executor.tell(new TickTask(0, () -> world.addFreshEntity(newEntity)));
-						return true;
+						return false;
 					}
 				}
 			}
-			return false;
+			return true;
 		});
 		RegistryEntryRemovedCallback.event(Registry.ITEM).register((rawId, id, item) -> {
 			if (item instanceof BlockItemExtensions blockItem) {
