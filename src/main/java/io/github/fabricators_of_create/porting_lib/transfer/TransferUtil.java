@@ -60,7 +60,7 @@ public class TransferUtil {
 	 * @return Either an outer transaction or a nested one in the current open one
 	 */
 	public static Transaction getTransaction() {
-		if (Transaction.isOpen()) {
+		if (Transaction.getLifecycle() != Transaction.Lifecycle.CLOSING || Transaction.getLifecycle() != Transaction.Lifecycle.OUTER_CLOSING) {
 			TransactionContext open = Transaction.getCurrentUnsafe();
 			if (open != null) {
 				return open.openNested();
