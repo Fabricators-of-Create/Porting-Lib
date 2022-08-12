@@ -114,6 +114,8 @@
     "VineBlockMixin",
     "WalkNodeEvaluatorMixin",
     "WebBlockMixin",
+    "WitherBossMixin",
+    "WitherSkullMixin",
     "accessor.AbstractMinecartAccessor",
     "accessor.AbstractProjectileDispenseBehaviorAccessor",
     "accessor.ArrayVoxelShapeAccessor",

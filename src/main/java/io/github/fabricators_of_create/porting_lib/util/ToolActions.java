@@ -82,10 +82,10 @@ public class ToolActions {
 	 */
 	public static final ToolAction SHEARS_DISARM = ToolAction.get("shears_disarm");
 
-	///**
-	// *  Passed onto {@link IForgeBlock#getToolModifiedState} when a hoe wants to turn dirt into soil
-	// */
-	// TODO: public static final ToolAction HOE_TILL = ToolAction.get("till");
+	/**
+	 *  Passed onto {@link IForgeBlock#getToolModifiedState} when a hoe wants to turn dirt into soil
+	 */
+	 public static final ToolAction HOE_TILL = ToolAction.get("till");
 
 	/**
 	 * A tool action corresponding to the 'block' action of shields.
