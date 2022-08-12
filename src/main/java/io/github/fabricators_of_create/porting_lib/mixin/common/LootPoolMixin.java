@@ -22,6 +22,16 @@ public class LootPoolMixin implements LootPoolExtensions {
 	@Unique
 	private String name;
 
+	@Override
+	public String getName() {
+		return this.name;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	@Mixin(LootPool.Builder.class)
 	public static class LootPoolBuilderMixin implements LootPoolBuilderExtension {
 		private String name;
