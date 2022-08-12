@@ -126,6 +126,7 @@ processResources {
 	properties.put("minecraft_version", project.minecraft_version)
 	properties.put("java_version", sourceCompatibility)
 	properties.put("class_5124", project.wtf_gradle)
+	properties.put("class_56", project.wtf_gradle2)
 
 	properties.forEach((k, v) -> inputs.property(k, v))
 

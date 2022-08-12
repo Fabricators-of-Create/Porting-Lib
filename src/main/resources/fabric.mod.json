@@ -47,6 +47,9 @@
     },
     "loom:injected_interfaces": {
       "net/minecraft/class_20": ["io/github/fabricators_of_create/porting_lib/extensions/MapDecorationExtensions"],
+      "net/minecraft/class_47": ["io/github/fabricators_of_create/porting_lib/extensions/LootContextExtensions"],
+      "net/minecraft/class_55": ["io/github/fabricators_of_create/porting_lib/extensions/LootPoolExtensions"],
+      "net/minecraft/class_55$class_56": ["io/github/fabricators_of_create/porting_lib/extensions/LootPoolBuilderExtension"],
       "net/minecraft/class_293": ["io/github/fabricators_of_create/porting_lib/extensions/VertexFormatExtensions"],
       "net/minecraft/class_276": ["io/github/fabricators_of_create/porting_lib/extensions/RenderTargetExtensions"],
       "net/minecraft/class_638": ["io/github/fabricators_of_create/porting_lib/extensions/ClientLevelExtensions"],
@@ -97,6 +100,9 @@
       "net/minecraft/class_4581": ["io/github/fabricators_of_create/porting_lib/extensions/Matrix3fExtensions"],
       "net/minecraft/class_4588": ["io/github/fabricators_of_create/porting_lib/extensions/VertexConsumerExtension"],
       "net/minecraft/class_4590": ["io/github/fabricators_of_create/porting_lib/extensions/TransformationExtensions"]
+    },
+    "modmenu": {
+      "badges": [ "library" ]
     }
   }
 }

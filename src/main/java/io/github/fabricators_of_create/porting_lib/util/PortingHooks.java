@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -93,6 +94,22 @@ public class PortingHooks {
 					}
 				}
 			}
+		});
+		EntityEvents.ON_JOIN_WORLD.register((entity, world, loadedFromDisk) -> {
+			if (entity.getClass().equals(ItemEntity.class)) {
+				ItemStack stack = ((ItemEntity)entity).getItem();
+				Item item = stack.getItem();
+				if (item.hasCustomEntity(stack)) {
+					Entity newEntity = item.createEntity(world, entity, stack);
+					if (newEntity != null) {
+						entity.discard();
+						var executor = LogicalSidedProvider.WORKQUEUE.get(world.isClientSide ? EnvType.CLIENT : EnvType.SERVER);
+						executor.tell(new TickTask(0, () -> world.addFreshEntity(newEntity)));
+						return false;
+					}
+				}
+			}
+			return true;
 		});
 		RegistryEntryRemovedCallback.event(Registry.ITEM).register((rawId, id, item) -> {
 			if (item instanceof BlockItemExtensions blockItem) {

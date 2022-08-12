@@ -21,7 +21,7 @@ public abstract class ModdedBlockLoot extends BlockLoot {
 		this.addTables();
 		Set<ResourceLocation> set = Sets.<ResourceLocation>newHashSet();
 
-		for(Block block : Registry.BLOCK) {
+		for(Block block : getKnownBlocks()) {
 			ResourceLocation resourceLocation = block.getLootTable();
 			if (resourceLocation != BuiltInLootTables.EMPTY && set.add(resourceLocation)) {
 				LootTable.Builder builder6 = ((BlockLootAccessor)this).getMap().remove(resourceLocation);
