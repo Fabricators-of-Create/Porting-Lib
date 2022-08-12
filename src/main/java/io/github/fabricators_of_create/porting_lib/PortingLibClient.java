@@ -4,6 +4,8 @@ import io.github.fabricators_of_create.porting_lib.event.client.RegisterShadersC
 
 import io.github.fabricators_of_create.porting_lib.model.PortingLibRenderTypes;
 
+import io.github.fabricators_of_create.porting_lib.util.LogicalSidedProvider;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
