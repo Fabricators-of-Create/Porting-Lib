@@ -3,6 +3,7 @@ package io.github.fabricators_of_create.porting_lib.util;
 import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
+import io.github.fabricators_of_create.porting_lib.event.common.EntityEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.ModsLoadedCallback;
 import io.github.fabricators_of_create.porting_lib.extensions.BlockItemExtensions;
 import io.github.fabricators_of_create.porting_lib.util.client.ClientHooks;
@@ -21,10 +22,12 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -107,6 +110,22 @@ public class PortingHooks {
 					}
 				}
 			}
+		});
+		EntityEvents.ON_JOIN_WORLD.register((entity, world, loadedFromDisk) -> {
+			if (entity.getClass().equals(ItemEntity.class)) {
+				ItemStack stack = ((ItemEntity)entity).getItem();
+				Item item = stack.getItem();
+				if (item.hasCustomEntity(stack)) {
+					Entity newEntity = item.createEntity(world, entity, stack);
+					if (newEntity != null) {
+						entity.discard();
+						var executor = LogicalSidedProvider.WORKQUEUE.get(world.isClientSide ? EnvType.CLIENT : EnvType.SERVER);
+						executor.tell(new TickTask(0, () -> world.addFreshEntity(newEntity)));
+						return true;
+					}
+				}
+			}
+			return false;
 		});
 		RegistryEntryRemovedCallback.event(Registry.ITEM).register((rawId, id, item) -> {
 			if (item instanceof BlockItemExtensions blockItem) {

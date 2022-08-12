@@ -7,11 +7,13 @@ import io.github.fabricators_of_create.porting_lib.event.client.ModelsBakedCallb
 import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientBlockApiCache;
 import io.github.fabricators_of_create.porting_lib.util.FluidTextUtil;
 import io.github.fabricators_of_create.porting_lib.util.FluidVariantFluidAttributesHandler;
+import io.github.fabricators_of_create.porting_lib.util.LogicalSidedProvider;
 import io.github.fabricators_of_create.porting_lib.util.NetworkUtil;
 import io.github.fabricators_of_create.porting_lib.util.client.ClientHooks;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
@@ -72,6 +74,7 @@ public class PortingLibClient implements ClientModInitializer {
 
 			client.execute(() -> openScreen(typeId, syncId, title, extraData));
 		});
+		ClientLifecycleEvents.CLIENT_STARTED.register(client -> LogicalSidedProvider.setClient(() -> client));
 	}
 
 	private void openScreen(int typeId, int syncId, Component title, FriendlyByteBuf buf) {

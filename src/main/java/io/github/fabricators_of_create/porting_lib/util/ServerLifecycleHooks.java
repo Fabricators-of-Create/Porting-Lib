@@ -7,7 +7,10 @@ public class ServerLifecycleHooks {
 	private static MinecraftServer currentServer;
 
 	public static void init() {
-		ServerLifecycleEvents.SERVER_STARTING.register(server -> currentServer = server);
+		ServerLifecycleEvents.SERVER_STARTING.register(server -> {
+			currentServer = server;
+			LogicalSidedProvider.setServer(() -> server);
+		});
 	}
 
 	public static MinecraftServer getCurrentServer() {
