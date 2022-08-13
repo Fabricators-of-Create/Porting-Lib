@@ -41,7 +41,7 @@ public class ConditionalAdvancement {
 		for (JsonElement ele : entries) {
 			if (!ele.isJsonObject())
 				throw new JsonSyntaxException("Invalid advancement entry at index " + idx + " Must be JsonObject");
-			if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions")))
+			if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), ResourceConditions.CONDITIONS_KEY)))
 				return GsonHelper.getAsJsonObject(ele.getAsJsonObject(), "advancement");
 			idx++;
 		}
