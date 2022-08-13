@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.github.fabricators_of_create.porting_lib.util.ContinueUsingItem;
+import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.util.UsingTickItem;
 
 import org.jetbrains.annotations.Nullable;
@@ -335,5 +336,12 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 			return false;
 		}
 		return original;
+	}
+
+	@Inject(method = "getVisibilityPercent", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
+	public void port_lib$getVisibility(Entity lookingEntity, CallbackInfoReturnable<Double> cir, double d) {
+		double newVis = LivingEntityEvents.VISIBILITY.invoker().getEntityVisibilityMultiplier(MixinHelper.cast(this), lookingEntity, d);
+		if (newVis != d)
+			cir.setReturnValue(Math.max(0, newVis));
 	}
 }
