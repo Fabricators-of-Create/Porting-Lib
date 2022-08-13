@@ -179,4 +179,8 @@ public class CraftingHelper {
 		}
 		return true;
 	}
+
+	public static boolean processConditions(JsonObject json, String memberName) {
+		return !json.has(memberName) || processConditions(GsonHelper.getAsJsonArray(json, memberName));
+	}
 }

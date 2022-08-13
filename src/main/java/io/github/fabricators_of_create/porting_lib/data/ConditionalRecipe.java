@@ -21,6 +21,8 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
+import javax.annotation.Nullable;
+
 public class ConditionalRecipe {
 	public static final RecipeSerializer<Recipe<?>> SERIALZIER = Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation("forge:conditional"), new Serializer<>());
 
@@ -64,6 +66,8 @@ public class ConditionalRecipe {
 	public static class Builder {
 		private List<ConditionJsonProvider[]> conditions = new ArrayList<>();
 		private List<FinishedRecipe> recipes = new ArrayList<>();
+		private ResourceLocation advId;
+		private ConditionalAdvancement.Builder adv;
 
 		private List<ConditionJsonProvider> currentConditions = new ArrayList<>();
 
@@ -86,8 +90,37 @@ public class ConditionalRecipe {
 			return this;
 		}
 
-		public void build(Consumer<FinishedRecipe> consumer, String namespace, String path)
-		{
+		public Builder generateAdvancement() {
+			return generateAdvancement(null);
+		}
+
+		public Builder generateAdvancement(@Nullable ResourceLocation id) {
+			ConditionalAdvancement.Builder builder = ConditionalAdvancement.builder();
+			for(int i=0;i<recipes.size();i++) {
+				for(ConditionJsonProvider cond : conditions.get(i))
+					builder = builder.addCondition(cond);
+				builder = builder.addAdvancement(recipes.get(i));
+			}
+			return setAdvancement(id, builder);
+		}
+
+		public Builder setAdvancement(ConditionalAdvancement.Builder advancement) {
+			return setAdvancement(null, advancement);
+		}
+
+		public Builder setAdvancement(String namespace, String path, ConditionalAdvancement.Builder advancement) {
+			return setAdvancement(new ResourceLocation(namespace, path), advancement);
+		}
+
+		public Builder setAdvancement(@Nullable ResourceLocation id, ConditionalAdvancement.Builder advancement) {
+			if (this.adv != null)
+				throw new IllegalStateException("Invalid ConditionalRecipeBuilder, Advancement already set");
+			this.advId = id;
+			this.adv = advancement;
+			return this;
+		}
+
+		public void build(Consumer<FinishedRecipe> consumer, String namespace, String path) {
 			build(consumer, new ResourceLocation(namespace, path));
 		}
 
@@ -97,7 +130,11 @@ public class ConditionalRecipe {
 			if (recipes.isEmpty())
 				throw new IllegalStateException("Invalid ConditionalRecipe builder, No recipes");
 
-			consumer.accept(new Finished(id, conditions, recipes));
+			if (advId == null && adv != null) {
+				advId = new ResourceLocation(id.getNamespace(), "recipes/" + id.getPath());
+			}
+
+			consumer.accept(new Finished(id, conditions, recipes, advId, adv));
 		}
 	}
 
@@ -105,11 +142,15 @@ public class ConditionalRecipe {
 		private final ResourceLocation id;
 		private final List<ConditionJsonProvider[]> conditions;
 		private final List<FinishedRecipe> recipes;
+		private final ResourceLocation advId;
+		private final ConditionalAdvancement.Builder adv;
 
-		private Finished(ResourceLocation id, List<ConditionJsonProvider[]> conditions, List<FinishedRecipe> recipes) {
+		private Finished(ResourceLocation id, List<ConditionJsonProvider[]> conditions, List<FinishedRecipe> recipes, @Nullable ResourceLocation advId, @Nullable ConditionalAdvancement.Builder adv) {
 			this.id = id;
 			this.conditions = conditions;
 			this.recipes = recipes;
+			this.advId = advId;
+			this.adv = adv;
 		}
 
 		@Override
@@ -122,7 +163,7 @@ public class ConditionalRecipe {
 				JsonArray conds = new JsonArray();
 				for (ConditionJsonProvider c : conditions.get(x))
 					conds.add(c.toJson());
-				holder.add(ResourceConditions.CONDITIONS_KEY, conds);
+				holder.add("conditions", conds);
 				holder.add("recipe", recipes.get(x).serializeRecipe());
 
 				array.add(holder);
@@ -141,12 +182,12 @@ public class ConditionalRecipe {
 
 		@Override
 		public JsonObject serializeAdvancement() {
-			return null;
+			return adv == null ? null : adv.write();
 		}
 
 		@Override
 		public ResourceLocation getAdvancementId() {
-			return null;
+			return advId;
 		}
 	}
 
