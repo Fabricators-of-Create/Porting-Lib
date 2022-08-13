@@ -163,7 +163,7 @@ public class ConditionalRecipe {
 				JsonArray conds = new JsonArray();
 				for (ConditionJsonProvider c : conditions.get(x))
 					conds.add(c.toJson());
-				holder.add("conditions", conds);
+				holder.add(ResourceConditions.CONDITIONS_KEY, conds);
 				holder.add("recipe", recipes.get(x).serializeRecipe());
 
 				array.add(holder);
