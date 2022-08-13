@@ -14,6 +14,7 @@ import com.google.gson.JsonSyntaxException;
 
 import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
 import net.fabricmc.fabric.api.resource.conditions.v1.ConditionJsonProvider;
+import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.util.GsonHelper;
@@ -34,7 +35,7 @@ public class ConditionalAdvancement {
 		JsonArray entries = GsonHelper.getAsJsonArray(json, "advancements", null);
 		if (entries == null)
 		{
-			return CraftingHelper.processConditions(json, "conditions") ? json : null;
+			return CraftingHelper.processConditions(json, ResourceConditions.CONDITIONS_KEY) ? json : null;
 		}
 
 		int idx = 0;
@@ -107,7 +108,7 @@ public class ConditionalAdvancement {
 				JsonArray conds = new JsonArray();
 				for (ConditionJsonProvider c : conditions.get(x))
 					conds.add(c.toJson());
-				holder.add("conditions", conds);
+				holder.add(ResourceConditions.CONDITIONS_KEY, conds);
 				holder.add("advancement", advancements.get(x).get());
 
 				array.add(holder);
