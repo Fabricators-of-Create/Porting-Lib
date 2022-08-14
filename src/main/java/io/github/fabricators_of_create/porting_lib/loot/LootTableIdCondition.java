@@ -32,7 +32,7 @@ public class LootTableIdCondition implements LootItemCondition {
 
 	@Override
 	public boolean test(LootContext lootContext) {
-		return false;//lootContext.getQueriedLootTableId().equals(this.targetLootTableId); // TODO: PORT
+		return lootContext.getQueriedLootTableId().equals(this.targetLootTableId);
 	}
 
 	public static class Builder implements LootItemCondition.Builder {

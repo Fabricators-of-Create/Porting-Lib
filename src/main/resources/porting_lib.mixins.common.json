@@ -58,6 +58,8 @@
     "LootPoolMixin",
     "LootPoolMixin$LootPoolBuilderMixin",
     "LootPoolMixin$LootPoolSerializerMixin",
+    "LootTableMixin",
+    "LootTablesMixin",
     "MainMixin",
     "MapDecorationMixin",
     "MapItemMixin",

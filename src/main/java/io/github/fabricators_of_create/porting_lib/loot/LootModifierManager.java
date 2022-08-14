@@ -12,6 +12,11 @@ import java.util.Map;
 
 import io.github.fabricators_of_create.porting_lib.PortingLib;
 
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+
+import net.minecraft.server.packs.PackType;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +38,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.storage.loot.Deserializers;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
-public class LootModifierManager extends SimpleJsonResourceReloadListener { // FIXME this probably needs to be registered!
+public class LootModifierManager extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener { // FIXME this probably needs to be registered!
 	public static final Logger LOGGER = LogManager.getLogger();
 	private static final Gson GSON_INSTANCE = Deserializers.createFunctionSerializer().create();
 	private static final String folder = "loot_modifiers";
@@ -67,7 +72,7 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener { // F
         });*/
 		//new way
 		ArrayList<ResourceLocation> finalLocations = new ArrayList<ResourceLocation>();
-		ResourceLocation resourcelocation = new ResourceLocation("assets/forge", "loot_modifiers/global_loot_modifiers.json");
+		ResourceLocation resourcelocation = new ResourceLocation("forge", "loot_modifiers/global_loot_modifiers.json");
 		try {
 			//read in all data files from forge:loot_modifiers/global_loot_modifiers in order to do layering
 			for (Resource iresource : resourceManagerIn.getResources(resourcelocation)) {
@@ -131,4 +136,21 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener { // F
 		return registeredLootModifiers.values();
 	}
 
+	private static LootModifierManager INSTANCE;
+
+	public static void init() {
+		INSTANCE = new LootModifierManager();
+		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(INSTANCE);
+	}
+
+	public static LootModifierManager getLootModifierManager() {
+		if(INSTANCE == null)
+			throw new IllegalStateException("Can not retrieve LootModifierManager until resources have loaded once.");
+		return INSTANCE;
+	}
+
+	@Override
+	public ResourceLocation getFabricId() {
+		return PortingLib.id("loot_modifier_manager");
+	}
 }

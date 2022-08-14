@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib;
 
+import io.github.fabricators_of_create.porting_lib.loot.LootModifierManager;
 import io.github.fabricators_of_create.porting_lib.loot.LootTableIdCondition;
 import io.github.fabricators_of_create.porting_lib.util.CanToolPerformAction;
 import net.minecraft.core.Registry;
@@ -29,6 +30,7 @@ public class PortingLib implements ModInitializer {
 		ServerLifecycleHooks.init();
 		PortingLibAttributes.init();
 		TierSortingRegistry.init();
+		LootModifierManager.init();
 		ConditionalRecipe.init();
 		ItemItemStorages.init();
 		BiomeDictionary.init();
