@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import io.github.fabricators_of_create.porting_lib.util.ContinueUsingItem;
 import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.util.UsingTickItem;
+
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootTable;
 
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
@@ -19,6 +23,7 @@ import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -343,5 +348,10 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 		double newVis = LivingEntityEvents.VISIBILITY.invoker().getEntityVisibilityMultiplier(MixinHelper.cast(this), lookingEntity, d);
 		if (newVis != d)
 			cir.setReturnValue(Math.max(0, newVis));
+	}
+
+	@Redirect(method = "dropFromLootTable", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/loot/LootTable;getRandomItems(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V"))
+	public void port_lib$modifyLootTable(LootTable instance, LootContext contextData, Consumer<ItemStack> stacksOut) {
+		instance.getRandomItems(contextData).forEach(stacksOut);
 	}
 }
