@@ -15,8 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(LootTables.class)
 public class LootTablesMixin {
-	@Inject(method = "m_upgvhpqp", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap$Builder;put(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMap$Builder;"), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = {"m_upgvhpqp", "method_20711", "lambda$apply$0"}, at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap$Builder;put(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMap$Builder;"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void port_lib$setName(ImmutableMap.Builder builder, ResourceLocation id, JsonElement json, CallbackInfo ci, LootTable lootTable) {
-
+		lootTable.setLootTableId(id);
 	}
 }
