@@ -1,0 +1,7 @@
+accessWidener v2 named
+accessible method net/minecraft/client/renderer/block/model/ItemOverride$Deserializer <init> ()V
+accessible method net/minecraft/client/renderer/block/model/ItemTransforms$Deserializer <init> ()V
+accessible method net/minecraft/client/renderer/block/model/ItemTransform$Deserializer <init> ()V
+accessible method net/minecraft/client/renderer/block/model/BlockFaceUV$Deserializer <init> ()V
+accessible method net/minecraft/client/renderer/block/model/BlockElementFace$Deserializer <init> ()V
+accessible method net/minecraft/client/renderer/block/model/BlockElement$Deserializer <init> ()V

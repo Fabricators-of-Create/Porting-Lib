@@ -1,0 +1,7 @@
+archivesBaseName = "model-loader"
+version = "1.0"
+
+moduleDependencies(project, [
+		'accessors',
+		'extensions'
+])

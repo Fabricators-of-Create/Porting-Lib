@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib",
+  "version": "${version}",
+  "name": "Porting_lib",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/porting_lib/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "io.github.fabricators_of_create.porting_lib.client.Porting_libClient"
+    ],
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.Porting_lib"
+    ]
+  },
+  "mixins": [
+    "porting_lib.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.9",
+    "fabric": "*",
+    "minecraft": "1.18.2"
+  }
+}

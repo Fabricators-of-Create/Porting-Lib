@@ -1,7 +1,9 @@
+import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
+
 //file:noinspection GroovyAssignabilityCheck
 //file:noinspection GroovyAccessibility
 plugins {
-	id "fabric-loom" version "0.12-SNAPSHOT"
+	id "fabric-loom" version "0.13-SNAPSHOT"
 	id "io.github.juuxel.loom-quiltflower" version "1.+" // Quiltflower, a better decompiler
 	id "org.quiltmc.quilt-mappings-on-loom" version "4.2.0" // Quilt Mappings, for parameters and javadoc. Also hashed mojmap.
 //	id "io.github.p03w.machete" version "1.+" // automatic jar compressing on build
@@ -27,124 +29,241 @@ if (grgit != null) {
 	version += "+custom_unknown"
 }
 
-repositories {
-	mavenLocal()
-	maven { url = "https://hephaestus.dev/release" }
-	maven { url = "https://api.modrinth.com/maven" }
-	maven { url = "https://maven.bai.lol" }
-	maven { url = "https://maven.terraformersmc.com/releases/" }
-	maven { url = "https://maven.parchmentmc.org" }
-	maven { url = "https://maven.shedaniel.me/" }
-	maven { url = "https://mvn.devos.one/releases/" }
-	maven { url = "https://mvn.devos.one/snapshots/" }
-	maven { url = "https://maven.wispforest.io" }
-	maven { url = "https://cursemaven.com" }
-	maven {
-		url = "https://jitpack.io"
-		content {
-			includeGroup("com.github.Chocohead")
-			includeGroup("com.github.LlamaLad7")
+def moduleDependencies(project, List<String> depNames) {
+	def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: 'namedElements') }
+	def clientOutputs = depNames.iterator().collect {findProject(":$it").sourceSets.client.output }
+	depNames.iterator().forEachRemaining {
+		def dependProject = findProject(":$it")
+		project.loom {
+			interfaceInjection {
+				interfaceInjectionSourceSets.add(dependProject.sourceSets.main)
+				interfaceInjectionSourceSets.add(dependProject.sourceSets.client)
+			}
+		}
+	}
+
+	project.dependencies {
+		deps.each {
+			api it
+
+		}
+
+		clientOutputs.each {
+			clientImplementation it
+		}
+	}
+
+	// As we manually handle the maven artifacts, we need to also manually specify the deps.
+	project.publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				pom.withXml {
+					def depsNode = asNode().appendNode("dependencies")
+					deps.each {
+						def depNode = depsNode.appendNode("dependency")
+						depNode.appendNode("groupId", it.group)
+						depNode.appendNode("artifactId", it.name)
+						depNode.appendNode("version", it.version)
+						depNode.appendNode("scope", "compile")
+					}
+				}
+			}
 		}
 	}
 }
 
-dependencies {
-    // dev environment
-	minecraft("com.mojang:minecraft:${project.minecraft_version}")
-	mappings(loom.layered {
-		it.addLayer(quiltMappings.mappings("org.quiltmc:quilt-mappings:${project.minecraft_version}+build.${project.qm_version}:v2"))
-		it.parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${project.parchment_version}@zip")
-		it.officialMojangMappings { nameSyntheticMembers = false }
-	})
-	modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
-	modLocalRuntime("maven.modrinth:lazydfu:0.1.2")
-	modLocalRuntime("maven.modrinth:suggestionproviderfabric:1.0.1")
-//	modLocalRuntime("mcjty.theoneprobe:theoneprobe-fabric:${top_version}")
-	modLocalRuntime("maven.modrinth:lithium:${project.lithium_version}")
-	modLocalRuntime("maven.modrinth:vmp-fabric:${project.vmp_version}")
-//	modLocalRuntime("maven.modrinth:iris:${project.iris_version}")
-//	modLocalRuntime("dev.monarkhes:myron:1.6.3+1.18.1") { transitive = false }
-	modLocalRuntime("com.terraformersmc:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
+File globalAccessWidener = file("src/main/resources/porting_lib.accesswidener")
 
-	// dependencies
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
-	modImplementation(include("io.github.tropheusj:serialization-hooks:${project.serialization_hooks_version}"))
-	modApi(include("me.alphamode:ForgeTags:${project.forge_tags_version}"))
-	api(include("com.github.LlamaLad7:MixinExtras:0.0.11"))
-	annotationProcessor(include("com.github.LlamaLad7:MixinExtras:0.0.11"))
+allprojects {
+	apply plugin: "fabric-loom"
+	apply plugin: "maven-publish"
+	group = "io.github.fabricators_of_create.porting-lib"
 
-	modApi(include("com.github.Chocohead:Fabric-ASM:v2.3"))
+	tasks.withType(JavaCompile).configureEach {
+		it.options.release = 17
+	}
+
+	java {
+		// Must be added before the split source sets are setup.
+		withSourcesJar()
+	}
+
+	loom {
+		splitEnvironmentSourceSets()
+
+		accessWidenerPath = globalAccessWidener
+	}
+
+	repositories {
+		mavenLocal()
+		maven { url = "https://hephaestus.dev/release" }
+		maven { url = "https://api.modrinth.com/maven" }
+		maven { url = "https://maven.bai.lol" }
+		maven { url = "https://maven.terraformersmc.com/releases/" }
+		maven { url = "https://maven.parchmentmc.org" }
+		maven { url = "https://maven.shedaniel.me/" }
+		maven { url = "https://mvn.devos.one/releases/" }
+		maven { url = "https://mvn.devos.one/snapshots/" }
+		maven { url = "https://maven.wispforest.io" }
+		maven { url = "https://cursemaven.com" }
+		maven {
+			url = "https://jitpack.io"
+			content {
+				includeGroup("com.github.Chocohead")
+				includeGroup("com.github.LlamaLad7")
+			}
+		}
+	}
+
+	allprojects.each { p ->
+		loom.mods.register(p.name) {
+			sourceSet p.sourceSets.main
+			sourceSet p.sourceSets.client
+		}
+	}
+
+	dependencies {
+		// dev environment
+		minecraft("com.mojang:minecraft:${project.minecraft_version}")
+		mappings(loom.layered {
+			it.addLayer(quiltMappings.mappings("org.quiltmc:quilt-mappings:${project.minecraft_version}+build.${project.qm_version}:v2"))
+			it.parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${project.parchment_version}@zip")
+			it.officialMojangMappings { nameSyntheticMembers = false }
+		})
+		modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
+		modLocalRuntime("maven.modrinth:lazydfu:0.1.2")
+		modLocalRuntime("maven.modrinth:suggestionproviderfabric:1.0.1")
+		//	modLocalRuntime("mcjty.theoneprobe:theoneprobe-fabric:${top_version}")
+		modLocalRuntime("maven.modrinth:lithium:${project.lithium_version}")
+		modLocalRuntime("maven.modrinth:vmp-fabric:${project.vmp_version}")
+		//	modLocalRuntime("maven.modrinth:iris:${project.iris_version}")
+		//	modLocalRuntime("dev.monarkhes:myron:1.6.3+1.18.1") { transitive = false }
+		modLocalRuntime("com.terraformersmc:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc";
+			exclude group: "net.fabricmc.fabric-api" }
+
+		// dependencies
+		modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
+		modImplementation(include("io.github.tropheusj:serialization-hooks:${project.serialization_hooks_version}"))
+		modApi(include("me.alphamode:ForgeTags:${project.forge_tags_version}"))
+		api(include("com.github.LlamaLad7:MixinExtras:0.0.11"))
+		annotationProcessor(include("com.github.LlamaLad7:MixinExtras:0.0.11"))
+
+		modApi(include("com.github.Chocohead:Fabric-ASM:v2.3"))
+	}
+
+	tasks.withType(ProcessResources).configureEach {
+		Map<String, String> properties = new HashMap<>()
+		properties.put("version", project.version)
+		properties.put("loader_version", project.loader_version)
+		properties.put("fabric_version", project.fabric_version)
+		properties.put("minecraft_version", project.minecraft_version)
+		properties.put("java_version", sourceCompatibility)
+		properties.put("class_5124", project.wtf_gradle)
+		properties.put("class_56", project.wtf_gradle2)
+
+		properties.forEach((k, v) -> inputs.property(k, v))
+
+		filesMatching("fabric.mod.json") {
+			expand properties
+		}
+
+		from(sourceSets.main.resources.srcDirs) {
+			include "fabric.mod.json"
+			expand "version": project.version
+		}
+	}
+
+	task buildOrPublish {
+		group = "build"
+		String mavenUser = System.getenv().MAVEN_USER
+		if (mavenUser != null && !mavenUser.isEmpty()) {
+			dependsOn(tasks.getByName("publish"))
+			println "prepared for publish"
+		} else {
+			dependsOn(tasks.getByName("build"))
+			println "prepared for build"
+		}
+	}
+
+	tasks.withType(AbstractArchiveTask) {
+		preserveFileTimestamps = false
+		reproducibleFileOrder = true
+	}
+
+	tasks.withType(JavaCompile).configureEach {
+		it.options.release = Integer.parseInt(sourceCompatibility)
+	}
+
+	jar {
+		from("LICENSE") {
+			rename { "${it}_${project.archivesBaseName}" }
+		}
+	}
 }
 
 loom {
-	accessWidenerPath = file("src/main/resources/porting_lib.accesswidener")
-
 	sourceSets {
-            main {
-                resources {
-                    srcDir("src/generated/resources")
-                    exclude("src/generated/resources/.cache")
-                }
-            }
-        }
+		main {
+			resources {
+				srcDir("src/generated/resources")
+				exclude("src/generated/resources/.cache")
+			}
+		}
+	}
 
-        runs {
-            datagen {
-                client()
+	runs {
+		datagen {
+			client()
 
-                name "Data Generation"
-                vmArg "-Dfabric-api.datagen"
-                vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
-                vmArg "-Dfabric-api.datagen.modid=porting_lib"
-                // from ae2
+			name "Data Generation"
+			vmArg "-Dfabric-api.datagen"
+			vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
+			vmArg "-Dfabric-api.datagen.modid=porting_lib"
+			// from ae2
 
-                runDir "build/datagen"
-            }
-        }
-}
-
-task buildOrPublish {
-	group = "build"
-	String mavenUser = System.getenv().MAVEN_USER
-	if (mavenUser != null && !mavenUser.isEmpty()) {
-		dependsOn(tasks.getByName("publish"))
-		println "prepared for publish"
-	} else {
-		dependsOn(tasks.getByName("build"))
-		println "prepared for build"
+			runDir "build/datagen"
+		}
 	}
 }
 
-processResources {
-	Map<String, String> properties = new HashMap<>()
-	properties.put("version", project.version)
-	properties.put("loader_version", project.loader_version)
-	properties.put("fabric_version", project.fabric_version)
-	properties.put("minecraft_version", project.minecraft_version)
-	properties.put("java_version", sourceCompatibility)
-	properties.put("class_5124", project.wtf_gradle)
-	properties.put("class_56", project.wtf_gradle2)
-
-	properties.forEach((k, v) -> inputs.property(k, v))
-
-	filesMatching("fabric.mod.json") {
-		expand properties
+javadoc {
+	options {
+		source = "17"
+		encoding = "UTF-8"
+		charSet = "UTF-8"
+		memberLevel = JavadocMemberLevel.PACKAGE
+		links(
+				"https://guava.dev/releases/21.0/api/docs/",
+				"https://asm.ow2.io/javadoc/",
+				"https://docs.oracle.com/javase/8/docs/api/",
+				"http://jenkins.liteloader.com/job/Mixin/javadoc/",
+				"https://logging.apache.org/log4j/2.x/log4j-api/apidocs/"
+				// Need to add minecraft jd publication etc once there is one available
+		)
+		// Disable the crazy super-strict doclint tool in Java 8
+		addStringOption("Xdoclint:none", "-quiet")
 	}
-}
 
-tasks.withType(JavaCompile).configureEach {
-	it.options.release = Integer.parseInt(sourceCompatibility)
-}
+	allprojects.each {
+		if (it.name == "deprecated") return
 
-java {
-	withSourcesJar()
-}
-
-jar {
-	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}" }
+		source(it.sourceSets.main.allJava.srcDirs)
+		source(it.sourceSets.client.allJava.srcDirs)
 	}
+
+	classpath = files(sourceSets.main.compileClasspath, sourceSets.client.compileClasspath)
+	include("**/api/**")
+	failOnError false
 }
+
+task javadocJar(type: Jar) {
+	dependsOn javadoc
+	from javadoc.destinationDir
+	//Set as `fatjavadoc` to prevent an ide form trying to use this javadoc, over using the modules javadoc
+	archiveClassifier = "fatjavadoc"
+}
+
+build.dependsOn javadocJar
 
 publishing {
 	publications {
@@ -163,6 +282,21 @@ publishing {
 			authentication {
 				basic(BasicAuthentication)
 			}
+		}
+	}
+}
+
+subprojects.each {
+	if (it.name == "deprecated") return
+
+	remapJar.dependsOn("${it.path}:remapJar")
+}
+
+remapJar {
+	afterEvaluate {
+		subprojects.each {
+			// Include the signed or none signed jar from the sub project.
+			nestedJars.from project("${it.path}").tasks.getByName("remapJar")
 		}
 	}
 }

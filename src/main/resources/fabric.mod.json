@@ -13,28 +13,6 @@
   "license": "LGPL",
   "icon": "assets/porting_lib/icon.png",
   "environment": "*",
-  "entrypoints": {
-    "main": [
-      "io.github.fabricators_of_create.porting_lib.PortingLib"
-    ],
-    "client": [
-      "io.github.fabricators_of_create.porting_lib.PortingLibClient"
-    ],
-    "mm:early_risers": [
-      "io.github.fabricators_of_create.porting_lib.PortingLibER"
-    ],
-    "preLaunch": [
-      "io.github.fabricators_of_create.porting_lib.PortingLibPreLaunch"
-    ],
-    "fabric-datagen": [
-      "io.github.fabricators_of_create.porting_lib.PortingLibData"
-    ]
-  },
-  "mixins": [
-    "porting_lib.mixins.client.json",
-    "porting_lib.mixins.common.json"
-  ],
-  "accessWidener": "porting_lib.accesswidener",
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": ">=${fabric_version}",

@@ -1,0 +1,6 @@
+archivesBaseName = "attributes"
+version = "1.0"
+
+moduleDependencies(project, [
+		'constants'
+])

@@ -1,0 +1,6 @@
+archivesBaseName = "accessors"
+version = "1.0"
+
+loom {
+	accessWidenerPath = file("src/main/resources/porting_lib.accesswidener")
+}
