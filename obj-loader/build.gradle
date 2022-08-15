@@ -1,0 +1,7 @@
+archivesBaseName = "obj-loader"
+version = "1.0"
+
+moduleDependencies(project, [
+		'model-loader',
+		'model-geometry',
+])

@@ -1,0 +1,7 @@
+archivesBaseName = "extensions"
+version = "1.0"
+
+moduleDependencies(project, [
+		'common',
+		'attributes'
+])

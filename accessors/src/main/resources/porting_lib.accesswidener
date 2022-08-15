@@ -1,0 +1,73 @@
+accessWidener v2 named
+
+transitive-extendable class net/minecraft/world/item/crafting/Ingredient
+transitive-accessible method net/minecraft/world/item/crafting/Ingredient <init> (Ljava/util/stream/Stream;)V
+transitive-accessible class net/minecraft/world/item/crafting/Ingredient$Value
+transitive-accessible class net/minecraft/world/item/crafting/Ingredient$ItemValue
+transitive-accessible method net/minecraft/world/item/crafting/Ingredient$ItemValue <init> (Lnet/minecraft/world/item/ItemStack;)V
+transitive-accessible class net/minecraft/world/item/crafting/Ingredient$TagValue
+
+transitive-accessible class net/minecraft/world/level/entity/PersistentEntitySectionManager$Callback
+transitive-accessible class net/minecraft/world/level/entity/TransientEntitySectionManager$Callback
+
+transitive-accessible class net/minecraft/world/item/alchemy/PotionBrewing$Mix
+
+transitive-accessible class net/minecraft/client/renderer/texture/TextureAtlasSprite$AnimatedTexture
+
+transitive-accessible class net/minecraft/client/renderer/RenderType$CompositeState
+transitive-accessible class net/minecraft/client/renderer/RenderType$CompositeRenderType
+
+transitive-accessible method net/minecraft/client/renderer/block/model/ItemOverride$Deserializer <init> ()V
+transitive-accessible method net/minecraft/client/renderer/block/model/ItemTransforms$Deserializer <init> ()V
+transitive-accessible method net/minecraft/client/renderer/block/model/ItemTransform$Deserializer <init> ()V
+transitive-accessible method net/minecraft/client/renderer/block/model/BlockFaceUV$Deserializer <init> ()V
+transitive-accessible method net/minecraft/client/renderer/block/model/BlockElementFace$Deserializer <init> ()V
+transitive-accessible method net/minecraft/client/renderer/block/model/BlockElement$Deserializer <init> ()V
+
+transitive-accessible field net/minecraft/client/renderer/block/model/BlockModel parent Lnet/minecraft/client/renderer/block/model/BlockModel;
+transitive-accessible field net/minecraft/client/renderer/block/model/BlockModel parentLocation Lnet/minecraft/resources/ResourceLocation;
+
+transitive-accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/List;
+transitive-accessible field net/minecraft/client/gui/components/CommandSuggestions suggestions Lnet/minecraft/client/gui/components/CommandSuggestions$SuggestionsList;
+
+transitive-accessible method net/minecraft/client/renderer/block/model/ItemOverrides <init> ()V
+
+transitive-accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
+transitive-accessible method net/minecraft/client/renderer/texture/TextureAtlasSprite getFrameCount ()I
+
+transitive-accessible class net/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier
+transitive-accessible method net/minecraft/world/item/crafting/Ingredient <init> (Ljava/util/stream/Stream;)V
+transitive-accessible method net/minecraft/world/item/crafting/Ingredient fromValues (Ljava/util/stream/Stream;)Lnet/minecraft/world/item/crafting/Ingredient;
+transitive-accessible method net/minecraft/world/item/crafting/Ingredient valueFromJson (Lcom/google/gson/JsonObject;)Lnet/minecraft/world/item/crafting/Ingredient$Value;
+transitive-accessible field net/minecraft/world/item/crafting/Ingredient values [Lnet/minecraft/world/item/crafting/Ingredient$Value;
+transitive-extendable method net/minecraft/data/loot/BlockLoot add (Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/level/storage/loot/LootTable$Builder;)V
+transitive-extendable class net/minecraft/world/item/crafting/Ingredient
+transitive-extendable class net/minecraft/data/tags/TagsProvider
+transitive-accessible field net/minecraft/client/renderer/block/model/BlockModel$GuiLight name Ljava/lang/String;
+transitive-accessible class net/minecraft/client/renderer/block/model/ItemTransform$Deserializer
+transitive-accessible field net/minecraft/client/renderer/block/model/ItemTransform$Deserializer DEFAULT_ROTATION Lcom/mojang/math/Vector3f;
+transitive-accessible field net/minecraft/client/renderer/block/model/ItemTransform$Deserializer DEFAULT_TRANSLATION Lcom/mojang/math/Vector3f;
+transitive-accessible field net/minecraft/client/renderer/block/model/ItemTransform$Deserializer DEFAULT_SCALE Lcom/mojang/math/Vector3f;
+transitive-accessible method net/minecraft/client/renderer/block/model/BlockElement uvsByFace (Lnet/minecraft/core/Direction;)[F
+transitive-accessible field net/minecraft/client/resources/ClientPackSource BUILT_IN Lnet/minecraft/server/packs/metadata/pack/PackMetadataSection;
+transitive-accessible field net/minecraft/client/Minecraft RESOURCE_RELOAD_INITIAL_TASK Ljava/util/concurrent/CompletableFuture;
+
+transitive-accessible method net/minecraft/world/level/block/BushBlock mayPlaceOn (Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z
+
+transitive-accessible class net/minecraft/client/gui/MapRenderer$MapInstance
+transitive-accessible field net/minecraft/client/gui/MapRenderer MAP_ICONS Lnet/minecraft/client/renderer/RenderType;
+
+transitive-accessible class net/minecraft/server/MinecraftServer$ReloadableResources
+
+transitive-accessible field net/minecraft/data/tags/TagsProvider$TagAppender registry Lnet/minecraft/core/Registry;
+
+transitive-accessible field net/minecraft/world/entity/LivingEntity effectsDirty Z
+
+transitive-accessible field net/minecraft/world/item/AxeItem STRIPPABLES Ljava/util/Map;
+
+transitive-accessible class net/minecraft/client/gui/components/CommandSuggestions$SuggestionsList
+transitive-accessible method net/minecraft/client/gui/components/CommandSuggestions$SuggestionsList <init> (Lnet/minecraft/client/gui/components/CommandSuggestions;IIILjava/util/List;Z)V
+transitive-accessible field net/minecraft/world/item/ShovelItem FLATTENABLES Ljava/util/Map;
+transitive-accessible method net/minecraft/client/gui/screens/MenuScreens getConstructor (Lnet/minecraft/world/inventory/MenuType;)Lnet/minecraft/client/gui/screens/MenuScreens$ScreenConstructor;
+transitive-accessible field net/minecraft/data/loot/EntityLoot SPECIAL_LOOT_TABLE_TYPES Ljava/util/Set;
+transitive-accessible field net/minecraft/data/loot/EntityLoot map Ljava/util/Map;

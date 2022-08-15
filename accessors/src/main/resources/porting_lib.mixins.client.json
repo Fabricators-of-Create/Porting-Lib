@@ -1,0 +1,41 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "priority": 951,
+  "package": "io.github.fabricators_of_create.porting_lib.mixin.client.accessor",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "AbstractContainerScreenAccessor",
+    "AbstractSelectionList$EntryAccessor",
+    "AbstractSelectionListAccessor",
+    "AbstractWidgetAccessor",
+    "AgeableListModelAccessor",
+    "BlockModel$DeserializerAccessor",
+    "BlockModelAccessor",
+    "BlockRenderDispatcherAccessor",
+    "ClientPacketListenerAccessor",
+    "CommandSuggestions$SuggestionsListAccessor",
+    "FontAccessor",
+    "GameRendererAccessor",
+    "HumanoidModelAccessor",
+    "ItemInHandRendererAccessor",
+    "ItemRendererAccessor",
+    "KeyMappingAccessor",
+    "MinecraftAccessor",
+    "ModelBakeryAccessor",
+    "ModelPartAccessor",
+    "ParticleAccessor",
+    "ParticleEngineAccessor",
+    "RenderTypeAccessor",
+    "ScreenAccessor",
+    "SheetsAccessor",
+    "SimpleBakedModel$BuilderAccessor",
+    "TextureAtlasSprite$AnimatedTextureAccessor",
+    "TextureSheetParticleAccessor",
+    "TitleScreenAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1,
+    "maxShiftBy": 999999
+  }
+}
