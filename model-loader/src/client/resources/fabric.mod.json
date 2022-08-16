@@ -24,5 +24,10 @@
     "fabricloader": ">=0.14.9",
     "fabric": "*",
     "minecraft": "1.18.2"
+  },
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_793": ["io/github/fabricators_of_create/porting_lib/extensions/BlockModelExtensions"]
+    }
   }
 }

@@ -1,2 +1,11 @@
 archivesBaseName = "transfer"
 version = "1.0"
+
+moduleDependencies(project, [
+		'constants',
+		'common'
+])
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}

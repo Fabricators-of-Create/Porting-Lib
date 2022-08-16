@@ -7,10 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
-
-import io.github.fabricators_of_create.porting_lib.util.ServerLifecycleHooks;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -195,7 +191,7 @@ public class SimpleChannel {
 	}
 
 	public void sendToClientsInCurrentServer(S2CPacket packet) {
-		sendToClientsInServer(packet, ServerLifecycleHooks.getCurrentServer());
+		sendToClientsInServer(packet, SimpleNetworking.getCurrentServer());
 	}
 
 	public void sendToClientsInWorld(S2CPacket packet, ServerLevel world) {

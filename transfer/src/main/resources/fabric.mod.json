@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib",
+  "id": "porting_lib-transfer",
   "version": "${version}",
   "name": "Porting Lib",
   "description": "A collection of utilities for porting mods from Forge to Fabric.",
@@ -19,9 +19,18 @@
     "minecraft": ">=${minecraft_version}",
     "java": ">=${java_version}"
   },
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.transfer.TransferUtil"
+    ]
+  },
+  "mixins": [
+    "porting_lib-transfer.mixins.client.json"
+  ],
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_638": ["io/github/fabricators_of_create/porting_lib/extensions/ClientLevelExtensions"]
+      "net/minecraft/class_638": ["io/github/fabricators_of_create/porting_lib/extensions/ClientLevelExtensions"],
+      "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/extensions/transfer/LevelExtensions"]
     },
     "modmenu": {
       "badges": [ "library" ]

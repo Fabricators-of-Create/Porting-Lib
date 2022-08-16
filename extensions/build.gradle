@@ -5,3 +5,7 @@ moduleDependencies(project, [
 		'common',
 		'attributes'
 ])
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}

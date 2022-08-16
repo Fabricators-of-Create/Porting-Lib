@@ -2,6 +2,14 @@ archivesBaseName = "base"
 version = "1.0"
 
 moduleDependencies(project, [
+		'model-loader',
 		'extensions',
-		'common'
+		'transfer',
+		'entity',
+		'common',
+		'models',
 ])
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}

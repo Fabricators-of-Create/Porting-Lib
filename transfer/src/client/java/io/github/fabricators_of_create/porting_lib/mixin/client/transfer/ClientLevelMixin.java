@@ -1,14 +1,23 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client.transfer;
 
 import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.transfer.LevelExtensions;
 import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientBlockApiCache;
+import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientFluidLookupCache;
+import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientItemLookupCache;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.minecraft.client.multiplayer.ClientLevel;
 
 import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -19,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 @Mixin(ClientLevel.class)
-public class ClientLevelMixin implements ClientLevelExtensions {
+public class ClientLevelMixin implements LevelExtensions, ClientLevelExtensions {
 	// lookup stuff, from FAPI
 
 	@Unique
@@ -66,5 +75,15 @@ public class ClientLevelMixin implements ClientLevelExtensions {
 		caches.removeIf(weakReference -> weakReference.get() == null);
 		caches.add(new WeakReference<>(cache));
 		port_lib$apiLookupAccessesWithoutCleanup++;
+	}
+
+	@Override
+	public BlockApiCache<Storage<ItemVariant>, Direction> port_lib$getItemCache(BlockPos pos) {
+		return ClientItemLookupCache.get(((ClientLevel) (Object) this), pos);
+	}
+
+	@Override
+	public BlockApiCache<Storage<FluidVariant>, Direction> port_lib$getFluidApiCache(BlockPos pos) {
+		return ClientFluidLookupCache.get(((ClientLevel) (Object) this), pos);
 	}
 }

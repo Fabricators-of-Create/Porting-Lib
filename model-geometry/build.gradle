@@ -4,3 +4,7 @@ version = "1.0"
 moduleDependencies(project, [
 		'model-loader'
 ])
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}

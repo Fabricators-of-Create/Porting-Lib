@@ -11,7 +11,6 @@ import com.mojang.math.Vector3f;
 import io.github.fabricators_of_create.porting_lib.event.client.CameraSetupCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.CameraSetupCallback.CameraInfo;
 import io.github.fabricators_of_create.porting_lib.event.client.FOVModifierCallback;
-import io.github.fabricators_of_create.porting_lib.extensions.CameraExtensions;
 import net.minecraft.client.Camera;
 
 import org.spongepowered.asm.mixin.Final;
