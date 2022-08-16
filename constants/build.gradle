@@ -1,2 +1,6 @@
 archivesBaseName = "constants" // Yes I really did create another module for this :ioa:
 version = "1.0"
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}

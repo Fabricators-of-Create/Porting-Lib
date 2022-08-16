@@ -4,3 +4,7 @@ version = "1.0"
 loom {
 	accessWidenerPath = file("src/main/resources/porting_lib.accesswidener")
 }
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}
