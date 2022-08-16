@@ -1,5 +1,5 @@
 archivesBaseName = "extensions"
-version = "1.0"
+version = getSubprojectVersion(project)
 
 moduleDependencies(project, [
 		'attributes',

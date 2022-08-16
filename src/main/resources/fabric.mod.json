@@ -13,10 +13,6 @@
   "license": "LGPL",
   "icon": "assets/porting_lib/icon.png",
   "environment": "*",
-  "mixins": [
-    "porting_lib.mixins.common-base.json",
-    "porting_lib.mixins.client-base.json"
-  ],
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": ">=${fabric_version}",

@@ -1,5 +1,5 @@
 archivesBaseName = "networking"
-version = "1.0"
+version = getSubprojectVersion(project)
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN

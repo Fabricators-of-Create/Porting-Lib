@@ -9,7 +9,6 @@
     "AbstractTextureMixin",
     "BlockColorsMixin",
     "BlockModelDeserializerMixin",
-    "BlockModelMixin",
     "BufferBuilderMixin",
     "CameraMixin",
     "ChestRendererMixin",
