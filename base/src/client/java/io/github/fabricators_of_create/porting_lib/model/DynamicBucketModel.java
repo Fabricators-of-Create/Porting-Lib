@@ -5,14 +5,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import io.github.fabricators_of_create.porting_lib.extensions.RegistryNameProvider;
-import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -21,13 +16,11 @@ import com.google.common.collect.Sets;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
-
-import io.github.fabricators_of_create.porting_lib.extensions.FluidExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.TransformationExtensions;
-import net.minecraft.client.multiplayer.ClientLevel;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
 
+import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -56,7 +49,6 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
 	private static final float NORTH_Z_FLUID = 7.498f / 16f;
 	private static final float SOUTH_Z_FLUID = 8.502f / 16f;
 
-	@Nonnull
 	private final Fluid fluid;
 
 	private final boolean flipGas;

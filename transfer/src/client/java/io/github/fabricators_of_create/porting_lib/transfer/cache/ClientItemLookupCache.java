@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.transfer.cache;
 
-import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
+import org.jetbrains.annotations.Nullable;
+
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
@@ -14,8 +15,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A {@link BlockApiLookup} for item storage on the client. can only access API provided through TransferUtil. Null directions allowed.
@@ -35,7 +34,7 @@ public class ClientItemLookupCache implements BlockApiCache<Storage<ItemVariant>
 	}
 
 	public ClientItemLookupCache(ClientLevel world, BlockPos pos) {
-		((ClientLevelExtensions) world).port_lib$registerCache(pos ,this);
+		world.port_lib$registerCache(pos ,this);
 		this.world = world;
 		this.pos = pos.immutable();
 	}

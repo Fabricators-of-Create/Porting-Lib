@@ -5,3 +5,7 @@ moduleDependencies(project, [
 		'accessors',
 		'extensions'
 ])
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}

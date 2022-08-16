@@ -6,14 +6,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import io.github.fabricators_of_create.porting_lib.PortingLib;
-import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientFluidLookupCache;
-import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientItemLookupCache;
-import io.github.fabricators_of_create.porting_lib.transfer.cache.EmptyFluidLookupCache;
-import io.github.fabricators_of_create.porting_lib.transfer.cache.EmptyItemLookupCache;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import io.github.fabricators_of_create.porting_lib.transfer.fluid.FluidTransferable;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemTransferable;
 import io.github.fabricators_of_create.porting_lib.util.FluidStack;
+import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
@@ -29,18 +28,12 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.annotation.Nullable;
 
 /**
  * Utilities for transferring things.
@@ -56,7 +49,7 @@ import javax.annotation.Nullable;
  * 	}
  * }</pre>
  */
-public class TransferUtil {
+public class TransferUtil implements ModInitializer {
 	/**
 	 * @return Either an outer transaction or a nested one in the current open one
 	 */
@@ -655,12 +648,7 @@ public class TransferUtil {
 	 * which can only interact with BlockEntities using the ItemTransferable interface.
 	 */
 	public static BlockApiCache<Storage<ItemVariant>, Direction> getItemCache(Level level, BlockPos pos) {
-		if (level instanceof ServerLevel server) {
-			return BlockApiCache.create(ItemStorage.SIDED, server, pos);
-		} else if (level.isClientSide()) {
-			return ClientItemLookupCache.get(level, pos);
-		}
-		return EmptyItemLookupCache.INSTANCE;
+		return level.port_lib$getItemCache(pos);
 	}
 
 	/**
@@ -668,18 +656,14 @@ public class TransferUtil {
 	 * which can only interact with BlockEntities using the FluidTransferable interface.
 	 */
 	public static BlockApiCache<Storage<FluidVariant>, Direction> getFluidCache(Level level, BlockPos pos) {
-		if (level instanceof ServerLevel server) {
-			return BlockApiCache.create(FluidStorage.SIDED, server, pos);
-		} else if (level.isClientSide()) {
-			return ClientFluidLookupCache.get(level, pos);
-		}
-		return EmptyFluidLookupCache.INSTANCE;
+		return level.port_lib$getFluidApiCache(pos);
 	}
 
 	/**
-	 * Initialize the ItemTransferable and FluidTransferable fallback callbacks. Do not call, is done by {@link PortingLib#onInitialize() }
+	 * Initialize the ItemTransferable and FluidTransferable fallback callbacks. }
 	 */
-	public static void initApi() {
+	@Override
+	public void onInitialize() {
 		FluidStorage.SIDED.registerFallback((world, pos, state, be, face) -> {
 			if (be instanceof FluidTransferable t) {
 				return t.getFluidStorage(face);

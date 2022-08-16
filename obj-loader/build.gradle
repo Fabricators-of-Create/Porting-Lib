@@ -5,3 +5,7 @@ moduleDependencies(project, [
 		'model-loader',
 		'model-geometry',
 ])
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}

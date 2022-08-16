@@ -1,6 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.transfer.callbacks;
 
-import io.github.fabricators_of_create.porting_lib.util.LevelUtil;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext.Result;
 

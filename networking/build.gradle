@@ -1,0 +1,6 @@
+archivesBaseName = "networking"
+version = "1.0"
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}

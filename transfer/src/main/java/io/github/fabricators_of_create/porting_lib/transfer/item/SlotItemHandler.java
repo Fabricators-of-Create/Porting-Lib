@@ -1,7 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
-import javax.annotation.Nonnull;
-
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -21,27 +19,26 @@ public class SlotItemHandler extends Slot {
 	}
 
 	@Override
-	public boolean mayPlace(@Nonnull ItemStack stack) {
+	public boolean mayPlace(ItemStack stack) {
 		if (stack.isEmpty())
 			return false;
 		return itemHandler.isItemValid(index, ItemVariant.of(stack));
 	}
 
 	@Override
-	@Nonnull
 	public ItemStack getItem() {
 		return this.getItemHandler().getStackInSlot(index);
 	}
 
 	// Override if your IItemHandler does not implement IItemHandlerModifiable
 	@Override
-	public void set(@Nonnull ItemStack stack) {
+	public void set(ItemStack stack) {
 		this.getItemHandler().setStackInSlot(index, stack);
 		this.setChanged();
 	}
 
 	@Override
-	public void onQuickCraft(@Nonnull ItemStack oldStackIn, @Nonnull ItemStack newStackIn) {
+	public void onQuickCraft(ItemStack oldStackIn, ItemStack newStackIn) {
 
 	}
 
@@ -51,7 +48,7 @@ public class SlotItemHandler extends Slot {
 	}
 
 	@Override
-	public int getMaxStackSize(@Nonnull ItemStack stack) {
+	public int getMaxStackSize(ItemStack stack) {
 		return getItemHandler().getStackLimit(index, ItemVariant.of(stack));
 	}
 
@@ -61,7 +58,6 @@ public class SlotItemHandler extends Slot {
 	}
 
 	@Override
-	@Nonnull
 	public ItemStack remove(int amount) {
 		ItemStack held = itemHandler.getStackInSlot(index).copy();
 		ItemStack removed = held.split(amount);

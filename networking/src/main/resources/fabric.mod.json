@@ -1,21 +1,22 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib-client-extensions",
+  "id": "simplenetworking",
   "version": "${version}",
-  "name": "Porting Lib",
-  "description": "A collection of utilities for porting mods from Forge to Fabric.",
+  "name": "Simple Networking",
+  "description": "A simple networking mod.",
   "authors": [
-    "The Create Fabric Team"
+    "Pepper_Bell"
   ],
   "contact": {
     "sources": "https://github.com/Fabricators-of-Create/Porting-Lib"
   },
+  "entrypoints": {
+    "main": [
+      "me.pepperbell.simplenetworking.SimpleNetworking"
+    ]
+  },
   "license": "LGPL",
-  "icon": "assets/porting_lib/icon.png",
   "environment": "*",
-  "mixins": [
-    "porting_lib-extensions.mixins.client.json"
-  ],
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": ">=${fabric_version}",
@@ -23,9 +24,6 @@
     "java": ">=${java_version}"
   },
   "custom": {
-    "loom:injected_interfaces": {
-      
-    },
     "modmenu": {
       "badges": [ "library" ]
     }

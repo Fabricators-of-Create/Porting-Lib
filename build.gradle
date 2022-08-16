@@ -74,6 +74,7 @@ def moduleDependencies(project, List<String> depNames) {
 
 File globalAccessWidener = file("src/main/resources/porting_lib.accesswidener")
 
+
 allprojects {
 	apply plugin: "fabric-loom"
 	apply plugin: "maven-publish"
@@ -89,7 +90,8 @@ allprojects {
 	}
 
 	loom {
-		splitEnvironmentSourceSets()
+		if (project.getName() != "networking")
+			splitEnvironmentSourceSets()
 
 		accessWidenerPath = globalAccessWidener
 	}
@@ -117,6 +119,7 @@ allprojects {
 
 	allprojects.each { p ->
 		loom.mods.register(p.name) {
+			if (it.getName() == "networking") return
 			sourceSet p.sourceSets.main
 			sourceSet p.sourceSets.client
 		}
@@ -151,7 +154,7 @@ allprojects {
 		modApi(include("com.github.Chocohead:Fabric-ASM:v2.3"))
 	}
 
-	tasks.withType(ProcessResources).configureEach {
+	processResources {
 		Map<String, String> properties = new HashMap<>()
 		properties.put("version", project.version)
 		properties.put("loader_version", project.loader_version)
@@ -165,11 +168,6 @@ allprojects {
 
 		filesMatching("fabric.mod.json") {
 			expand properties
-		}
-
-		from(sourceSets.main.resources.srcDirs) {
-			include "fabric.mod.json"
-			expand "version": project.version
 		}
 	}
 
@@ -245,7 +243,7 @@ javadoc {
 	}
 
 	allprojects.each {
-		if (it.name == "deprecated") return
+		if (it.getName() == "networking") return
 
 		source(it.sourceSets.main.allJava.srcDirs)
 		source(it.sourceSets.client.allJava.srcDirs)
@@ -287,8 +285,6 @@ publishing {
 }
 
 subprojects.each {
-	if (it.name == "deprecated") return
-
 	remapJar.dependsOn("${it.path}:remapJar")
 }
 

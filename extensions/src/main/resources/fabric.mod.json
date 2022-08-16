@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib-common-extensions",
+  "id": "porting_lib-extensions",
   "version": "${version}",
   "name": "Porting Lib",
   "description": "A collection of utilities for porting mods from Forge to Fabric.",
@@ -14,7 +14,8 @@
   "icon": "assets/porting_lib/icon.png",
   "environment": "*",
   "mixins": [
-    "porting_lib-extensions.mixins.common.json"
+    "porting_lib-extensions.mixins.common.json",
+    "porting_lib-extensions.mixins.client.json"
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",
@@ -31,9 +32,7 @@
       "net/minecraft/class_55$class_56": ["io/github/fabricators_of_create/porting_lib/extensions/LootPoolBuilderExtension"],
       "net/minecraft/class_293": ["io/github/fabricators_of_create/porting_lib/extensions/VertexFormatExtensions"],
       "net/minecraft/class_276": ["io/github/fabricators_of_create/porting_lib/extensions/RenderTargetExtensions"],
-      "net/minecraft/class_638": ["io/github/fabricators_of_create/porting_lib/extensions/ClientLevelExtensions"],
       "net/minecraft/class_703": ["io/github/fabricators_of_create/porting_lib/extensions/ParticleExtensions"],
-      "net/minecraft/class_793": ["io/github/fabricators_of_create/porting_lib/extensions/BlockModelExtensions"],
       "net/minecraft/class_1044": ["io/github/fabricators_of_create/porting_lib/extensions/AbstractTextureExtensions"],
       "net/minecraft/class_1058": ["io/github/fabricators_of_create/porting_lib/extensions/TextureAtlasSpriteExtensions"],
       "net/minecraft/class_1077": ["io/github/fabricators_of_create/porting_lib/extensions/LanguageInfoExtensions"],
@@ -82,14 +81,14 @@
       "net/minecraft/class_2960": ["io/github/fabricators_of_create/porting_lib/extensions/ResourceLocationExtensions"],
       "net/minecraft/class_3491": ["io/github/fabricators_of_create/porting_lib/extensions/StructureProcessorExtensions"],
       "net/minecraft/class_3499": ["io/github/fabricators_of_create/porting_lib/extensions/StructureTemplateExtensions"],
-      "net/minecraft/class_3611": [
-        "io/github/fabricators_of_create/porting_lib/extensions/FluidExtensions",
-        "io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"
-      ],
+      "net/minecraft/class_3611": ["io/github/fabricators_of_create/porting_lib/extensions/RegistryNameProvider"],
       "net/minecraft/class_3665": ["io/github/fabricators_of_create/porting_lib/extensions/ModelStateExtensions"],
       "net/minecraft/class_3727": ["io/github/fabricators_of_create/porting_lib/extensions/EntityCollisionContextExtensions"],
       "net/minecraft/class_4184": ["io/github/fabricators_of_create/porting_lib/extensions/CameraExtensions"],
-      "net/minecraft/class_4590": ["io/github/fabricators_of_create/porting_lib/extensions/TransformationExtensions"],
+      "net/minecraft/class_4590": [
+        "io/github/fabricators_of_create/porting_lib/extensions/TransformationExtensions",
+        "io/github/fabricators_of_create/porting_lib/extensions/client/TransformationClientExtensions"
+      ],
       "net/minecraft/class_4581": ["io/github/fabricators_of_create/porting_lib/extensions/Matrix3fExtensions"]
     },
     "modmenu": {
