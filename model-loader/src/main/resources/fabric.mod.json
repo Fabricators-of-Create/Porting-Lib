@@ -18,7 +18,7 @@
     ]
   },
   "mixins": [
-    "porting_lib.mixins.json"
+    "porting_lib.mixins.client-model-loader.json"
   ],
   "depends": {
     "fabricloader": ">=0.14.9",

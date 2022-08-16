@@ -29,6 +29,11 @@ if (grgit != null) {
 	version += "+custom_unknown"
 }
 
+
+def getSubprojectVersion(project) {
+	return version
+}
+
 def moduleDependencies(project, List<String> depNames) {
 	def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: 'namedElements') }
 
@@ -71,7 +76,7 @@ File globalAccessWidener = file("src/main/resources/porting_lib.accesswidener")
 allprojects {
 	apply plugin: "fabric-loom"
 	apply plugin: "maven-publish"
-	group = "io.github.fabricators_of_create.porting-lib"
+	group = "io.github.fabricators_of_create.Porting-Lib"
 
 	publishing {
 		setupRepositories(repositories)

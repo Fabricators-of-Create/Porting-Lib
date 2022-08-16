@@ -1,11 +1,12 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "io.github.fabricators_of_create.porting_lib.mixin",
+  "package": "io.github.fabricators_of_create.porting_lib.mixin.client",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
   ],
   "client": [
+    "BlockModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1
