@@ -4,10 +4,11 @@ version = "1.0"
 moduleDependencies(project, [
 		'model-loader',
 		'extensions',
+		'obj-loader',
 		'transfer',
 		'entity',
 		'common',
-		'models',
+		'models'
 ])
 
 processResources {

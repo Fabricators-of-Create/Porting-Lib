@@ -31,25 +31,18 @@ if (grgit != null) {
 
 def moduleDependencies(project, List<String> depNames) {
 	def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: 'namedElements') }
-	def clientOutputs = depNames.iterator().collect {findProject(":$it").sourceSets.client.output }
+
 	depNames.iterator().forEachRemaining {
 		def dependProject = findProject(":$it")
 		project.loom {
 			interfaceInjection {
 				interfaceInjectionSourceSets.add(dependProject.sourceSets.main)
-				interfaceInjectionSourceSets.add(dependProject.sourceSets.client)
 			}
 		}
 	}
-
 	project.dependencies {
 		deps.each {
 			api it
-
-		}
-
-		clientOutputs.each {
-			clientImplementation it
 		}
 	}
 
@@ -80,19 +73,19 @@ allprojects {
 	apply plugin: "maven-publish"
 	group = "io.github.fabricators_of_create.porting-lib"
 
+	publishing {
+		setupRepositories(repositories)
+	}
+
 	tasks.withType(JavaCompile).configureEach {
 		it.options.release = 17
 	}
 
 	java {
-		// Must be added before the split source sets are setup.
 		withSourcesJar()
 	}
 
 	loom {
-		if (project.getName() != "networking")
-			splitEnvironmentSourceSets()
-
 		accessWidenerPath = globalAccessWidener
 	}
 
@@ -114,14 +107,6 @@ allprojects {
 				includeGroup("com.github.Chocohead")
 				includeGroup("com.github.LlamaLad7")
 			}
-		}
-	}
-
-	allprojects.each { p ->
-		loom.mods.register(p.name) {
-			if (it.getName() == "networking") return
-			sourceSet p.sourceSets.main
-			sourceSet p.sourceSets.client
 		}
 	}
 
@@ -148,10 +133,12 @@ allprojects {
 		modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
 		modImplementation(include("io.github.tropheusj:serialization-hooks:${project.serialization_hooks_version}"))
 		modApi(include("me.alphamode:ForgeTags:${project.forge_tags_version}"))
-		api(include("com.github.LlamaLad7:MixinExtras:0.0.11"))
-		annotationProcessor(include("com.github.LlamaLad7:MixinExtras:0.0.11"))
+		api(include("com.github.LlamaLad7:MixinExtras:0.0.12"))
+		annotationProcessor(include("com.github.LlamaLad7:MixinExtras:0.0.12"))
 
 		modApi(include("com.github.Chocohead:Fabric-ASM:v2.3"))
+		implementation("javax.annotation:javax.annotation-api:1.3.2")
+		implementation("com.google.code.findbugs:jsr305:3.0.0")
 	}
 
 	processResources {
@@ -246,10 +233,9 @@ javadoc {
 		if (it.getName() == "networking") return
 
 		source(it.sourceSets.main.allJava.srcDirs)
-		source(it.sourceSets.client.allJava.srcDirs)
 	}
 
-	classpath = files(sourceSets.main.compileClasspath, sourceSets.client.compileClasspath)
+	classpath = files(sourceSets.main.compileClasspath)
 	include("**/api/**")
 	failOnError false
 }
@@ -263,23 +249,46 @@ task javadocJar(type: Jar) {
 
 build.dependsOn javadocJar
 
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			from components.java
+subprojects.each {
+	remapJar.dependsOn("${it.path}:remapJar")
+}
+
+remapJar {
+	afterEvaluate {
+		subprojects.each {
+			nestedJars.from project("${it.path}").tasks.getByName("remapJar")
+		}
+	}
+}
+
+subprojects {
+	publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				artifact(remapJar) {
+					builtBy(remapJar)
+				}
+
+				artifact(remapSourcesJar) {
+					builtBy remapSourcesJar
+				}
+			}
 		}
 	}
 
-	repositories {
-		maven {
-			url = "https://mvn.devos.one/${System.getenv().PUBLISH_SUFFIX}/"
-			credentials {
-				username = System.getenv().MAVEN_USER
-				password = System.getenv().MAVEN_PASS
-			}
-			authentication {
-				basic(BasicAuthentication)
-			}
+	loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
+}
+
+void setupRepositories(RepositoryHandler repositories) {
+	//repositories.mavenLocal() // uncomment for testing
+	repositories.maven {
+		url = "https://mvn.devos.one/${System.getenv().PUBLISH_SUFFIX}/"
+		credentials {
+			username = System.getenv().MAVEN_USER
+			password = System.getenv().MAVEN_PASS
+		}
+		authentication {
+			basic(BasicAuthentication)
 		}
 	}
 }
@@ -288,11 +297,36 @@ subprojects.each {
 	remapJar.dependsOn("${it.path}:remapJar")
 }
 
-remapJar {
-	afterEvaluate {
-		subprojects.each {
-			// Include the signed or none signed jar from the sub project.
-			nestedJars.from project("${it.path}").tasks.getByName("remapJar")
+task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: jar) {
+	input = jar.archiveFile
+	archiveFileName = "${archivesBaseName}-${project.version}-maven.jar"
+	addNestedDependencies = false
+}
+build.dependsOn remapMavenJar
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			artifact(remapMavenJar) {
+				builtBy(remapMavenJar)
+			}
+
+			artifact(sourcesJar) {
+				builtBy remapSourcesJar
+			}
+
+			artifact javadocJar
+
+			pom.withXml {
+				def depsNode = asNode().appendNode("dependencies")
+				subprojects.each {
+					def depNode = depsNode.appendNode("dependency")
+					depNode.appendNode("groupId", it.group)
+					depNode.appendNode("artifactId", it.name)
+					depNode.appendNode("version", it.version)
+					depNode.appendNode("scope", "compile")
+				}
+			}
 		}
 	}
 }

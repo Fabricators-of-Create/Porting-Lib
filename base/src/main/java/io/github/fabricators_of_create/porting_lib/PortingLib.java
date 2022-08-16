@@ -28,13 +28,11 @@ public class PortingLib implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ServerLifecycleHooks.init();
-		PortingLibAttributes.init();
 		TierSortingRegistry.init();
 		LootModifierManager.init();
 		ConditionalRecipe.init();
 		ItemItemStorages.init();
 		BiomeDictionary.init();
-		TransferUtil.initApi();
 		CraftingHelper.init();
 		TrueCondition.init();
 		PortingHooks.init();

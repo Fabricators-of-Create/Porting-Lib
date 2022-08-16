@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.util;
 
 import com.google.common.math.LongMath;
 
+import io.github.fabricators_of_create.porting_lib.PortingConstants;
 import io.github.fabricators_of_create.porting_lib.PortingLib;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.resources.ResourceLocation;
@@ -25,7 +26,7 @@ public class FluidTextUtil {
 	public static final Format NUMBER_FORMAT = new Format();
 
 	public static class Format extends SimplePreparableReloadListener<Unit> implements IdentifiableResourceReloadListener {
-		public static final ResourceLocation ID = PortingLib.id("format_reload_listener");
+		public static final ResourceLocation ID = PortingConstants.id("format_reload_listener");
 		private NumberFormat format = NumberFormat.getNumberInstance(Locale.ROOT);
 
 		private Format() {}

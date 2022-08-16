@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import io.github.fabricators_of_create.porting_lib.PortingConstants;
 import io.github.fabricators_of_create.porting_lib.PortingLib;
 
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
@@ -42,7 +43,7 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener implem
 	public static final Logger LOGGER = LogManager.getLogger();
 	private static final Gson GSON_INSTANCE = Deserializers.createFunctionSerializer().create();
 	private static final String folder = "loot_modifiers";
-	public static MappedRegistry<GlobalLootModifierSerializer> SERIALIZER = FabricRegistryBuilder.createSimple(GlobalLootModifierSerializer.class, PortingLib.id("loot_modifier")).buildAndRegister();
+	public static MappedRegistry<GlobalLootModifierSerializer> SERIALIZER = FabricRegistryBuilder.createSimple(GlobalLootModifierSerializer.class, PortingConstants.id("loot_modifier")).buildAndRegister();
 	private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
 
 	public LootModifierManager() {
@@ -151,6 +152,6 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener implem
 
 	@Override
 	public ResourceLocation getFabricId() {
-		return PortingLib.id("loot_modifier_manager");
+		return PortingConstants.id("loot_modifier_manager");
 	}
 }

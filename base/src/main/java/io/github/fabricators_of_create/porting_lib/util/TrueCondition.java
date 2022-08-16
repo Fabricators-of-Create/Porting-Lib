@@ -3,13 +3,14 @@ package io.github.fabricators_of_create.porting_lib.util;
 
 import com.google.gson.JsonObject;
 
+import io.github.fabricators_of_create.porting_lib.PortingConstants;
 import io.github.fabricators_of_create.porting_lib.PortingLib;
 import net.fabricmc.fabric.api.resource.conditions.v1.ConditionJsonProvider;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.minecraft.resources.ResourceLocation;
 
 public class TrueCondition implements ConditionJsonProvider {
-	public static final ResourceLocation ID = PortingLib.id("true");
+	public static final ResourceLocation ID = PortingConstants.id("true");
 	public static final TrueCondition INSTANCE = new TrueCondition();
 
 	public static void init() {

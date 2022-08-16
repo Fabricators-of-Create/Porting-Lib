@@ -28,7 +28,7 @@ import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 
 @Mixin(ServerLevel.class)
-public abstract class ServerLevelMixin implements LevelExtensions {
+public abstract class ServerLevelMixin implements LevelExtensions, io.github.fabricators_of_create.porting_lib.extensions.entity.LevelExtensions {
 	@Inject(
 			method = "explode",
 			at = @At(

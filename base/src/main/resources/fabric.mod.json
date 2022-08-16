@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib",
+  "id": "porting_lib-base",
   "version": "${version}",
-  "name": "Porting Lib",
+  "name": "Porting Lib Base",
   "description": "A collection of utilities for porting mods from Forge to Fabric.",
   "authors": [
     "The Create Fabric Team"
@@ -31,8 +31,8 @@
     ]
   },
   "mixins": [
-    "porting_lib.mixins.client.json",
-    "porting_lib.mixins.common.json"
+    "porting_lib.mixins.common-base.json",
+    "porting_lib.mixins.client-base.json"
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",
@@ -45,7 +45,14 @@
       "net/minecraft/class_3611": ["io/github/fabricators_of_create/porting_lib/extensions/FluidExtensions"]
     },
     "modmenu": {
-      "badges": [ "library" ]
+      "badges": [ "library" ],
+      "parent": {
+        "id": "porting_lib",
+        "name": "Porting Lib",
+        "description": "A collection of utilities for porting mods from Forge to Fabric.",
+        "icon": "assets/porting_lib/icon.png",
+        "badges": [ "library" ]
+      }
     }
   }
 }
