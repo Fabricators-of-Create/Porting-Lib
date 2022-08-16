@@ -6,7 +6,8 @@
   "mixins": [
   ],
   "client": [
-    "BlockModelMixin"
+    "BlockModelMixin",
+    "VertexConsumerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

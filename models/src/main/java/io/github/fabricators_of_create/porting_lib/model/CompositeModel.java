@@ -12,6 +12,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import io.github.fabricators_of_create.porting_lib.client.RenderTypeGroup;
+import io.github.fabricators_of_create.porting_lib.model.geometry.IGeometryBakingContext;
+import io.github.fabricators_of_create.porting_lib.model.geometry.IGeometryLoader;
+import io.github.fabricators_of_create.porting_lib.model.geometry.IUnbakedGeometry;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 

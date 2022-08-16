@@ -9,8 +9,4 @@ import net.minecraft.world.item.ItemStack;
 
 @Mixin(Item.class)
 public abstract class ItemMixin implements ItemExtensions {
-	@Override
-	public boolean canPerformAction(ItemStack stack, ToolAction toolAction) {
-		return false;
-	}
 }

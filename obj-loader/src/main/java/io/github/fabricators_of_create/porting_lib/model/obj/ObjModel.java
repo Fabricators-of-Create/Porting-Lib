@@ -1,37 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.model.obj;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
-
-import io.github.fabricators_of_create.porting_lib.client.textures.UnitTextureAtlasSprite;
-import io.github.fabricators_of_create.porting_lib.model.IGeometryBakingContext;
-import io.github.fabricators_of_create.porting_lib.model.IModelBuilder;
-import io.github.fabricators_of_create.porting_lib.model.geometry.SimpleUnbakedGeometry;
-import io.github.fabricators_of_create.porting_lib.model.geometry.UnbakedGeometryHelper;
-import io.github.fabricators_of_create.porting_lib.model.pipeline.QuadBakingVertexConsumer;
-import io.github.fabricators_of_create.porting_lib.model.renderable.CompositeRenderable;
-import joptsimple.internal.Strings;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec2;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +13,39 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.mojang.math.Transformation;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
+
+import io.github.fabricators_of_create.porting_lib.client.textures.UnitTextureAtlasSprite;
+import io.github.fabricators_of_create.porting_lib.model.IModelBuilder;
+import io.github.fabricators_of_create.porting_lib.model.geometry.IGeometryBakingContext;
+import io.github.fabricators_of_create.porting_lib.model.geometry.SimpleUnbakedGeometry;
+import io.github.fabricators_of_create.porting_lib.model.geometry.UnbakedGeometryHelper;
+import io.github.fabricators_of_create.porting_lib.model.pipeline.QuadBakingVertexConsumer;
+import io.github.fabricators_of_create.porting_lib.renderable.CompositeRenderable;
+import joptsimple.internal.Strings;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec2;
 
 /**
  * A model loaded from an OBJ file.

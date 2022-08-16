@@ -113,6 +113,7 @@ allprojects {
 				includeGroup("com.github.LlamaLad7")
 			}
 		}
+		mavenCentral()
 	}
 
 	dependencies {
@@ -124,26 +125,25 @@ allprojects {
 			it.officialMojangMappings { nameSyntheticMembers = false }
 		})
 		modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
-		modLocalRuntime("maven.modrinth:lazydfu:0.1.2")
-		modLocalRuntime("maven.modrinth:suggestionproviderfabric:1.0.1")
+		modLocalRuntime("maven.modrinth:lazydfu:0.1.3")
+//		modLocalRuntime("maven.modrinth:suggestionproviderfabric:1.0.1")
 		//	modLocalRuntime("mcjty.theoneprobe:theoneprobe-fabric:${top_version}")
-		modLocalRuntime("maven.modrinth:lithium:${project.lithium_version}")
-		modLocalRuntime("maven.modrinth:vmp-fabric:${project.vmp_version}")
+//		modLocalRuntime("maven.modrinth:lithium:${project.lithium_version}")
+//		modLocalRuntime("maven.modrinth:vmp-fabric:${project.vmp_version}")
 		//	modLocalRuntime("maven.modrinth:iris:${project.iris_version}")
 		//	modLocalRuntime("dev.monarkhes:myron:1.6.3+1.18.1") { transitive = false }
-		modLocalRuntime("com.terraformersmc:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc";
-			exclude group: "net.fabricmc.fabric-api" }
+		modLocalRuntime("com.terraformersmc:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
 
 		// dependencies
 		modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
 		modImplementation(include("io.github.tropheusj:serialization-hooks:${project.serialization_hooks_version}"))
-		modApi(include("me.alphamode:ForgeTags:${project.forge_tags_version}"))
+		modApi(include("me.alphamode:ForgeTags:${project.forge_tags_version}")) { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
 		api(include("com.github.LlamaLad7:MixinExtras:0.0.12"))
 		annotationProcessor(include("com.github.LlamaLad7:MixinExtras:0.0.12"))
 
 		modApi(include("com.github.Chocohead:Fabric-ASM:v2.3"))
 		implementation("javax.annotation:javax.annotation-api:1.3.2")
-		implementation("com.google.code.findbugs:jsr305:3.0.0")
+		implementation('com.google.code.findbugs:jsr305:3.0.2')
 	}
 
 	processResources {

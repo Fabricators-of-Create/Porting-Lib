@@ -12,7 +12,7 @@
   "depends": {
     "fabricloader": ">=0.14.9",
     "fabric": "*",
-    "minecraft": "1.18.2"
+    "minecraft": ">=${minecraft_version}"
   },
   "custom": {
     "modmenu": {

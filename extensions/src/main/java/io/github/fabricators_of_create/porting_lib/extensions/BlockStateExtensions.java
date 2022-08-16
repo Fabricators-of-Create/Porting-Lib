@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.extensions;
 
+import io.github.fabricators_of_create.porting_lib.util.IPlantable;
 import io.github.fabricators_of_create.porting_lib.util.ToolAction;
 import io.github.fabricators_of_create.porting_lib.util.ToolActions;
 import net.minecraft.core.BlockPos;

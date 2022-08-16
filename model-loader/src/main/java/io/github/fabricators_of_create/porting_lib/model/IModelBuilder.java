@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.model;
 
+import io.github.fabricators_of_create.porting_lib.client.RenderTypeGroup;
 import io.github.fabricators_of_create.porting_lib.mixin.client.accessor.SimpleBakedModel$BuilderAccessor;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;

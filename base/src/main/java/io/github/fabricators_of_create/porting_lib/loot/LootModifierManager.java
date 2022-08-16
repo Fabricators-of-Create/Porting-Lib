@@ -11,6 +11,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import io.github.fabricators_of_create.porting_lib.PortingConstants;
+
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+
+import net.minecraft.server.packs.PackType;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,7 +38,7 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.storage.loot.Deserializers;
 
-public class LootModifierManager extends SimpleJsonResourceReloadListener {
+public class LootModifierManager extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener {
 	public static final Logger LOGGER = LogManager.getLogger();
 	public static final Gson GSON_INSTANCE = Deserializers.createFunctionSerializer().create();
 
@@ -87,4 +95,21 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
 		return registeredLootModifiers.values();
 	}
 
+	private static LootModifierManager INSTANCE;
+
+	public static void init() {
+		INSTANCE = new LootModifierManager();
+		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(INSTANCE);
+	}
+
+	public static LootModifierManager getLootModifierManager() {
+		if(INSTANCE == null)
+			throw new IllegalStateException("Can not retrieve LootModifierManager until resources have loaded once.");
+		return INSTANCE;
+	}
+
+	@Override
+	public ResourceLocation getFabricId() {
+		return PortingConstants.id("loot_modifier_manager");
+	}
 }

@@ -4,7 +4,8 @@ version = getSubprojectVersion(project)
 moduleDependencies(project, [
 		'model-loader',
 		'obj-loader',
-		'extensions'
+		'extensions',
+		'transfer'
 ])
 
 processResources {

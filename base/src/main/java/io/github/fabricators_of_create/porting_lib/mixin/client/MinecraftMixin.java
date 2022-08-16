@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 import static net.minecraft.world.InteractionResult.PASS;
 import static net.minecraft.world.InteractionResult.SUCCESS;
 
-import io.github.fabricators_of_create.porting_lib.model.GeometryLoaderManager;
+import io.github.fabricators_of_create.porting_lib.model.geometry.GeometryLoaderManager;
 
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;

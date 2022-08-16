@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.List;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -27,8 +29,8 @@ public class LootTableMixin implements LootTableExtensions {
 	@Override
 	public ResourceLocation getLootTableId() { return this.lootTableId; }
 
-	@ModifyReturnValue(method = "getRandomItems(Lnet/minecraft/world/level/storage/loot/LootContext;)Ljava/util/List;", at = @At("RETURN"))
-	public List<ItemStack> port_lib$modifyGlobalLootTable(List<ItemStack> list, LootContext context) {
+	@ModifyReturnValue(method = "getRandomItems(Lnet/minecraft/world/level/storage/loot/LootContext;)Lit/unimi/dsi/fastutil/objects/ObjectArrayList;", at = @At("RETURN"))
+	public List<ItemStack> port_lib$modifyGlobalLootTable(ObjectArrayList<ItemStack> list, LootContext context) {
 		return PortingHooks.modifyLoot(getLootTableId(), list, context);
 	}
 }

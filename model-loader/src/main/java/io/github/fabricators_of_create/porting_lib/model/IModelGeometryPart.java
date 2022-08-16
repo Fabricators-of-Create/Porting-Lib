@@ -7,6 +7,7 @@ import java.util.function.Function;
 
 import com.mojang.datafixers.util.Pair;
 
+import io.github.fabricators_of_create.porting_lib.model.geometry.IGeometryBakingContext;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;

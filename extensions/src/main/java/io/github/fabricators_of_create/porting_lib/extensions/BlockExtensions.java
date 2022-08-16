@@ -1,9 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.extensions;
 
+import io.github.fabricators_of_create.porting_lib.util.IPlantable;
 import io.github.fabricators_of_create.porting_lib.util.PlantType;
 import io.github.fabricators_of_create.porting_lib.util.ToolAction;
 import io.github.fabricators_of_create.porting_lib.util.ToolActions;
-import net.fabricmc.fabric.mixin.content.registry.ShovelItemAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;

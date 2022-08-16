@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib;
 
+import io.github.fabricators_of_create.porting_lib.loot.LootModifierManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +25,9 @@ public class PortingLib implements ModInitializer {
 	public void onInitialize() {
 		ServerLifecycleHooks.init();
 		TierSortingRegistry.init();
+		LootModifierManager.init();
 		ConditionalRecipe.init();
 		ItemItemStorages.init();
-		TransferUtil.initApi();
 		CraftingHelper.init();
 		TrueCondition.init();
 		PortingHooks.init();

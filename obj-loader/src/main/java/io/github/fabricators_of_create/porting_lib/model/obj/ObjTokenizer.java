@@ -1,12 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.model.obj;
 
-<<<<<<<< HEAD:obj-loader/src/client/java/io/github/fabricators_of_create/porting_lib/model/obj/ObjTokenizer.java
 import com.google.common.base.Charsets;
 import joptsimple.internal.Strings;
 import org.jetbrains.annotations.Nullable;
 
-========
->>>>>>>> 1.18.2-dev:obj-loader/src/client/java/io/github/fabricators_of_create/porting_lib/model/obj/LineReader.java
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-<<<<<<<< HEAD:obj-loader/src/client/java/io/github/fabricators_of_create/porting_lib/model/obj/ObjTokenizer.java
 /**
  * A tokenizer for OBJ and MTL files.
  * <p>
@@ -23,18 +19,6 @@ import java.util.List;
  */
 public class ObjTokenizer implements AutoCloseable {
 	private final BufferedReader lineReader;
-========
-import javax.annotation.Nullable;
-
-import com.google.common.base.Charsets;
-
-import joptsimple.internal.Strings;
-import net.minecraft.server.packs.resources.Resource;
-
-public class LineReader implements AutoCloseable {
-	InputStreamReader lineStream;
-	BufferedReader lineReader;
->>>>>>>> 1.18.2-dev:obj-loader/src/client/java/io/github/fabricators_of_create/porting_lib/model/obj/LineReader.java
 
 	public ObjTokenizer(InputStream inputStream) {
 		this.lineReader = new BufferedReader(new InputStreamReader(inputStream, Charsets.UTF_8));

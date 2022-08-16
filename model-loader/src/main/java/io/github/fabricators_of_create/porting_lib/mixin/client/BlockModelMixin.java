@@ -10,6 +10,7 @@ import io.github.fabricators_of_create.porting_lib.model.CompositeModelState;
 
 import io.github.fabricators_of_create.porting_lib.model.PerspectiveMapWrapper;
 
+import io.github.fabricators_of_create.porting_lib.model.geometry.BlockGeometryBakingContext;
 import io.github.fabricators_of_create.porting_lib.model.geometry.UnbakedGeometryHelper;
 import io.github.fabricators_of_create.porting_lib.render.TransformTypeDependentItemBakedModel;
 
@@ -24,8 +25,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.mojang.datafixers.util.Pair;
 
 import io.github.fabricators_of_create.porting_lib.extensions.BlockModelExtensions;
-import io.github.fabricators_of_create.porting_lib.model.BlockGeometryBakingContext;
-import io.github.fabricators_of_create.porting_lib.model.IUnbakedGeometry;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;

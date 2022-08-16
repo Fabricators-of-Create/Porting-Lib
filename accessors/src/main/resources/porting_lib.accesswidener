@@ -14,6 +14,8 @@ transitive-accessible class net/minecraft/world/item/alchemy/PotionBrewing$Mix
 
 transitive-accessible class net/minecraft/client/renderer/texture/TextureAtlasSprite$AnimatedTexture
 
+transitive-accessible class net/minecraft/client/renderer/FogRenderer$FogData
+
 transitive-accessible class net/minecraft/client/renderer/RenderType$CompositeState
 transitive-accessible class net/minecraft/client/renderer/RenderType$CompositeRenderType
 
@@ -69,5 +71,21 @@ transitive-accessible class net/minecraft/client/gui/components/CommandSuggestio
 transitive-accessible method net/minecraft/client/gui/components/CommandSuggestions$SuggestionsList <init> (Lnet/minecraft/client/gui/components/CommandSuggestions;IIILjava/util/List;Z)V
 transitive-accessible field net/minecraft/world/item/ShovelItem FLATTENABLES Ljava/util/Map;
 transitive-accessible method net/minecraft/client/gui/screens/MenuScreens getConstructor (Lnet/minecraft/world/inventory/MenuType;)Lnet/minecraft/client/gui/screens/MenuScreens$ScreenConstructor;
+
+transitive-accessible field net/minecraft/world/level/block/FlowerPotBlock content Lnet/minecraft/world/level/block/Block;
+transitive-mutable field net/minecraft/world/level/block/FlowerPotBlock content Lnet/minecraft/world/level/block/Block;
+transitive-accessible method net/minecraft/world/entity/SpawnPlacements register (Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/entity/SpawnPlacements$Type;Lnet/minecraft/world/level/levelgen/Heightmap$Types;Lnet/minecraft/world/entity/SpawnPlacements$SpawnPredicate;)V
+
+transitive-accessible method net/minecraft/resources/ResourceKey create (Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/resources/ResourceKey;
+
 transitive-accessible field net/minecraft/data/loot/EntityLoot SPECIAL_LOOT_TABLE_TYPES Ljava/util/Set;
 transitive-accessible field net/minecraft/data/loot/EntityLoot map Ljava/util/Map;
+
+transitive-accessible class net/minecraft/client/renderer/RenderStateShard$TextureStateShard
+transitive-accessible field net/minecraft/client/renderer/RenderStateShard$TextureStateShard blur Z
+transitive-accessible field net/minecraft/client/renderer/RenderStateShard$TextureStateShard mipmap Z
+transitive-accessible field net/minecraft/client/renderer/RenderStateShard setupState Ljava/lang/Runnable;
+
+transitive-accessible method net/minecraft/client/gui/screens/MenuScreens getConstructor (Lnet/minecraft/world/inventory/MenuType;)Lnet/minecraft/client/gui/screens/MenuScreens$ScreenConstructor;
+transitive-accessible method net/minecraft/client/renderer/block/model/BlockModel bakeFace (Lnet/minecraft/client/renderer/block/model/BlockElement;Lnet/minecraft/client/renderer/block/model/BlockElementFace;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/core/Direction;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/block/model/BakedQuad;
+transitive-accessible method net/minecraft/client/renderer/block/model/ItemModelGenerator processFrames (ILjava/lang/String;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;)Ljava/util/List;

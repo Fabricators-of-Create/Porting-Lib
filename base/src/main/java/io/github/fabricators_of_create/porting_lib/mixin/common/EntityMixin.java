@@ -2,10 +2,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.Collection;
 
-import io.github.fabricators_of_create.porting_lib.entity.StepHeightEntity;
 import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializableCompound;
-import net.minecraft.world.phys.Vec3;
-
 import net.minecraft.world.phys.Vec3;
 
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +24,6 @@ import io.github.fabricators_of_create.porting_lib.event.common.MountEntityCallb
 import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.ITeleporter;
 import io.github.fabricators_of_create.porting_lib.util.EntityHelper;
-import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;

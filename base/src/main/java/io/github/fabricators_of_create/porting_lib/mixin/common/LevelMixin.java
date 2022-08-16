@@ -10,6 +10,7 @@ import java.util.function.Predicate;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
+import io.github.fabricators_of_create.porting_lib.PortingConstants;
 import io.github.fabricators_of_create.porting_lib.PortingLib;
 import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
@@ -138,7 +139,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 				if (data.pos().equals(pos)) {
 					BlockState state = data.state();
 					if (state == null) {
-						PortingLib.LOGGER.error("null blockstate stored in snapshots at " + pos);
+						PortingConstants.LOGGER.error("null blockstate stored in snapshots at " + pos);
 						new Throwable().printStackTrace();
 					} else {
 						cir.setReturnValue(state);
@@ -153,7 +154,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 			at = @At(value = "INVOKE", shift = Shift.BEFORE, target = "Lnet/minecraft/world/level/Level;getChunkAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/chunk/LevelChunk;"), cancellable = true)
 	private void port_lib$setBlock(BlockPos pos, BlockState state, int flags, int recursionLeft, CallbackInfoReturnable<Boolean> cir) {
 		if (state == null) {
-			PortingLib.LOGGER.error("Setting null blockstate at " + pos);
+			PortingConstants.LOGGER.error("Setting null blockstate at " + pos);
 			new Throwable().printStackTrace();
 		}
 		if (port_lib$modifiedStates != null) {
@@ -219,33 +220,6 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		if (ExplosionEvents.START.invoker().onExplosionStart((Level) (Object) this, explosion)) cir.setReturnValue(explosion);
 	}
 
-	@Inject(
-			method = "getEntities(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;",
-			at = @At("TAIL"),
-			locals = LocalCapture.CAPTURE_FAILHARD
-	)
-	private void port_lib$appendPartEntitiesPredicate(@Nullable Entity entity, AABB area, Predicate<? super Entity> predicate, CallbackInfoReturnable<List<Entity>> cir, List<Entity> list) {
-		for (PartEntity<?> p : this.getPartEntities()) {
-			if (p != entity && p.getBoundingBox().intersects(area) && predicate.test(p)) {
-				list.add(p);
-			}
-		}
-	}
-
-	@Inject(
-			method = "getEntities(Lnet/minecraft/world/level/entity/EntityTypeTest;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;",
-			at = @At("TAIL"),
-			locals = LocalCapture.CAPTURE_FAILHARD
-	)
-	private <T extends Entity> void port_lib$appendPartEntitiesTypeTest(EntityTypeTest<Entity, T> test, AABB area, Predicate<? super T> predicate, CallbackInfoReturnable<List<T>> cir, List<Entity> list) {
-		for (PartEntity<?> p : this.getPartEntities()) {
-			T t = test.tryCast(p);
-			if (t != null && t.getBoundingBox().intersects(area) && predicate.test(t)) {
-				list.add(t);
-			}
-		}
-	}
-
 	@Inject(method = "tickBlockEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;push(Ljava/lang/String;)V", shift = Shift.AFTER))
 	public void port_lib$pendingBlockEntities(CallbackInfo ci) {
 		if (!this.port_lib$pendingFreshBlockEntities.isEmpty()) {
@@ -270,11 +244,6 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		} else {
 			this.port_lib$freshBlockEntities.addAll(beList);
 		}
-	}
-
-	@Override
-	public Int2ObjectMap<PartEntity<?>> getPartEntityMap() {
-		return port_lib$multiparts;
 	}
 
 	@Unique

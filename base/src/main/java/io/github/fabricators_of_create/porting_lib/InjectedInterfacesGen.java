@@ -32,7 +32,7 @@ import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensi
 import io.github.fabricators_of_create.porting_lib.extensions.EntityCollisionContextExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializableCompound;
-import io.github.fabricators_of_create.porting_lib.extensions.IPlantable;
+import io.github.fabricators_of_create.porting_lib.util.IPlantable;
 import io.github.fabricators_of_create.porting_lib.extensions.IShearable;
 import io.github.fabricators_of_create.porting_lib.extensions.ItemExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.ItemStackExtensions;
@@ -101,7 +101,6 @@ import net.minecraft.world.level.block.WebBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
 
@@ -123,7 +122,7 @@ public class InjectedInterfacesGen {
 		boolean inception = Boolean.parseBoolean(System.getProperty(IT_GOES_DEEPER));
 		if (inception) {
 			InjectedInterfacesGenGen.run();
-			PortingLib.LOGGER.info("Porting Lib successfully generated the generator for injected interfaces. my head hurts.");
+			PortingConstants.LOGGER.info("Porting Lib successfully generated the generator for injected interfaces. my head hurts.");
 			System.exit(0);
 			return;
 		}
@@ -140,8 +139,8 @@ public class InjectedInterfacesGen {
 			}
 			entries.add(target.replaceAll("\\.", "/"), injectionsJson);
 		});
-		PortingLib.LOGGER.info("\n{}", gson.toJson(root));
-		PortingLib.LOGGER.info("Porting Lib successfully generated injected interfaces.");
+		PortingConstants.LOGGER.info("\n{}", gson.toJson(root));
+		PortingConstants.LOGGER.info("Porting Lib successfully generated injected interfaces.");
 		System.exit(0);
 	}
 
@@ -347,7 +346,7 @@ public class InjectedInterfacesGen {
 //				end(code);
 //			}
 
-			PortingLib.LOGGER.info(code.toString());
+			PortingConstants.LOGGER.info(code.toString());
 		}
 	}
 

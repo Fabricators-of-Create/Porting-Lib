@@ -18,7 +18,7 @@ public class PortingLibRegistries {
 		public static final ResourceKey<Registry<Codec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS = key("global_loot_modifier_serializers");
 
 		private static <T> ResourceKey<Registry<T>> key(String name) {
-			return ResourceKey.createRegistryKey(PortingLib.id(name));
+			return ResourceKey.createRegistryKey(PortingConstants.id(name));
 		}
 	}
 }

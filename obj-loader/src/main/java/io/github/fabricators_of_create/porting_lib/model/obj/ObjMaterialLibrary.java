@@ -1,32 +1,19 @@
 package io.github.fabricators_of_create.porting_lib.model.obj;
 
-<<<<<<<< HEAD:obj-loader/src/client/java/io/github/fabricators_of_create/porting_lib/model/obj/ObjMaterialLibrary.java
 import com.google.common.collect.Maps;
 import com.mojang.math.Vector4f;
 import joptsimple.internal.Strings;
 
-========
->>>>>>>> 1.18.2-dev:obj-loader/src/client/java/io/github/fabricators_of_create/porting_lib/model/obj/MaterialLibrary.java
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-<<<<<<<< HEAD:obj-loader/src/client/java/io/github/fabricators_of_create/porting_lib/model/obj/ObjMaterialLibrary.java
 /**
  * An OBJ material library (MTL), composed of named {@link Material materials}.
  */
 public class ObjMaterialLibrary {
 	public static final ObjMaterialLibrary EMPTY = new ObjMaterialLibrary();
-========
-import com.google.common.collect.Maps;
-import com.mojang.math.Vector4f;
-
-import joptsimple.internal.Strings;
-
-public class MaterialLibrary {
-	public static final MaterialLibrary EMPTY = new MaterialLibrary();
->>>>>>>> 1.18.2-dev:obj-loader/src/client/java/io/github/fabricators_of_create/porting_lib/model/obj/MaterialLibrary.java
 	final Map<String, Material> materials = Maps.newHashMap();
 
 	private ObjMaterialLibrary() {}

@@ -1,21 +1,12 @@
 package io.github.fabricators_of_create.porting_lib;
 
-import io.github.fabricators_of_create.porting_lib.event.client.RegisterShadersCallback;
-
-import io.github.fabricators_of_create.porting_lib.model.PortingLibRenderTypes;
-
-import io.github.fabricators_of_create.porting_lib.util.LogicalSidedProvider;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
-import io.github.fabricators_of_create.porting_lib.model.DynamicBucketModel;
-import io.github.fabricators_of_create.porting_lib.model.ModelLoaderRegistry;
 import io.github.fabricators_of_create.porting_lib.util.FluidTextUtil;
+import io.github.fabricators_of_create.porting_lib.util.LogicalSidedProvider;
 import io.github.fabricators_of_create.porting_lib.util.NetworkUtil;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
@@ -31,7 +22,6 @@ import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -42,7 +32,7 @@ public class PortingLibClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(FluidTextUtil.NUMBER_FORMAT);
-		RegisterShadersCallback.EVENT.register(PortingLibRenderTypes.Internal::initEntityTranslucentUnlitShader);
+
 		ClientEntityEvents.ENTITY_LOAD.register((entity, world) -> {
 			if (entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
 				for (PartEntity<?> part : partEntity.getParts()) {
@@ -94,7 +84,5 @@ public class PortingLibClient implements ClientModInitializer {
 		} finally {
 			buf.release(); // Release the buf
 		}
-
-		ModelLoaderRegistry.registerLoader(new ResourceLocation("forge","bucket"), DynamicBucketModel.Loader.INSTANCE);
 	}
 }

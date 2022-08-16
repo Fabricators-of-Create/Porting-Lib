@@ -20,7 +20,6 @@
     "ClientboundPlayerAbilitiesPacketAccessor",
     "CubeVoxelShapeAccessor",
     "DamageSourceAccessor",
-    "DimensionTypeAccessor",
     "EntityAccessor",
     "HashMapPaletteAccessor",
     "ItemAccessor",

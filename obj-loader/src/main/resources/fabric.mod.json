@@ -12,7 +12,12 @@
   "depends": {
     "fabricloader": ">=0.14.9",
     "fabric": "*",
-    "minecraft": "1.18.2"
+    "minecraft": ">=${minecraft_version}"
+  },
+  "entrypoints": {
+    "client": [
+      "io.github.fabricators_of_create.porting_lib.PortingLibObjLoader"
+    ]
   },
   "custom": {
     "modmenu": {

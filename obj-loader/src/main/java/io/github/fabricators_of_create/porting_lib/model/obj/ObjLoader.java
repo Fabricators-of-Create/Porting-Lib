@@ -9,7 +9,9 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-import io.github.fabricators_of_create.porting_lib.model.IGeometryLoader;
+import io.github.fabricators_of_create.porting_lib.PortingConstants;
+import io.github.fabricators_of_create.porting_lib.model.geometry.IGeometryLoader;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -23,7 +25,7 @@ import net.minecraft.util.GsonHelper;
  * Allows the user to enable automatic face culling, toggle quad shading, flip UVs, render emissively and specify a
  * {@link ObjMaterialLibrary material library} override.
  */
-public class ObjLoader implements IGeometryLoader<ObjModel>, ResourceManagerReloadListener {
+public class ObjLoader implements IGeometryLoader<ObjModel>, ResourceManagerReloadListener, IdentifiableResourceReloadListener {
 	public static ObjLoader INSTANCE = new ObjLoader();
 
 	private final Map<ObjModel.ModelSettings, ObjModel> modelCache = Maps.newHashMap();
@@ -105,5 +107,10 @@ public class ObjLoader implements IGeometryLoader<ObjModel>, ResourceManagerRelo
 				throw new RuntimeException("Could not read OBJ material library", e);
 			}
 		});
+	}
+
+	@Override
+	public ResourceLocation getFabricId() {
+		return PortingConstants.id("obj-loader");
 	}
 }

@@ -4,6 +4,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
+import io.github.fabricators_of_create.porting_lib.PortingConstants;
 import io.github.fabricators_of_create.porting_lib.PortingLib;
 import net.minecraft.world.level.storage.loot.Serializer;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
@@ -15,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 public class LootTableIdCondition implements LootItemCondition {
 	// TODO Forge Registry at some point?
 	public static final LootItemConditionType LOOT_TABLE_ID = new LootItemConditionType(new LootTableIdCondition.Serializer());
-	public static final ResourceLocation UNKNOWN_LOOT_TABLE = PortingLib.id("unknown_loot_table");
+	public static final ResourceLocation UNKNOWN_LOOT_TABLE = PortingConstants.id("unknown_loot_table");
 
 	private final ResourceLocation targetLootTableId;
 

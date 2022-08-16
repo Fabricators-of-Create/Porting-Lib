@@ -14,7 +14,8 @@
   "icon": "assets/porting_lib/icon.png",
   "environment": "*",
   "mixins": [
-    "porting_lib.mixins.common.json"
+    "porting_lib.mixins.common.json",
+    "porting_lib.mixins.client-common.json"
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",
@@ -24,6 +25,7 @@
   },
   "custom": {
     "loom:injected_interfaces": {
+      "net/minecraft/class_1077": ["io/github/fabricators_of_create/porting_lib/extensions/LanguageInfoExtensions"],
       "net/minecraft/class_1792": ["io/github/fabricators_of_create/porting_lib/extensions/tool/ItemExtensions"]
     },
     "modmenu": {

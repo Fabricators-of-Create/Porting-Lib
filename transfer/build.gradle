@@ -6,15 +6,6 @@ moduleDependencies(project, [
 		'common'
 ])
 
-java {
-	// Must be added before the split source sets are setup.
-	withSourcesJar()
-}
-
-loom {
-	splitEnvironmentSourceSets()
-}
-
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }

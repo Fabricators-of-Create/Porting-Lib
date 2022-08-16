@@ -142,7 +142,6 @@
     "accessor.DamageSourceAccessor",
     "accessor.EntityAccessor",
     "accessor.HashMapPaletteAccessor",
-    "accessor.HumanoidModelAccessor",
     "accessor.ItemAccessor",
     "accessor.ItemValueAccessor",
     "accessor.LiquidBlockAccessor",

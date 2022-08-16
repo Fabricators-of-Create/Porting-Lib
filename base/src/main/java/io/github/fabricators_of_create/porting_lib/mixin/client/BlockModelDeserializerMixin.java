@@ -8,7 +8,7 @@ import java.util.Map;
 import com.google.gson.JsonParseException;
 import com.mojang.math.Transformation;
 
-import io.github.fabricators_of_create.porting_lib.model.GeometryLoaderManager;
+import io.github.fabricators_of_create.porting_lib.model.geometry.GeometryLoaderManager;
 import net.minecraft.resources.ResourceLocation;
 
 import org.jetbrains.annotations.Nullable;
@@ -22,10 +22,9 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import io.github.fabricators_of_create.porting_lib.model.IUnbakedGeometry;
+import io.github.fabricators_of_create.porting_lib.model.geometry.IUnbakedGeometry;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.util.GsonHelper;
 
 @Mixin(BlockModel.Deserializer.class)
