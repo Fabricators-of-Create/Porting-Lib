@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "porting_lib-common-entity",
   "version": "${version}",
-  "name": "Porting Lib",
+  "name": "Porting Lib Entity",
   "description": "A collection of utilities for porting mods from Forge to Fabric.",
   "authors": [
     "The Create Fabric Team"
@@ -16,6 +16,11 @@
   "mixins": [
     "porting_lib-entity.mixins.common.json"
   ],
+  "entrypoints": {
+    "client": [
+      "io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity"
+    ]
+  },
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": ">=${fabric_version}",
@@ -27,7 +32,14 @@
       "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/extensions/entity/LevelExtensions"]
     },
     "modmenu": {
-      "badges": [ "library" ]
+      "badges": [ "library" ],
+      "parent": {
+        "id": "porting_lib",
+        "name": "Porting Lib",
+        "description": "A collection of utilities for porting mods from Forge to Fabric.",
+        "icon": "assets/porting_lib/icon.png",
+        "badges": [ "library" ]
+      }
     }
   }
 }

@@ -2,18 +2,17 @@ package io.github.fabricators_of_create.porting_lib.crafting;
 
 import java.util.stream.Stream;
 
-import javax.annotation.Nullable;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import io.github.fabricators_of_create.porting_lib.crafting.PartialNBTIngredient.Serializer;
 import io.github.tropheusj.serialization_hooks.ingredient.IngredientDeserializer;
 import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.network.FriendlyByteBuf;
+
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Ingredient that matches the given stack, performing an exact NBT match.

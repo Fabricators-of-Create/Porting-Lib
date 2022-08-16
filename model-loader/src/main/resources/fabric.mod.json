@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib-model-loader",
+  "version": "${version}",
+  "name": "Porting Lib Model Loader",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/porting_lib/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "io.github.fabricators_of_create.porting_lib.client.Porting_libClient"
+    ],
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.Porting_lib"
+    ]
+  },
+  "mixins": [
+    "porting_lib.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.9",
+    "fabric": "*",
+    "minecraft": "1.18.2"
+  },
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_793": ["io/github/fabricators_of_create/porting_lib/extensions/BlockModelExtensions"]
+    },
+    "modmenu": {
+      "badges": [ "library" ],
+      "parent": {
+        "id": "porting_lib",
+        "name": "Porting Lib",
+        "description": "A collection of utilities for porting mods from Forge to Fabric.",
+        "icon": "assets/porting_lib/icon.png",
+        "badges": [ "library" ]
+      }
+    }
+  }
+}

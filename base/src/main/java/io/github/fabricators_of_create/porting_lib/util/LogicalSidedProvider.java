@@ -19,8 +19,7 @@ public class LogicalSidedProvider<T> {
 	private static Supplier<MinecraftServer> server;
 
 	// INTERNAL, DO  NOT CALL
-	public static void setClient(Supplier<Minecraft> client)
-	{
+	public static void setClient(Supplier<Minecraft> client) {
 		LogicalSidedProvider.client = client;
 	}
 	public static void setServer(Supplier<MinecraftServer> server)
@@ -28,8 +27,7 @@ public class LogicalSidedProvider<T> {
 		LogicalSidedProvider.server = server;
 	}
 
-	private LogicalSidedProvider(Function<Supplier<Minecraft>, T> clientSide, Function<Supplier<MinecraftServer>, T> serverSide)
-	{
+	private LogicalSidedProvider(Function<Supplier<Minecraft>, T> clientSide, Function<Supplier<MinecraftServer>, T> serverSide) {
 		this.clientSide = clientSide;
 		this.serverSide = serverSide;
 	}

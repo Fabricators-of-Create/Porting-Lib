@@ -15,6 +15,7 @@
       "me.pepperbell.simplenetworking.SimpleNetworking"
     ]
   },
+  "icon": "assets/porting_lib/icon.png",
   "license": "LGPL",
   "environment": "*",
   "depends": {
@@ -25,7 +26,14 @@
   },
   "custom": {
     "modmenu": {
-      "badges": [ "library" ]
+      "badges": [ "library" ],
+      "parent": {
+        "id": "porting_lib",
+        "name": "Porting Lib",
+        "description": "A collection of utilities for porting mods from Forge to Fabric.",
+        "icon": "assets/porting_lib/icon.png",
+        "badges": [ "library" ]
+      }
     }
   }
 }

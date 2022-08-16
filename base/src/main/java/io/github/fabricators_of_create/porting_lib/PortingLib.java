@@ -19,13 +19,9 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 
 public class PortingLib implements ModInitializer {
-	public static final String ID = "porting_lib";
-	public static final Logger LOGGER = LoggerFactory.getLogger(ID);
-
 	@Override
 	public void onInitialize() {
 		ServerLifecycleHooks.init();
-		PortingLibAttributes.init();
 		TierSortingRegistry.init();
 		ConditionalRecipe.init();
 		ItemItemStorages.init();
@@ -38,9 +34,5 @@ public class PortingLib implements ModInitializer {
 
 		Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
 		Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:can_tool_perform_action"), CanToolPerformAction.LOOT_CONDITION_TYPE);
-	}
-
-	public static ResourceLocation id(String path) {
-		return new ResourceLocation(ID, path);
 	}
 }

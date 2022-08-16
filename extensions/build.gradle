@@ -2,8 +2,9 @@ archivesBaseName = "extensions"
 version = "1.0"
 
 moduleDependencies(project, [
+		'attributes',
+		'accessors',
 		'common',
-		'attributes'
 ])
 
 processResources {

@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "priority": 951,
+  "package": "io.github.fabricators_of_create.porting_lib.mixin.common",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "tool.ItemMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1,
+    "maxShiftBy": 999999
+  }
+}

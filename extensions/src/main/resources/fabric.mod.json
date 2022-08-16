@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "porting_lib-extensions",
   "version": "${version}",
-  "name": "Porting Lib",
+  "name": "Porting Lib Extensions",
   "description": "A collection of utilities for porting mods from Forge to Fabric.",
   "authors": [
     "The Create Fabric Team"
@@ -85,14 +85,18 @@
       "net/minecraft/class_3665": ["io/github/fabricators_of_create/porting_lib/extensions/ModelStateExtensions"],
       "net/minecraft/class_3727": ["io/github/fabricators_of_create/porting_lib/extensions/EntityCollisionContextExtensions"],
       "net/minecraft/class_4184": ["io/github/fabricators_of_create/porting_lib/extensions/CameraExtensions"],
-      "net/minecraft/class_4590": [
-        "io/github/fabricators_of_create/porting_lib/extensions/TransformationExtensions",
-        "io/github/fabricators_of_create/porting_lib/extensions/client/TransformationClientExtensions"
-      ],
+      "net/minecraft/class_4590": ["io/github/fabricators_of_create/porting_lib/extensions/TransformationExtensions"],
       "net/minecraft/class_4581": ["io/github/fabricators_of_create/porting_lib/extensions/Matrix3fExtensions"]
     },
     "modmenu": {
-      "badges": [ "library" ]
+      "badges": [ "library" ],
+      "parent": {
+        "id": "porting_lib",
+        "name": "Porting Lib",
+        "description": "A collection of utilities for porting mods from Forge to Fabric.",
+        "icon": "assets/porting_lib/icon.png",
+        "badges": [ "library" ]
+      }
     }
   }
 }

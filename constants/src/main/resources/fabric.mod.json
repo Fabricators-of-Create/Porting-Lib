@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "porting_lib-constants",
   "version": "${version}",
-  "name": "Porting Lib",
+  "name": "Porting Lib Constants",
   "description": "A collection of utilities for porting mods from Forge to Fabric.",
   "authors": [
     "The Create Fabric Team"
@@ -21,7 +21,14 @@
   },
   "custom": {
     "modmenu": {
-      "badges": [ "library" ]
+      "badges": [ "library" ],
+      "parent": {
+        "id": "porting_lib",
+        "name": "Porting Lib",
+        "description": "A collection of utilities for porting mods from Forge to Fabric.",
+        "icon": "assets/porting_lib/icon.png",
+        "badges": [ "library" ]
+      }
     }
   }
 }
