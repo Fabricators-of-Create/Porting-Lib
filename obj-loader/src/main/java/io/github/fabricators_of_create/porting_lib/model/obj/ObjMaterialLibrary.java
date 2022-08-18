@@ -3,6 +3,10 @@ package io.github.fabricators_of_create.porting_lib.model.obj;
 import com.google.common.collect.Maps;
 import com.mojang.math.Vector4f;
 import joptsimple.internal.Strings;
+import net.fabricmc.fabric.api.renderer.v1.Renderer;
+import net.fabricmc.fabric.api.renderer.v1.material.MaterialFinder;
+import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
+import net.minecraft.resources.ResourceLocation;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -30,6 +34,9 @@ public class ObjMaterialLibrary {
 					materials.put(name, currentMaterial);
 					break;
 				}
+				case "texture":
+					currentMaterial.texture = new ResourceLocation(line[1]);
+					break;
 
 				case "Ka":
 					currentMaterial.ambientColor = ObjModel.parseVector4(line);
@@ -86,6 +93,8 @@ public class ObjMaterialLibrary {
 
 	public static class Material {
 		public final String name;
+		private RenderMaterial material;
+		public ResourceLocation texture;
 		public Vector4f ambientColor = new Vector4f(0, 0, 0, 1);
 		public String ambientColorMap;
 		public Vector4f diffuseColor = new Vector4f(1, 1, 1, 1);
@@ -99,6 +108,16 @@ public class ObjMaterialLibrary {
 
 		// non-standard
 		public int diffuseTintIndex = 0;
+
+		public RenderMaterial getMaterial(Renderer renderer) {
+			if (this.material == null) {
+				MaterialFinder finder = renderer.materialFinder();
+
+				this.material = finder.find();
+			}
+
+			return this.material;
+		}
 
 		public Material(String name)
 		{

@@ -16,6 +16,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 
+import org.spongepowered.asm.mixin.injection.Inject;
+
 @Mixin(LootTable.class)
 public class LootTableMixin implements LootTableExtensions {
 	private ResourceLocation lootTableId;
@@ -30,7 +32,7 @@ public class LootTableMixin implements LootTableExtensions {
 	public ResourceLocation getLootTableId() { return this.lootTableId; }
 
 	@ModifyReturnValue(method = "getRandomItems(Lnet/minecraft/world/level/storage/loot/LootContext;)Lit/unimi/dsi/fastutil/objects/ObjectArrayList;", at = @At("RETURN"))
-	public List<ItemStack> port_lib$modifyGlobalLootTable(ObjectArrayList<ItemStack> list, LootContext context) {
+	public ObjectArrayList<ItemStack> port_lib$modifyGlobalLootTable(ObjectArrayList<ItemStack> list, LootContext context) {
 		return PortingHooks.modifyLoot(getLootTableId(), list, context);
 	}
 }

@@ -14,6 +14,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.resources.model.BakedModel;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,7 +56,7 @@ import net.minecraft.world.phys.Vec2;
  * Supports positions, texture coordinates, normals and colors. The {@link ObjMaterialLibrary material library}
  * has support for numerous features, including support for {@link ResourceLocation} textures (non-standard).
  */
-public class ObjModel extends SimpleUnbakedGeometry<ObjModel> {
+public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements UnbakedModel {
 	private static final Logger LOGGER = LogManager.getLogger();
 
 	private static final Vector4f COLOR_WHITE = new Vector4f(1, 1, 1, 1);
@@ -300,6 +303,27 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> {
 	}
 
 	@Override
+	public Collection<Material> getMaterials(Function<ResourceLocation, UnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors) {
+		Set<Material> combined = Sets.newHashSet();
+		for (ModelGroup part : parts.values())
+			combined.addAll(part.getTextures(modelGetter, missingTextureErrors));
+		return combined;
+	}
+
+	@Nullable
+	@Override
+	public BakedModel bake(ModelBakery modelBakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState transform, ResourceLocation location) {
+		List<ObjBakedModel.Mesh> meshes = new ArrayList<>();
+
+		for (var entry : parts.entrySet()) {
+			var part = entry.getValue();
+			part.bake(meshes);
+		}
+
+		return new ObjBakedModel(meshes);
+	}
+
+	@Override
 	protected void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
 		for (var entry : deprecationWarnings.entrySet())
 			LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated \"" + entry.getKey() + "\" field in its OBJ model instead of \"" + entry.getValue() + "\". This field will be removed in 1.20.");
@@ -465,6 +489,11 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> {
 		return builder.get();
 	}
 
+	@Override
+	public Collection<ResourceLocation> getDependencies() {
+		return Collections.emptyList();
+	}
+
 	public class ModelObject {
 		public final String name;
 
@@ -490,10 +519,24 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> {
 			}
 		}
 
+		public void bake(List<ObjBakedModel.Mesh> meshes) {
+			for (ModelMesh mesh : this.meshes) {
+				mesh.bake(meshes);
+			}
+		}
+
 		public Collection<Material> getTextures(IGeometryBakingContext owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors) {
 			return meshes.stream()
 					.flatMap(mesh -> mesh.mat != null
 							? Stream.of(UnbakedGeometryHelper.resolveDirtyMaterial(mesh.mat.diffuseColorMap, owner))
+							: Stream.of())
+					.collect(Collectors.toSet());
+		}
+
+		public Collection<Material> getTextures(Function<ResourceLocation, UnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors) {
+			return meshes.stream()
+					.flatMap(mesh -> mesh.mat != null
+							? Stream.of(new Material(TextureAtlas.LOCATION_BLOCKS, mesh.mat.texture))
 							: Stream.of())
 					.collect(Collectors.toSet());
 		}
@@ -530,11 +573,30 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> {
 		}
 
 		@Override
+		public void bake(List<ObjBakedModel.Mesh> meshes) {
+			super.bake(meshes);
+
+			for (var entry : parts.entrySet()) {
+				var part = entry.getValue();
+				part.bake(meshes);
+			}
+		}
+
+		@Override
 		public Collection<Material> getTextures(IGeometryBakingContext owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors) {
 			Set<Material> combined = Sets.newHashSet();
 			combined.addAll(super.getTextures(owner, modelGetter, missingTextureErrors));
 			for (ModelObject part : parts.values())
 				combined.addAll(part.getTextures(owner, modelGetter, missingTextureErrors));
+			return combined;
+		}
+
+		@Override
+		public Collection<Material> getTextures(Function<ResourceLocation, UnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors) {
+			Set<Material> combined = Sets.newHashSet();
+			combined.addAll(super.getTextures(modelGetter, missingTextureErrors));
+			for (ModelObject part : parts.values())
+				combined.addAll(part.getTextures(modelGetter, missingTextureErrors));
 			return combined;
 		}
 
@@ -592,6 +654,26 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> {
 			ResourceLocation texturePath = new ResourceLocation(textureLocation.getNamespace(), "textures/" + textureLocation.getPath() + ".png");
 
 			builder.addMesh(texturePath, quads);
+		}
+
+		public void bake(List<ObjBakedModel.Mesh> meshes) {
+			ObjMaterialLibrary.Material mat = this.mat;
+			if (mat == null)
+				return;
+			int tintIndex = mat.diffuseTintIndex;
+			Vector4f colorTint = mat.diffuseColor;
+
+			final List<BakedQuad> quads = new ArrayList<>();
+
+			for (var face : this.faces) {
+				var pair = makeQuad(face, tintIndex, colorTint, mat.ambientColor, UnitTextureAtlasSprite.INSTANCE, Transformation.identity());
+				quads.add(pair.getLeft());
+			}
+
+			ResourceLocation textureLocation = new Material(TextureAtlas.LOCATION_BLOCKS, mat.texture).texture();
+			ResourceLocation texturePath = new ResourceLocation(textureLocation.getNamespace(), "textures/" + textureLocation.getPath() + ".png");
+
+			meshes.add(new ObjBakedModel.Mesh(texturePath, quads, mat));
 		}
 	}
 

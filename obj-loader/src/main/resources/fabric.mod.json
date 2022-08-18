@@ -19,6 +19,9 @@
       "io.github.fabricators_of_create.porting_lib.PortingLibObjLoader"
     ]
   },
+  "mixins": [
+    "porting_lib.mixins.client-obj-loader.json"
+  ],
   "custom": {
     "modmenu": {
       "badges": [ "library" ],
