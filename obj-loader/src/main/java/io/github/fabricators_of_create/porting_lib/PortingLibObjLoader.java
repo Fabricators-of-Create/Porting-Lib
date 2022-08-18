@@ -24,16 +24,18 @@ public class PortingLibObjLoader implements ClientModInitializer {
 	public void onInitializeClient() {
 		RegisterGeometryLoadersCallback.EVENT.register(loaders -> loaders.put(new ResourceLocation("forge","obj"), ObjLoader.INSTANCE));
 		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(ObjLoader.INSTANCE);
-		ModelLoadingRegistry.INSTANCE.registerModelProvider((manager, out) -> manager.listResources("models/block", resourceLocation -> {
+		ModelLoadingRegistry.INSTANCE.registerModelProvider((manager, out) -> manager.listResources("models/misc", resourceLocation -> {
 			if (resourceLocation.getPath().endsWith(".json")) {
-				try {
-					JsonObject jsonObject = Streams.parse(new JsonReader(new InputStreamReader(manager.getResource(resourceLocation).orElseThrow().open(), Charsets.UTF_8))).getAsJsonObject();
+				manager.getResource(resourceLocation).ifPresent(resource -> {
+					try {
+					JsonObject jsonObject = Streams.parse(new JsonReader(new InputStreamReader(resource.open(), Charsets.UTF_8))).getAsJsonObject();
 					if (jsonObject.has(PortingConstants.ID + ":" + "obj_marker")) {
-						out.accept(new ResourceLocation(GsonHelper.getAsString(jsonObject, "model")));
+						out.accept(resourceLocation);
 					}
-				} catch (IOException | NoSuchElementException e) {
-					throw new RuntimeException(e);
-				}
+					} catch (IOException | NoSuchElementException e) {
+						e.fillInStackTrace();
+					}
+				});
 			}
 			return true;
 		}));

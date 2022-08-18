@@ -36,18 +36,20 @@ public abstract class ModelBakeryMixin {
 
 	@Inject(method = "loadModel", at = @At("HEAD"), cancellable = true)
 	public void port_lib$loadObjModels(ResourceLocation modelLocation, CallbackInfo ci) {
-		resourceManager.getResource(new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath() + ".json")).ifPresent(resource -> {
+		if (!modelLocation.getPath().endsWith(".json"))
+			return;
+		resourceManager.getResource(new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath())).ifPresent(resource -> {
 			try {
 				JsonObject jsonObject = Streams.parse(new JsonReader(new InputStreamReader(resource.open(), Charsets.UTF_8))).getAsJsonObject();
 				if (jsonObject.has(PortingConstants.ID + ":" + "obj_marker")) {
-					ObjModel model = ObjLoader.INSTANCE.loadModel(resourceManager, new ObjModel.ModelSettings(modelLocation, true, true, true, true, null));
+					ObjModel model = ObjLoader.INSTANCE.loadModel(resourceManager, new ObjModel.ModelSettings(new ResourceLocation(GsonHelper.getAsString(jsonObject, "model")), true, true, true, true, null));
 					if (model != null) {
 						cacheAndQueueDependencies(modelLocation, model);
 						ci.cancel();
 					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+
 			}
 		});
 

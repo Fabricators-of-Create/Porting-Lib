@@ -17,6 +17,8 @@ import java.util.stream.Stream;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 
+import net.minecraft.server.packs.resources.ResourceManager;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -102,6 +104,10 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 	}
 
 	static ObjModel parse(ObjTokenizer tokenizer, ModelSettings settings, Map<String, String> deprecationWarnings) throws IOException {
+		return parse(tokenizer, settings, deprecationWarnings, null);
+	}
+
+	static ObjModel parse(ObjTokenizer tokenizer, ModelSettings settings, Map<String, String> deprecationWarnings, @Nullable ResourceManager resourceManager) throws IOException {
 		var modelLocation = settings.modelLocation;
 		var materialLibraryOverrideLocation = settings.mtlOverride;
 		var model = new ObjModel(settings, deprecationWarnings);
@@ -127,9 +133,9 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 		if (materialLibraryOverrideLocation != null) {
 			String lib = materialLibraryOverrideLocation;
 			if (lib.contains(":"))
-				mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(lib));
+				mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(lib), resourceManager);
 			else
-				mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(modelDomain, modelPath + lib));
+				mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(modelDomain, modelPath + lib), resourceManager);
 		}
 
 		String[] line;
@@ -141,9 +147,9 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 
 					String lib = line[1];
 					if (lib.contains(":"))
-						mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(lib));
+						mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(lib), resourceManager);
 					else
-						mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(modelDomain, modelPath + lib));
+						mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(modelDomain, modelPath + lib), resourceManager);
 					break;
 				}
 

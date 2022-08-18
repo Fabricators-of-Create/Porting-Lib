@@ -19,6 +19,8 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.util.GsonHelper;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * A loader for {@link ObjModel OBJ models}.
  * <p>
@@ -114,8 +116,12 @@ public class ObjLoader implements IGeometryLoader<ObjModel>, ResourceManagerRelo
 	}
 
 	public ObjMaterialLibrary loadMaterialLibrary(ResourceLocation materialLocation) {
+		return loadMaterialLibrary(materialLocation, null);
+	}
+
+	public ObjMaterialLibrary loadMaterialLibrary(ResourceLocation materialLocation, @Nullable ResourceManager resourceManager) {
 		return materialCache.computeIfAbsent(materialLocation, (location) -> {
-			Resource resource = manager.getResource(location).orElseThrow();
+			Resource resource = resourceManager != null ? resourceManager.getResource(location).orElseThrow() : manager.getResource(location).orElseThrow();
 			try (ObjTokenizer rdr = new ObjTokenizer(resource.open())) {
 				return new ObjMaterialLibrary(rdr);
 			} catch (FileNotFoundException e) {
