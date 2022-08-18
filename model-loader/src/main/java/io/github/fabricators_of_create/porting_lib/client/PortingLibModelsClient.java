@@ -7,7 +7,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public class Porting_libClient implements ClientModInitializer {
+public class PortingLibModelsClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		RegisterShadersCallback.EVENT.register(PortingLibRenderTypes.Internal::initEntityTranslucentUnlitShader);

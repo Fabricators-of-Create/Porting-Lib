@@ -102,6 +102,4 @@ public abstract class BlockModelMixin implements BlockModelExtensions {
 	public void fixElements(CallbackInfoReturnable<List<BlockElement>> cir) {
 		if (data.hasCustomGeometry()) cir.setReturnValue(java.util.Collections.emptyList());
 	}
-
-
 }

@@ -8,7 +8,6 @@
     "AbstractClientPlayerMixin",
     "AbstractTextureMixin",
     "BlockColorsMixin",
-    "BlockModelDeserializerMixin",
     "CameraMixin",
     "ChestRendererMixin",
     "ClientLanguageAccessor",

@@ -11,10 +11,7 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "io.github.fabricators_of_create.porting_lib.client.Porting_libClient"
-    ],
-    "main": [
-      "io.github.fabricators_of_create.porting_lib.Porting_lib"
+      "io.github.fabricators_of_create.porting_lib.client.PortingLibModelsClient"
     ]
   },
   "mixins": [
