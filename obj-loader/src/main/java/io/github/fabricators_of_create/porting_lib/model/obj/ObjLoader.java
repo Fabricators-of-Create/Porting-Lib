@@ -83,9 +83,26 @@ public class ObjLoader implements IGeometryLoader<ObjModel>, ResourceManagerRelo
 		return loadModel(settings, Map.of());
 	}
 
+	public ObjModel loadModel(ResourceManager resourceManager, ObjModel.ModelSettings settings) {
+		return loadModel(resourceManager, settings, Map.of());
+	}
+
 	private ObjModel loadModel(ObjModel.ModelSettings settings, Map<String, String> deprecationWarnings) {
 		return modelCache.computeIfAbsent(settings, (data) -> {
 			Resource resource = manager.getResource(settings.modelLocation()).orElseThrow();
+			try (ObjTokenizer tokenizer = new ObjTokenizer(resource.open())) {
+				return ObjModel.parse(tokenizer, settings, deprecationWarnings);
+			} catch (FileNotFoundException e) {
+				throw new RuntimeException("Could not find OBJ model", e);
+			} catch (Exception e) {
+				throw new RuntimeException("Could not read OBJ model", e);
+			}
+		});
+	}
+
+	private ObjModel loadModel(ResourceManager resourceManager, ObjModel.ModelSettings settings, Map<String, String> deprecationWarnings) {
+		return modelCache.computeIfAbsent(settings, (data) -> {
+			Resource resource = resourceManager.getResource(settings.modelLocation()).orElseThrow();
 			try (ObjTokenizer tokenizer = new ObjTokenizer(resource.open())) {
 				return ObjModel.parse(tokenizer, settings, deprecationWarnings);
 			} catch (FileNotFoundException e) {
