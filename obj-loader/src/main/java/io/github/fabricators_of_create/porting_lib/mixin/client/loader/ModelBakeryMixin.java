@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.mixin.client;
+package io.github.fabricators_of_create.porting_lib.mixin.client.loader;
 
 import com.google.common.base.Charsets;
 import com.google.gson.JsonObject;
