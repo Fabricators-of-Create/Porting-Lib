@@ -1,7 +1,10 @@
 package io.github.fabricators_of_create.porting_lib;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.NoSuchElementException;
+
 import com.google.common.base.Charsets;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
@@ -13,11 +16,6 @@ import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.util.GsonHelper;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.NoSuchElementException;
 
 public class PortingLibObjLoader implements ClientModInitializer {
 	@Override

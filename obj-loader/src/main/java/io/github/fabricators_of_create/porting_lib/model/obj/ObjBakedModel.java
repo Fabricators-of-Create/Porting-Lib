@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
@@ -65,7 +66,9 @@ public class ObjBakedModel implements BakedModel, FabricBakedModel {
 
 	@Override
 	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction direction, RandomSource random) {
-		return Collections.emptyList();
+		List<BakedQuad> bakedQuads = new ArrayList<>();
+		meshes.forEach(mesh -> bakedQuads.addAll(mesh.quads()));
+		return bakedQuads;
 	}
 
 	@Override
