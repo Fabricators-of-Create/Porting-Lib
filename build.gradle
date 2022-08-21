@@ -78,6 +78,10 @@ allprojects {
 	apply plugin: "maven-publish"
 	group = "io.github.fabricators_of_create.Porting-Lib"
 
+	tasks.withType(GenerateModuleMetadata) {
+		enabled = false
+	}
+
 	publishing {
 		setupRepositories(repositories)
 	}
@@ -146,7 +150,13 @@ allprojects {
 		implementation('com.google.code.findbugs:jsr305:3.0.2')
 	}
 
-	processResources {
+	allprojects.each { p ->
+		loom.mods.register(p.name) {
+			sourceSet p.sourceSets.main
+		}
+	}
+
+	tasks.withType(ProcessResources).configureEach {
 		Map<String, String> properties = new HashMap<>()
 		properties.put("version", project.version)
 		properties.put("loader_version", project.loader_version)
@@ -161,6 +171,10 @@ allprojects {
 		filesMatching("fabric.mod.json") {
 			expand properties
 		}
+	}
+
+	task generateResources {
+		group = "porting-lib"
 	}
 
 	task buildOrPublish {
@@ -254,16 +268,16 @@ task javadocJar(type: Jar) {
 
 build.dependsOn javadocJar
 
-subprojects.each {
-	remapJar.dependsOn("${it.path}:remapJar")
-}
-
 remapJar {
 	afterEvaluate {
 		subprojects.each {
 			nestedJars.from project("${it.path}").tasks.getByName("remapJar")
 		}
 	}
+}
+
+subprojects.each {
+	remapJar.dependsOn("${it.path}:remapJar")
 }
 
 subprojects {
@@ -282,6 +296,8 @@ subprojects {
 	}
 
 	loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
+
+	javadoc.enabled = false
 }
 
 void setupRepositories(RepositoryHandler repositories) {
@@ -335,3 +351,4 @@ publishing {
 		}
 	}
 }
+loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
