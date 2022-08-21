@@ -24,7 +24,6 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 
 import java.io.InputStreamReader;
-import java.util.Map;
 
 @Mixin(ModelBakery.class)
 public abstract class ModelBakeryMixin {
@@ -37,13 +36,13 @@ public abstract class ModelBakeryMixin {
 
 	@Inject(method = "loadModel", at = @At("HEAD"), cancellable = true)
 	public void port_lib$loadObjModels(ResourceLocation modelLocation, CallbackInfo ci) {
-		if (!modelLocation.getPath().endsWith(".json"))
+		if (!modelLocation.getPath().contains(".json"))
 			return;
 		resourceManager.getResource(new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath())).ifPresent(resource -> {
 			try {
 				JsonObject jsonObject = Streams.parse(new JsonReader(new InputStreamReader(resource.open(), Charsets.UTF_8))).getAsJsonObject();
 				if (jsonObject.has(PortingConstants.ID + ":" + "obj_marker")) {
-					ObjModel model = ObjLoader.INSTANCE.loadModel(resourceManager, new ObjModel.ModelSettings(new ResourceLocation(GsonHelper.getAsString(jsonObject, "model")), true, true, true, true, null));
+					ObjModel model = ObjLoader.INSTANCE.loadModel(resource, new ObjModel.ModelSettings(new ResourceLocation(GsonHelper.getAsString(jsonObject, "model")), true, true, true, true, null));
 					if (model != null) {
 						cacheAndQueueDependencies(modelLocation, model);
 						ci.cancel();

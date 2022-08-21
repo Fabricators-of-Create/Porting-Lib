@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.NoSuchElementException;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.base.Charsets;
 import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
@@ -21,8 +23,6 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
-
-import org.jetbrains.annotations.Nullable;
 
 public class PortingLibObjLoader implements ClientModInitializer {
 	@Override
@@ -49,13 +49,6 @@ public class PortingLibObjLoader implements ClientModInitializer {
 
 	@Nullable
 	public static UnbakedModel loadModel(ResourceManager resourceManager, ResourceLocation modelLocation) {
-		if (!modelLocation.getPath().endsWith(".obj")) {
-			modelLocation = new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath() + ".obj");
-		}
-
-		if (!modelLocation.getPath().startsWith("models/")) {
-			modelLocation = new ResourceLocation(modelLocation.getNamespace(), "models/" + modelLocation.getPath());
-		}
 		if (!modelLocation.getPath().endsWith(".json"))
 			return null;
 		Resource resource = resourceManager.getResource(new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath())).orElse(null);
@@ -63,7 +56,7 @@ public class PortingLibObjLoader implements ClientModInitializer {
 			try {
 				JsonObject jsonObject = Streams.parse(new JsonReader(new InputStreamReader(resource.open(), Charsets.UTF_8))).getAsJsonObject();
 				if (jsonObject.has(PortingConstants.ID + ":" + "obj_marker")) {
-					return ObjLoader.INSTANCE.loadModel(resourceManager, new ObjModel.ModelSettings(new ResourceLocation(GsonHelper.getAsString(jsonObject, "model")), true, true, true, true, null));
+					return ObjLoader.INSTANCE.loadModel(resource, new ObjModel.ModelSettings(new ResourceLocation(GsonHelper.getAsString(jsonObject, "model")), true, true, true, true, null));
 				}
 			} catch (Exception e) {
 

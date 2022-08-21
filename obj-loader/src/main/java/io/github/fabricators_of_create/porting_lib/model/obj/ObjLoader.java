@@ -85,8 +85,8 @@ public class ObjLoader implements IGeometryLoader<ObjModel>, ResourceManagerRelo
 		return loadModel(settings, Map.of());
 	}
 
-	public ObjModel loadModel(ResourceManager resourceManager, ObjModel.ModelSettings settings) {
-		return loadModel(resourceManager, settings, Map.of());
+	public ObjModel loadModel(Resource resource, ObjModel.ModelSettings settings) {
+		return loadModel(resource, settings, Map.of());
 	}
 
 	private ObjModel loadModel(ObjModel.ModelSettings settings, Map<String, String> deprecationWarnings) {
@@ -102,9 +102,8 @@ public class ObjLoader implements IGeometryLoader<ObjModel>, ResourceManagerRelo
 		});
 	}
 
-	private ObjModel loadModel(ResourceManager resourceManager, ObjModel.ModelSettings settings, Map<String, String> deprecationWarnings) {
+	private ObjModel loadModel(Resource resource, ObjModel.ModelSettings settings, Map<String, String> deprecationWarnings) {
 		return modelCache.computeIfAbsent(settings, (data) -> {
-			Resource resource = resourceManager.getResource(settings.modelLocation()).orElseThrow();
 			try (ObjTokenizer tokenizer = new ObjTokenizer(resource.open())) {
 				return ObjModel.parse(tokenizer, settings, deprecationWarnings);
 			} catch (FileNotFoundException e) {
