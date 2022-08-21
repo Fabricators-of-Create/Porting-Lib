@@ -35,10 +35,6 @@ public abstract class ModelBakeryMixin {
 	@Final
 	private ResourceManager resourceManager;
 
-	@Shadow
-	@Final
-	private Map<ResourceLocation, UnbakedModel> topLevelModels;
-
 	@Inject(method = "loadModel", at = @At("HEAD"), cancellable = true)
 	public void port_lib$loadObjModels(ResourceLocation modelLocation, CallbackInfo ci) {
 		if (!modelLocation.getPath().endsWith(".json"))
@@ -50,7 +46,6 @@ public abstract class ModelBakeryMixin {
 					ObjModel model = ObjLoader.INSTANCE.loadModel(resourceManager, new ObjModel.ModelSettings(new ResourceLocation(GsonHelper.getAsString(jsonObject, "model")), true, true, true, true, null));
 					if (model != null) {
 						cacheAndQueueDependencies(modelLocation, model);
-						topLevelModels.put(modelLocation, model);
 						ci.cancel();
 					}
 				}

@@ -11,17 +11,25 @@ import com.google.gson.stream.JsonReader;
 
 import io.github.fabricators_of_create.porting_lib.event.client.RegisterGeometryLoadersCallback;
 import io.github.fabricators_of_create.porting_lib.model.obj.ObjLoader;
+import io.github.fabricators_of_create.porting_lib.model.obj.ObjModel;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.GsonHelper;
+
+import org.jetbrains.annotations.Nullable;
 
 public class PortingLibObjLoader implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		RegisterGeometryLoadersCallback.EVENT.register(loaders -> loaders.put(new ResourceLocation("forge","obj"), ObjLoader.INSTANCE));
 		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(ObjLoader.INSTANCE);
+		ModelLoadingRegistry.INSTANCE.registerResourceProvider(resourceManager -> (resourceId, context) -> loadModel(resourceManager, resourceId));
 		ModelLoadingRegistry.INSTANCE.registerModelProvider((manager, out) -> manager.listResources("models/misc", resourceLocation -> {
 			if (resourceLocation.getPath().endsWith(".json")) {
 				manager.getResource(resourceLocation).ifPresent(resource -> {
@@ -37,5 +45,30 @@ public class PortingLibObjLoader implements ClientModInitializer {
 			}
 			return true;
 		}));
+	}
+
+	@Nullable
+	public static UnbakedModel loadModel(ResourceManager resourceManager, ResourceLocation modelLocation) {
+		if (!modelLocation.getPath().endsWith(".obj")) {
+			modelLocation = new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath() + ".obj");
+		}
+
+		if (!modelLocation.getPath().startsWith("models/")) {
+			modelLocation = new ResourceLocation(modelLocation.getNamespace(), "models/" + modelLocation.getPath());
+		}
+		if (!modelLocation.getPath().endsWith(".json"))
+			return null;
+		Resource resource = resourceManager.getResource(new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath())).orElse(null);
+		if (resource != null) {
+			try {
+				JsonObject jsonObject = Streams.parse(new JsonReader(new InputStreamReader(resource.open(), Charsets.UTF_8))).getAsJsonObject();
+				if (jsonObject.has(PortingConstants.ID + ":" + "obj_marker")) {
+					return ObjLoader.INSTANCE.loadModel(resourceManager, new ObjModel.ModelSettings(new ResourceLocation(GsonHelper.getAsString(jsonObject, "model")), true, true, true, true, null));
+				}
+			} catch (Exception e) {
+
+			}
+		}
+		return null;
 	}
 }
