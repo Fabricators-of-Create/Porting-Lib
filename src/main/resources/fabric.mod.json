@@ -20,9 +20,6 @@
     "java": ">=${java_version}"
   },
   "custom": {
-    "loom:injected_interfaces": {
-      "net/minecraft/class_3611": ["io/github/fabricators_of_create/porting_lib/extensions/FluidExtensions"]
-    },
     "modmenu": {
       "badges": [ "library" ],
       "parent": {
