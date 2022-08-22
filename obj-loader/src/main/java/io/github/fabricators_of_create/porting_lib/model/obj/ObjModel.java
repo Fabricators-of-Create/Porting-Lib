@@ -14,6 +14,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import net.fabricmc.fabric.api.renderer.v1.Renderer;
+import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
+import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 
@@ -319,7 +323,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 	@Nullable
 	@Override
 	public BakedModel bake(ModelBakery modelBakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState transform, ResourceLocation location) {
-		List<ObjBakedModel.Mesh> meshes = new ArrayList<>();
+		List<ObjBakedModel.MeshInfo> meshes = new ArrayList<>();
 
 		for (var entry : parts.entrySet()) {
 			var part = entry.getValue();
@@ -525,7 +529,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 			}
 		}
 
-		public void bake(List<ObjBakedModel.Mesh> meshes) {
+		public void bake(List<ObjBakedModel.MeshInfo> meshes) {
 			for (ModelMesh mesh : this.meshes) {
 				mesh.bake(meshes);
 			}
@@ -579,7 +583,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 		}
 
 		@Override
-		public void bake(List<ObjBakedModel.Mesh> meshes) {
+		public void bake(List<ObjBakedModel.MeshInfo> meshes) {
 			super.bake(meshes);
 
 			for (var entry : parts.entrySet()) {
@@ -662,7 +666,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 			builder.addMesh(texturePath, quads);
 		}
 
-		public void bake(List<ObjBakedModel.Mesh> meshes) {
+		public void bake(List<ObjBakedModel.MeshInfo> meshes) {
 			ObjMaterialLibrary.Material mat = this.mat;
 			if (mat == null)
 				return;
@@ -679,7 +683,15 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 			ResourceLocation textureLocation = new Material(TextureAtlas.LOCATION_BLOCKS, mat.texture).texture();
 			ResourceLocation texturePath = new ResourceLocation(textureLocation.getNamespace(), "textures/" + textureLocation.getPath() + ".png");
 
-			meshes.add(new ObjBakedModel.Mesh(texturePath, quads, mat));
+			Renderer renderer = RendererAccess.INSTANCE.getRenderer();
+			MeshBuilder builder = renderer.meshBuilder();
+			QuadEmitter emitter = builder.getEmitter();
+			quads.forEach(bakedQuad -> {
+				emitter.fromVanilla(bakedQuad, mat.getMaterial(renderer), bakedQuad.getDirection());
+				emitter.emit();
+			});
+
+			meshes.add(new ObjBakedModel.MeshInfo(texturePath, builder.build(), mat));
 		}
 	}
 

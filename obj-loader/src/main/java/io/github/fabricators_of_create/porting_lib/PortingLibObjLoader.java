@@ -49,6 +49,7 @@ public class PortingLibObjLoader implements ClientModInitializer {
 
 	@Nullable
 	public static UnbakedModel loadModel(ResourceManager resourceManager, ResourceLocation modelLocation) {
+		ObjLoader.INSTANCE.setManager(resourceManager);
 		if (!modelLocation.getPath().endsWith(".json"))
 			return null;
 		Resource resource = resourceManager.getResource(new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath())).orElse(null);
@@ -56,10 +57,11 @@ public class PortingLibObjLoader implements ClientModInitializer {
 			try {
 				JsonObject jsonObject = Streams.parse(new JsonReader(new InputStreamReader(resource.open(), Charsets.UTF_8))).getAsJsonObject();
 				if (jsonObject.has(PortingConstants.ID + ":" + "obj_marker")) {
-					return ObjLoader.INSTANCE.loadModel(resource, new ObjModel.ModelSettings(new ResourceLocation(GsonHelper.getAsString(jsonObject, "model")), true, true, true, true, null));
+					ResourceLocation objLocation = new ResourceLocation(GsonHelper.getAsString(jsonObject, "model"));
+					return ObjLoader.INSTANCE.loadModel(resourceManager.getResource(objLocation).orElseThrow(), new ObjModel.ModelSettings(objLocation, true, true, true, true, null));
 				}
 			} catch (Exception e) {
-
+				e.printStackTrace();
 			}
 		}
 		return null;

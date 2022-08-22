@@ -42,6 +42,10 @@ public class ObjLoader implements IGeometryLoader<ObjModel>, ResourceManagerRelo
 		manager = resourceManager;
 	}
 
+	public void setManager(ResourceManager manager) {
+		this.manager = manager;
+	}
+
 	@Override
 	public ObjModel read(JsonObject jsonObject, JsonDeserializationContext deserializationContext) {
 		if (!jsonObject.has("model"))

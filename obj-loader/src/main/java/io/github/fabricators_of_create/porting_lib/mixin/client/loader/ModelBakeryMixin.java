@@ -42,7 +42,8 @@ public abstract class ModelBakeryMixin {
 			try {
 				JsonObject jsonObject = Streams.parse(new JsonReader(new InputStreamReader(resource.open(), Charsets.UTF_8))).getAsJsonObject();
 				if (jsonObject.has(PortingConstants.ID + ":" + "obj_marker")) {
-					ObjModel model = ObjLoader.INSTANCE.loadModel(resource, new ObjModel.ModelSettings(new ResourceLocation(GsonHelper.getAsString(jsonObject, "model")), true, true, true, true, null));
+					ResourceLocation objLocation = new ResourceLocation(GsonHelper.getAsString(jsonObject, "model"));
+					ObjModel model = ObjLoader.INSTANCE.loadModel(resourceManager.getResource(objLocation).orElseThrow(), new ObjModel.ModelSettings(objLocation, true, true, true, true, null));
 					if (model != null) {
 						cacheAndQueueDependencies(modelLocation, model);
 						ci.cancel();
