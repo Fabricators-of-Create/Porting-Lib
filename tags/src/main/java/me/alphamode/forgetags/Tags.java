@@ -1,25 +1,24 @@
 package me.alphamode.forgetags;
 
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
-
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
-
-import net.minecraft.world.level.biome.Biome;
-
-import net.minecraft.world.level.block.Block;
-
-import net.minecraft.world.level.material.Fluid;
-
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Set;
 import java.util.function.Supplier;
 
-public class Tags {
-	public static void init () {
+import net.fabricmc.api.ModInitializer;
+
+import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluid;
+
+public class Tags implements ModInitializer {
+	@Override
+	public void onInitialize() {
 		Blocks.init();
 		Items.init();
 		Fluids.init();
@@ -27,7 +26,8 @@ public class Tags {
 	}
 
 	public static class Blocks {
-		private static void init(){}
+		private static void init() {
+		}
 
 		public static final TagKey<Block> BARRELS = tag("barrels");
 		public static final TagKey<Block> BARRELS_WOODEN = tag("barrels/wooden");
@@ -176,7 +176,8 @@ public class Tags {
 	}
 
 	public static class Items {
-		private static void init(){}
+		private static void init() {
+		}
 
 		public static final TagKey<Item> BARRELS = tag("barrels");
 		public static final TagKey<Item> BARRELS_WOODEN = tag("barrels/wooden");
@@ -387,7 +388,7 @@ public class Tags {
 		public static final TagKey<Item> STORAGE_BLOCKS_RAW_GOLD = tag("storage_blocks/raw_gold");
 		public static final TagKey<Item> STORAGE_BLOCKS_RAW_IRON = tag("storage_blocks/raw_iron");
 		public static final TagKey<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
-		public static final TagKey<Item> STRING                  = tag("string");
+		public static final TagKey<Item> STRING = tag("string");
 		/**
 		 * A tag containing all existing tools.
 		 */
@@ -457,14 +458,14 @@ public class Tags {
 			return TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation("c", name));
 		}
 
-		private static TagKey<Item> tag(String name)
-		{
+		private static TagKey<Item> tag(String name) {
 			return tag(name, null);
 		}
 	}
 
 	public static class Fluids {
-		private static void init() {}
+		private static void init() {
+		}
 
 		/**
 		 * Holds all fluids related to milk.
@@ -481,7 +482,8 @@ public class Tags {
 	}
 
 	public static class Biomes {
-		private static void init() {}
+		private static void init() {
+		}
 
 		public static final TagKey<Biome> IS_HOT = tag("is_hot");
 		public static final TagKey<Biome> IS_HOT_OVERWORLD = tag("is_hot/overworld");

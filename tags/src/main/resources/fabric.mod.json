@@ -23,6 +23,9 @@
     "forge_tags"
   ],
   "entrypoints": {
+    "main": [
+      "me.alphamode.forgetags.Tags"
+    ]
   },
   "mixins": [
     "porting_lib-tags.mixins.json"
