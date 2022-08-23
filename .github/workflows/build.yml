@@ -8,7 +8,6 @@ jobs:
         java: [ 17 ]
     runs-on: ubuntu-latest
     env:
-      PUBLISH_SUFFIX: snapshots
       MAVEN_USER: ${{ secrets.MAVEN_USER }}
       MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
     steps:
