@@ -1,0 +1,6 @@
+archivesBaseName = "tags"
+version = getSubprojectVersion(project)
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}
