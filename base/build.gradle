@@ -8,7 +8,8 @@ moduleDependencies(project, [
 		'transfer',
 		'entity',
 		'common',
-		'models'
+		'models',
+		'tags'
 ])
 
 processResources {
