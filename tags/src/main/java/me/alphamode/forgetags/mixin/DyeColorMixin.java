@@ -1,4 +1,4 @@
-package me.alphamode.forgetags.bixin;
+package me.alphamode.forgetags.mixin;
 
 import me.alphamode.forgetags.extensions.DyeExtension;
 import net.minecraft.core.Registry;
@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(DyeColor.class)
-public class DyeColorBixin implements DyeExtension {
+public class DyeColorMixin implements DyeExtension {
     @Shadow @Final private String name;
     @Unique
     private TagKey<Item> tag;

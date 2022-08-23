@@ -1,13 +1,12 @@
 {
   "required": true,
-  "priority": 1100,
-  "package": "me.alphamode.forgetags.bixin",
+  "minVersion": "0.8",
+  "package": "me.alphamode.forgetags.mixin",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [
-    "DyeColorBixin"
-  ],
   "injectors": {
     "defaultRequire": 1
   },
-  "minVersion": "0.8"
+  "mixins": [
+    "DyeColorMixin"
+  ],
 }
