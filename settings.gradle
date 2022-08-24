@@ -9,16 +9,16 @@ pluginManagement {
 }
 rootProject.name = "porting-lib"
 
+include("accessors")
+include("attributes")
 include("base")
 include("common")
-include("models")
-include("entity")
-include("transfer")
 include("constants")
-include("accessors")
-include("networking")
-include("attributes")
+include("entity")
 include("extensions")
-include("obj_loader")
 include("model_loader")
+include("models")
+include("networking")
+include("obj_loader")
 include("tags")
+include("transfer")
