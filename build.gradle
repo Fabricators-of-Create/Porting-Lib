@@ -155,11 +155,9 @@ allprojects {
 		accessWidenerPath = globalAccessWidener
 	}
 
-	// todo why?
-//	tasks.withType(AbstractArchiveTask) {
-//		preserveFileTimestamps = false
-//		reproducibleFileOrder = true
-//	}
+	tasks.withType(AbstractArchiveTask) {
+		reproducibleFileOrder = true
+	}
 
 	// todo why?
 //	tasks.withType(GenerateModuleMetadata) {
