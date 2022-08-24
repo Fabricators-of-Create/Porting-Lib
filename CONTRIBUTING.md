@@ -3,7 +3,7 @@
 1. **Organization:**
     - Porting Lib is split into modules. Each module has its own functionality and features. The separation allows for
     mods to only use the modules they need.
-    - Mixins should be sported by environment. Ex. have `mixin.common` and `mixin.client` subpackages.
+    - Mixins should be sorted by environment. Ex. have `mixin.common` and `mixin.client` subpackages.
     - Accessor mixins should be further sorted into `accessor` subpackages. Ex. `mixin.common.accessor`.
     - Extension interfaces adding functionality to Minecraft classes should be injected onto their targets and stored
     in an `extensions` package.
