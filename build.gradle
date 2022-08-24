@@ -1,8 +1,4 @@
-import java.nio.file.FileSystem
-import java.nio.file.FileSystems
-import java.nio.file.Files
-import java.util.jar.JarFile
-import java.util.zip.ZipFile
+import io.github.fabricators_of_create.porting_lib_build.PortingLibBuildPlugin
 
 //file:noinspection GroovyAssignabilityCheck
 //file:noinspection GroovyAccessibility
@@ -10,7 +6,7 @@ plugins {
 	id "fabric-loom" version "0.13.12"
 	id "io.github.juuxel.loom-quiltflower" version "1.+" // Quiltflower, a better decompiler
 	id "org.quiltmc.quilt-mappings-on-loom" version "4.2.0" // Quilt Mappings, for parameters and javadoc. Also hashed mojmap.
-//	id "io.github.p03w.machete" version "1.+" // automatic jar compressing on build
+	id "io.github.p03w.machete" version "1.+" // automatic jar compressing on build
 	id "org.ajoberstar.grgit" version "4.1.1"
 	id "maven-publish"
 }
@@ -22,8 +18,8 @@ archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
-ext.buildNumber = System.getenv("GITHUB_RUN_NUMBER")
-def patch = buildNumber != null ? buildNumber : "99999"
+String buildNumber = System.getenv("GITHUB_RUN_NUMBER")
+String patch = buildNumber != null ? buildNumber : "99999"
 
 version = version.replace("<patch>", patch)
 
@@ -60,8 +56,11 @@ File globalAccessWidener = file("src/main/resources/porting_lib.accesswidener")
 
 
 allprojects {
+	if (name == "buildSrc") return
+
 	apply plugin: "fabric-loom"
 	apply plugin: "maven-publish"
+	apply plugin: PortingLibBuildPlugin
 	group = "io.github.fabricators_of_create.Porting-Lib"
 
 	repositories {
@@ -153,6 +152,12 @@ allprojects {
 
 	loom {
 		accessWidenerPath = globalAccessWidener
+	}
+
+	machete {
+		if (buildNumber == null) {
+			enabled = false
+		}
 	}
 
 	tasks.withType(AbstractArchiveTask) {
