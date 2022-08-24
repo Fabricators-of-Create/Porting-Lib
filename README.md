@@ -15,6 +15,7 @@ The latest patch can be found from GitHub Actions as the build number.
 |----------------|--------------------------------------------------------------------------------------|
 | `porting_lib`  | Fat jar including all modules                                                        |
 | `accessors`    | Accessor mixins aplenty                                                              |
+| `attributes`   | Additional Entity Attributes; step height, gravity, swim speed                       |
 | `base`         | Code that has not yet been split into modules                                        |
 | `common`       | Miscellaneous utilities for other modules                                            |
 | `constants`    | Internal constants used by Porting Lib                                               |
