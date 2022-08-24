@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib",
+  "id": "template",
   "version": "${version}",
-  "name": "Porting Lib",
-  "description": "A collection of utilities for porting mods from Forge to Fabric.",
+  "name": "TEMPLATE",
+  "description": "TEMPLATE",
   "authors": [
     "The Create Fabric Team"
   ],
