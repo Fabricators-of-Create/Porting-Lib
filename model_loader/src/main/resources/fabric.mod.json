@@ -4,11 +4,6 @@
   "version": "${version}",
   "name": "Porting Lib Model Loader",
   "description": "",
-  "authors": [],
-  "contact": {},
-  "license": "MIT",
-  "icon": "assets/porting_lib/icon.png",
-  "environment": "*",
   "entrypoints": {
     "client": [
       "io.github.fabricators_of_create.porting_lib.client.PortingLibModelsClient"
@@ -17,25 +12,10 @@
   "mixins": [
     "porting_lib_model_loader.mixins.json"
   ],
-  "depends": {
-    "fabricloader": ">=0.14.9",
-    "fabric": "*",
-    "minecraft": ">=${minecraft_version}"
-  },
   "custom": {
     "loom:injected_interfaces": {
       "net/minecraft/class_793": ["io/github/fabricators_of_create/porting_lib/extensions/BlockModelExtensions"],
       "net/minecraft/class_4588": ["io/github/fabricators_of_create/porting_lib/extensions/VertexConsumerExtension"]
-    },
-    "modmenu": {
-      "badges": [ "library" ],
-      "parent": {
-        "id": "porting_lib",
-        "name": "Porting Lib",
-        "description": "A collection of utilities for porting mods from Forge to Fabric.",
-        "icon": "assets/porting_lib/icon.png",
-        "badges": [ "library" ]
-      }
     }
   }
 }

@@ -4,11 +4,6 @@
   "version": "${version}",
   "name": "Porting Lib Accessors",
   "description": "",
-  "authors": [],
-  "contact": {},
-  "license": "MIT",
-  "icon": "assets/porting_lib/icon.png",
-  "environment": "*",
   "mixins": [
     "porting_lib_accessors.client.mixins.json",
     "porting_lib_accessors.common.mixins.json"
@@ -18,16 +13,5 @@
     "fabricloader": ">=${loader_version}",
     "fabric": ">=${fabric_version}",
     "minecraft": ">=${minecraft_version}"
-  },
-  "custom": {
-    "modmenu": {
-      "parent": {
-        "id": "porting_lib",
-        "name": "Porting Lib",
-        "description": "A collection of utilities for porting mods from Forge to Fabric.",
-        "icon": "assets/porting_lib/icon.png",
-        "badges": [ "library" ]
-      }
-    }
   }
 }

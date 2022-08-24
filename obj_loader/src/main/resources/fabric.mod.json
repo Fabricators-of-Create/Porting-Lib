@@ -4,16 +4,6 @@
   "version": "${version}",
   "name": "Porting Lib Obj Loader",
   "description": "",
-  "authors": [],
-  "contact": {},
-  "license": "MIT",
-  "icon": "assets/porting_lib/icon.png",
-  "environment": "*",
-  "depends": {
-    "fabricloader": ">=0.14.9",
-    "fabric": "*",
-    "minecraft": ">=${minecraft_version}"
-  },
   "entrypoints": {
     "client": [
       "io.github.fabricators_of_create.porting_lib.PortingLibObjLoader"
@@ -21,17 +11,5 @@
   },
   "mixins": [
     "porting_lib_obj_loader.mixins.json"
-  ],
-  "custom": {
-    "modmenu": {
-      "badges": [ "library" ],
-      "parent": {
-        "id": "porting_lib",
-        "name": "Porting Lib",
-        "description": "A collection of utilities for porting mods from Forge to Fabric.",
-        "icon": "assets/porting_lib/icon.png",
-        "badges": [ "library" ]
-      }
-    }
-  }
+  ]
 }

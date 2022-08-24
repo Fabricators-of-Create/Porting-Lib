@@ -4,15 +4,6 @@
   "version": "${version}",
   "name": "Porting Lib Base",
   "description": "A collection of utilities for porting mods from Forge to Fabric.",
-  "authors": [
-    "The Create Fabric Team"
-  ],
-  "contact": {
-    "sources": "https://github.com/Fabricators-of-Create/Porting-Lib"
-  },
-  "license": "LGPL",
-  "icon": "assets/porting_lib/icon.png",
-  "environment": "*",
   "entrypoints": {
     "main": [
       "io.github.fabricators_of_create.porting_lib.PortingLib"
@@ -33,23 +24,5 @@
   "mixins": [
     "porting_lib_base.client.mixins.json",
     "porting_lib_base.common.mixins.json"
-  ],
-  "depends": {
-    "fabricloader": ">=${loader_version}",
-    "fabric": ">=${fabric_version}",
-    "minecraft": ">=${minecraft_version}",
-    "java": ">=${java_version}"
-  },
-  "custom": {
-    "modmenu": {
-      "badges": [ "library" ],
-      "parent": {
-        "id": "porting_lib",
-        "name": "Porting Lib",
-        "description": "A collection of utilities for porting mods from Forge to Fabric.",
-        "icon": "assets/porting_lib/icon.png",
-        "badges": [ "library" ]
-      }
-    }
-  }
+  ]
 }

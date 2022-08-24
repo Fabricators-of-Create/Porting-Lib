@@ -3,32 +3,5 @@
   "id": "porting_lib_constants",
   "version": "${version}",
   "name": "Porting Lib Constants",
-  "description": "A collection of utilities for porting mods from Forge to Fabric.",
-  "authors": [
-    "The Create Fabric Team"
-  ],
-  "contact": {
-    "sources": "https://github.com/Fabricators-of-Create/Porting-Lib"
-  },
-  "license": "LGPL",
-  "icon": "assets/porting_lib/icon.png",
-  "environment": "*",
-  "depends": {
-    "fabricloader": ">=${loader_version}",
-    "fabric": ">=${fabric_version}",
-    "minecraft": ">=${minecraft_version}",
-    "java": ">=${java_version}"
-  },
-  "custom": {
-    "modmenu": {
-      "badges": [ "library" ],
-      "parent": {
-        "id": "porting_lib",
-        "name": "Porting Lib",
-        "description": "A collection of utilities for porting mods from Forge to Fabric.",
-        "icon": "assets/porting_lib/icon.png",
-        "badges": [ "library" ]
-      }
-    }
-  }
+  "description": "A collection of utilities for porting mods from Forge to Fabric."
 }
