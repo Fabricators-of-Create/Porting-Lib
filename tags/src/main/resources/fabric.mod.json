@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib-tags",
+  "id": "porting_lib_tags",
   "version": "${version}",
   "name": "Porting Lib Tags",
   "description": "A collection of utilities for porting mods from Forge to Fabric.",
@@ -28,7 +28,7 @@
     ]
   },
   "mixins": [
-    "porting_lib-tags.mixins.json"
+    "porting_lib_tags.mixins.json"
   ],
   "custom": {
     "loom:injected_interfaces": {

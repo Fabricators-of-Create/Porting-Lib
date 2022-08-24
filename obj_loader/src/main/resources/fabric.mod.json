@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib-obj-loader",
+  "id": "porting_lib_obj_loader",
   "version": "${version}",
   "name": "Porting Lib Obj Loader",
   "description": "",
@@ -20,7 +20,7 @@
     ]
   },
   "mixins": [
-    "porting_lib.mixins.client-obj-loader.json"
+    "porting_lib_obj_loader.mixins.json"
   ],
   "custom": {
     "modmenu": {

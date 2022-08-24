@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "simplenetworking",
+  "id": "porting_lib_networking",
   "version": "${version}",
   "name": "Simple Networking",
   "description": "A simple networking mod.",
@@ -15,6 +15,9 @@
       "me.pepperbell.simplenetworking.SimpleNetworking"
     ]
   },
+  "provides": [
+    "simplenetworking"
+  ],
   "icon": "assets/porting_lib/icon.png",
   "license": "LGPL",
   "environment": "*",

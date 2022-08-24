@@ -2,8 +2,8 @@ archivesBaseName = "models"
 version = getSubprojectVersion(project)
 
 moduleDependencies(project, [
-		"model-loader",
-		"obj-loader",
+		"model_loader",
+		"obj_loader",
 		"extensions",
 		"transfer"
 ])

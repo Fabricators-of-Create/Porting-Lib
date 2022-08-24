@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib-models",
+  "id": "porting_lib_models",
   "version": "${version}",
   "name": "Porting Lib Models",
   "description": "",

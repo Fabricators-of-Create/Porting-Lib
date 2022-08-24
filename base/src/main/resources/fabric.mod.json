@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib-base",
+  "id": "porting_lib_base",
   "version": "${version}",
   "name": "Porting Lib Base",
   "description": "A collection of utilities for porting mods from Forge to Fabric.",
@@ -31,8 +31,8 @@
     ]
   },
   "mixins": [
-    "porting_lib.mixins.common-base.json",
-    "porting_lib.mixins.client-base.json"
+    "porting_lib_base.client.mixins.json",
+    "porting_lib_base.common.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",

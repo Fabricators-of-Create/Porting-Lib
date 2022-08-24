@@ -1,8 +1,8 @@
-archivesBaseName = "obj-loader"
+archivesBaseName = "obj_loader"
 version = getSubprojectVersion(project)
 
 moduleDependencies(project, [
-		"model-loader",
+		"model_loader",
 		"extensions",
 ])
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib-constants",
+  "id": "porting_lib_constants",
   "version": "${version}",
   "name": "Porting Lib Constants",
   "description": "A collection of utilities for porting mods from Forge to Fabric.",

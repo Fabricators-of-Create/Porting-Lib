@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib-attributes",
+  "id": "porting_lib_attributes",
   "version": "${version}",
   "name": "Porting Lib Attributes",
   "description": "A collection of utilities for porting mods from Forge to Fabric.",

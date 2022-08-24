@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib-transfer",
+  "id": "porting_lib_transfer",
   "version": "${version}",
   "name": "Porting Lib Transfer",
   "description": "A collection of utilities for porting mods from Forge to Fabric.",
@@ -28,7 +28,7 @@
     ]
   },
   "mixins": [
-    "porting_lib-transfer.mixins.client.json"
+    "porting_lib_transfer.mixins.client.json"
   ],
   "custom": {
     "loom:injected_interfaces": {

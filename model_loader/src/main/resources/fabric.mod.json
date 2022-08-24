@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib-model-loader",
+  "id": "porting_lib_model_loader",
   "version": "${version}",
   "name": "Porting Lib Model Loader",
   "description": "",
@@ -15,7 +15,7 @@
     ]
   },
   "mixins": [
-    "porting_lib.mixins.client-model-loader.json"
+    "porting_lib_model_loader.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.14.9",

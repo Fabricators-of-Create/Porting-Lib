@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib-common-entity",
+  "id": "porting_lib_entity",
   "version": "${version}",
   "name": "Porting Lib Entity",
   "description": "A collection of utilities for porting mods from Forge to Fabric.",
@@ -14,7 +14,7 @@
   "icon": "assets/porting_lib/icon.png",
   "environment": "*",
   "mixins": [
-    "porting_lib-entity.mixins.common.json"
+    "porting_lib_entity.mixins.json"
   ],
   "entrypoints": {
     "client": [

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib-common-accessors",
+  "id": "porting_lib_accessors",
   "version": "${version}",
   "name": "Porting Lib Accessors",
   "description": "",
@@ -10,8 +10,8 @@
   "icon": "assets/porting_lib/icon.png",
   "environment": "*",
   "mixins": [
-    "porting_lib.mixins.common-accessors.json",
-    "porting_lib.mixins.client-accessors.json"
+    "porting_lib_accessors.client.mixins.json",
+    "porting_lib_accessors.common.mixins.json"
   ],
   "accessWidener": "porting_lib.accesswidener",
   "depends": {
