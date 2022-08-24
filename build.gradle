@@ -116,11 +116,11 @@ allprojects {
 	}
 
 	// todo why?
-	allprojects.each { p ->
-		loom.mods.register(p.name) {
-			sourceSet p.sourceSets.main
-		}
-	}
+//	allprojects.each { p ->
+//		loom.mods.register(p.name) {
+//			sourceSet p.sourceSets.main
+//		}
+//	}
 
 	tasks.withType(ProcessResources).configureEach {
 		Map<String, String> properties = new HashMap<>()
