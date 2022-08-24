@@ -2,8 +2,8 @@ archivesBaseName = "transfer"
 version = getSubprojectVersion(project)
 
 moduleDependencies(project, [
-		'constants',
-		'common'
+		"constants",
+		"common"
 ])
 
 processResources {

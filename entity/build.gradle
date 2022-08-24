@@ -2,7 +2,7 @@ archivesBaseName = "entity"
 version = getSubprojectVersion(project)
 
 moduleDependencies(project, [
-		'constants'
+		"constants"
 ])
 
 processResources {

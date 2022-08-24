@@ -1,5 +1,3 @@
-import net.fabricmc.loom.task.RemapJarTask
-
 import java.nio.file.FileSystem
 import java.nio.file.FileSystems
 import java.nio.file.Files
@@ -24,8 +22,8 @@ archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
-ext.buildNumber = System.getenv('GITHUB_RUN_NUMBER')
-def patch = buildNumber != null ? buildNumber : '99999'
+ext.buildNumber = System.getenv("GITHUB_RUN_NUMBER")
+def patch = buildNumber != null ? buildNumber : "99999"
 
 version = version.replace("<patch>", patch)
 
@@ -41,7 +39,7 @@ def getSubprojectVersion(project) {
 }
 
 def moduleDependencies(Project project, List<String> depNames) {
-	def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: 'namedElements') }
+	def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: "namedElements") }
 
 	depNames.iterator().forEachRemaining {
 		Project dependProject = findProject(":$it")
@@ -114,7 +112,7 @@ allprojects {
 
 		modImplementation(include("com.github.Chocohead:Fabric-ASM:v2.3"))
 		implementation("javax.annotation:javax.annotation-api:1.3.2")
-		implementation('com.google.code.findbugs:jsr305:3.0.2')
+		implementation("com.google.code.findbugs:jsr305:3.0.2")
 	}
 
 	// todo why?
@@ -168,9 +166,10 @@ allprojects {
 //		enabled = false
 //	}
 
-	tasks.withType(JavaCompile).configureEach {
-		it.options.release = Integer.parseInt(sourceCompatibility)
-	}
+	// fixme uncommenting this causes everything to explode, but this might be important
+//	tasks.withType(JavaCompile).configureEach {
+//		it.options.setRelease(Integer.parseInt(sourceCompatibility))
+//	}
 
 	java {
 		withSourcesJar()
@@ -205,19 +204,13 @@ allprojects {
 }
 
 sourceSets {
-	test2 {
-
+	allModules {
+		for (Project p : subprojects) {
+			def main = p.sourceSets.main
+			compileClasspath += main.compileClasspath + main.output
+			runtimeClasspath += main.runtimeClasspath + main.output
+		}
 	}
-	test3 {
-
-	}
-//	allModules {
-//		for (Project p : subprojects) {
-//			def projectMain = p.sourceSets.main
-//			setCompileClasspath(compileClasspath + projectMain.compileClasspath + projectMain.output)
-//			setRuntimeClasspath(runtimeClasspath + projectMain.runtimeClasspath + projectMain.output)
-//		}
-//	}
 }
 
 loom {
@@ -235,12 +228,12 @@ loom {
 		client {
 			client()
 			name "Minecraft Client"
-//			source sourceSets.allModules
+			source sourceSets.allModules
 		}
 		server {
 			server()
 			name "Minecraft Server"
-//			source sourceSets.allModules
+			source sourceSets.allModules
 		}
 		// todo figure out datagen
 		datagen {
@@ -265,35 +258,6 @@ remapJar {
 		}
 	}
 }
-
-// deduplicate nested modules
-//subprojects {
-//	remapJar {
-//		afterEvaluate {
-//			List<String> inclusions = new ArrayList<>()
-//			for (Iterator<File> itr = task.nestedJars.iterator(); itr.hasNext();) {
-//				File file = itr.next()
-//				try (FileSystem jar = FileSystems.newFileSystem(file.toPath())) {
-//					jar.getRootDirectories().forEach(root -> {
-//						def jars = root.resolve("META-INF").resolve("jars")
-//						def jarsFile = jars.toFile()
-//						if (jarsFile.exists()) {
-//							File[] files = jarsFile.listFiles()
-//							for (File included : files) {
-//								String name = file.getName()
-//								if (inclusions.contains(name)) {
-//									Files.delete(included.toPath())
-//								} else {
-//									inclusions.add(name)
-//								}
-//							}
-//						}
-//					})
-//				}
-//			}
-//		}
-//	}
-//}
 
 // todo why?
 //javadoc {
