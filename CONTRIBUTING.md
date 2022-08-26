@@ -35,14 +35,18 @@
     - The mixin config JSON file should have all mixins in alphabetical order, with accessor mixins being listed before
    regular mixins.
 
-5. **Testing:**
-    - You should run the mod in dev from the `base` module. This will load all modules.
-
-6. **Adding Modules:**
+5. **Adding Modules:**
     - Modules can be added when a new feature doesn't fit in an existing one.
-    - Start by creating the directory.
+    - Start by creating the directory. It should match the module's name.
     - Add a build.gradle file, using another module as a template.
+    - Include the module in the root `settings.gradle` file, in alphabetical order with the others.
     - The `moduleDependencies` method may be used to make a module depend on another one.
     - All code should be in the `io.github.fabricators_of_create` package. Exceptions are made when a significant
    portion of the code is copied from elsewhere. See `networking` and `tags` modules.
-    - Add metadata: `fabric.mod.json` and a mixins JSON if needed. Copy the icon over from another module.
+    - A `fabric.mod.json` file is the only needed metadata. An icon will be added at build time.
+      - The mod JSON will be filled with additional values on build as well. The only required fields are
+      `id`, `name`, `description`, `version`, and `schemaVersion`. Add anything else as needed.
+        - `id` should be `porting_lib_` plus the module name.
+        - `version` should be `${version}`, it'll be filled in at build.
+        - `schemaVersion` should be `1`. It's only there to make the IDE be quiet.
+    - When in doubt, reference another module.
