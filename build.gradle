@@ -52,6 +52,31 @@ def moduleDependencies(Project project, List<String> depNames) {
 	}
 }
 
+def setupDatagen(Project module) {
+	module.loom {
+		runs {
+			datagen {
+				client()
+				name "Data Generation"
+				source module.sourceSets.main
+				vmArg "-Dfabric-api.datagen"
+				vmArg "-Dfabric-api.datagen.output-dir=${module.file("src/generated/resources")}"
+				vmArg "-Dfabric-api.datagen.modid=porting_lib_$module.name"
+				runDir "build/datagen"
+				ideConfigGenerated true // loom will only make run configs for the root project by default
+			}
+		}
+	}
+	module.sourceSets {
+		main {
+			resources {
+				srcDir("src/generated/resources")
+				exclude("src/generated/resources/.cache")
+			}
+		}
+	}
+}
+
 File globalAccessWidener = file("src/main/resources/porting_lib.accesswidener")
 
 
@@ -224,15 +249,6 @@ sourceSets {
 }
 
 loom {
-	sourceSets {
-		main {
-			resources {
-				srcDir("src/generated/resources")
-				exclude("src/generated/resources/.cache")
-			}
-		}
-	}
-
 	runs {
 		// make default run configs run all modules
 		client {
@@ -244,18 +260,6 @@ loom {
 			server()
 			name "Minecraft Server"
 			source sourceSets.allModules
-		}
-		// todo figure out datagen
-		datagen {
-			client()
-
-			name "Data Generation"
-			vmArg "-Dfabric-api.datagen"
-			vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
-			vmArg "-Dfabric-api.datagen.modid=porting_lib"
-			// from ae2
-
-			runDir "build/datagen"
 		}
 	}
 }
