@@ -3,7 +3,7 @@
   "id": "porting_lib_model_loader",
   "version": "${version}",
   "name": "Porting Lib Model Loader",
-  "description": "",
+  "description": "Adds the framework for loading more types of models.",
   "entrypoints": {
     "client": [
       "io.github.fabricators_of_create.porting_lib.client.PortingLibModelsClient"

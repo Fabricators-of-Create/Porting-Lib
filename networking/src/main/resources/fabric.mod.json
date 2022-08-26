@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "id": "porting_lib_networking",
   "version": "${version}",
-  "name": "Simple Networking",
-  "description": "A simple networking mod.",
+  "name": "Porting Lib Networking",
+  "description": "Adds a Forge-like packet system.",
   "authors": [
     "Pepper_Bell"
   ],

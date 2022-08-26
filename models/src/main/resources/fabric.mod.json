@@ -3,5 +3,5 @@
   "id": "porting_lib_models",
   "version": "${version}",
   "name": "Porting Lib Models",
-  "description": ""
+  "description": "Expands models with features from Forge."
 }

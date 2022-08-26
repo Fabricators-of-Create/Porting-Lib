@@ -3,5 +3,5 @@
   "id": "porting_lib_constants",
   "version": "${version}",
   "name": "Porting Lib Constants",
-  "description": "A collection of utilities for porting mods from Forge to Fabric."
+  "description": "Constant values used internally by Porting Lib."
 }

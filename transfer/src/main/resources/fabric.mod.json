@@ -3,7 +3,7 @@
   "id": "porting_lib_transfer",
   "version": "${version}",
   "name": "Porting Lib Transfer",
-  "description": "A collection of utilities for porting mods from Forge to Fabric.",
+  "description": "Utilities for transferring items and fluids.",
   "entrypoints": {
     "main": [
       "io.github.fabricators_of_create.porting_lib.transfer.TransferUtil"

@@ -3,7 +3,7 @@
   "id": "porting_lib_entity",
   "version": "${version}",
   "name": "Porting Lib Entity",
-  "description": "A collection of utilities for porting mods from Forge to Fabric.",
+  "description": "Adds additional functionality for Entities for mod developers.",
   "mixins": [
     "porting_lib_entity.mixins.json"
   ],

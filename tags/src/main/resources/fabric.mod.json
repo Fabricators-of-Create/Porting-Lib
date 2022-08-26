@@ -3,7 +3,7 @@
   "id": "porting_lib_tags",
   "version": "${version}",
   "name": "Porting Lib Tags",
-  "description": "A collection of utilities for porting mods from Forge to Fabric.",
+  "description": "Adds tags from Forge that Fabric is missing.",
   "authors": [
     "AlphaMode"
   ],

@@ -3,7 +3,7 @@
   "id": "porting_lib_obj_loader",
   "version": "${version}",
   "name": "Porting Lib Obj Loader",
-  "description": "",
+  "description": "Loads .obj models.",
   "entrypoints": {
     "client": [
       "io.github.fabricators_of_create.porting_lib.PortingLibObjLoader"

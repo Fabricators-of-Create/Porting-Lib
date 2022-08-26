@@ -3,7 +3,7 @@
   "id": "porting_lib_common",
   "version": "${version}",
   "name": "Porting Lib Common",
-  "description": "A collection of utilities for porting mods from Forge to Fabric.",
+  "description": "Miscellaneous utilities for other Porting Lib modules.",
   "mixins": [
     "porting_lib_common.client.mixins.json",
     "porting_lib_common.mixins.json"

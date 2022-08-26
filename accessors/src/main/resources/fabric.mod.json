@@ -3,7 +3,7 @@
   "id": "porting_lib_accessors",
   "version": "${version}",
   "name": "Porting Lib Accessors",
-  "description": "",
+  "description": "Opens up access to Minecraft internals for other modules to use.",
   "mixins": [
     "porting_lib_accessors.client.mixins.json",
     "porting_lib_accessors.common.mixins.json"
