@@ -3,13 +3,15 @@ package io.github.fabricators_of_create.porting_lib_build;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.file.FileCollection;
+import org.gradle.api.tasks.TaskContainer;
 
 public class PortingLibBuildPlugin implements Plugin<Project> {
 	@Override
 	public void apply(Project project) {
 		project.afterEvaluate(p -> {
 			setupDeduplication(p);
-			setupFmjGeneration(p);
+			setupResourceProcessing(p);
 		});
 	}
 
@@ -23,16 +25,21 @@ public class PortingLibBuildPlugin implements Plugin<Project> {
 		deduplicateInclusions.getInputs().files(remapJar.getOutputs().getFiles());
 	}
 
-	public void setupFmjGeneration(Project project) {
+	public void setupResourceProcessing(Project project) {
 		if (project.getRootProject() == project) {
-			return; // do not modify the root fmj
+			return; // do not modify the root resources
 		}
-		Task processResources = project.getTasks().findByName("processResources");
+		TaskContainer tasks = project.getTasks();
+		Task processResources = tasks.findByName("processResources");
 		if (processResources == null) {
 			throw new IllegalStateException("No processResources task?");
 		}
-		Task expandFmj = project.getTasks().create("expandFmj", ExpandFmjTask.class);
-		processResources.finalizedBy(expandFmj);
-		expandFmj.getInputs().files(processResources.getOutputs().getFiles());
+
+		Task expandFmj = tasks.create("expandFmj", ExpandFmjTask.class);
+		Task addIcons = tasks.create("addMissingIcons", AddMissingIconsTask.class);
+		processResources.finalizedBy(expandFmj, addIcons);
+		FileCollection processedResources = processResources.getOutputs().getFiles();
+		expandFmj.getInputs().files(processedResources);
+		addIcons.getInputs().files(processedResources);
 	}
 }
