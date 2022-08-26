@@ -103,13 +103,10 @@ allprojects {
 		//	modLocalRuntime("dev.monarkhes:myron:1.6.3+1.18.1") { transitive = false }
 		modLocalRuntime("com.terraformersmc:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
 
-		// dependencies
+		// common dependencies
+		// each module can also specify additional ones
 		modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
-		modImplementation(include("io.github.tropheusj:serialization-hooks:${project.serialization_hooks_version}"))
-		api(include("com.github.LlamaLad7:MixinExtras:0.0.12"))
-		annotationProcessor(include("com.github.LlamaLad7:MixinExtras:0.0.12"))
 
-		modImplementation(include("com.github.Chocohead:Fabric-ASM:v2.3"))
 		implementation("javax.annotation:javax.annotation-api:1.3.2")
 		implementation("com.google.code.findbugs:jsr305:3.0.2")
 	}
@@ -204,6 +201,16 @@ allprojects {
 			}
 		}
 	}
+}
+
+subprojects.forEach {
+	// everything has the same version
+	it.version = version
+	it.tasks.findByName("processResources")
+	// make subprojects depend on root processResources, needed for values to be properly filled
+			.dependsOn(processResources)
+	// make them always run, because if they don't, extreme weirdness with caching occurs with every other task
+			.outputs.upToDateWhen { false }
 }
 
 sourceSets {

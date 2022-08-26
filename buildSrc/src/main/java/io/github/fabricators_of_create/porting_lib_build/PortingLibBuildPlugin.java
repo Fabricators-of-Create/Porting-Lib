@@ -24,6 +24,9 @@ public class PortingLibBuildPlugin implements Plugin<Project> {
 	}
 
 	public void setupFmjGeneration(Project project) {
+		if (project.getRootProject() == project) {
+			return; // do not modify the root fmj
+		}
 		Task processResources = project.getTasks().findByName("processResources");
 		if (processResources == null) {
 			throw new IllegalStateException("No processResources task?");
