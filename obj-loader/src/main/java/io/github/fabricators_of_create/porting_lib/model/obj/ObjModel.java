@@ -327,7 +327,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 
 		for (var entry : parts.entrySet()) {
 			var part = entry.getValue();
-			part.bake(meshes);
+			part.bake(meshes, spriteGetter);
 		}
 
 		return new ObjBakedModel(meshes);
@@ -529,9 +529,9 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 			}
 		}
 
-		public void bake(List<ObjBakedModel.MeshInfo> meshes) {
+		public void bake(List<ObjBakedModel.MeshInfo> meshes, Function<Material, TextureAtlasSprite> spriteGetter) {
 			for (ModelMesh mesh : this.meshes) {
-				mesh.bake(meshes);
+				mesh.bake(meshes, spriteGetter);
 			}
 		}
 
@@ -583,12 +583,12 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 		}
 
 		@Override
-		public void bake(List<ObjBakedModel.MeshInfo> meshes) {
-			super.bake(meshes);
+		public void bake(List<ObjBakedModel.MeshInfo> meshes, Function<Material, TextureAtlasSprite> spriteGetter) {
+			super.bake(meshes, spriteGetter);
 
 			for (var entry : parts.entrySet()) {
 				var part = entry.getValue();
-				part.bake(meshes);
+				part.bake(meshes, spriteGetter);
 			}
 		}
 
@@ -666,7 +666,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 			builder.addMesh(texturePath, quads);
 		}
 
-		public void bake(List<ObjBakedModel.MeshInfo> meshes) {
+		public void bake(List<ObjBakedModel.MeshInfo> meshes, Function<Material, TextureAtlasSprite> spriteGetter) {
 			ObjMaterialLibrary.Material mat = this.mat;
 			if (mat == null)
 				return;
@@ -680,8 +680,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 				quads.add(pair.getLeft());
 			}
 
-			ResourceLocation textureLocation = new Material(TextureAtlas.LOCATION_BLOCKS, mat.texture).texture();
-			ResourceLocation texturePath = new ResourceLocation(textureLocation.getNamespace(), "textures/" + textureLocation.getPath() + ".png");
+			Material textureLocation = new Material(TextureAtlas.LOCATION_BLOCKS, mat.texture);
 
 			Renderer renderer = RendererAccess.INSTANCE.getRenderer();
 			MeshBuilder builder = renderer.meshBuilder();
@@ -691,7 +690,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 				emitter.emit();
 			});
 
-			meshes.add(new ObjBakedModel.MeshInfo(texturePath, builder.build(), mat));
+			meshes.add(new ObjBakedModel.MeshInfo(spriteGetter.apply(textureLocation), builder.build(), mat));
 		}
 	}
 

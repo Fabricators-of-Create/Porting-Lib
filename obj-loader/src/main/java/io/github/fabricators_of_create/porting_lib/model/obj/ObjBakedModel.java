@@ -51,7 +51,7 @@ public class ObjBakedModel implements BakedModel, FabricBakedModel {
 	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction direction, RandomSource random) {
 		List<BakedQuad> bakedQuads = new ArrayList<>();
 		meshes.forEach(mesh -> {
-			TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(mesh.texturePath());
+			TextureAtlasSprite sprite = mesh.sprite();
 			mesh.mesh().forEach(quadView -> bakedQuads.add(quadView.toBakedQuad(0, sprite, state == null)));
 		});
 		return bakedQuads;
@@ -92,6 +92,6 @@ public class ObjBakedModel implements BakedModel, FabricBakedModel {
 		return ItemOverrides.EMPTY;
 	}
 
-	public record MeshInfo(net.minecraft.resources.ResourceLocation texturePath, Mesh mesh, ObjMaterialLibrary.Material mat) {
+	public record MeshInfo(TextureAtlasSprite sprite, Mesh mesh, ObjMaterialLibrary.Material mat) {
 	}
 }
