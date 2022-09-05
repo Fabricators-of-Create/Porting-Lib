@@ -1,28 +1,14 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib-extensions",
+  "id": "porting_lib_extensions",
   "version": "${version}",
   "name": "Porting Lib Extensions",
-  "description": "A collection of utilities for porting mods from Forge to Fabric.",
-  "authors": [
-    "The Create Fabric Team"
-  ],
-  "contact": {
-    "sources": "https://github.com/Fabricators-of-Create/Porting-Lib"
-  },
-  "license": "LGPL",
-  "icon": "assets/porting_lib/icon.png",
-  "environment": "*",
+  "description": "Extends vanilla things for mods to take advantage of.",
   "mixins": [
-    "porting_lib-extensions.mixins.common.json",
-    "porting_lib-extensions.mixins.client.json"
+    "porting_lib_extensions.client.mixins.json",
+    "porting_lib_extensions.common.mixins.json"
   ],
-  "depends": {
-    "fabricloader": ">=${loader_version}",
-    "fabric": ">=${fabric_version}",
-    "minecraft": ">=${minecraft_version}",
-    "java": ">=${java_version}"
-  },
+
   "custom": {
     "loom:injected_interfaces": {
       "net/minecraft/class_20": ["io/github/fabricators_of_create/porting_lib/extensions/MapDecorationExtensions"],
@@ -75,16 +61,6 @@
       "net/minecraft/class_4538": ["io/github/fabricators_of_create/porting_lib/extensions/LevelReaderExtensions"],
       "net/minecraft/class_4590": ["io/github/fabricators_of_create/porting_lib/extensions/TransformationExtensions"],
       "net/minecraft/class_4581": ["io/github/fabricators_of_create/porting_lib/extensions/Matrix3fExtensions"]
-    },
-    "modmenu": {
-      "badges": [ "library" ],
-      "parent": {
-        "id": "porting_lib",
-        "name": "Porting Lib",
-        "description": "A collection of utilities for porting mods from Forge to Fabric.",
-        "icon": "assets/porting_lib/icon.png",
-        "badges": [ "library" ]
-      }
     }
   }
 }

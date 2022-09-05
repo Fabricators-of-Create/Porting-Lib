@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_model_loader",
+  "version": "${version}",
+  "name": "Porting Lib Model Loader",
+  "description": "Adds the framework for loading more types of models.",
+  "entrypoints": {
+    "client": [
+      "io.github.fabricators_of_create.porting_lib.client.PortingLibModelsClient"
+    ]
+  },
+  "mixins": [
+    "porting_lib_model_loader.mixins.json"
+  ],
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_793": ["io/github/fabricators_of_create/porting_lib/extensions/BlockModelExtensions"],
+      "net/minecraft/class_4588": ["io/github/fabricators_of_create/porting_lib/extensions/VertexConsumerExtension"]
+    }
+  }
+}

@@ -1,10 +1,10 @@
-archivesBaseName = "extensions"
+archivesBaseName = "model_loader"
 version = getSubprojectVersion(project)
 
 moduleDependencies(project, [
-		"attributes",
+		"extensions",
 		"accessors",
-		"common",
+		"common"
 ])
 
 processResources {

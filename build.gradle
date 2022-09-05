@@ -1,12 +1,12 @@
-import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
+import io.github.fabricators_of_create.porting_lib_build.PortingLibBuildPlugin
 
 //file:noinspection GroovyAssignabilityCheck
 //file:noinspection GroovyAccessibility
 plugins {
-	id "fabric-loom" version "0.13-SNAPSHOT"
+	id "fabric-loom" version "0.13.12"
 	id "io.github.juuxel.loom-quiltflower" version "1.+" // Quiltflower, a better decompiler
 	id "org.quiltmc.quilt-mappings-on-loom" version "4.2.0" // Quilt Mappings, for parameters and javadoc. Also hashed mojmap.
-//	id "io.github.p03w.machete" version "1.+" // automatic jar compressing on build
+	id "io.github.p03w.machete" version "1.+" // automatic jar compressing on build
 	id "org.ajoberstar.grgit" version "4.1.1"
 	id "maven-publish"
 }
@@ -18,8 +18,8 @@ archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
-ext.buildNumber = System.getenv('GITHUB_RUN_NUMBER')
-def patch = buildNumber != null ? buildNumber : '99999'
+String buildNumber = System.getenv("GITHUB_RUN_NUMBER")
+String patch = buildNumber != null ? buildNumber : "99999"
 
 version = version.replace("<patch>", patch)
 
@@ -34,11 +34,11 @@ def getSubprojectVersion(project) {
 	return version
 }
 
-def moduleDependencies(project, List<String> depNames) {
-	def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: 'namedElements') }
+def moduleDependencies(Project project, List<String> depNames) {
+	def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: "namedElements") }
 
 	depNames.iterator().forEachRemaining {
-		def dependProject = findProject(":$it")
+		Project dependProject = findProject(":$it")
 		project.loom {
 			interfaceInjection {
 				interfaceInjectionSourceSets.add(dependProject.sourceSets.main)
@@ -47,24 +47,31 @@ def moduleDependencies(project, List<String> depNames) {
 	}
 	project.dependencies {
 		deps.each {
-			api it
+			api(include(it))
 		}
 	}
+}
 
-	// As we manually handle the maven artifacts, we need to also manually specify the deps.
-	project.publishing {
-		publications {
-			mavenJava(MavenPublication) {
-				pom.withXml {
-					def depsNode = asNode().appendNode("dependencies")
-					deps.each {
-						def depNode = depsNode.appendNode("dependency")
-						depNode.appendNode("groupId", it.group)
-						depNode.appendNode("artifactId", it.name)
-						depNode.appendNode("version", it.version)
-						depNode.appendNode("scope", "compile")
-					}
-				}
+def setupDatagen(Project module) {
+	module.loom {
+		runs {
+			datagen {
+				client()
+				name "Data Generation"
+				source module.sourceSets.main
+				vmArg "-Dfabric-api.datagen"
+				vmArg "-Dfabric-api.datagen.output-dir=${module.file("src/generated/resources")}"
+				vmArg "-Dfabric-api.datagen.modid=porting_lib_$module.name"
+				runDir "build/datagen"
+				ideConfigGenerated true // loom will only make run configs for the root project by default
+			}
+		}
+	}
+	module.sourceSets {
+		main {
+			resources {
+				srcDir("src/generated/resources")
+				exclude("src/generated/resources/.cache")
 			}
 		}
 	}
@@ -74,29 +81,12 @@ File globalAccessWidener = file("src/main/resources/porting_lib.accesswidener")
 
 
 allprojects {
+	if (name == "buildSrc") return
+
 	apply plugin: "fabric-loom"
 	apply plugin: "maven-publish"
+	apply plugin: PortingLibBuildPlugin
 	group = "io.github.fabricators_of_create.Porting-Lib"
-
-	tasks.withType(GenerateModuleMetadata) {
-		enabled = false
-	}
-
-	publishing {
-		setupRepositories(repositories)
-	}
-
-	tasks.withType(JavaCompile).configureEach {
-		it.options.release = 17
-	}
-
-	java {
-		withSourcesJar()
-	}
-
-	loom {
-		accessWidenerPath = globalAccessWidener
-	}
 
 	repositories {
 		mavenLocal()
@@ -138,22 +128,20 @@ allprojects {
 		//	modLocalRuntime("dev.monarkhes:myron:1.6.3+1.18.1") { transitive = false }
 		modLocalRuntime("com.terraformersmc:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
 
-		// dependencies
+		// common dependencies
+		// each module can also specify additional ones
 		modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
-		modImplementation(include("io.github.tropheusj:serialization-hooks:${project.serialization_hooks_version}"))
-		api(include("com.github.LlamaLad7:MixinExtras:0.0.12"))
-		annotationProcessor(include("com.github.LlamaLad7:MixinExtras:0.0.12"))
 
-		modApi(include("com.github.Chocohead:Fabric-ASM:v2.3"))
 		implementation("javax.annotation:javax.annotation-api:1.3.2")
-		implementation('com.google.code.findbugs:jsr305:3.0.2')
+		implementation("com.google.code.findbugs:jsr305:3.0.2")
 	}
 
-	allprojects.each { p ->
-		loom.mods.register(p.name) {
-			sourceSet p.sourceSets.main
-		}
-	}
+	// todo why?
+//	allprojects.each { p ->
+//		loom.mods.register(p.name) {
+//			sourceSet p.sourceSets.main
+//		}
+//	}
 
 	tasks.withType(ProcessResources).configureEach {
 		Map<String, String> properties = new HashMap<>()
@@ -172,10 +160,6 @@ allprojects {
 		}
 	}
 
-	task generateResources {
-		group = "porting-lib"
-	}
-
 	task buildOrPublish {
 		group = "build"
 		String mavenUser = System.getenv().MAVEN_USER
@@ -188,13 +172,32 @@ allprojects {
 		}
 	}
 
+	loom {
+		accessWidenerPath = globalAccessWidener
+	}
+
+	machete {
+		if (buildNumber == null) {
+			enabled = false
+		}
+	}
+
 	tasks.withType(AbstractArchiveTask) {
-		preserveFileTimestamps = false
 		reproducibleFileOrder = true
 	}
 
-	tasks.withType(JavaCompile).configureEach {
-		it.options.release = Integer.parseInt(sourceCompatibility)
+	// todo why?
+//	tasks.withType(GenerateModuleMetadata) {
+//		enabled = false
+//	}
+
+	// fixme uncommenting this causes everything to explode, but this might be important
+//	tasks.withType(JavaCompile).configureEach {
+//		it.options.setRelease(Integer.parseInt(sourceCompatibility))
+//	}
+
+	java {
+		withSourcesJar()
 	}
 
 	jar {
@@ -202,152 +205,155 @@ allprojects {
 			rename { "${it}_${project.archivesBaseName}" }
 		}
 	}
-}
 
-loom {
-	sourceSets {
-		main {
-			resources {
-				srcDir("src/generated/resources")
-				exclude("src/generated/resources/.cache")
+	publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				from components.java
+			}
+		}
+
+		repositories {
+			maven {
+				url = "https://mvn.devos.one/snapshots/"
+				credentials {
+					username = System.getenv().MAVEN_USER
+					password = System.getenv().MAVEN_PASS
+				}
+				authentication {
+					basic(BasicAuthentication)
+				}
 			}
 		}
 	}
+}
 
-	runs {
-		datagen {
-			client()
+subprojects.forEach {
+	// everything has the same version
+	it.version = version
+	it.tasks.findByName("processResources")
+	// make subprojects depend on root processResources, needed for values to be properly filled
+			.dependsOn(processResources)
+	// make them always run, because if they don't, extreme weirdness with caching occurs with every other task
+			.outputs.upToDateWhen { false }
+}
 
-			name "Data Generation"
-			vmArg "-Dfabric-api.datagen"
-			vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
-			vmArg "-Dfabric-api.datagen.modid=porting_lib"
-			// from ae2
-
-			runDir "build/datagen"
+sourceSets {
+	allModules {
+		for (Project p : subprojects) {
+			def main = p.sourceSets.main
+			compileClasspath += main.compileClasspath + main.output
+			runtimeClasspath += main.runtimeClasspath + main.output
 		}
 	}
 }
 
-javadoc {
-	options {
-		source = "17"
-		encoding = "UTF-8"
-		charSet = "UTF-8"
-		memberLevel = JavadocMemberLevel.PACKAGE
-		links(
-				"https://guava.dev/releases/21.0/api/docs/",
-				"https://asm.ow2.io/javadoc/",
-				"https://docs.oracle.com/javase/8/docs/api/",
-				"http://jenkins.liteloader.com/job/Mixin/javadoc/",
-				"https://logging.apache.org/log4j/2.x/log4j-api/apidocs/"
-				// Need to add minecraft jd publication etc once there is one available
-		)
-		// Disable the crazy super-strict doclint tool in Java 8
-		addStringOption("Xdoclint:none", "-quiet")
+loom {
+	runs {
+		// make default run configs run all modules
+		client {
+			client()
+			name "Minecraft Client"
+			source sourceSets.allModules
+		}
+		server {
+			server()
+			name "Minecraft Server"
+			source sourceSets.allModules
+		}
 	}
-
-	allprojects.each {
-		if (it.getName() == "networking") return
-
-		source(it.sourceSets.main.allJava.srcDirs)
-	}
-
-	classpath = files(sourceSets.main.compileClasspath)
-	include("**/api/**")
-	failOnError false
 }
-
-task javadocJar(type: Jar) {
-	dependsOn javadoc
-	from javadoc.destinationDir
-	//Set as `fatjavadoc` to prevent an ide form trying to use this javadoc, over using the modules javadoc
-	archiveClassifier = "fatjavadoc"
-}
-
-build.dependsOn javadocJar
 
 remapJar {
 	afterEvaluate {
 		subprojects.each {
+			// include all modules inside the fat jar
 			nestedJars.from project("${it.path}").tasks.getByName("remapJar")
 		}
 	}
 }
 
-subprojects.each {
-	remapJar.dependsOn("${it.path}:remapJar")
-}
+// todo why?
+//javadoc {
+//	options {
+//		source = "17"
+//		encoding = "UTF-8"
+//		charSet = "UTF-8"
+//		memberLevel = JavadocMemberLevel.PACKAGE
+//		links(
+//				"https://guava.dev/releases/21.0/api/docs/",
+//				"https://asm.ow2.io/javadoc/",
+//				"https://docs.oracle.com/javase/8/docs/api/",
+//				"http://jenkins.liteloader.com/job/Mixin/javadoc/",
+//				"https://logging.apache.org/log4j/2.x/log4j-api/apidocs/"
+//				// Need to add minecraft jd publication etc once there is one available
+//		)
+//		// Disable the crazy super-strict doclint tool in Java 8
+//		addStringOption("Xdoclint:none", "-quiet")
+//	}
+//
+//	allprojects.each {
+//		if (it.getName() == "networking") return
+//
+//		source(it.sourceSets.main.allJava.srcDirs)
+//	}
+//
+//	classpath = files(sourceSets.main.compileClasspath)
+//	include("**/api/**")
+//	failOnError false
+//}
 
-subprojects {
-	publishing {
-		publications {
-			mavenJava(MavenPublication) {
-				artifact(remapJar) {
-					builtBy(remapJar)
-				}
+//task javadocJar(type: Jar) {
+//	dependsOn javadoc
+//	from javadoc.destinationDir
+//	//Set as `fatjavadoc` to prevent an ide form trying to use this javadoc, over using the modules javadoc
+//	archiveClassifier = "fatjavadoc"
+//}
 
-				artifact(remapSourcesJar) {
-					builtBy remapSourcesJar
-				}
-			}
-		}
-	}
+//build.dependsOn javadocJar
 
-	loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
+//subprojects.each {
+//	remapJar.dependsOn("${it.path}:remapJar")
+//}
 
-	javadoc.enabled = false
-}
+//subprojects {
+//	publishing {
+//		publications {
+//			mavenJava(MavenPublication) {
+//				artifact(remapJar) {
+//					builtBy(remapJar)
+//				}
+//
+//				artifact(remapSourcesJar) {
+//					builtBy remapSourcesJar
+//				}
+//			}
+//		}
+//	}
+//
+//	loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
+//
+//	javadoc.enabled = false
+//}
 
-void setupRepositories(RepositoryHandler repositories) {
-	//repositories.mavenLocal() // uncomment for testing
-	repositories.maven {
-		url = "https://mvn.devos.one/${System.getenv().PUBLISH_SUFFIX}/"
-		credentials {
-			username = System.getenv().MAVEN_USER
-			password = System.getenv().MAVEN_PASS
-		}
-		authentication {
-			basic(BasicAuthentication)
-		}
-	}
-}
+//void setupRepositories(RepositoryHandler repositories) {
+//	//repositories.mavenLocal() // uncomment for testing
+//	repositories.maven {
+//		url = "https://mvn.devos.one/${System.getenv().PUBLISH_SUFFIX}/"
+//		credentials {
+//			username = System.getenv().MAVEN_USER
+//			password = System.getenv().MAVEN_PASS
+//		}
+//		authentication {
+//			basic(BasicAuthentication)
+//		}
+//	}
+//}
 
-subprojects.each {
-	remapJar.dependsOn("${it.path}:remapJar")
-}
+//task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: jar) {
+//	input = jar.archiveFile
+//	archiveFileName = "${archivesBaseName}-${project.version}-maven.jar"
+//	addNestedDependencies = false
+//}
+//build.dependsOn remapMavenJar
 
-task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: jar) {
-	input = jar.archiveFile
-	archiveFileName = "${archivesBaseName}-${project.version}-maven.jar"
-	addNestedDependencies = false
-}
-build.dependsOn remapMavenJar
-
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			artifact(remapMavenJar) {
-				builtBy(remapMavenJar)
-			}
-
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
-
-			artifact javadocJar
-
-			pom.withXml {
-				def depsNode = asNode().appendNode("dependencies")
-				subprojects.each {
-					def depNode = depsNode.appendNode("dependency")
-					depNode.appendNode("groupId", it.group)
-					depNode.appendNode("artifactId", it.name)
-					depNode.appendNode("version", it.version)
-					depNode.appendNode("scope", "compile")
-				}
-			}
-		}
-	}
-}
-loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)

@@ -2,15 +2,24 @@ archivesBaseName = "base"
 version = getSubprojectVersion(project)
 
 moduleDependencies(project, [
-		'model-loader',
-		'extensions',
-		'obj-loader',
-		'transfer',
-		'entity',
-		'common',
-		'models',
-		'tags'
+		"model_loader",
+		"extensions",
+		"obj_loader",
+		"transfer",
+		"entity",
+		"common",
+		"models",
+		"tags"
 ])
+
+setupDatagen(project)
+
+dependencies {
+	modImplementation(include("com.github.Chocohead:Fabric-ASM:v2.3"))
+	modImplementation(include("io.github.tropheusj:serialization-hooks:${project.serialization_hooks_version}"))
+	api(include("com.github.LlamaLad7:MixinExtras:0.0.12"))
+	annotationProcessor(include("com.github.LlamaLad7:MixinExtras:0.0.12"))
+}
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN

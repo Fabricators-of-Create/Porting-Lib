@@ -1,24 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib-tags",
+  "id": "porting_lib_tags",
   "version": "${version}",
   "name": "Porting Lib Tags",
-  "description": "A collection of utilities for porting mods from Forge to Fabric.",
+  "description": "Adds tags from Forge that Fabric is missing.",
   "authors": [
-    "The Create Fabric Team"
+    "AlphaMode"
   ],
-  "contact": {
-    "sources": "https://github.com/Fabricators-of-Create/Porting-Lib"
-  },
-  "license": "LGPL",
-  "icon": "assets/porting_lib/icon.png",
-  "environment": "*",
-  "depends": {
-    "fabricloader": ">=${loader_version}",
-    "fabric": ">=${fabric_version}",
-    "minecraft": ">=${minecraft_version}",
-    "java": ">=${java_version}"
-  },
   "provides": [
     "forge_tags"
   ],
@@ -28,21 +16,11 @@
     ]
   },
   "mixins": [
-    "porting_lib-tags.mixins.json"
+    "porting_lib_tags.mixins.json"
   ],
   "custom": {
     "loom:injected_interfaces": {
       "net/minecraft/class_1767": ["me/alphamode/forgetags/extensions/DyeExtension"]
-    },
-    "modmenu": {
-      "badges": [ "library" ],
-      "parent": {
-        "id": "porting_lib",
-        "name": "Porting Lib",
-        "description": "A collection of utilities for porting mods from Forge to Fabric.",
-        "icon": "assets/porting_lib/icon.png",
-        "badges": [ "library" ]
-      }
     }
   }
 }
