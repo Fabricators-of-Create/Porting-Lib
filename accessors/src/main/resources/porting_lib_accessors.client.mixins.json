@@ -17,6 +17,7 @@
     "CommandSuggestions$SuggestionsListAccessor",
     "FontAccessor",
     "GameRendererAccessor",
+    "GuiAccessor",
     "HumanoidModelAccessor",
     "ItemInHandRendererAccessor",
     "ItemRendererAccessor",
