@@ -79,7 +79,6 @@ def setupDatagen(Project module) {
 
 File globalAccessWidener = file("src/main/resources/porting_lib.accesswidener")
 
-
 allprojects {
 	if (name == "buildSrc") return
 
@@ -228,6 +227,15 @@ allprojects {
 	}
 }
 
+dependencies {
+	afterEvaluate {
+		// fat jar depends on and includes all modules
+		for (Project module : subprojects) {
+			api(include(module))
+		}
+	}
+}
+
 subprojects.forEach {
 	// everything has the same version
 	it.version = version
@@ -260,15 +268,6 @@ loom {
 			server()
 			name "Minecraft Server"
 			source sourceSets.allModules
-		}
-	}
-}
-
-remapJar {
-	afterEvaluate {
-		subprojects.each {
-			// include all modules inside the fat jar
-			nestedJars.from project("${it.path}").tasks.getByName("remapJar")
 		}
 	}
 }
