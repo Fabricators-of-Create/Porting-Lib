@@ -17,6 +17,7 @@
     "BlockLootAccessor",
     "BucketItemAccessor",
     "BundleItemAccessor",
+    "ChunkGeneratorAccessor",
     "ClientboundPlayerAbilitiesPacketAccessor",
     "CubeVoxelShapeAccessor",
     "DamageSourceAccessor",

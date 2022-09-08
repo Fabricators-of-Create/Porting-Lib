@@ -33,6 +33,7 @@
     "ConnectionMixin",
     "DeadBushBlockMixin",
     "DropExperienceBlockMixin",
+    "EnchantedBookItemMixin",
     "EnchantmentHelperMixin",
     "EnchantmentMenuMixin",
     "EnchantmentMixin",
