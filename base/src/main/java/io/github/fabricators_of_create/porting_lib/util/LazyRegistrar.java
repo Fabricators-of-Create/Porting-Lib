@@ -50,16 +50,16 @@ public class LazyRegistrar<T> {
 		return cachedHolder;
 	}
 
-	public <R extends T> RegistryObject<R> register(String id, Supplier<R> entry) {
+	public <R extends T> RegistryObject<R> register(String id, Supplier<? extends R> entry) {
 		return register(new ResourceLocation(mod_id, id), entry);
 	}
 
-	public <R extends T> RegistryObject<R> register(ResourceLocation id, Supplier<R> entry) {
-		RegistryObject<R> obj = new RegistryObject<>(id, entry, ResourceKey.create(registryName, id));
+	public <R extends T> RegistryObject<R> register(ResourceLocation id, final Supplier<? extends R> entry) {
+		RegistryObject<? extends R> obj = new RegistryObject<>(id, entry, ResourceKey.create(registryName, id));
 		if (entries.putIfAbsent((RegistryObject<T>) obj, entry) != null) {
 			throw new IllegalArgumentException("Duplicate registration " + id);
 		}
-		return obj;
+		return (RegistryObject<R>) obj;
 	}
 
 	public void register() {
