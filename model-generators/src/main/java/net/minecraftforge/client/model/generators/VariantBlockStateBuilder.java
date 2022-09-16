@@ -66,7 +66,7 @@ import net.minecraftforge.client.model.generators.BlockStateProvider.ConfiguredM
  *
  * @see BlockStateProvider
  */
-public class VariantBlockStateBuilder implements IGeneratedBlockstate {
+public class VariantBlockStateBuilder implements IGeneratedBlockState {
 
     private final Block owner;
     private final Map<PartialBlockstate, ConfiguredModelList> models = new LinkedHashMap<>();
