@@ -4,15 +4,19 @@ import com.google.common.base.Suppliers;
 
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.Registry;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class LazyRegistrar<T> {
@@ -81,16 +85,26 @@ public class LazyRegistrar<T> {
 	private static class RegistryHolder<V> implements Supplier<Registry<V>> {
 		private final ResourceKey<? extends Registry<V>> registryKey;
 		private Registry<V> registry = null;
+		private final List<Registry<? extends Registry<?>>> registries;
 
 		private RegistryHolder(ResourceKey<? extends Registry<V>> registryKey) {
 			this.registryKey = registryKey;
+			this.registries = new ArrayList<>();
+			registerRegistry(Registry.REGISTRY);
+			registerRegistry(BuiltinRegistries.REGISTRY);
+		}
+
+		public void registerRegistry(Registry<? extends Registry<?>> registry) {
+			registries.add(registry);
 		}
 
 		@Override
 		public Registry<V> get() {
 			// Keep looking up the registry until it's not null
-			if (Registry.REGISTRY.containsKey(registryKey.location()))
-				this.registry = (Registry<V>) Registry.REGISTRY.get(registryKey.location());
+			registries.forEach(reg -> {
+				if (reg.containsKey(registryKey.location()))
+					this.registry = (Registry<V>) reg.get(registryKey.location());
+			});
 			if (this.registry == null)
 				this.registry = (Registry<V>) FabricRegistryBuilder.createSimple(null, registryKey.location()).buildAndRegister();
 
