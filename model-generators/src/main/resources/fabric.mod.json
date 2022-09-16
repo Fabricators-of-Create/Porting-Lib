@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_model_generators",
+  "version": "${version}",
+  "name": "Porting Lib Model Generators",
+  "description": "Utility classes for generating model files with data generation."
+}

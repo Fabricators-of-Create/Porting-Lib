@@ -1,0 +1,6 @@
+archivesBaseName = "model-generators"
+version = getSubprojectVersion(project)
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}
