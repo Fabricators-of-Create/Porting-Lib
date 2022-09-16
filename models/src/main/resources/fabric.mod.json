@@ -3,5 +3,10 @@
   "id": "porting_lib_models",
   "version": "${version}",
   "name": "Porting Lib Models",
-  "description": "Expands models with features from Forge."
+  "description": "Expands models with features from Forge.",
+  "entrypoints": {
+    "client": [
+      "io.github.fabricators_of_create.porting_lib.client.PortingLibModelsClient"
+    ]
+  }
 }
