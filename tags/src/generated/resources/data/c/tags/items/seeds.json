@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "#c:seeds/beetroot",
+    "#c:seeds/melon",
+    "#c:seeds/pumpkin",
+    "#c:seeds/wheat"
+  ]
+}

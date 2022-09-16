@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "#c:is_sparse/overworld",
+    {
+      "id": "#c:is_sparse/nether",
+      "required": false
+    },
+    {
+      "id": "#c:is_sparse/end",
+      "required": false
+    }
+  ]
+}

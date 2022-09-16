@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#c:glass/colorless",
+    "#c:stained_glass",
+    "#c:glass/tinted"
+  ]
+}

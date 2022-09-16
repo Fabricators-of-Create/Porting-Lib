@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "#c:is_cold/overworld",
+    {
+      "id": "#c:is_cold/nether",
+      "required": false
+    },
+    "#c:is_cold/end"
+  ]
+}

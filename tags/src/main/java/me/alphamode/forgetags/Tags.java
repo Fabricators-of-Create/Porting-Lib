@@ -5,6 +5,8 @@ import java.util.function.Supplier;
 
 import net.fabricmc.api.ModInitializer;
 
+import net.minecraft.world.entity.EntityType;
+
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.Registry;
@@ -20,6 +22,7 @@ public class Tags implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		Blocks.init();
+		EntityTypes.init();
 		Items.init();
 		Fluids.init();
 		Biomes.init();
@@ -172,6 +175,16 @@ public class Tags implements ModInitializer {
 
 		private static TagKey<Block> tag(String name) {
 			return TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation("c", name));
+		}
+	}
+
+	public static class EntityTypes {
+		private static void init() {}
+
+		public static final TagKey<EntityType<?>> BOSSES = tag("bosses");
+
+		private static TagKey<EntityType<?>> tag(String name) {
+			return TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation("c", name));
 		}
 	}
 

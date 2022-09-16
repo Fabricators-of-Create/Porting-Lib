@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:mangrove_swamp",
+    "#c:is_wet/overworld",
+    {
+      "id": "#c:is_wet/nether",
+      "required": false
+    },
+    {
+      "id": "#c:is_wet/end",
+      "required": false
+    }
+  ]
+}

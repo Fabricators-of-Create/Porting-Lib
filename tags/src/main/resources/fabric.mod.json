@@ -13,6 +13,9 @@
   "entrypoints": {
     "main": [
       "me.alphamode.forgetags.Tags"
+    ],
+    "fabric-datagen": [
+      "me.alphamode.forgetags.data.DataGenerators"
     ]
   },
   "mixins": [

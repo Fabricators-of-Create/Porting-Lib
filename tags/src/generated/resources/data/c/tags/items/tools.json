@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "#c:tools/swords",
+    "#c:tools/axes",
+    "#c:tools/pickaxes",
+    "#c:tools/shovels",
+    "#c:tools/hoes",
+    "#c:tools/shields",
+    "#c:tools/bows",
+    "#c:tools/crossbows",
+    "#c:tools/fishing_rods",
+    "#c:tools/tridents"
+  ]
+}

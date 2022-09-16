@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#c:crops/beetroot",
+    "#c:crops/carrot",
+    "#c:crops/nether_wart",
+    "#c:crops/potato",
+    "#c:crops/wheat"
+  ]
+}
