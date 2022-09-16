@@ -35,6 +35,7 @@ public class CraftingHelper {
 	public static void init() {
 		// forge's Compound defers to Serialization Hooks' Combined		// can't register more than once so construct a new one
 		register(new ResourceLocation("forge", "compound"), new CombinedIngredient.Deserializer());
+		register(new ResourceLocation("forge", "partial_nbt"), PartialNBTIngredient.Serializer.INSTANCE);
 		register(NBTIngredient.Serializer.ID, NBTIngredient.Serializer.INSTANCE);
 		register(DifferenceIngredient.Serializer.ID, DifferenceIngredient.Serializer.INSTANCE);
 		register(IntersectionIngredient.Serializer.ID, IntersectionIngredient.Serializer.INSTANCE);
