@@ -11,5 +11,6 @@ public class PortingLibModelsClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		RegisterShadersCallback.EVENT.register(PortingLibRenderTypes.Internal::initEntityTranslucentUnlitShader);
+		NamedRenderTypeManager.init();
 	}
 }
