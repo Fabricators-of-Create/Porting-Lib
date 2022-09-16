@@ -6,7 +6,7 @@
   "description": "Expands models with features from Forge.",
   "entrypoints": {
     "client": [
-      "io.github.fabricators_of_create.porting_lib.client.PortingLibModelsClient"
+      "io.github.fabricators_of_create.porting_lib.PortingLibModels"
     ]
   }
 }
