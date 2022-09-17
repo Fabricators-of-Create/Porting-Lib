@@ -40,8 +40,15 @@ public class RecipeManagerMixin {
 		capturedRecipe.set(null);
 	}
 
+	@WrapOperation(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/crafting/Recipe;getType()Lnet/minecraft/world/item/crafting/RecipeType;"))
+	public RecipeType porting_lib$nullCompute(Recipe<?> recipe, Operation<RecipeType> recipeTypeOperation) {
+		if (recipe == null)
+			return null;
+		return recipeTypeOperation.call(recipe);
+	}
+
 	@WrapOperation(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At(value = "INVOKE", target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;"))
-	public Object porting_lib$captureRecipe(Map<RecipeType<?>, ImmutableMap.Builder<ResourceLocation, Recipe<?>>> map, Object obj, Function function, Operation<Map> operation) {
+	public Object porting_lib$allowNullMap(Map<RecipeType<?>, ImmutableMap.Builder<ResourceLocation, Recipe<?>>> map, Object obj, Function function, Operation<Map> operation) {
 		if (capturedRecipe.get() == null)
 			return ImmutableMap.builder();
 		return operation.call(map, obj, function);
