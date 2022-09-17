@@ -16,6 +16,7 @@ import io.github.fabricators_of_create.porting_lib.client.RenderTypeGroup;
 import io.github.fabricators_of_create.porting_lib.model.geometry.IGeometryBakingContext;
 import io.github.fabricators_of_create.porting_lib.model.geometry.IGeometryLoader;
 import io.github.fabricators_of_create.porting_lib.model.geometry.IUnbakedGeometry;
+import io.github.fabricators_of_create.porting_lib.model.geometry.UnbakedGeometryHelper;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 
@@ -93,7 +94,7 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel> {
 			if (!context.isComponentVisible(name, true))
 				continue;
 			var model = entry.getValue();
-			bakedPartsBuilder.put(name, model.bake(bakery, model, spriteGetter, modelState, modelLocation, true));
+			bakedPartsBuilder.put(name, UnbakedGeometryHelper.bake(model, bakery, model, spriteGetter, modelState, modelLocation, true));
 		}
 		var bakedParts = bakedPartsBuilder.build();
 
