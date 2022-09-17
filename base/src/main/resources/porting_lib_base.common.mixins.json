@@ -86,6 +86,7 @@
     "ProjectileUtilMixin",
     "ProtoChunkMixin",
     "RailStateMixin",
+    "RecipeManagerMixin",
     "RedStoneOreBlockMixin",
     "RedStoneWireBlockMixin",
     "ReloadableServerResourcesMixin",

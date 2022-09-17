@@ -1,14 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client.loader;
 
-import com.google.common.base.Charsets;
-import com.google.gson.JsonObject;
-import com.google.gson.internal.Streams;
-import com.google.gson.stream.JsonReader;
-
-import io.github.fabricators_of_create.porting_lib.PortingConstants;
-import net.minecraft.server.packs.resources.ResourceManager;
-
-import net.minecraft.util.GsonHelper;
+import java.io.InputStreamReader;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,13 +9,19 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.google.common.base.Charsets;
+import com.google.gson.JsonObject;
+import com.google.gson.internal.Streams;
+import com.google.gson.stream.JsonReader;
+
+import io.github.fabricators_of_create.porting_lib.PortingConstants;
 import io.github.fabricators_of_create.porting_lib.model.obj.ObjLoader;
 import io.github.fabricators_of_create.porting_lib.model.obj.ObjModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
-
-import java.io.InputStreamReader;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.GsonHelper;
 
 @Mixin(ModelBakery.class)
 public abstract class ModelBakeryMixin {
@@ -53,7 +51,5 @@ public abstract class ModelBakeryMixin {
 
 			}
 		});
-
-
 	}
 }

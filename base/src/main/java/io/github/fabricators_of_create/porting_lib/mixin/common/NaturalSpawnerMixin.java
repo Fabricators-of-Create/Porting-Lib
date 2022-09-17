@@ -1,7 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.WrapWithCondition;
 
 import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEvents;
 import io.github.fabricators_of_create.porting_lib.block.ValidSpawnBlock;

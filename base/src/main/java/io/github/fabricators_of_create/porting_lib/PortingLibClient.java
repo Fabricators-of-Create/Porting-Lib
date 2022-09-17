@@ -1,5 +1,14 @@
 package io.github.fabricators_of_create.porting_lib;
 
+import io.github.fabricators_of_create.porting_lib.event.client.ModelsBakedCallback;
+
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.minecraft.client.renderer.block.BlockModelShaper;
+
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +69,8 @@ public class PortingLibClient implements ClientModInitializer {
 			client.execute(() -> openScreen(typeId, syncId, title, extraData));
 		});
 		ClientLifecycleEvents.CLIENT_STARTED.register(client -> LogicalSidedProvider.setClient(() -> client));
+
+
 	}
 
 	private void openScreen(int typeId, int syncId, Component title, FriendlyByteBuf buf) {

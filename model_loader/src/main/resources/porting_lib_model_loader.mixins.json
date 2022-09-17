@@ -11,7 +11,8 @@
     "BlockModelDeserializerMixin",
     "BlockModelMixin",
     "FaceBakeryMixin",
-    "VertexConsumerMixin"
+    "VertexConsumerMixin",
+    "accessor.BlockModelAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

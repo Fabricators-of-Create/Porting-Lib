@@ -557,7 +557,8 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             private String texture = MissingTextureAtlasSprite.getLocation().toString();
             private float[] uvs;
             private FaceRotation rotation = FaceRotation.ZERO;
-//            private int emissivity = 0;
+            private int emissivity = 0;
+			private boolean hasAmbientOcclusion = true;
 
             FaceBuilder(Direction dir) {
                 // param unused for functional match
@@ -605,38 +606,48 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             }
 
             /**
-			 * UNSUPPORTED ON FABRIC
-			 *
              * Set the emissivity of the face (0-15).
              *
              * @param emissivity the emissivity
              * @return this builder
 			 * @deprecated does not work on fabric
              */
-			@Deprecated
             public FaceBuilder emissivity(int emissivity) {
-//                this.emissivity = emissivity;
+                this.emissivity = emissivity;
                 return this;
             }
 
             /**
-			 * UNSUPPORTED ON FABRIC
-			 *
              * Make the face emissive (emissivity = 15).
              *
              * @return this builder
 			 * @deprecated does not work on fabric
              */
-			@Deprecated
             public FaceBuilder emissive() {
                 return emissivity(15);
             }
+
+			/**
+			 * CURRENTLY UNIMPLEMENTED!
+			 * <p>
+			 * Set the ambient occlusion of the face.
+			 *
+			 * @param ao the ambient occlusion
+			 * @return this builder
+			 */
+			@Deprecated
+			public FaceBuilder ao(boolean ao) {
+				this.hasAmbientOcclusion = ao;
+				return this;
+			}
 
             BlockElementFace build() {
                 if (this.texture == null) {
                     throw new IllegalStateException("A model face must have a texture");
                 }
-                return new BlockElementFace(cullface, tintindex, texture, new BlockFaceUV(uvs, rotation.rotation));
+				BlockElementFace face = new BlockElementFace(cullface, tintindex, texture, new BlockFaceUV(uvs, rotation.rotation));
+				((BlockElementFaceExtensions) face).setEmissivity(emissivity);
+                return face;
             }
 
             public ElementBuilder end() { return ElementBuilder.this; }

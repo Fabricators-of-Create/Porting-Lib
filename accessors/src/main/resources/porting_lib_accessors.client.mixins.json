@@ -11,7 +11,6 @@
     "AbstractWidgetAccessor",
     "AgeableListModelAccessor",
     "BlockModel$DeserializerAccessor",
-    "BlockModelAccessor",
     "BlockRenderDispatcherAccessor",
     "ClientPacketListenerAccessor",
     "CommandSuggestions$SuggestionsListAccessor",
