@@ -2,6 +2,12 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.function.Function;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
+import net.minecraft.world.item.crafting.RecipeType;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -34,6 +40,12 @@ public class RecipeManagerMixin {
 		capturedRecipe.set(null);
 	}
 
+	@WrapOperation(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At(value = "INVOKE", target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;"))
+	public Object porting_lib$captureRecipe(Map<RecipeType<?>, ImmutableMap.Builder<ResourceLocation, Recipe<?>>> map, Object obj, Function function, Operation<Map> operation) {
+		if (capturedRecipe.get() == null)
+			return ImmutableMap.builder();
+		return operation.call(map, obj, function);
+	}
 
 	@WrapWithCondition(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap$Builder;put(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMap$Builder;"))
 	public boolean porting_lib$allowNullRecipe(ImmutableMap.Builder self, Object key, Object val) {
