@@ -14,6 +14,7 @@
   ],
   "custom": {
     "loom:injected_interfaces": {
+      "net/minecraft/class_783": ["io/github/fabricators_of_create/porting_lib/extensions/BlockElementFaceExtensions"],
       "net/minecraft/class_793": ["io/github/fabricators_of_create/porting_lib/extensions/BlockModelExtensions"],
       "net/minecraft/class_4588": ["io/github/fabricators_of_create/porting_lib/extensions/VertexConsumerExtension"]
     }

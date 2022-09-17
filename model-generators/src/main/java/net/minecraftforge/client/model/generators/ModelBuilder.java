@@ -29,6 +29,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+import io.github.fabricators_of_create.porting_lib.extensions.BlockElementFaceExtensions;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 
 import org.jetbrains.annotations.Nullable;
@@ -343,9 +344,9 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                         faceObj.addProperty("tintindex", face.tintIndex);
                     }
 					// fabric: doesn't exist
-//                    if (face.emissivity > 0) {
-//                        faceObj.addProperty("emissivity", face.emissivity);
-//                    }
+                    if (((BlockElementFaceExtensions)face).getEmissivity() > 0) {
+                        faceObj.addProperty("emissivity", ((BlockElementFaceExtensions)face).getEmissivity());
+                    }
                     faces.add(dir.getSerializedName(), faceObj);
                 }
                 if (!part.faces.isEmpty()) {

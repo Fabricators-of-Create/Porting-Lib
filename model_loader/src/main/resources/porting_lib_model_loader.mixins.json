@@ -6,8 +6,11 @@
   "mixins": [
   ],
   "client": [
+    "BlockElementFaceDeserializerMixin",
+    "BlockElementFaceMixin",
     "BlockModelDeserializerMixin",
     "BlockModelMixin",
+    "FaceBakeryMixin",
     "VertexConsumerMixin"
   ],
   "injectors": {
