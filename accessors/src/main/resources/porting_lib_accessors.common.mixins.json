@@ -7,6 +7,7 @@
   "mixins": [
     "AbstractMinecartAccessor",
     "AbstractProjectileDispenseBehaviorAccessor",
+    "AdvancementProviderAccessor",
     "ArrayVoxelShapeAccessor",
     "AxeItemAccessor",
     "BaseSpawnerAccessor",
@@ -29,6 +30,7 @@
     "LivingEntityAccessor",
     "MinecraftServerAccessor",
     "MobAccessor",
+    "PaintingAccessor",
     "PlayerAccessor",
     "PotionBrewing$MixAccessor",
     "PotionBrewingAccessor",
@@ -40,7 +42,8 @@
     "SlotAccessor",
     "StairBlockAccessor",
     "StructureTemplateAccessor",
-    "TagValueAccessor"
+    "TagValueAccessor",
+    "UseOnContextAccessor"
   ],
   "injectors": {
     "defaultRequire": 1,
