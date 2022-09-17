@@ -148,7 +148,7 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel> {
 		public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
 			if (blockView instanceof RenderAttachedBlockView renderAttachedBlockView)
 				for (Map.Entry<String, BakedModel> entry : children.entrySet())
-					((FabricBakedModel) entry.getValue()).emitBlockQuads(new CustomDataBlockView(renderAttachedBlockView, CompositeModel.Data.resolve((ModelData) renderAttachedBlockView.getBlockEntityRenderAttachment(pos), entry.getKey())), state, pos, randomSupplier, context);
+					((FabricBakedModel) entry.getValue()).emitBlockQuads(new CustomDataBlockView(renderAttachedBlockView, CompositeModel.Data.resolve(ModelData.EMPTY, entry.getKey())), state, pos, randomSupplier, context);
 		}
 
 		@Override
