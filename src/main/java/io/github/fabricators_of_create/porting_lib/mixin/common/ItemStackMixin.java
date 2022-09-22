@@ -1,8 +1,11 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
 import io.github.fabricators_of_create.porting_lib.extensions.ItemStackExtensions;
 
 import io.github.fabricators_of_create.porting_lib.util.DamageableItem;
+import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.util.ToolAction;
 
 import org.jetbrains.annotations.Nullable;
@@ -86,5 +89,12 @@ public abstract class ItemStackMixin implements INBTSerializable<CompoundTag>, I
 		if(getItem() instanceof DamageableItem damagableItem) {
 			cir.setReturnValue(damagableItem.getDamage((ItemStack) (Object) this));
 		}
+	}
+
+	@ModifyReturnValue(method = "getHideFlags", at = @At(value = "RETURN", ordinal = 1))
+	public int port_lib$itemFlags(int val) {
+		if (val == 0 && !(this.hasTag() && this.tag.contains("HideFlags", 99)))
+			return getItem().getDefaultTooltipHideFlags(MixinHelper.cast(this));
+		return val;
 	}
 }
