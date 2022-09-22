@@ -22,7 +22,7 @@ def patch = buildNumber != null ? buildNumber : '99999'
 version = version.replace("<patch>", patch)
 
 if (grgit != null) {
-	version += "+${grgit.getBranch().current().name}.${grgit.head().abbreviatedId}"
+	version += "+${grgit.getBranch().current().name}"
 } else {
 	version += "+custom_unknown"
 }
