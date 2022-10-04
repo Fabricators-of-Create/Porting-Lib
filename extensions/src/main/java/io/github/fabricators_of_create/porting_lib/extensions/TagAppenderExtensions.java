@@ -8,7 +8,7 @@ public interface TagAppenderExtensions<T> {
 	@SuppressWarnings("unchecked")
 	default TagsProvider.TagAppender<T> addTags(TagKey<T>... values) {
 		TagsProvider.TagAppender<T> builder = (TagsProvider.TagAppender<T>) this;
-		if (builder instanceof FabricTagProvider<T>.FabricTagBuilder<T> fabricTagBuilder)
+		if (builder instanceof FabricTagProvider<?>.FabricTagBuilder<T> fabricTagBuilder)
 			for (TagKey<T> value : values) {
 				fabricTagBuilder.forceAddTag(value);
 			}
