@@ -16,7 +16,7 @@ The latest patch can be found from GitHub Actions as the build number.
 ### Modules
 | Module         | Description                                                                          |
 |----------------|--------------------------------------------------------------------------------------|
-| `porting_lib`  | Fat jar including all modules                                                        |
+| `porting-lib`  | Fat jar including all modules                                                        |
 | `accessors`    | Accessor mixins aplenty                                                              |
 | `attributes`   | Additional Entity Attributes; step height, gravity, swim speed                       |
 | `base`         | Code that has not yet been split into modules                                        |
@@ -33,3 +33,20 @@ The latest patch can be found from GitHub Actions as the build number.
 
 ### Contributing
 See [the contribution information](CONTRIBUTING.md).
+
+### Related APIs
+Some APIs (some in-house) we've found to also be useful with porting mods.
+
+| Name                                                                                        | Description                                                          |
+|---------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
+| [Forge Config API Port](https://github.com/Fuzss/forgeconfigapiport-fabric)                 | A port of the Forge config API to Fabric                             |
+| [Registrate Refabricated](https://github.com/Fabricators-of-Create/Registrate-Refabricated) | A port of Registrate to Fabric                                       |
+| [Reach Entity Attributes](https://github.com/JamiesWhiteShirt/reach-entity-attributes)      | Provides Entity Attributes for reach distance                        |
+| [Fake Player API](https://github.com/CafeteriaGuild/fake-player-api)                        | Provides an easy way to create fake players while minimizing issues  |
+| [Milk Lib](https://github.com/TropheusJ/milk-lib)                                           | Provides a Milk fluid as well as other milk items used often by mods |
+| [Serialization Hooks](https://github.com/TropheusJ/serialization-hooks)                     | Allows creating custom Ingredients and Values                        |
+| [Cardinal Components API](https://github.com/OnyxStudios/Cardinal-Components-API)           | Provides Components, which can replace Capabilities                  |
+| [Trinkets](https://github.com/emilyploszaj/trinkets)                                        | Accessories, replacing Curios                                        |
+| [Here be no Dragons](https://github.com/Parzivail-Modding-Team/HereBeNoDragons)             | Hides the Experimental World Settings screen                         |
+| [Mixin Extras](https://github.com/LlamaLad7/MixinExtras)                                    | For when Mixin just isn't enough                                     |
+| [Fabric ASM](https://github.com/Chocohead/Fabric-ASM)                                       | For when Mixin Extras just isn't enough                              |
