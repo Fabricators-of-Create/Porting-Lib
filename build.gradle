@@ -75,6 +75,10 @@ def setupDatagen(Project module) {
 			}
 		}
 	}
+	module.sourcesJar {
+		// don't know why stuff is copied twice but it's harmless and way too much work to debug
+		duplicatesStrategy = DuplicatesStrategy.EXCLUDE // exclude - ignore duplicates
+	}
 }
 
 File globalAccessWidener = file("src/main/resources/porting_lib.accesswidener")
