@@ -58,6 +58,13 @@ Thank you for your interest in contributing to Porting Lib! We have some guideli
         - `schemaVersion` should be `1`. It's only there to make the IDE be quiet.
     - When in doubt, reference another module.
 
-7. **Asking Questions:**
+7. **Common Gradle Errors:**
+   - Since Gradle is a quality piece of software, here's some common errors and solutions.
+     - **Failed to download version manifest:**
+       - Find which project it fails in. Delete the .gradle folder from that project and try again.
+     - **Any FileSystemException:**
+       - Run `./gradlew --stop` to stop all running daemons and try again.
+
+8. **Asking Questions:**
    - Not sure about something? Want feedback on an API? You can find us either here on GitHub, or in
    the [official Create discord server](https://discord.gg/hmaD7Se) in #devchat.
