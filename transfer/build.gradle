@@ -3,7 +3,8 @@ version = getSubprojectVersion(project)
 
 moduleDependencies(project, [
 		"constants",
-		"common"
+		"common",
+		"extensions"
 ])
 
 processResources {
