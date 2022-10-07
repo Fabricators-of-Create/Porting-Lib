@@ -3,12 +3,13 @@ package io.github.fabricators_of_create.porting_lib.transfer.item;
 import java.util.Arrays;
 import java.util.Iterator;
 
+
 import org.jetbrains.annotations.Nullable;
 
 import io.github.fabricators_of_create.porting_lib.transfer.callbacks.TransactionCallback;
 import io.github.fabricators_of_create.porting_lib.transfer.callbacks.TransactionSuccessCallback;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler.SnapshotData;
-import io.github.fabricators_of_create.porting_lib.util.INBTSerializable;
+import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializableCompound;
 import io.github.fabricators_of_create.porting_lib.util.ItemStackUtil;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
@@ -20,7 +21,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 
-public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implements Storage<ItemVariant>, INBTSerializable<CompoundTag> {
+public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implements Storage<ItemVariant>, INBTSerializableCompound {
 	public ItemStack[] stacks;
 
 	public ItemStackHandler() {
