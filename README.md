@@ -25,10 +25,10 @@ The latest patch can be found from GitHub Actions as the build number.
 | `entity`           | Multipart entities, extra spawn data, removal listening                              |
 | `extensions`       | Extensions to vanilla classes for additional functionality                           |
 | `model_generators` | Forge model generators                                                               |
-| `model-loader`     | Base loader for custom model types                                                   |
+| `model_loader`     | Base loader for custom model types                                                   |
 | `models`           | Model implementations, ModelData, RenderTypes                                        |
 | `networking`       | A Forge-like packet system                                                           |
-| `obj-loader`       | Loading .obj models                                                                  |
+| `obj_loader`       | Loading .obj models                                                                  |
 | `tags`             | Forge tags                                                                           |
 | `transfer`         | Storage implementations, client-side lookup, FluidStack, assorted transfer utilities |
 
