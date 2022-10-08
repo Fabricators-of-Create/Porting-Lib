@@ -1,4 +1,4 @@
-archivesBaseName = "model-generators"
+archivesBaseName = "model_generators"
 version = getSubprojectVersion(project)
 
 moduleDependencies(project, [

@@ -44,6 +44,7 @@ Thank you for your interest in contributing to Porting Lib! We have some guideli
 
 6. **Adding Modules:**
     - Modules can be added when a new feature doesn't fit in an existing one.
+    - Module names should use lower_snake_case.
     - Start by creating the directory. It should match the module's name.
     - Add a build.gradle file, using another module as a template.
     - Include the module in the root `settings.gradle` file, in alphabetical order with the others.
