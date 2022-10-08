@@ -68,13 +68,6 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 	public abstract ItemStack getItemInHand(InteractionHand interactionHand);
 
 	@Shadow
-	public abstract boolean hasEffect(MobEffect potion);
-
-	@Shadow
-	@Nullable
-	public abstract AttributeInstance getAttribute(Attribute attribute);
-
-	@Shadow
 	public abstract ItemStack getUseItem();
 
 	@Shadow
@@ -91,11 +84,6 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 
 	public LivingEntityMixin(EntityType<?> entityType, Level world) {
 		super(entityType, world);
-	}
-
-	@Inject(method = "createLivingAttributes", at = @At("RETURN"))
-	private static void port_lib$addModdedAttributes(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
-		cir.getReturnValue().add(PortingLibAttributes.ENTITY_GRAVITY).add(PortingLibAttributes.SWIM_SPEED);
 	}
 
 	@ModifyArgs(
@@ -228,44 +216,6 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 			return custom.getFriction(state, level, pos, (LivingEntity) (Object) this);
 		}
 		return p;
-	}
-
-	@ModifyExpressionValue(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;hasEffect(Lnet/minecraft/world/effect/MobEffect;)Z", ordinal = 0))
-	private boolean port_lib$disableOldLogicFallingLogic(boolean original) {
-		return false;
-	}
-
-	private static final AttributeModifier SLOW_FALLING = new AttributeModifier(UUID.fromString("A5B6CF2A-2F7C-31EF-9022-7C3E7D5E6ABA"), "Slow falling acceleration reduction", -0.07, AttributeModifier.Operation.ADDITION); // Add -0.07 to 0.08 so we get the vanilla default of 0.01
-
-	@Inject(
-			method = "travel",
-			at = @At(
-					value = "CONSTANT",args = {
-						"doubleValue=0.08D"
-				}
-			)
-	)
-	public void port_lib$entityGravity(Vec3 travelVector, CallbackInfo ci) {
-		AttributeInstance gravity = this.getAttribute(PortingLibAttributes.ENTITY_GRAVITY);
-		if (gravity != null) {
-			boolean falling = this.getDeltaMovement().y <= 0.0D;
-			if (falling && this.hasEffect(MobEffects.SLOW_FALLING)) {
-				if (!gravity.hasModifier(SLOW_FALLING)) gravity.addTransientModifier(SLOW_FALLING);
-				this.resetFallDistance();
-			} else if (gravity.hasModifier(SLOW_FALLING)) {
-				gravity.removeModifier(SLOW_FALLING);
-			}
-		}
-	}
-
-	@ModifyVariable(method = "travel", at = @At(value = "STORE", ordinal = 0)) // double d = 0.08;
-	private double port_lib$modifyGravity(double original) {
-		if (original == 0.08) { // only apply gravity if other mods haven't changed it
-			AttributeInstance attribute = this.getAttribute(PortingLibAttributes.ENTITY_GRAVITY);
-			if (attribute != null)
-				return attribute.getValue();
-		}
-		return original;
 	}
 
 	@Inject(method = "completeUsingItem", at = @At(value = "INVOKE", shift = Shift.BY, by = 2, target = "Lnet/minecraft/world/item/ItemStack;finishUsingItem(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/item/ItemStack;"),
