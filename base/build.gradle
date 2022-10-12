@@ -3,6 +3,7 @@ version = getSubprojectVersion(project)
 
 moduleDependencies(project, [
 		"model_generators",
+		"lazy_register",
 		"model_loader",
 		"extensions",
 		"obj_loader",
