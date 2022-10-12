@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib_lazy_register",
+  "id": "porting_lib_lazy_registration",
   "version": "${version}",
   "name": "Porting Lib Lazy Register",
   "description": "A lazier way of registering things."
