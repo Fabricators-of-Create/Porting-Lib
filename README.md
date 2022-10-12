@@ -31,6 +31,7 @@ The latest patch can be found from GitHub Actions as the build number.
 | `obj_loader`       | Loading .obj models                                                                  |
 | `tags`             | Forge tags                                                                           |
 | `transfer`         | Storage implementations, client-side lookup, FluidStack, assorted transfer utilities |
+| `lazy_register`    | A implementation of forge's DeferredRegister system rewritten for fabric             |
 
 ### Contributing
 See [the contribution information](CONTRIBUTING.md).
