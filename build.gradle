@@ -61,7 +61,7 @@ dependencies {
 	modLocalRuntime("maven.modrinth:suggestionproviderfabric:1.0.1")
 //	modLocalRuntime("mcjty.theoneprobe:theoneprobe-fabric:${top_version}")
 	modLocalRuntime("maven.modrinth:lithium:${project.lithium_version}")
-	modLocalRuntime("maven.modrinth:vmp-fabric:${project.vmp_version}")
+//	modLocalRuntime("maven.modrinth:vmp-fabric:${project.vmp_version}")
 //	modLocalRuntime("maven.modrinth:iris:${project.iris_version}")
 //	modLocalRuntime("dev.monarkhes:myron:1.6.3+1.18.1") { transitive = false }
 	modLocalRuntime("com.terraformersmc:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
