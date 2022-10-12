@@ -23,16 +23,16 @@ public class LivingEntityEvents {
 	/**
 	 * Legacy method will be removed in 1.20 use below method {@link LivingEntityEvents#EXPERIENCE_DROP_WITH_ENTITY}
 	 */
-	public static final Event<ExperienceDropOld> EXPERIENCE_DROP = EventFactory.createArrayBacked(ExperienceDropOld.class, callbacks -> (i, player) -> {
-		for (ExperienceDropOld callback : callbacks) {
+	public static final Event<ExperienceDrop> EXPERIENCE_DROP = EventFactory.createArrayBacked(ExperienceDrop.class, callbacks -> (i, player) -> {
+		for (ExperienceDrop callback : callbacks) {
 			return callback.onLivingEntityExperienceDrop(i, player);
 		}
 
 		return i;
 	});
 
-	public static final Event<ExperienceDrop> EXPERIENCE_DROP_WITH_ENTITY = EventFactory.createArrayBacked(ExperienceDrop.class, callbacks -> (i, attackingPlayer, entity) -> {
-		for (ExperienceDrop callback : callbacks) {
+	public static final Event<ExperienceDropNew> EXPERIENCE_DROP_WITH_ENTITY = EventFactory.createArrayBacked(ExperienceDropNew.class, callbacks -> (i, attackingPlayer, entity) -> {
+		for (ExperienceDropNew callback : callbacks) {
 			return callback.onLivingEntityExperienceDrop(i, attackingPlayer, entity);
 		}
 
@@ -190,12 +190,12 @@ public class LivingEntityEvents {
 	}
 
 	@FunctionalInterface
-	public interface ExperienceDropOld {
+	public interface ExperienceDrop {
 		int onLivingEntityExperienceDrop(int i, Player player);
 	}
 
 	@FunctionalInterface
-	public interface ExperienceDrop {
+	public interface ExperienceDropNew {
 		int onLivingEntityExperienceDrop(int i, Player attackingPlayer, LivingEntity entity);
 	}
 
