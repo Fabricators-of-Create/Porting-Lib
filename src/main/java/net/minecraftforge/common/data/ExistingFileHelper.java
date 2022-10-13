@@ -33,6 +33,8 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.resources.AssetIndex;
 import net.minecraft.client.resources.ClientPackSource;
 import net.minecraft.client.resources.DefaultClientPackResources;
@@ -49,6 +51,7 @@ import net.minecraft.server.packs.resources.MultiPackResourceManager;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.client.model.generators.ModelBuilder;
+import net.minecraftforge.resource.ResourcePackLoader;
 
 /**
  * Enables data providers to check if other data files currently exist. The
@@ -121,6 +124,14 @@ public class ExistingFileHelper {
 			PackResources pack = file.isDirectory() ? new FolderPackResources(file) : new FilePackResources(file);
 			candidateClientResources.add(pack);
 			candidateServerResources.add(pack);
+		}
+		for (String existingMod : existingMods) {
+			ModContainer modFileInfo = FabricLoader.getInstance().getModContainer(existingMod).orElse(null);
+			if (modFileInfo != null) {
+				PackResources pack = ResourcePackLoader.createPackForMod(modFileInfo);
+				candidateClientResources.add(pack);
+				candidateServerResources.add(pack);
+			}
 		}
 
 		this.clientResources = new MultiPackResourceManager(PackType.CLIENT_RESOURCES, candidateClientResources);
