@@ -60,7 +60,12 @@ public class ResourcePackLoader {
 				if (paths.length < 1) {
 					throw new IllegalArgumentException("Missing path");
 				}
-				return mf.findPath(String.join("/", paths)).get();
+				String path = String.join("/", paths);
+				for (ModContainer modContainer : FabricLoader.getInstance().getAllMods()) {
+					if (modContainer.findPath(path).isPresent())
+						return modContainer.findPath(path).get();
+				}
+				return mf.findPath(path).orElseThrow();
 			}
 		};
 	}
