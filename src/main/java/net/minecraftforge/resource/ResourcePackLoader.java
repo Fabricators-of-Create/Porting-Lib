@@ -65,9 +65,17 @@ public class ResourcePackLoader {
 					if (modContainer.findPath(path).isPresent())
 						return modContainer.findPath(path).get();
 				}
-				return mf.findPath(path).orElseThrow();
+
+				return mf.findPath(path).orElse(new RefPath(mf.getRootPath().getFileSystem(), makeKey(mf.getRootPath().getRoot()), path));
 			}
 		};
+	}
+
+	private static int index = 0;
+
+	private static synchronized String makeKey(Path path) {
+		var key= path.toAbsolutePath().normalize().toUri().getPath();
+		return key.replace('!', '_') + "#" + index++;
 	}
 
 	public static List<String> getPackNames() {
