@@ -83,6 +83,11 @@ public class LivingEntityEvents {
 		}
 	});
 
+	/**
+	 * Use {@link LivingEntityEvents#ACTUALLY_HURT} instead.
+	 * Will be removed in 1.20
+	 */
+	@Deprecated(forRemoval = true, since = "1.19.2")
 	public static final Event<Hurt> HURT = EventFactory.createArrayBacked(Hurt.class, callbacks -> (source, amount) -> {
 		for (Hurt callback : callbacks) {
 			float newAmount = callback.onHurt(source, amount);
@@ -91,6 +96,9 @@ public class LivingEntityEvents {
 		return amount;
 	});
 
+	/**
+	 *Same as forge's LivingHurtEvent will be renamed to HURT in 1.20
+	 */
 	public static final Event<ActuallyHurt> ACTUALLY_HURT = EventFactory.createArrayBacked(ActuallyHurt.class, callbacks -> (source, damaged, amount) -> {
 		for (ActuallyHurt callback : callbacks) {
 			float newAmount = callback.onHurt(source, damaged, amount);
