@@ -5,7 +5,6 @@
   "name": "Porting Lib Common",
   "description": "Miscellaneous utilities for other Porting Lib modules.",
   "mixins": [
-    "porting_lib_common.client.mixins.json",
     "porting_lib_common.mixins.json"
   ],
   "custom": {

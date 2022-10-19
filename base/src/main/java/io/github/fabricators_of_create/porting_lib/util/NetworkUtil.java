@@ -3,7 +3,6 @@ package io.github.fabricators_of_create.porting_lib.util;
 import java.util.function.Consumer;
 
 import io.github.fabricators_of_create.porting_lib.PortingConstants;
-import io.github.fabricators_of_create.porting_lib.PortingLib;
 import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.ServerPlayerAccessor;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

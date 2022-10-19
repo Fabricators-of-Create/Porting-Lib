@@ -5,8 +5,7 @@
   "name": "Porting Lib Accessors",
   "description": "Opens up access to Minecraft internals for other modules to use.",
   "mixins": [
-    "porting_lib_accessors.client.mixins.json",
-    "porting_lib_accessors.common.mixins.json"
+    "porting_lib_accessors.mixins.json"
   ],
   "accessWidener": "porting_lib.accesswidener",
   "depends": {
