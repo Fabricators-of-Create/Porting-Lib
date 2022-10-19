@@ -1,14 +1,13 @@
 package io.github.fabricators_of_create.porting_lib;
 
+import java.util.function.Supplier;
+
 import com.mojang.serialization.Codec;
 
 import io.github.fabricators_of_create.porting_lib.loot.IGlobalLootModifier;
 import io.github.fabricators_of_create.porting_lib.util.LazyRegistrar;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-
-import java.util.function.Supplier;
 
 public class PortingLibRegistries {
 	static final LazyRegistrar<Codec<? extends IGlobalLootModifier>> DEFERRED_GLOBAL_LOOT_MODIFIER_SERIALIZERS = LazyRegistrar.create(Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS.location().getNamespace());

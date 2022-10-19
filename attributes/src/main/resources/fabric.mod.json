@@ -8,5 +8,13 @@
     "main": [
       "io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes"
     ]
+  },
+  "mixins": [
+    "porting_lib_attributes.common.mixins.json"
+  ],
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_1297": ["io/github/fabricators_of_create/porting_lib/attributes/extensions/EntityAttributes"]
+    }
   }
 }

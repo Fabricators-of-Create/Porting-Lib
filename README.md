@@ -14,23 +14,24 @@ The latest major and minor versions can be found in the `gradle.properties` file
 The latest patch can be found from GitHub Actions as the build number.
 
 ### Modules
-| Module             | Description                                                                          |
-|--------------------|--------------------------------------------------------------------------------------|
-| `porting-lib`      | Fat jar including all modules                                                        |
-| `accessors`        | Accessor mixins aplenty                                                              |
-| `attributes`       | Additional Entity Attributes; step height, gravity, swim speed                       |
-| `base`             | Code that has not yet been split into modules                                        |
-| `common`           | Miscellaneous utilities for other modules                                            |
-| `constants`        | Internal constants used by Porting Lib                                               |
-| `entity`           | Multipart entities, extra spawn data, removal listening                              |
-| `extensions`       | Extensions to vanilla classes for additional functionality                           |
-| `model_generators` | Forge model generators                                                               |
-| `model_loader`     | Base loader for custom model types                                                   |
-| `models`           | Model implementations, ModelData, RenderTypes                                        |
-| `networking`       | A Forge-like packet system                                                           |
-| `obj_loader`       | Loading .obj models                                                                  |
-| `tags`             | Forge tags                                                                           |
-| `transfer`         | Storage implementations, client-side lookup, FluidStack, assorted transfer utilities |
+| Module              | Description                                                                          |
+|---------------------|--------------------------------------------------------------------------------------|
+| `porting-lib`       | Fat jar including all modules                                                        |
+| `accessors`         | Accessor mixins aplenty                                                              |
+| `attributes`        | Additional Entity Attributes; step height, gravity, swim speed                       |
+| `base`              | Code that has not yet been split into modules                                        |
+| `common`            | Miscellaneous utilities for other modules                                            |
+| `constants`         | Internal constants used by Porting Lib                                               |
+| `entity`            | Multipart entities, extra spawn data, removal listening                              |
+| `extensions`        | Extensions to vanilla classes for additional functionality                           |
+| `model_generators`  | Forge model generators                                                               |
+| `model_loader`      | Base loader for custom model types                                                   |
+| `models`            | Model implementations, ModelData, RenderTypes                                        |
+| `networking`        | A Forge-like packet system                                                           |
+| `obj_loader`        | Loading .obj models                                                                  |
+| `tags`              | Forge tags                                                                           |
+| `transfer`          | Storage implementations, client-side lookup, FluidStack, assorted transfer utilities |
+| `lazy_registration` | A implementation of forge's DeferredRegister system rewritten for fabric             |
 
 ### Contributing
 See [the contribution information](CONTRIBUTING.md).

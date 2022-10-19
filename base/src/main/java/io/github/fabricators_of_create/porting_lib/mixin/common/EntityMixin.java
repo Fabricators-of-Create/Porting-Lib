@@ -257,9 +257,4 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializableC
 			return null;
 		}
 	}
-
-	@Inject(method = "collide", at = @At(value = "JUMP", opcode = Opcodes.IFGE))
-	public void port_lib$modifyStepHeight(Vec3 movement, CallbackInfoReturnable<Vec3> cir) {
-		this.maxUpStep = this.getStepHeight();
-	}
 }

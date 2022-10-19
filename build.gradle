@@ -113,6 +113,17 @@ allprojects {
 		mavenCentral()
 	}
 
+	loom {
+		runs {
+			client {
+				client()
+				name "Minecraft Client"
+				vmArg "-Dmixin.debug.export=true"
+				ideConfigGenerated true // loom will only make run configs for the root project by default
+			}
+		}
+	}
+
 	dependencies {
 		// dev environment
 		minecraft("com.mojang:minecraft:${project.minecraft_version}")

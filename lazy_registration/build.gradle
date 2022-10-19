@@ -1,0 +1,10 @@
+archivesBaseName = "lazy_registration"
+version = getSubprojectVersion(project)
+
+moduleDependencies(project, [
+
+])
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}

@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.world.entity.EntityType;
@@ -84,5 +85,10 @@ public abstract class PlayerMixin extends LivingEntity {
 	@Inject(method = "createAttributes", at = @At("RETURN"))
 	private static void port_lib$addKnockback(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
 		cir.getReturnValue().add(Attributes.ATTACK_KNOCKBACK);
+	}
+
+	@ModifyVariable(method = "hurt", at = @At("HEAD"), argsOnly = true)
+	private float port_lib$onHurt(float amount, DamageSource source, float amount2) {
+		return LivingEntityEvents.HURT.invoker().onHurt(source, amount);
 	}
 }
