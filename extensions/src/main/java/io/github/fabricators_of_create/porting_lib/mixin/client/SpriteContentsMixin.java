@@ -2,20 +2,20 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import com.mojang.blaze3d.platform.NativeImage;
 
-import io.github.fabricators_of_create.porting_lib.extensions.TextureAtlasSpriteExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.SpriteContentsExtensions;
 import io.github.fabricators_of_create.porting_lib.mixin.client.accessor.TextureAtlasSprite$AnimatedTextureAccessor;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.SpriteContents;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(TextureAtlasSprite.class)
-public abstract class TextureAtlasSpriteMixin implements TextureAtlasSpriteExtensions {
+@Mixin(SpriteContents.class)
+public abstract class SpriteContentsMixin implements SpriteContentsExtensions {
 	@Shadow
 	@Final
-	private @Nullable TextureAtlasSprite.AnimatedTexture animatedTexture;
+	private @Nullable SpriteContents.AnimatedTexture animatedTexture;
 
 	@Shadow
 	@Final
@@ -26,8 +26,7 @@ public abstract class TextureAtlasSpriteMixin implements TextureAtlasSpriteExten
 	int height;
 
 	@Shadow
-	@Final
-	protected NativeImage[] mainImage;
+	NativeImage[] byMipLevel;
 
 	@Override
 	public int getPixelRGBA(int frameIndex, int x, int y) {
@@ -36,6 +35,6 @@ public abstract class TextureAtlasSpriteMixin implements TextureAtlasSpriteExten
 			y += ((TextureAtlasSprite$AnimatedTextureAccessor) this.animatedTexture).port_lib$getFrameY(frameIndex) * this.height;
 		}
 
-		return this.mainImage[0].getPixelRGBA(x, y);
+		return this.byMipLevel[0].getPixelRGBA(x, y);
 	}
 }

@@ -4,7 +4,7 @@ import io.github.fabricators_of_create.porting_lib_build.PortingLibBuildPlugin
 //file:noinspection GroovyAccessibility
 plugins {
 	id "fabric-loom" version "0.13.12"
-	id "io.github.juuxel.loom-quiltflower" version "1.+" // Quiltflower, a better decompiler
+//	id "io.github.juuxel.loom-quiltflower" version "1.+" // Quiltflower, a better decompiler
 	id "org.quiltmc.quilt-mappings-on-loom" version "4.2.0" // Quilt Mappings, for parameters and javadoc. Also hashed mojmap.
 	id "io.github.p03w.machete" version "1.+" // automatic jar compressing on build
 	id "org.ajoberstar.grgit" version "4.1.1"
@@ -127,11 +127,7 @@ allprojects {
 	dependencies {
 		// dev environment
 		minecraft("com.mojang:minecraft:${project.minecraft_version}")
-		mappings(loom.layered {
-			it.addLayer(quiltMappings.mappings("org.quiltmc:quilt-mappings:${project.minecraft_version}+build.${project.qm_version}:v2"))
-			it.parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${project.parchment_version}@zip")
-			it.officialMojangMappings { nameSyntheticMembers = false }
-		})
+		mappings(loom.officialMojangMappings())
 		modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
 		modLocalRuntime("maven.modrinth:lazydfu:0.1.3")
 //		modLocalRuntime("maven.modrinth:suggestionproviderfabric:1.0.1")

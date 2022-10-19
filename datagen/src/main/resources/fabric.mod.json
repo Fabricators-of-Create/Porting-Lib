@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_datagen",
+  "version": "${version}",
+  "name": "Porting Lib Data Gen",
+  "description": "Utility classes for generating different kinds of json files."
+}

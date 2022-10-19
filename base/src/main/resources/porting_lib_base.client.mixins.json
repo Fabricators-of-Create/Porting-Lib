@@ -46,7 +46,7 @@
     "ShaderInstanceMixin",
     "SkullBlockRendererMixin",
     "TextureAtlasMixin",
-    "TextureAtlasSpriteMixin",
+    "SpriteContentsMixin",
     "TextureManagerMixin",
     "VertexFormatMixin"
   ],

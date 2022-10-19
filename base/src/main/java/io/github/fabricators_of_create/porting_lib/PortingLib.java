@@ -2,15 +2,10 @@ package io.github.fabricators_of_create.porting_lib;
 
 import io.github.fabricators_of_create.porting_lib.loot.LootModifierManager;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes;
 import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
 import io.github.fabricators_of_create.porting_lib.data.ConditionalRecipe;
 import io.github.fabricators_of_create.porting_lib.loot.CanToolPerformAction;
 import io.github.fabricators_of_create.porting_lib.loot.LootTableIdCondition;
-import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemItemStorages;
 import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import io.github.fabricators_of_create.porting_lib.util.ServerLifecycleHooks;

@@ -18,7 +18,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import io.github.fabricators_of_create.porting_lib.render.TransformTypeDependentItemBakedModel;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -70,28 +69,28 @@ public abstract class ItemRendererMixin {
 	}
 
 	// FIXME CANVAS COMPAT
-	@ModifyVariable(method = "render", at = @At("HEAD"), argsOnly = true)
-	private BakedModel port_lib$handleModel(BakedModel model, ItemStack itemStack, ItemTransforms.TransformType transformType, boolean leftHand, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, BakedModel model1) {
-		if (model instanceof TransformTypeDependentItemBakedModel handler) {
-			PoseStack stack = new PoseStack();
-			BakedModel bakedModel = handler.handlePerspective(transformType, stack);
-			if (!stack.clear())
-			{
-				// Apply the transformation to the real matrix stack, flipping for left hand
-				Matrix4f tMat = stack.last().pose();
-				Matrix3f nMat = stack.last().normal();
-				if (leftHand)
-				{
-					tMat.multiplyBackward(flipX);
-					tMat.multiply(flipX);
-					nMat.multiplyBackward(flipXNormal);
-					nMat.mul(flipXNormal);
-				}
-				matrixStack.last().pose().multiply(tMat);
-				matrixStack.last().normal().mul(nMat);
-			}
-			return bakedModel;
-		}
-		return model;
-	}
+//	@ModifyVariable(method = "render", at = @At("HEAD"), argsOnly = true)
+//	private BakedModel port_lib$handleModel(BakedModel model, ItemStack itemStack, ItemTransforms.TransformType transformType, boolean leftHand, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, BakedModel model1) {
+//		if (model instanceof TransformTypeDependentItemBakedModel handler) {
+//			PoseStack stack = new PoseStack();
+//			BakedModel bakedModel = handler.handlePerspective(transformType, stack);
+//			if (!stack.clear())
+//			{
+//				// Apply the transformation to the real matrix stack, flipping for left hand
+//				Matrix4f tMat = stack.last().pose();
+//				Matrix3f nMat = stack.last().normal();
+//				if (leftHand)
+//				{
+//					tMat.multiplyBackward(flipX);
+//					tMat.multiply(flipX);
+//					nMat.multiplyBackward(flipXNormal);
+//					nMat.mul(flipXNormal);
+//				}
+//				matrixStack.last().pose().multiply(tMat);
+//				matrixStack.last().normal().mul(nMat);
+//			}
+//			return bakedModel;
+//		}
+//		return model;
+//	}
 }

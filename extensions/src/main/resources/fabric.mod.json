@@ -20,7 +20,6 @@
       "net/minecraft/class_276": ["io/github/fabricators_of_create/porting_lib/extensions/RenderTargetExtensions"],
       "net/minecraft/class_703": ["io/github/fabricators_of_create/porting_lib/extensions/ParticleExtensions"],
       "net/minecraft/class_1044": ["io/github/fabricators_of_create/porting_lib/extensions/AbstractTextureExtensions"],
-      "net/minecraft/class_1058": ["io/github/fabricators_of_create/porting_lib/extensions/TextureAtlasSpriteExtensions"],
       "net/minecraft/class_1159": ["io/github/fabricators_of_create/porting_lib/extensions/Matrix4fExtensions"],
       "net/minecraft/class_1160": ["io/github/fabricators_of_create/porting_lib/extensions/Vector3fExtensions"],
       "net/minecraft/class_1282": ["io/github/fabricators_of_create/porting_lib/mixin/common/accessor/DamageSourceAccessor"],
@@ -60,7 +59,8 @@
       "net/minecraft/class_4184": ["io/github/fabricators_of_create/porting_lib/extensions/CameraExtensions"],
       "net/minecraft/class_4538": ["io/github/fabricators_of_create/porting_lib/extensions/LevelReaderExtensions"],
       "net/minecraft/class_4590": ["io/github/fabricators_of_create/porting_lib/extensions/TransformationExtensions"],
-      "net/minecraft/class_4581": ["io/github/fabricators_of_create/porting_lib/extensions/Matrix3fExtensions"]
+      "net/minecraft/class_4581": ["io/github/fabricators_of_create/porting_lib/extensions/Matrix3fExtensions"],
+      "net/minecraft/class_7764": ["io/github/fabricators_of_create/porting_lib/extensions/SpriteContentsExtensions"]
     }
   }
 }

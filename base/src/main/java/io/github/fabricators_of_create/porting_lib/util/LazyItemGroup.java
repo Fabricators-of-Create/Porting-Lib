@@ -1,20 +1,21 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
+import java.util.function.Supplier;
+
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.function.Supplier;
-
-public class LazyItemGroup extends CreativeModeTab {
+public abstract class LazyItemGroup extends CreativeModeTab {
 
 	private final Supplier<ItemStack> stackSupplier;
 
-	public LazyItemGroup(String name, Supplier<ItemStack> stackSupplier) {
+	public LazyItemGroup(Component name, Supplier<ItemStack> stackSupplier) {
 		super(ItemGroupUtil.expandArrayAndGetId(), name);
 		this.stackSupplier = stackSupplier;
 	}
 
-	public LazyItemGroup(String name) {
+	public LazyItemGroup(Component name) {
 		this(name, null);
 	}
 

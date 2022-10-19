@@ -11,7 +11,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.renderer.ShaderInstance;
-import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceProvider;
 
 @Environment(EnvType.CLIENT)
 public interface RegisterShadersCallback {
@@ -27,5 +27,5 @@ public interface RegisterShadersCallback {
 		}
 	}
 
-	void onShaderReload(ResourceManager resourceManager, ShaderRegistry registry) throws IOException;
+	void onShaderReload(ResourceProvider resourceManager, ShaderRegistry registry) throws IOException;
 }

@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.PackOutput;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -24,12 +25,12 @@ import net.minecraft.world.level.block.Block;
 public abstract class LanguageProvider implements DataProvider {
 	private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().setLenient().create();
 	private final Map<String, String> data = new TreeMap<>();
-	private final DataGenerator gen;
+	private final PackOutput output;
 	private final String modid;
 	private final String locale;
 
-	public LanguageProvider(DataGenerator gen, String modid, String locale) {
-		this.gen = gen;
+	public LanguageProvider(PackOutput output, String modid, String locale) {
+		this.output = output;
 		this.modid = modid;
 		this.locale = locale;
 	}
@@ -40,7 +41,7 @@ public abstract class LanguageProvider implements DataProvider {
 	public void run(CachedOutput cache) throws IOException {
 		addTranslations();
 		if (!data.isEmpty())
-			save(cache, data, this.gen.getOutputFolder().resolve("assets/" + modid + "/lang/" + locale + ".json"));
+			save(cache, data, this.output.getOutputFolder().resolve("assets/" + modid + "/lang/" + locale + ".json"));
 	}
 
 	@Override

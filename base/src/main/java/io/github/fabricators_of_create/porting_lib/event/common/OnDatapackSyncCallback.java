@@ -9,9 +9,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 
 /**
- * Use {@link ServerLifecycleEvents.SyncDataPackContents}
+ * Use {@link ServerLifecycleEvents.SyncDataPackContents} when possible.
  * */
-@Deprecated(forRemoval = true)
 @FunctionalInterface
 public interface OnDatapackSyncCallback {
 	Event<OnDatapackSyncCallback> EVENT = EventFactory.createArrayBacked(OnDatapackSyncCallback.class, callbacks -> ((playerList, player) -> {

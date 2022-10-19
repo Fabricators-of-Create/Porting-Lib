@@ -1,18 +1,8 @@
-archivesBaseName = "base"
+archivesBaseName = "datagen"
 version = getSubprojectVersion(project)
 
 moduleDependencies(project, [
-		"lazy_registration",
-//		"model_generators",
-//		"model_loader",
-		"extensions",
-//		"obj_loader",
-		"transfer",
-		"datagen",
-		"entity",
-		"common",
-//		"models",
-		"tags"
+	"accessors"
 ])
 
 dependencies {

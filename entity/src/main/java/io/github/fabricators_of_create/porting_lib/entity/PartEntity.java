@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.entity;
 
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.network.protocol.Packet;
 
@@ -16,7 +17,7 @@ public abstract class PartEntity<T extends Entity> extends Entity {
 	}
 
 	@Override
-	public Packet<?> getAddEntityPacket() {
+	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		throw new UnsupportedOperationException();
 	}
 }

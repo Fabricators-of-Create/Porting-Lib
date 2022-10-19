@@ -12,7 +12,7 @@ transitive-accessible class net/minecraft/world/level/entity/TransientEntitySect
 
 transitive-accessible class net/minecraft/world/item/alchemy/PotionBrewing$Mix
 
-transitive-accessible class net/minecraft/client/renderer/texture/TextureAtlasSprite$AnimatedTexture
+transitive-accessible class net/minecraft/client/renderer/texture/SpriteContents$AnimatedTexture
 
 transitive-accessible class net/minecraft/client/renderer/FogRenderer$FogData
 
@@ -80,8 +80,9 @@ transitive-accessible method net/minecraft/world/entity/SpawnPlacements register
 
 transitive-accessible method net/minecraft/resources/ResourceKey create (Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/resources/ResourceKey;
 
-transitive-accessible field net/minecraft/data/loot/EntityLoot SPECIAL_LOOT_TABLE_TYPES Ljava/util/Set;
-transitive-accessible field net/minecraft/data/loot/EntityLoot map Ljava/util/Map;
+transitive-accessible field net/minecraft/data/loot/EntityLootSubProvider enabledFeatures Lnet/minecraft/world/flag/FeatureFlagSet;
+transitive-accessible field net/minecraft/data/loot/EntityLootSubProvider SPECIAL_LOOT_TABLE_TYPES Ljava/util/Set;
+transitive-accessible field net/minecraft/data/loot/EntityLootSubProvider map Ljava/util/Map;
 
 transitive-accessible class net/minecraft/client/renderer/RenderStateShard$TextureStateShard
 transitive-accessible field net/minecraft/client/renderer/RenderStateShard$TextureStateShard blur Z

@@ -15,7 +15,7 @@
     "BiomeManagerAccessor",
     "BlockAccessor",
     "BlockEntityAccessor",
-    "BlockLootAccessor",
+    "BlockLootSubProviderAccessor",
     "BucketItemAccessor",
     "BundleItemAccessor",
     "ChunkGeneratorAccessor",

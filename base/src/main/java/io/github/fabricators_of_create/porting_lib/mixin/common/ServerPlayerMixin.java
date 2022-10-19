@@ -4,6 +4,7 @@ import io.github.fabricators_of_create.porting_lib.event.common.PlayerTickEvents
 
 import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.ITeleporter;
+import net.minecraft.network.chat.RemoteChatSession;
 import net.minecraft.network.protocol.game.ClientboundChangeDifficultyPacket;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
@@ -46,8 +47,8 @@ import javax.annotation.Nullable;
 @Mixin(ServerPlayer.class)
 public abstract class ServerPlayerMixin extends Player implements EntityExtensions {
 
-	public ServerPlayerMixin(Level level, BlockPos blockPos, float f, GameProfile gameProfile, @org.jetbrains.annotations.Nullable ProfilePublicKey profilePublicKey) {
-		super(level, blockPos, f, gameProfile, profilePublicKey);
+	public ServerPlayerMixin(Level level, BlockPos blockPos, float f, GameProfile gameProfile) {
+		super(level, blockPos, f, gameProfile);
 	}
 
 	@Shadow
@@ -96,7 +97,7 @@ public abstract class ServerPlayerMixin extends Player implements EntityExtensio
 	private int lastSentFood;
 
 	@Inject(method = "<init>", at = @At("RETURN"))
-	private void port_lib$init(MinecraftServer minecraftServer, ServerLevel serverLevel, GameProfile gameProfile, ProfilePublicKey profilePublicKey, CallbackInfo ci) {
+	private void port_lib$init(MinecraftServer minecraftServer, ServerLevel serverLevel, GameProfile gameProfile, RemoteChatSession remoteChatSession, CallbackInfo ci) {
 		ServerPlayerCreationCallback.EVENT.invoker().onCreate((ServerPlayer) (Object) this);
 	}
 

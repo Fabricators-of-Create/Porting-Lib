@@ -1,51 +1,50 @@
 package io.github.fabricators_of_create.porting_lib.data;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
-import com.mojang.datafixers.util.Pair;
-import com.mojang.logging.LogUtils;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+
+import org.slf4j.Logger;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
+import com.mojang.logging.LogUtils;
+
 import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.loot.BlockLoot;
-import net.minecraft.data.loot.ChestLoot;
-import net.minecraft.data.loot.EntityLoot;
-import net.minecraft.data.loot.FishingLoot;
-import net.minecraft.data.loot.GiftLoot;
-import net.minecraft.data.loot.PiglinBarterLoot;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.data.loot.packs.VanillaBlockLoot;
+import net.minecraft.data.loot.packs.VanillaChestLoot;
+import net.minecraft.data.loot.packs.VanillaEntityLoot;
+import net.minecraft.data.loot.packs.VanillaFishingLoot;
+import net.minecraft.data.loot.packs.VanillaGiftLoot;
+import net.minecraft.data.loot.packs.VanillaPiglinBarterLoot;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.world.level.storage.loot.ValidationContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import org.slf4j.Logger;
 
 public class ModdedLootTableProvider implements DataProvider {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	private final DataGenerator.PathProvider pathProvider;
-	private final List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> subProviders = ImmutableList.of(Pair.of(FishingLoot::new, LootContextParamSets.FISHING), Pair.of(ChestLoot::new, LootContextParamSets.CHEST), Pair.of(EntityLoot::new, LootContextParamSets.ENTITY), Pair.of(BlockLoot::new, LootContextParamSets.BLOCK), Pair.of(PiglinBarterLoot::new, LootContextParamSets.PIGLIN_BARTER), Pair.of(GiftLoot::new, LootContextParamSets.GIFT));
+	private final PackOutput.PathProvider pathProvider;
+	private final List<LootTableProvider.SubProviderEntry> subProviders = ImmutableList.of(new LootTableProvider.SubProviderEntry(VanillaFishingLoot::new, LootContextParamSets.FISHING), new LootTableProvider.SubProviderEntry(VanillaChestLoot::new, LootContextParamSets.CHEST), new LootTableProvider.SubProviderEntry(VanillaEntityLoot::new, LootContextParamSets.ENTITY), new LootTableProvider.SubProviderEntry(VanillaBlockLoot::new, LootContextParamSets.BLOCK), new LootTableProvider.SubProviderEntry(VanillaPiglinBarterLoot::new, LootContextParamSets.PIGLIN_BARTER), new LootTableProvider.SubProviderEntry(VanillaGiftLoot::new, LootContextParamSets.GIFT));
 
-	public ModdedLootTableProvider(DataGenerator p_124437_) {
-		this.pathProvider = p_124437_.createPathProvider(DataGenerator.Target.DATA_PACK, "loot_tables");
+	public ModdedLootTableProvider(PackOutput packOutput) {
+		this.pathProvider = packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "loot_tables");
 	}
 
 	public void run(CachedOutput p_236269_) {
 		Map<ResourceLocation, LootTable> map = Maps.newHashMap();
-		this.getTables().forEach((p_124458_) -> {
-			p_124458_.getFirst().get().accept((p_176077_, p_176078_) -> {
-				if (map.put(p_176077_, p_176078_.setParamSet(p_124458_.getSecond()).build()) != null) {
-					throw new IllegalStateException("Duplicate loot table " + p_176077_);
+		this.subProviders.forEach((subProviderEntry) -> {
+			subProviderEntry.provider().get().generate((resourceLocation, builder) -> {
+				if (map.put(resourceLocation, builder.setParamSet(subProviderEntry.paramSet()).build()) != null) {
+					throw new IllegalStateException("Duplicate loot table " + resourceLocation);
 				}
 			});
 		});
@@ -75,7 +74,7 @@ public class ModdedLootTableProvider implements DataProvider {
 		}
 	}
 
-	protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables() {
+	protected List<LootTableProvider.SubProviderEntry> getTables() {
 		return subProviders;
 	}
 

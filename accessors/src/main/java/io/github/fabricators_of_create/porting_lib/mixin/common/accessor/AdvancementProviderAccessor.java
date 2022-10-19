@@ -1,20 +1,19 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common.accessor;
 
-import net.minecraft.advancements.Advancement;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.advancements.AdvancementProvider;
+import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import java.util.List;
-import java.util.function.Consumer;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.advancements.AdvancementProvider;
+import net.minecraft.data.advancements.AdvancementSubProvider;
 
 @Mixin(AdvancementProvider.class)
 public interface AdvancementProviderAccessor {
 	@Accessor
-	DataGenerator.PathProvider getPathProvider();
+	PackOutput.PathProvider getPathProvider();
 
 	@Accessor
-	List<Consumer<Consumer<Advancement>>> getTabs();
+	List<AdvancementSubProvider> getSubProviders();
 }

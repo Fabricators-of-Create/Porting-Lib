@@ -26,7 +26,6 @@ import io.github.fabricators_of_create.porting_lib.extensions.BaseRailBlockExten
 import io.github.fabricators_of_create.porting_lib.extensions.BlockEntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.BlockExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.BlockItemExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.BlockModelExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.CameraExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.EntityCollisionContextExtensions;
@@ -52,7 +51,7 @@ import io.github.fabricators_of_create.porting_lib.extensions.SlotExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.StructureProcessorExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.StructureTemplateExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.TagAppenderExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.TextureAtlasSpriteExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.SpriteContentsExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.TierExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.TransformationExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.Vector3fExtensions;
@@ -154,7 +153,7 @@ public class InjectedInterfacesGen {
 		builder.inject(BlockEntity.class, BlockEntityExtensions.class);
 		builder.inject(Block.class, BlockExtensions.class);
 		builder.inject(BlockItem.class, BlockItemExtensions.class);
-		builder.inject(BlockModel.class, BlockModelExtensions.class);
+//		builder.inject(BlockModel.class, BlockModelExtensions.class);
 		builder.inject(Camera.class, CameraExtensions.class);
 		builder.inject(ClientLevel.class, ClientLevelExtensions.class);
 		builder.inject(EntityCollisionContext.class, EntityCollisionContextExtensions.class);
@@ -181,7 +180,7 @@ public class InjectedInterfacesGen {
 		builder.inject(StructureProcessor.class, StructureProcessorExtensions.class);
 		builder.inject(StructureTemplate.class, StructureTemplateExtensions.class);
 		builder.inject(TagAppender.class, TagAppenderExtensions.class);
-		builder.inject(TextureAtlasSprite.class, TextureAtlasSpriteExtensions.class);
+		builder.inject(TextureAtlasSprite.class, SpriteContentsExtensions.class);
 		builder.inject(Tier.class, TierExtensions.class);
 		builder.inject(Transformation.class, TransformationExtensions.class);
 		builder.inject(Vector3f.class, Vector3fExtensions.class);

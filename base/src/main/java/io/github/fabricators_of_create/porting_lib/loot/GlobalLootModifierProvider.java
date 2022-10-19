@@ -18,6 +18,7 @@ import io.github.fabricators_of_create.porting_lib.util.LamdbaExceptionUtils;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -27,13 +28,13 @@ import net.minecraft.resources.ResourceLocation;
  */
 public abstract class GlobalLootModifierProvider implements DataProvider {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-	private final DataGenerator gen;
+	private final PackOutput output;
 	private final String modid;
 	private final Map<String, JsonElement> toSerialize = new HashMap<>();
 	private boolean replace = false;
 
-	public GlobalLootModifierProvider(DataGenerator gen, String modid) {
-		this.gen = gen;
+	public GlobalLootModifierProvider(PackOutput output, String modid) {
+		this.output = output;
 		this.modid = modid;
 	}
 
@@ -53,13 +54,13 @@ public abstract class GlobalLootModifierProvider implements DataProvider {
 	public void run(CachedOutput cache) throws IOException {
 		start();
 
-		Path forgePath = gen.getOutputFolder().resolve("data/forge/loot_modifiers/global_loot_modifiers.json");
+		Path forgePath = output.getOutputFolder().resolve("data/forge/loot_modifiers/global_loot_modifiers.json");
 		String modPath = "data/" + modid + "/loot_modifiers/";
 		List<ResourceLocation> entries = new ArrayList<>();
 
 		toSerialize.forEach(LamdbaExceptionUtils.rethrowBiConsumer((name, json) -> {
 			entries.add(new ResourceLocation(modid, name));
-			Path modifierPath = gen.getOutputFolder().resolve(modPath + name + ".json");
+			Path modifierPath = output.getOutputFolder().resolve(modPath + name + ".json");
 			DataProvider.saveStable(cache, json, modifierPath);
 		}));
 
