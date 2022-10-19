@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.mixin.client.transfer;
+package io.github.fabricators_of_create.porting_lib.transfer.mixin.client;
 
 import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.transfer.LevelExtensions;

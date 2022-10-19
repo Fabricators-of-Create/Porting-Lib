@@ -19,7 +19,6 @@
     ]
   },
   "mixins": [
-    "porting_lib_base.client.mixins.json",
-    "porting_lib_base.common.mixins.json"
+    "porting_lib_base.mixins.json"
   ]
 }

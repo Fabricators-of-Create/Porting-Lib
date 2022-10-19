@@ -25,7 +25,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 
 @Environment(EnvType.CLIENT)
 @Mixin(ClientLevel.class)
-public abstract class ClientLevelMixin implements ClientLevelExtensions, LevelExtensions {
+public abstract class ClientLevelMixin {
 	@Shadow
 	@Final
 	private Minecraft minecraft;
@@ -34,8 +34,6 @@ public abstract class ClientLevelMixin implements ClientLevelExtensions, LevelEx
 	public void port_lib$init(CallbackInfo ci) {
 		ClientWorldEvents.LOAD.invoker().onWorldLoad(minecraft, MixinHelper.cast(this));
 	}
-
-
 
 	@Inject(method = "addEntity", at = @At("HEAD"), cancellable = true)
 	public void port_lib$addEntityEvent(int i, Entity entity, CallbackInfo ci) {
