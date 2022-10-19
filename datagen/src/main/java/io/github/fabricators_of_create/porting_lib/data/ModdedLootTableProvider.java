@@ -41,7 +41,7 @@ public class ModdedLootTableProvider implements DataProvider {
 
 	public void run(CachedOutput p_236269_) {
 		Map<ResourceLocation, LootTable> map = Maps.newHashMap();
-		this.subProviders.forEach((subProviderEntry) -> {
+		getTables().forEach((subProviderEntry) -> {
 			subProviderEntry.provider().get().generate((resourceLocation, builder) -> {
 				if (map.put(resourceLocation, builder.setParamSet(subProviderEntry.paramSet()).build()) != null) {
 					throw new IllegalStateException("Duplicate loot table " + resourceLocation);
