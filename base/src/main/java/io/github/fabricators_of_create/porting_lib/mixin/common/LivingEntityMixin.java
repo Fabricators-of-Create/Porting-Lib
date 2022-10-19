@@ -8,6 +8,8 @@ import java.util.UUID;
 import io.github.fabricators_of_create.porting_lib.item.ContinueUsingItem;
 import io.github.fabricators_of_create.porting_lib.item.UsingTickItem;
 
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -141,11 +143,6 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 		return multiplier;
 	}
 
-	@ModifyVariable(method = "actuallyHurt", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-	private float port_lib$modifyDamage(float damageAmount, DamageSource source, float damageAmountButAgainBecauseYes) {
-		return LivingEntityEvents.ACTUALLY_HURT.invoker().onHurt(source, (LivingEntity) (Object) this, damageAmount);
-	}
-
 	@Inject(method = "swing(Lnet/minecraft/world/InteractionHand;Z)V", at = @At("HEAD"), cancellable = true)
 	private void port_lib$swingHand(InteractionHand hand, boolean bl, CallbackInfo ci) {
 		ItemStack stack = getItemInHand(hand);
@@ -175,7 +172,7 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 
 	@ModifyVariable(method = "hurt", at = @At("HEAD"), argsOnly = true)
 	private float port_lib$onHurt(float amount, DamageSource source, float amount2) {
-		return LivingEntityEvents.HURT.invoker().onHurt(source, amount);
+		return LivingEntityEvents.HURT.invoker().onHurt(source, (LivingEntity) (Object) this, amount);
 	}
 
 	@Inject(method = "jumpFromGround", at = @At("TAIL"))
@@ -257,11 +254,6 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 	@Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
 	public void port_lib$attackEvent(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
 		if(LivingEntityEvents.ATTACK.invoker().onAttack((LivingEntity) (Object) this, source, amount)) cir.setReturnValue(false);
-	}
-
-	@Inject(method = "collectEquipmentChanges", at = @At(value = "JUMP", opcode = Opcodes.IFNONNULL), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void port_lib$equipmentChange(CallbackInfoReturnable<Map<EquipmentSlot, ItemStack>> cir, Map<EquipmentSlot, ItemStack> map, EquipmentSlot[] equipmentslots, int i, int j, EquipmentSlot equipmentslot, ItemStack itemstack, ItemStack itemstack1) {
-		LivingEntityEvents.EQUIPMENT_CHANGE.invoker().onEquipmentChange((LivingEntity) (Object) this, equipmentslot, itemstack, itemstack1);
 	}
 
 	@Inject(method = "updatingUsingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;", shift = Shift.AFTER, ordinal = 1))

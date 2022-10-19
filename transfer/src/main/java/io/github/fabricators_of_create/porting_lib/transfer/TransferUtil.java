@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SidedStorageBlockEntity;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import io.github.fabricators_of_create.porting_lib.transfer.fluid.FluidTransferable;
-import io.github.fabricators_of_create.porting_lib.transfer.item.ItemTransferable;
 import io.github.fabricators_of_create.porting_lib.util.FluidStack;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
@@ -126,14 +126,8 @@ public class TransferUtil implements ModInitializer {
 		boolean libOnly = level == null || level.isClientSide();
 		if (libOnly) {
 			// on the client we only allow lib handling.
-			if (be instanceof ItemTransferable t) {
-				boolean client = level != null && level.isClientSide();
-				if (client) {
-					if (t.canTransferItemsClientSide())
-						return t.getItemStorage(side); // only query if on client and client transfer allowed
-				} else {
-					return t.getItemStorage(side); // null level - hope for the best
-				}
+			if (be instanceof SidedStorageBlockEntity t) {
+				return t.getItemStorage(side);
 			}
 			return null;
 		}
@@ -225,14 +219,8 @@ public class TransferUtil implements ModInitializer {
 		boolean libOnly = level == null || level.isClientSide();
 		if (libOnly) {
 			// on the client we only allow lib handling.
-			if (be instanceof FluidTransferable t) {
-				boolean client = level != null && level.isClientSide();
-					if (client) {
-						if (t.canTransferFluidsClientSide())
-							return t.getFluidStorage(side); // only query if on client and client transfer allowed
-					} else {
-						return t.getFluidStorage(side); // null level - hope for the best
-					}
+			if (be instanceof SidedStorageBlockEntity t) {
+				return t.getFluidStorage(side);
 			}
 			return null;
 		}
@@ -671,17 +659,6 @@ public class TransferUtil implements ModInitializer {
 	 */
 	@Override
 	public void onInitialize() {
-		FluidStorage.SIDED.registerFallback((world, pos, state, be, face) -> {
-			if (be instanceof FluidTransferable t) {
-				return t.getFluidStorage(face);
-			}
-			return null;
-		});
-		ItemStorage.SIDED.registerFallback((world, pos, state, be, face) -> {
-			if (be instanceof ItemTransferable t) {
-				return t.getItemStorage(face);
-			}
-			return null;
-		});
+
 	}
 }

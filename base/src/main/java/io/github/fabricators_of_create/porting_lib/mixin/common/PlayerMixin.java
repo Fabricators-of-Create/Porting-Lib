@@ -50,14 +50,6 @@ public abstract class PlayerMixin extends LivingEntity {
 		PlayerTickEvents.END.invoker().onEndOfPlayerTick((Player) (Object) this);
 	}
 
-	@ModifyArgs(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getDamageAfterArmorAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"))
-	private void port_lib$onHurt(Args args) {
-		DamageSource source = args.get(0);
-		float currentAmount = args.get(1);
-		float newAmount = LivingEntityEvents.ACTUALLY_HURT.invoker().onHurt(source, this, currentAmount);
-		args.set(1, newAmount);
-	}
-
 	@Inject(method = "interactOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;interact(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;"), cancellable = true)
 	public void port_lib$onEntityInteract(Entity entityToInteractOn, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
 		InteractionResult cancelResult = EntityInteractCallback.EVENT.invoker().onEntityInteract((Player) (Object) this, hand, entityToInteractOn);
@@ -89,6 +81,6 @@ public abstract class PlayerMixin extends LivingEntity {
 
 	@ModifyVariable(method = "hurt", at = @At("HEAD"), argsOnly = true)
 	private float port_lib$onHurt(float amount, DamageSource source, float amount2) {
-		return LivingEntityEvents.HURT.invoker().onHurt(source, amount);
+		return LivingEntityEvents.HURT.invoker().onHurt(source, this, amount);
 	}
 }

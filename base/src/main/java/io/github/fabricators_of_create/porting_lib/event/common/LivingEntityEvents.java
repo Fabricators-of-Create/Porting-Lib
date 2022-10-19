@@ -72,16 +72,8 @@ public class LivingEntityEvents {
 		}
 	});
 
-	public static final Event<Hurt> HURT = EventFactory.createArrayBacked(Hurt.class, callbacks -> (source, amount) -> {
+	public static final Event<Hurt> HURT = EventFactory.createArrayBacked(Hurt.class, callbacks -> (source, damaged, amount) -> {
 		for (Hurt callback : callbacks) {
-			float newAmount = callback.onHurt(source, amount);
-			if (newAmount != amount) return newAmount;
-		}
-		return amount;
-	});
-
-	public static final Event<ActuallyHurt> ACTUALLY_HURT = EventFactory.createArrayBacked(ActuallyHurt.class, callbacks -> (source, damaged, amount) -> {
-		for (ActuallyHurt callback : callbacks) {
 			float newAmount = callback.onHurt(source, damaged, amount);
 			if (newAmount != amount) return newAmount;
 		}
@@ -111,11 +103,6 @@ public class LivingEntityEvents {
 		return false;
 	});
 
-	public static final Event<EquipmentChange> EQUIPMENT_CHANGE = EventFactory.createArrayBacked(EquipmentChange.class, callbacks -> ((entity, slot, from, to) -> {
-		for (EquipmentChange callback : callbacks)
-			callback.onEquipmentChange(entity, slot, from, to);
-	}));
-
 	public static final Event<Visibility> VISIBILITY = EventFactory.createArrayBacked(Visibility.class, callbacks -> (entity, lookingEntity, originalMultiplier) -> {
 		for (Visibility e : callbacks) {
 			double newMultiplier = e.getEntityVisibilityMultiplier(entity, lookingEntity, originalMultiplier);
@@ -126,22 +113,12 @@ public class LivingEntityEvents {
 	});
 
 	@FunctionalInterface
-	public interface EquipmentChange {
-		void onEquipmentChange(LivingEntity entity, EquipmentSlot slot, @Nonnull ItemStack from, @Nonnull ItemStack to);
-	}
-
-	@FunctionalInterface
 	public interface Attack {
 		boolean onAttack(LivingEntity entity, DamageSource source, float amount);
 	}
 
 	@FunctionalInterface
 	public interface Hurt {
-		float onHurt(DamageSource source, float amount);
-	}
-
-	@FunctionalInterface
-	public interface ActuallyHurt {
 		float onHurt(DamageSource source, LivingEntity damaged, float amount);
 	}
 

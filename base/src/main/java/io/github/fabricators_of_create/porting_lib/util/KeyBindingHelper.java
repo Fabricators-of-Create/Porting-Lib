@@ -12,15 +12,7 @@ import net.minecraft.client.KeyMapping;
 @Environment(EnvType.CLIENT)
 public final class KeyBindingHelper {
 	public static boolean isActiveAndMatches(KeyMapping keyMapping, Key keyCode) {
-		return keyCode != InputConstants.UNKNOWN && keyCode.equals(getKeyCode(keyMapping));
-	}
-
-	/**
-	 * Use {@link net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper#getBoundKeyOf(KeyMapping)} instead
-	 */
-	@Deprecated(forRemoval = true)
-	public static InputConstants.Key getKeyCode(KeyMapping keyBinding) {
-		return get(keyBinding).port_lib$getKey();
+		return keyCode != InputConstants.UNKNOWN && keyCode.equals(net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper.getBoundKeyOf(keyMapping));
 	}
 
 	private static KeyMappingAccessor get(KeyMapping keyBinding) {
