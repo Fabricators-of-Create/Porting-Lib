@@ -7,10 +7,5 @@
   "mixins": [
     "porting_lib_accessors.mixins.json"
   ],
-  "accessWidener": "porting_lib.accesswidener",
-  "depends": {
-    "fabricloader": ">=${loader_version}",
-    "fabric": ">=${fabric_version}",
-    "minecraft": ">=${minecraft_version}"
-  }
+  "accessWidener": "porting_lib.accesswidener"
 }

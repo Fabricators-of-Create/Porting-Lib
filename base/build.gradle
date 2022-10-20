@@ -17,7 +17,7 @@ moduleDependencies(project, [
 
 dependencies {
 	modImplementation(include("com.github.Chocohead:Fabric-ASM:v2.3"))
-	modImplementation(include("io.github.tropheusj:serialization-hooks:${project.serialization_hooks_version}"))
+	modImplementation(include("io.github.tropheusj:serialization-hooks:${project.serialization_hooks_version}")) { transitive(false) }
 	api(include("com.github.LlamaLad7:MixinExtras:0.1.0-rc5"))
 	annotationProcessor("com.github.LlamaLad7:MixinExtras:0.1.0-rc5")
 }

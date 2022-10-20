@@ -1,9 +1,11 @@
 archivesBaseName = "lazy_registration"
 version = getSubprojectVersion(project)
 
-moduleDependencies(project, [
+loom.accessWidenerPath = file("src/main/resources/lazy_registration.accesswidener")
 
-])
+dependencies {
+	modImplementation(fabricApi.module("fabric-registry-sync-v0", rootProject.fabric_version))
+}
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN

@@ -15,7 +15,7 @@
     "common.accessor.BiomeManagerAccessor",
     "common.accessor.BlockAccessor",
     "common.accessor.BlockEntityAccessor",
-    "common.accessor.BlockLootAccessor",
+    "common.accessor.BlockLootSubProviderAccessor",
     "common.accessor.BucketItemAccessor",
     "common.accessor.BundleItemAccessor",
     "common.accessor.ChunkGeneratorAccessor",
