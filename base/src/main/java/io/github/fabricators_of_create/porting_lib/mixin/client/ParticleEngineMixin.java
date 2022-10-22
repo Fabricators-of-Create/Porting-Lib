@@ -48,7 +48,7 @@ public abstract class ParticleEngineMixin {
 		RENDER_ORDER.add(type);
 	}
 
-	@Inject(method = "method_18125", at = @At("RETURN"))
+	@Inject(method = { "method_18125", "m_qcrhunhf", "lambda$tick$8" }, at = @At("RETURN"))
 	private static void port_lib$addCustomRenderTypes(ParticleRenderType particleRenderType, CallbackInfoReturnable<Queue<Particle>> cir) {
 		if (!RENDER_ORDER.contains(particleRenderType)) {
 			port_lib$addRenderType(particleRenderType);
