@@ -33,7 +33,6 @@
     "common.ConnectionMixin",
     "common.DeadBushBlockMixin",
     "common.DropExperienceBlockMixin",
-    "common.EnchantedBookItemMixin",
     "common.EnchantmentHelperMixin",
     "common.EnchantmentMenuMixin",
     "common.EnchantmentMixin",
@@ -169,7 +168,6 @@
     "client.ShaderInstanceMixin",
     "client.SkullBlockRendererMixin",
     "client.TextureAtlasMixin",
-    "client.TextureAtlasSpriteMixin",
     "client.TextureManagerMixin",
     "client.VertexFormatMixin"
   ],

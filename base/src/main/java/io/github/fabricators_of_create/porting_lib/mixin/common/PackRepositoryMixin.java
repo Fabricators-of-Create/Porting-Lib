@@ -21,8 +21,8 @@ public abstract class PackRepositoryMixin {
 	@Final
 	private Set<RepositorySource> sources;
 
-	@Inject(method = "<init>(Lnet/minecraft/server/packs/PackType;[Lnet/minecraft/server/packs/repository/RepositorySource;)V", at = @At("TAIL"))
-	public void port_lib$addModdedPacks(PackType packType, RepositorySource[] repositorySources, CallbackInfo ci) {
-		AddPackFindersCallback.EVENT.invoker().addPack(packType, sources::add);
+	@Inject(method = "<init>", at = @At("TAIL"))
+	public void port_lib$addModdedPacks(RepositorySource[] repositorySources, CallbackInfo ci) {
+		AddPackFindersCallback.EVENT.invoker().addPack(sources::add);
 	}
 }

@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import io.github.fabricators_of_create.porting_lib.event.common.RecipesUpdatedCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.TagsUpdatedCallback;
+import net.minecraft.client.multiplayer.ClientRegistryLayer;
+import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
 
@@ -36,9 +38,9 @@ public abstract class ClientPacketListenerMixin {
 	private RecipeManager recipeManager;
 
 	@Shadow
-	private RegistryAccess.Frozen registryAccess;
+	private LayeredRegistryAccess<ClientRegistryLayer> registryAccess;
 
-	@Inject(method = { "method_38542", "m_rwonxwmk", "lambda$handleBlockEntityData$5" }, at = @At("HEAD"), cancellable = true)
+	@Inject(method = "method_38542", at = @At("HEAD"), cancellable = true)
 	public void port_lib$handleCustomBlockEntity(ClientboundBlockEntityDataPacket packet, BlockEntity blockEntity, CallbackInfo ci) {
 		if (blockEntity instanceof CustomDataPacketHandlingBlockEntity handler) {
 			handler.onDataPacket(connection, packet);
@@ -53,6 +55,6 @@ public abstract class ClientPacketListenerMixin {
 
 	@Inject(method = "handleUpdateTags", at = @At("TAIL"))
 	public void port_lib$updateTags(ClientboundUpdateTagsPacket packet, CallbackInfo ci) {
-		TagsUpdatedCallback.EVENT.invoker().onTagsUpdated(this.registryAccess);
+		TagsUpdatedCallback.EVENT.invoker().onTagsUpdated(this.registryAccess.compositeAccess());
 	}
 }

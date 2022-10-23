@@ -4,15 +4,14 @@ import java.util.function.Consumer;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.RepositorySource;
 
 public interface AddPackFindersCallback {
-	Event<AddPackFindersCallback> EVENT = EventFactory.createArrayBacked(AddPackFindersCallback.class, callbacks -> (packType, sources) -> {
+	Event<AddPackFindersCallback> EVENT = EventFactory.createArrayBacked(AddPackFindersCallback.class, callbacks -> (sources) -> {
 		for (AddPackFindersCallback e : callbacks) {
-			e.addPack(packType, sources);
+			e.addPack(sources);
 		}
 	});
 
-	void addPack(PackType packType, Consumer<RepositorySource> sources);
+	void addPack(Consumer<RepositorySource> sources);
 }

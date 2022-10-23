@@ -9,7 +9,6 @@
     "common.TransformationMixin"
   ],
   "client": [
-    "client.TextureAtlasSpriteMixin",
     "client.VertexFormatMixin"
   ],
   "injectors": {
