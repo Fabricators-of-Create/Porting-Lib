@@ -1,6 +1,6 @@
-package io.github.fabricators_of_create.porting_lib.model;
+package io.github.fabricators_of_create.porting_lib.model_loader.model;
 
-import io.github.fabricators_of_create.porting_lib.model.data.ModelData;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.data.ModelData;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

@@ -1,7 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
 import io.github.fabricators_of_create.porting_lib.event.client.RenderTooltipBorderColorCallback;
-import io.github.fabricators_of_create.porting_lib.mixin.client.accessor.ScreenAccessor;
+import io.github.fabricators_of_create.porting_lib.mixin.accessors.client.accessor.ScreenAccessor;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;

@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import java.util.function.Function;
 
+import io.github.fabricators_of_create.porting_lib.util.MaterialChest;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import io.github.fabricators_of_create.porting_lib.util.MaterialChest;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.ChestRenderer;

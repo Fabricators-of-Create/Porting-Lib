@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.model.mixin.client;
+package io.github.fabricators_of_create.porting_lib.model_loader.model.mixin.client;
 
 import java.io.InputStreamReader;
 
@@ -15,8 +15,8 @@ import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
 
 import io.github.fabricators_of_create.porting_lib.PortingConstants;
-import io.github.fabricators_of_create.porting_lib.model.obj.ObjLoader;
-import io.github.fabricators_of_create.porting_lib.model.obj.ObjModel;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.obj.ObjLoader;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.obj.ObjModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;

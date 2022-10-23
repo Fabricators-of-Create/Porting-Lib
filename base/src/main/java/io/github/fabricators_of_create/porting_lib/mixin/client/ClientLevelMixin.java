@@ -1,8 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import io.github.fabricators_of_create.porting_lib.event.client.ClientWorldEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.EntityEvents;
-import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
 
 import net.minecraft.world.entity.Entity;
 
@@ -15,8 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import io.github.fabricators_of_create.porting_lib.event.client.ClientWorldEvents;
-import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
+import io.github.fabricators_of_create.porting_lib.common.util.MixinHelper;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

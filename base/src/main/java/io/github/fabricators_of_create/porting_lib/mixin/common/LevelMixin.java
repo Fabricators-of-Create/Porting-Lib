@@ -5,20 +5,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import io.github.fabricators_of_create.porting_lib.PortingConstants;
-import io.github.fabricators_of_create.porting_lib.PortingLib;
 import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
-import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
-import io.github.fabricators_of_create.porting_lib.extensions.BlockEntityExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockEntityExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.LevelExtensions;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -29,9 +23,6 @@ import net.minecraft.world.level.ExplosionDamageCalculator;
 
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.entity.EntityTypeTest;
-
-import net.minecraft.world.phys.AABB;
 
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
@@ -48,7 +39,6 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import io.github.fabricators_of_create.porting_lib.block.NeighborChangeListeningBlock;
 import io.github.fabricators_of_create.porting_lib.block.WeakPowerCheckingBlock;
-import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

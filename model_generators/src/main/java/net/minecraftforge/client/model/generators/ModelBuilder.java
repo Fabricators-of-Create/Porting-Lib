@@ -29,7 +29,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import io.github.fabricators_of_create.porting_lib.extensions.BlockElementFaceExtensions;
+import io.github.fabricators_of_create.porting_lib.model_loader.extensions.BlockElementFaceExtensions;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 
 import org.jetbrains.annotations.Nullable;

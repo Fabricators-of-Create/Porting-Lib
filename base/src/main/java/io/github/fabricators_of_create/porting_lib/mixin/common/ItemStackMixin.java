@@ -1,10 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializableCompound;
-import io.github.fabricators_of_create.porting_lib.extensions.ItemStackExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.INBTSerializableCompound;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.ItemStackExtensions;
 
 import io.github.fabricators_of_create.porting_lib.item.DamageableItem;
-import io.github.fabricators_of_create.porting_lib.util.ToolAction;
+import io.github.fabricators_of_create.porting_lib.common.util.ToolAction;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,7 +16,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import io.github.fabricators_of_create.porting_lib.item.CustomMaxCountItem;
-import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;

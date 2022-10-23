@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
-import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.StairBlockAccessor;
+import io.github.fabricators_of_create.porting_lib.mixin.accessors.common.accessor.StairBlockAccessor;
 
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;

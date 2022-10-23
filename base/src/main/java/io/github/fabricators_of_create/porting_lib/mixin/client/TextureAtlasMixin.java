@@ -1,11 +1,11 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import io.github.fabricators_of_create.porting_lib.event.client.TextureStitchCallback;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import io.github.fabricators_of_create.porting_lib.event.client.TextureStitchCallback;
 import net.minecraft.client.renderer.texture.SpriteLoader;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 

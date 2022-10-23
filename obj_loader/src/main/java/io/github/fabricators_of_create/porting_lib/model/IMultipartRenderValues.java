@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.model;
+package io.github.fabricators_of_create.porting_lib.model_loader.model;
 
 import org.jetbrains.annotations.Nullable;
 

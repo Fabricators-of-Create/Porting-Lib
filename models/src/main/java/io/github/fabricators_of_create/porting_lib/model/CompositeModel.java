@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.model;
+package io.github.fabricators_of_create.porting_lib.model_loader.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,11 +12,11 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import io.github.fabricators_of_create.porting_lib.client.RenderTypeGroup;
-import io.github.fabricators_of_create.porting_lib.model.geometry.IGeometryBakingContext;
-import io.github.fabricators_of_create.porting_lib.model.geometry.IGeometryLoader;
-import io.github.fabricators_of_create.porting_lib.model.geometry.IUnbakedGeometry;
-import io.github.fabricators_of_create.porting_lib.model.geometry.UnbakedGeometryHelper;
+import io.github.fabricators_of_create.porting_lib.model_loader.client.RenderTypeGroup;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.IGeometryBakingContext;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.IGeometryLoader;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.IUnbakedGeometry;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.UnbakedGeometryHelper;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 
@@ -32,8 +32,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Pair;
 
-import io.github.fabricators_of_create.porting_lib.model.data.ModelData;
-import io.github.fabricators_of_create.porting_lib.model.data.ModelProperty;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.data.ModelData;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.data.ModelProperty;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;

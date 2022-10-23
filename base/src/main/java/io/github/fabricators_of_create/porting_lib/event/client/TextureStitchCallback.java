@@ -5,9 +5,6 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.resources.ResourceLocation;
-
-import java.util.function.Consumer;
 
 public interface TextureStitchCallback {
   Event<Post> POST = EventFactory.createArrayBacked(Post.class, callbacks -> atlas -> {

@@ -5,7 +5,7 @@ import java.util.function.BiConsumer;
 
 import com.google.common.collect.Sets;
 
-import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.BlockLootSubProviderAccessor;
+import io.github.fabricators_of_create.porting_lib.mixin.accessors.common.accessor.BlockLootSubProviderAccessor;
 import net.minecraft.core.Registry;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.resources.ResourceLocation;

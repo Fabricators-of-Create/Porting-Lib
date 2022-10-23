@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import io.github.fabricators_of_create.porting_lib.mixin.client.accessor.ItemRendererAccessor;
+
+import io.github.fabricators_of_create.porting_lib.common.util.MixinHelper;
+import io.github.fabricators_of_create.porting_lib.mixin.accessors.client.accessor.ItemRendererAccessor;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

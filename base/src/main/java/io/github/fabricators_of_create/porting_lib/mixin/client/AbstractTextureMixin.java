@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
-import io.github.fabricators_of_create.porting_lib.extensions.AbstractTextureExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.AbstractTextureExtensions;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.texture.AbstractTexture;

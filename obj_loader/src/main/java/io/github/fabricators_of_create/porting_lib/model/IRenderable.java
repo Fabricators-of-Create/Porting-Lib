@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.model;
+package io.github.fabricators_of_create.porting_lib.model_loader.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;

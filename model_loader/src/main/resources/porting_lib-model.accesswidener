@@ -5,3 +5,4 @@ accessible method net/minecraft/client/renderer/block/model/ItemTransform$Deseri
 accessible method net/minecraft/client/renderer/block/model/BlockFaceUV$Deserializer <init> ()V
 accessible method net/minecraft/client/renderer/block/model/BlockElementFace$Deserializer <init> ()V
 accessible method net/minecraft/client/renderer/block/model/BlockElement$Deserializer <init> ()V
+accessible method net/minecraft/client/renderer/block/model/ItemModelGenerator processFrames (ILjava/lang/String;Lnet/minecraft/client/renderer/texture/SpriteContents;)Ljava/util/List;

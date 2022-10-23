@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.extensions.BlockStateExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockStateExtensions;
 
 import net.minecraft.world.level.block.state.BlockState;
 

@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import io.github.fabricators_of_create.porting_lib.block.MinecartPassHandlerBlock;
-import io.github.fabricators_of_create.porting_lib.extensions.AbstractMinecartExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializable;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.AbstractMinecartExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.INBTSerializable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

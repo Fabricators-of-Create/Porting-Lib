@@ -1,7 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
-import io.github.fabricators_of_create.porting_lib.extensions.ItemStackExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.ItemStackExtensions;
 import net.minecraft.core.BlockPos;
 
 import net.minecraft.core.Direction;

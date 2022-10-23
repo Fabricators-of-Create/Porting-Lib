@@ -1,11 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import static io.github.fabricators_of_create.porting_lib.util.ShapedRecipeUtil.HEIGHT;
-import static io.github.fabricators_of_create.porting_lib.util.ShapedRecipeUtil.WIDTH;
-
 import com.google.gson.JsonObject;
 
 import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
+import io.github.fabricators_of_create.porting_lib.util.ShapedRecipeUtil;
 import net.minecraft.world.item.ItemStack;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,7 +23,7 @@ public abstract class ShapedRecipeMixin {
 			constant = @Constant(intValue = 3, ordinal = 0)
 	)
 	private static int port_lib$modifyMaxHeight(int original) {
-		return HEIGHT;
+		return ShapedRecipeUtil.HEIGHT;
 	}
 
 	@ModifyConstant(
@@ -33,21 +31,21 @@ public abstract class ShapedRecipeMixin {
 			constant = @Constant(intValue = 3, ordinal = 1)
 	)
 	private static int port_lib$modifyMaxWidth(int original) {
-		return WIDTH;
+		return ShapedRecipeUtil.WIDTH;
 	}
 
 	@ModifyConstant(method = "patternFromJson(Lcom/google/gson/JsonArray;)[Ljava/lang/String;",
 			constant = @Constant(stringValue = "Invalid pattern: too many rows, 3 is maximum")
 	)
 	private static String port_lib$changeHeightWarning(String original) {
-		return "Invalid pattern: too many rows, " + HEIGHT + " is maximum";
+		return "Invalid pattern: too many rows, " + ShapedRecipeUtil.HEIGHT + " is maximum";
 	}
 
 	@ModifyConstant(method = "patternFromJson(Lcom/google/gson/JsonArray;)[Ljava/lang/String;",
 			constant = @Constant(stringValue = "Invalid pattern: too many columns, 3 is maximum")
 	)
 	private static String port_lib$changeWidthWarning(String original) {
-		return "Invalid pattern: too many columns, " + WIDTH + " is maximum";
+		return "Invalid pattern: too many columns, " + ShapedRecipeUtil.WIDTH + " is maximum";
 	}
 
 	@Inject(method = "itemStackFromJson", at = @At("HEAD"), cancellable = true)

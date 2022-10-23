@@ -2,8 +2,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.event.common.PlayerTickEvents;
 
-import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.ITeleporter;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.EntityExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.ITeleporter;
 import net.minecraft.network.chat.RemoteChatSession;
 import net.minecraft.network.protocol.game.ClientboundChangeDifficultyPacket;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
@@ -18,7 +18,6 @@ import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 
-import net.minecraft.world.entity.player.ProfilePublicKey;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.portal.PortalInfo;
 import net.minecraft.world.level.storage.LevelData;

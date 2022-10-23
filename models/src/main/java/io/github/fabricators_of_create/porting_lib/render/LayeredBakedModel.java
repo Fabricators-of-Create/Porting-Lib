@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.render;
+package io.github.fabricators_of_create.porting_lib.model_loader.render;
 
 import com.mojang.datafixers.util.Pair;
 

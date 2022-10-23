@@ -3,9 +3,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 import net.minecraft.world.level.block.state.BlockState;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Group;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import io.github.fabricators_of_create.porting_lib.enchant.EnchantmentBonusBlock;

@@ -13,7 +13,7 @@
 //import com.mojang.serialization.DynamicOps;
 //import com.mojang.serialization.JsonOps;
 //
-//import io.github.fabricators_of_create.porting_lib.util.LamdbaExceptionUtils;
+//import io.github.fabricators_of_create.porting_lib.model_loader.util.LamdbaExceptionUtils;
 //import net.minecraft.core.Registry;
 //import net.minecraft.core.RegistryAccess;
 //import net.minecraft.data.CachedOutput;

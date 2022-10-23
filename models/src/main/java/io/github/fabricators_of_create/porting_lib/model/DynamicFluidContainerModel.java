@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.model;
+package io.github.fabricators_of_create.porting_lib.model_loader.model;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -10,10 +10,10 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 
-import io.github.fabricators_of_create.porting_lib.client.RenderTypeGroup;
-import io.github.fabricators_of_create.porting_lib.model.geometry.*;
+import io.github.fabricators_of_create.porting_lib.model_loader.client.RenderTypeGroup;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.*;
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
-import io.github.fabricators_of_create.porting_lib.util.FluidUtil;
+import io.github.fabricators_of_create.porting_lib.model_loader.util.FluidUtil;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;

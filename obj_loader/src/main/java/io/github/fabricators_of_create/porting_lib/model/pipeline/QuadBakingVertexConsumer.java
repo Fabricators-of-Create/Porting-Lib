@@ -1,11 +1,11 @@
-package io.github.fabricators_of_create.porting_lib.model.pipeline;
+package io.github.fabricators_of_create.porting_lib.model_loader.model.pipeline;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 
-import io.github.fabricators_of_create.porting_lib.client.textures.UnitTextureAtlasSprite;
-import io.github.fabricators_of_create.porting_lib.model.IQuadTransformer;
+import io.github.fabricators_of_create.porting_lib.model_loader.client.textures.UnitTextureAtlasSprite;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.IQuadTransformer;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

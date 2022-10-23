@@ -2,7 +2,7 @@ package io.github.fabricators_of_create.porting_lib.util;
 
 import java.util.Iterator;
 
-import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.LivingEntityAccessor;
+import io.github.fabricators_of_create.porting_lib.mixin.accessors.common.accessor.LivingEntityAccessor;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;

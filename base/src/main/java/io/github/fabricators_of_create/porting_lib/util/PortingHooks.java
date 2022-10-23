@@ -6,7 +6,7 @@ import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.EntityEvents;
-import io.github.fabricators_of_create.porting_lib.extensions.BlockItemExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockItemExtensions;
 import io.github.fabricators_of_create.porting_lib.loot.IGlobalLootModifier;
 import io.github.fabricators_of_create.porting_lib.loot.LootModifierManager;
 import io.github.fabricators_of_create.porting_lib.loot.LootTableIdCondition;

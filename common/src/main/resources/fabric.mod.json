@@ -9,8 +9,8 @@
   ],
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_1077": ["io/github/fabricators_of_create/porting_lib/extensions/LanguageInfoExtensions"],
-      "net/minecraft/class_1792": ["io/github/fabricators_of_create/porting_lib/extensions/tool/ItemExtensions"]
+      "net/minecraft/class_1077": ["io/github/fabricators_of_create/porting_lib/common/extensions/LanguageInfoExtensions"],
+      "net/minecraft/class_1792": ["io/github/fabricators_of_create/porting_lib/common/extensions/tool/ItemExtensions"]
     }
   }
 }

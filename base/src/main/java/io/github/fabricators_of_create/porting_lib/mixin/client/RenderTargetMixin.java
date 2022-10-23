@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.GlStateManager;
-import io.github.fabricators_of_create.porting_lib.extensions.RenderTargetExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.RenderTargetExtensions;
 
 import net.minecraft.client.Minecraft;
 

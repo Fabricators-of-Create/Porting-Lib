@@ -1,7 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.event.common.AddPackFindersCallback;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.PackRepository;
 
 import net.minecraft.server.packs.repository.RepositorySource;

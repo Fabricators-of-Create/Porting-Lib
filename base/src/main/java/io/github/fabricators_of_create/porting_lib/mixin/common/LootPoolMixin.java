@@ -4,8 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
-import io.github.fabricators_of_create.porting_lib.extensions.LootPoolBuilderExtension;
-import io.github.fabricators_of_create.porting_lib.extensions.LootPoolExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.LootPoolBuilderExtension;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.LootPoolExtensions;
 import net.minecraft.world.level.storage.loot.LootPool;
 
 import org.spongepowered.asm.mixin.Mixin;

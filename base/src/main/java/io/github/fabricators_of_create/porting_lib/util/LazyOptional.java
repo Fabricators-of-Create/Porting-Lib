@@ -10,6 +10,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import io.github.fabricators_of_create.porting_lib.common.util.NonNullConsumer;
+import io.github.fabricators_of_create.porting_lib.common.util.NonNullFunction;
+import io.github.fabricators_of_create.porting_lib.common.util.NonNullSupplier;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.apache.logging.log4j.Level;

@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import io.github.fabricators_of_create.porting_lib.extensions.EntityCollisionContextExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.EntityCollisionContextExtensions;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;

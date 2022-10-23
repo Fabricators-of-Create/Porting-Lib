@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import static net.minecraft.client.gui.GuiComponent.GUI_ICONS_LOCATION;
 
+import io.github.fabricators_of_create.porting_lib.event.client.OverlayRenderCallback;
 import net.minecraft.world.entity.player.Player;
 
 import org.spongepowered.asm.mixin.Final;
@@ -14,7 +15,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import io.github.fabricators_of_create.porting_lib.event.client.OverlayRenderCallback;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

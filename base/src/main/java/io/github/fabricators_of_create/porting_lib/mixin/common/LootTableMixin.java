@@ -1,12 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
-import io.github.fabricators_of_create.porting_lib.extensions.LootTableExtensions;
-import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.LootTableExtensions;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;

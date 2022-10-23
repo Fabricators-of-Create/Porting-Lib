@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.model;
+package io.github.fabricators_of_create.porting_lib.model_loader.model;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.math.Matrix4f;

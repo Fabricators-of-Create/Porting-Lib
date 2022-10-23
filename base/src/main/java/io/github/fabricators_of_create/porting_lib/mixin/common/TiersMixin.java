@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 
-import io.github.fabricators_of_create.porting_lib.extensions.TierExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.TierExtensions;
 import io.github.fabricators_of_create.porting_lib.util.TagUtil;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Tiers;

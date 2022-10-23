@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.extensions.TagAppenderExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.TagAppenderExtensions;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider.FabricTagBuilder;
 import net.minecraft.data.tags.TagsProvider;
 

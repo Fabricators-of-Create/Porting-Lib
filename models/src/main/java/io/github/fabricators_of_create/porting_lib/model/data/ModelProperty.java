@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.model.data;
+package io.github.fabricators_of_create.porting_lib.model_loader.model.data;
 
 import com.google.common.base.Predicates;
 

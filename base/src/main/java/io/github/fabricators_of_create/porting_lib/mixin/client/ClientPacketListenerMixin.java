@@ -4,7 +4,6 @@ import io.github.fabricators_of_create.porting_lib.event.common.RecipesUpdatedCa
 import io.github.fabricators_of_create.porting_lib.event.common.TagsUpdatedCallback;
 import net.minecraft.client.multiplayer.ClientRegistryLayer;
 import net.minecraft.core.LayeredRegistryAccess;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
 
 import net.minecraft.network.protocol.game.ClientboundUpdateTagsPacket;

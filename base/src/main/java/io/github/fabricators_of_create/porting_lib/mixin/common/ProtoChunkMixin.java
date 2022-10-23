@@ -3,7 +3,6 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.biome.Biome;

@@ -2,11 +2,10 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.Collection;
 
-import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializableCompound;
-import net.minecraft.world.phys.Vec3;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.INBTSerializableCompound;
 
+import io.github.fabricators_of_create.porting_lib.util.EntityHelper;
 import org.jetbrains.annotations.Nullable;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -21,9 +20,8 @@ import io.github.fabricators_of_create.porting_lib.event.common.EntityEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.EntityReadExtraDataCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.MinecartEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.MountEntityCallback;
-import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.ITeleporter;
-import io.github.fabricators_of_create.porting_lib.util.EntityHelper;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.EntityExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.ITeleporter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;

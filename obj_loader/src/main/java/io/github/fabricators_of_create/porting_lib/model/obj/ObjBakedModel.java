@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.model.obj;
+package io.github.fabricators_of_create.porting_lib.model_loader.model.obj;
 
 import java.util.ArrayList;
 import java.util.List;

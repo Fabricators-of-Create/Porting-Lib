@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.model.obj;
+package io.github.fabricators_of_create.porting_lib.model_loader.model.obj;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,13 +36,13 @@ import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
 
-import io.github.fabricators_of_create.porting_lib.client.textures.UnitTextureAtlasSprite;
-import io.github.fabricators_of_create.porting_lib.model.IModelBuilder;
-import io.github.fabricators_of_create.porting_lib.model.geometry.IGeometryBakingContext;
-import io.github.fabricators_of_create.porting_lib.model.geometry.SimpleUnbakedGeometry;
-import io.github.fabricators_of_create.porting_lib.model.geometry.UnbakedGeometryHelper;
-import io.github.fabricators_of_create.porting_lib.model.pipeline.QuadBakingVertexConsumer;
-import io.github.fabricators_of_create.porting_lib.renderable.CompositeRenderable;
+import io.github.fabricators_of_create.porting_lib.model_loader.client.textures.UnitTextureAtlasSprite;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.IModelBuilder;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.IGeometryBakingContext;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.SimpleUnbakedGeometry;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.UnbakedGeometryHelper;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.pipeline.QuadBakingVertexConsumer;
+import io.github.fabricators_of_create.porting_lib.model_loader.renderable.CompositeRenderable;
 import joptsimple.internal.Strings;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.block.model.BakedQuad;

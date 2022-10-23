@@ -1,8 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
-import io.github.fabricators_of_create.porting_lib.mixin.client.accessor.ParticleAccessor;
+import io.github.fabricators_of_create.porting_lib.mixin.accessors.client.accessor.ParticleAccessor;
 
-import io.github.fabricators_of_create.porting_lib.mixin.client.accessor.TextureSheetParticleAccessor;
+import io.github.fabricators_of_create.porting_lib.mixin.accessors.client.accessor.TextureSheetParticleAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;

@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
-//import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.BundleItemAccessor;
+//import io.github.fabricators_of_create.porting_lib.model_loader.mixin.common.accessor.BundleItemAccessor;
 //import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 //import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 //import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;

@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
-import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.BaseSpawnerAccessor;
+import io.github.fabricators_of_create.porting_lib.common.util.MixinHelper;
+import io.github.fabricators_of_create.porting_lib.mixin.accessors.common.accessor.BaseSpawnerAccessor;
 
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.level.BaseSpawner;

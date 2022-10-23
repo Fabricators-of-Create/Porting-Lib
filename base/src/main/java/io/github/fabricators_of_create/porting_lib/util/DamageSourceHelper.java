@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
-import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.DamageSourceAccessor;
+import io.github.fabricators_of_create.porting_lib.common.util.MixinHelper;
+import io.github.fabricators_of_create.porting_lib.mixin.accessors.common.accessor.DamageSourceAccessor;
 
 import net.minecraft.world.damagesource.DamageSource;
 

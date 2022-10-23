@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.model.obj;
+package io.github.fabricators_of_create.porting_lib.model_loader.model.obj;
 
 import com.google.common.base.Charsets;
 import joptsimple.internal.Strings;

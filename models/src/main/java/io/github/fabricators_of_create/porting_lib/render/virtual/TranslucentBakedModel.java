@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.render.virtual;
+package io.github.fabricators_of_create.porting_lib.model_loader.render.virtual;
 
 import java.util.function.Supplier;
 

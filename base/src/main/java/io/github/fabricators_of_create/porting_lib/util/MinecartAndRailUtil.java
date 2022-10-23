@@ -2,8 +2,8 @@ package io.github.fabricators_of_create.porting_lib.util;
 
 import javax.annotation.Nullable;
 
-import io.github.fabricators_of_create.porting_lib.extensions.BaseRailBlockExtensions;
-import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.AbstractMinecartAccessor;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.BaseRailBlockExtensions;
+import io.github.fabricators_of_create.porting_lib.mixin.accessors.common.accessor.AbstractMinecartAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;

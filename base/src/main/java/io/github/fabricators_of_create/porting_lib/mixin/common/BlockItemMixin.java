@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import io.github.fabricators_of_create.porting_lib.event.common.BlockPlaceCallback;
-import io.github.fabricators_of_create.porting_lib.extensions.BlockItemExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockItemExtensions;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;

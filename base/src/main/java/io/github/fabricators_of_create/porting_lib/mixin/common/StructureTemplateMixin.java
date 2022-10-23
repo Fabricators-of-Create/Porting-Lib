@@ -15,8 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.common.collect.Lists;
 
-import io.github.fabricators_of_create.porting_lib.extensions.StructureTemplateExtensions;
-import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.StructureTemplateAccessor;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.StructureTemplateExtensions;
+import io.github.fabricators_of_create.porting_lib.mixin.accessors.common.accessor.StructureTemplateAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.DoubleTag;

@@ -7,7 +7,7 @@ import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.EntityEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
 
-import io.github.fabricators_of_create.porting_lib.extensions.LevelExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.LevelExtensions;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 
