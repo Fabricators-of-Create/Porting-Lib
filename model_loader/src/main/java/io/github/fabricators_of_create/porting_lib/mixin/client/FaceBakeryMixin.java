@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(FaceBakery.class)
 public class FaceBakeryMixin {
 	@Inject(method = "bakeQuad", at = @At("RETURN"))
-	public void porting_lib$bakeEmisssiveQuad(Vector3f posFrom, Vector3f posTo, BlockElementFace face, TextureAtlasSprite sprite, Direction facing, ModelState transform, BlockElementRotation partRotation, boolean shade, ResourceLocation modelLocation, CallbackInfoReturnable<BakedQuad> cir) {
+	public void port_lib$bakeEmisssiveQuad(Vector3f posFrom, Vector3f posTo, BlockElementFace face, TextureAtlasSprite sprite, Direction facing, ModelState transform, BlockElementRotation partRotation, boolean shade, ResourceLocation modelLocation, CallbackInfoReturnable<BakedQuad> cir) {
 		QuadTransformers.settingEmissivity(face.getEmissivity()).processInPlace(cir.getReturnValue());
 	}
 }

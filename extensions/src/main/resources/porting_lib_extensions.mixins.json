@@ -1,18 +1,18 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "priority": 951,
   "package": "io.github.fabricators_of_create.porting_lib.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "common.tool.ItemMixin"
+    "common.ItemMixin",
+    "common.Matrix4fMixin",
+    "common.TransformationMixin"
   ],
   "client": [
-    "client.LanguageInfoMixin",
-    "client.accessor.MinecraftAccessor"
+    "client.TextureAtlasSpriteMixin",
+    "client.VertexFormatMixin"
   ],
   "injectors": {
-    "defaultRequire": 1,
-    "maxShiftBy": 5
+    "defaultRequire": 1
   }
 }

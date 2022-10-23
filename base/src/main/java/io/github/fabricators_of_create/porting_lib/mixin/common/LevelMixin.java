@@ -94,9 +94,6 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		}
 	};
 
-	@Unique
-	final Int2ObjectMap<PartEntity<?>> port_lib$multiparts = new Int2ObjectOpenHashMap<>();
-
 	@Shadow
 	public abstract BlockState getBlockState(BlockPos blockPos);
 
@@ -105,9 +102,6 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 
 	@Shadow
 	public abstract ProfilerFiller getProfiler();
-
-	@Shadow
-	public abstract int getDirectSignalTo(BlockPos pos);
 
 	@Shadow
 	public abstract void setBlocksDirty(BlockPos pos, BlockState old, BlockState updated);

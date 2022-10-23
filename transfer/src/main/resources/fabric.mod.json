@@ -13,8 +13,7 @@
     ]
   },
   "mixins": [
-    "porting_lib_transfer.mixins.client.json",
-    "porting_lib_transfer.mixins.common.json"
+    "porting_lib_transfer.mixins.json"
   ],
   "custom": {
     "loom:injected_interfaces": {

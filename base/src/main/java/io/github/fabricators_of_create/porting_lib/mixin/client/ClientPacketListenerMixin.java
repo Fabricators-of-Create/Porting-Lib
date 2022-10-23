@@ -38,7 +38,7 @@ public abstract class ClientPacketListenerMixin {
 	@Shadow
 	private RegistryAccess.Frozen registryAccess;
 
-	@Inject(method = "method_38542", at = @At("HEAD"), cancellable = true)
+	@Inject(method = { "method_38542", "m_rwonxwmk", "lambda$handleBlockEntityData$5" }, at = @At("HEAD"), cancellable = true)
 	public void port_lib$handleCustomBlockEntity(ClientboundBlockEntityDataPacket packet, BlockEntity blockEntity, CallbackInfo ci) {
 		if (blockEntity instanceof CustomDataPacketHandlingBlockEntity handler) {
 			handler.onDataPacket(connection, packet);

@@ -22,18 +22,6 @@ public abstract class TransformationMixin implements TransformationExtensions {
 	private Matrix4f matrix;
 
 	@Shadow
-	public abstract Vector3f getTranslation();
-
-	@Shadow
-	public abstract Quaternion getRightRotation();
-
-	@Shadow
-	public abstract Vector3f getScale();
-
-	@Shadow
-	public abstract Quaternion getLeftRotation();
-
-	@Shadow
 	public abstract Matrix4f getMatrix();
 
 	@Unique
