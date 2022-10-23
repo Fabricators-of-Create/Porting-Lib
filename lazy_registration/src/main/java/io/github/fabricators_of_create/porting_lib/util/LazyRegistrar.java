@@ -18,12 +18,12 @@ import net.minecraft.world.level.block.Block;
 
 public class LazyRegistrar<T> {
 	public final String mod_id;
-	private final ResourceLocation registryName;
+	private final ResourceKey<? extends Registry<T>> registryKey;
 	private final Map<RegistryObject<T>, Supplier<? extends T>> entries = new LinkedHashMap<>();
 	private final Set<RegistryObject<T>> entriesView = Collections.unmodifiableSet(entries.keySet());
 
-	LazyRegistrar(ResourceLocation registryName, String modid) {
-		this.registryName = registryName;
+	LazyRegistrar(ResourceKey<? extends Registry<T>> registryKey, String modid) {
+		this.registryKey = registryKey;
 		this.mod_id = modid;
 	}
 
@@ -32,22 +32,22 @@ public class LazyRegistrar<T> {
 //    }
 
 	public static <R> LazyRegistrar<R> create(Registry<R> registry, String id) {
-		return new LazyRegistrar<>(registry.key().location(), id);
+		return new LazyRegistrar<>(registry.key(), id);
 	}
 
 	public static <B> LazyRegistrar<B> create(ResourceKey<? extends Registry<B>> registry, String id) {
-		return new LazyRegistrar<>(registry.location(), id);
+		return new LazyRegistrar<>(registry, id);
 	}
 
 	public static <B> LazyRegistrar<B> create(ResourceLocation registryName, String id) {
-		return new LazyRegistrar<>(registryName, id);
+		return new LazyRegistrar<>(ResourceKey.createRegistryKey(registryName), id);
 	}
 
 	private Supplier<Registry<T>> cachedHolder;
 
 	public Supplier<Registry<T>> makeRegistry() {
 		if (cachedHolder == null)
-			cachedHolder = new RegistryHolder<>(ResourceKey.createRegistryKey(registryName));
+			cachedHolder = new RegistryHolder<>(getRegistryKey());
 		return cachedHolder;
 	}
 
@@ -56,7 +56,7 @@ public class LazyRegistrar<T> {
 	}
 
 	public <R extends T> RegistryObject<R> register(ResourceLocation id, final Supplier<? extends R> entry) {
-		RegistryObject<? extends R> obj = new RegistryObject<>(id, entry, ResourceKey.create(registryName, id));
+		RegistryObject<? extends R> obj = new RegistryObject<>(id, entry, ResourceKey.create(getRegistryKey(), id));
 		if (entries.putIfAbsent((RegistryObject<T>) obj, entry) != null) {
 			throw new IllegalArgumentException("Duplicate registration " + id);
 		}
@@ -77,6 +77,13 @@ public class LazyRegistrar<T> {
 
 	public Collection<RegistryObject<T>> getEntries() {
 		return entriesView;
+	}
+
+	/**
+	 * @return The registry key stored in this deferred register. Useful for creating new deferred registers based on an existing one.
+	 */
+	public ResourceKey<? extends Registry<T>> getRegistryKey() {
+		return this.registryKey;
 	}
 
 	private static class RegistryHolder<V> implements Supplier<Registry<V>> {
