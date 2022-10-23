@@ -3,9 +3,8 @@ import io.github.fabricators_of_create.porting_lib_build.PortingLibBuildPlugin
 //file:noinspection GroovyAssignabilityCheck
 //file:noinspection GroovyAccessibility
 plugins {
-	id "fabric-loom" version "0.13.12"
-//	id "io.github.juuxel.loom-quiltflower" version "1.+" // Quiltflower, a better decompiler
-	id "org.quiltmc.quilt-mappings-on-loom" version "4.2.0" // Quilt Mappings, for parameters and javadoc. Also hashed mojmap.
+	id "fabric-loom" version "1.0.+"
+	id "io.github.juuxel.loom-quiltflower" version "1.+" // Quiltflower, a better decompiler
 	id "io.github.p03w.machete" version "1.+" // automatic jar compressing on build
 	id "org.ajoberstar.grgit" version "4.1.1"
 	id "maven-publish"
@@ -136,7 +135,7 @@ allprojects {
 //		modLocalRuntime("maven.modrinth:vmp-fabric:${project.vmp_version}")
 		//	modLocalRuntime("maven.modrinth:iris:${project.iris_version}")
 		//	modLocalRuntime("dev.monarkhes:myron:1.6.3+1.18.1") { transitive = false }
-//		modLocalRuntime("com.terraformersmc:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
+		modLocalRuntime("com.terraformersmc:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
 
 		// common dependencies
 		// each module can also specify additional ones
