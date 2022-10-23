@@ -7,10 +7,6 @@ moduleDependencies(project, [
 		"common",
 ])
 
-dependencies {
-	modImplementation(fabricApi.module("fabric-transfer-api-v1", project.fabric_version))
-}
-
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }

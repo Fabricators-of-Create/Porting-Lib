@@ -7,10 +7,6 @@ sourceSets.main.resources {
 
 setupDatagen(project)
 
-dependencies {
-	modImplementation(fabricApi.module("fabric-data-generation-api-v1", rootProject.fabric_version))
-}
-
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }

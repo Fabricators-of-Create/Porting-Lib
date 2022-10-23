@@ -140,9 +140,7 @@ allprojects {
 
 		// common dependencies
 		// each module can also specify additional ones
-//		modImplementation(fabricApi.module("fabric-networking-api-v1", project.fabric_version))
-//		modImplementation(fabricApi.module("fabric-networking-api-v1", project.fabric_version))
-		modCompileOnly("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
+		modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
 
 		implementation("javax.annotation:javax.annotation-api:1.3.2")
 		implementation("com.google.code.findbugs:jsr305:3.0.2")
