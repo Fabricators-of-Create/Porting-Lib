@@ -22,7 +22,6 @@ public class ExpandFmjTask extends DefaultTask {
 	public static final String FMJ = "fabric.mod.json";
 	// at src/main/resources/template.fabric.mod.json, this is where it goes after processResources
 	public static final String TEMPLATE_FMJ = "build/resources/main/template.fabric.mod.json";
-	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	@TaskAction
 	public void expandFmj() {
@@ -49,7 +48,7 @@ public class ExpandFmjTask extends DefaultTask {
 			tryMerge(template, key, value);
 		}
 		try (FileOutputStream out = new FileOutputStream(fmjFile)) {
-			out.write(GSON.toJson(template).getBytes());
+			out.write(PortingLibBuildPlugin.GSON.toJson(template).getBytes());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
