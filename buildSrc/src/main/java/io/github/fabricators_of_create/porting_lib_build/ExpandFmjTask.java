@@ -20,8 +20,8 @@ import java.util.Map.Entry;
 
 public class ExpandFmjTask extends DefaultTask {
 	public static final String FMJ = "fabric.mod.json";
-	// at src/main/resources/fabric.mod.json, this is where it goes after processResources
-	public static final String TEMPLATE_FMJ = "build/resources/main/fabric.mod.json";
+	// at src/main/resources/template.fabric.mod.json, this is where it goes after processResources
+	public static final String TEMPLATE_FMJ = "build/resources/main/template.fabric.mod.json";
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	@TaskAction
