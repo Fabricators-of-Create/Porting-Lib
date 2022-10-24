@@ -409,6 +409,6 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
 
 	private Path getPath(T model) {
 		ResourceLocation loc = model.getLocation();
-		return generator.getOutputFolder().resolve("assets/" + loc.getNamespace() + "/models/" + loc.getPath() + ".json");
+		return generator.getVanillaPackOutput().getOutputFolder().resolve("assets/" + loc.getNamespace() + "/models/" + loc.getPath() + ".json");
 	}
 }

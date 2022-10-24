@@ -13,19 +13,20 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.client.resources.DownloadedPackSource;
+import net.minecraft.client.resources.IndexedAssetSource;
+import net.minecraft.server.packs.PathPackResources;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import net.minecraft.client.resources.AssetIndex;
 import net.minecraft.client.resources.ClientPackSource;
-import net.minecraft.client.resources.DefaultClientPackResources;
 import net.minecraft.data.DataProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.FilePackResources;
-import net.minecraft.server.packs.FolderPackResources;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.VanillaPackResources;
@@ -94,15 +95,15 @@ public class ExistingFileHelper {
 		List<PackResources> candidateClientResources = new ArrayList<>();
 		List<PackResources> candidateServerResources = new ArrayList<>();
 
-		candidateClientResources.add(new VanillaPackResources(ClientPackSource.BUILT_IN, "minecraft", "realms"));
+		candidateClientResources.add(ClientPackSource.createVanillaPackSource(assetsDir.toPath()));
 		if (assetIndex != null && assetsDir != null)
 		{
-			candidateClientResources.add(new DefaultClientPackResources(ClientPackSource.BUILT_IN, new AssetIndex(assetsDir, assetIndex)));
+//			candidateClientResources.add(new DownloadedPackSource(assetIndex == null ? assetsDir : IndexedAssetSource.createIndexFs(assetsDir.toPath(), assetIndex).toFile())); TODO: PORT
 		}
-		candidateServerResources.add(new VanillaPackResources(ServerPacksSource.BUILT_IN_METADATA, "minecraft"));
+		candidateServerResources.add(ServerPacksSource.createVanillaPackSource());
 		for (Path existing : existingPacks) {
 			File file = existing.toFile();
-			PackResources pack = file.isDirectory() ? new FolderPackResources(file) : new FilePackResources(file);
+			PackResources pack = file.isDirectory() ? new PathPackResources("existing", existing) : new FilePackResources("existing", file);
 			candidateClientResources.add(pack);
 			candidateServerResources.add(pack);
 		}

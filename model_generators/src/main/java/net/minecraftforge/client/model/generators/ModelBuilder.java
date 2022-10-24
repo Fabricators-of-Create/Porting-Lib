@@ -29,7 +29,6 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import io.github.fabricators_of_create.porting_lib.model_loader.extensions.BlockElementFaceExtensions;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 
 import org.jetbrains.annotations.Nullable;
@@ -344,9 +343,9 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                         faceObj.addProperty("tintindex", face.tintIndex);
                     }
 					// fabric: doesn't exist
-                    if (((BlockElementFaceExtensions)face).getEmissivity() > 0) {
-                        faceObj.addProperty("emissivity", ((BlockElementFaceExtensions)face).getEmissivity());
-                    }
+//                    if (((BlockElementFaceExtensions)face).getEmissivity() > 0) { TODO: PORT 1.19.3
+//                        faceObj.addProperty("emissivity", ((BlockElementFaceExtensions)face).getEmissivity());
+//                    }
                     faces.add(dir.getSerializedName(), faceObj);
                 }
                 if (!part.faces.isEmpty()) {
@@ -646,7 +645,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                     throw new IllegalStateException("A model face must have a texture");
                 }
 				BlockElementFace face = new BlockElementFace(cullface, tintindex, texture, new BlockFaceUV(uvs, rotation.rotation));
-				((BlockElementFaceExtensions) face).setEmissivity(emissivity);
+//				((BlockElementFaceExtensions) face).setEmissivity(emissivity); TODO: PORT 1.19.4
                 return face;
             }
 

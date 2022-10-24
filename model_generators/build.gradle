@@ -2,7 +2,7 @@ archivesBaseName = "model_generators"
 version = getSubprojectVersion(project)
 
 moduleDependencies(project, [
-		"models"
+//		"models"
 ])
 
 processResources {
