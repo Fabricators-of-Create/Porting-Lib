@@ -125,13 +125,13 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
-	protected int getStackLimit(int slot, ItemVariant resource) {
-		return handler.getStackLimit(slot, resource);
+	public int getStackLimit(int slot, ItemVariant resource, long amount) {
+		return handler.getStackLimit(slot, resource, amount);
 	}
 
 	@Override
-	public boolean isItemValid(int slot, ItemVariant resource) {
-		return handler.isItemValid(slot, resource);
+	public boolean isItemValid(int slot, ItemVariant resource, long amount) {
+		return handler.isItemValid(slot, resource, amount);
 	}
 
 	@Override

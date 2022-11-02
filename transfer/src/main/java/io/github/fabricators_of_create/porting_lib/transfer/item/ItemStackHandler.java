@@ -4,12 +4,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 
+import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializable;
+
 import org.jetbrains.annotations.Nullable;
 
 import io.github.fabricators_of_create.porting_lib.transfer.callbacks.TransactionCallback;
 import io.github.fabricators_of_create.porting_lib.transfer.callbacks.TransactionSuccessCallback;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler.SnapshotData;
-import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializable;
 import io.github.fabricators_of_create.porting_lib.util.ItemStackUtil;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
@@ -21,7 +22,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 
-public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implements Storage<ItemVariant>, INBTSerializable<CompoundTag> {
+public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implements Storage<ItemVariant>, INBTSerializable<CompoundTag>, SlotExposedStorage {
 	public ItemStack[] stacks;
 
 	public ItemStackHandler() {
@@ -42,16 +43,16 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 		long inserted = 0;
 		updateSnapshots(transaction);
 		for (int i = 0; i < stacks.length; i++) {
-			if (isItemValid(i, resource)) {
+			if (isItemValid(i, resource, maxAmount)) {
 				ItemStack held = stacks[i];
 				if (held.isEmpty()) { // just throw in a full stack
-					int toFill = (int) Math.min(getStackLimit(i, resource), maxAmount);
+					int toFill = (int) Math.min(getStackLimit(i, resource, maxAmount), maxAmount);
 					maxAmount -= toFill;
 					inserted += toFill;
 					ItemStack stack = resource.toStack(toFill);
 					contentsChangedInternal(i, stack, transaction);
 				} else if (ItemStackUtil.canItemStacksStack(held, resource.toStack())) { // already filled, but can stack
-					int max = getStackLimit(i, resource); // total possible
+					int max = getStackLimit(i, resource, maxAmount); // total possible
 					int canInsert = max - held.getCount(); // room available
 					int actuallyInsert = Math.min(canInsert, (int) maxAmount);
 					if (actuallyInsert > 0) {
@@ -124,30 +125,47 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 		return  getClass().getSimpleName() + '{' + "stacks=" + Arrays.toString(stacks) + '}';
 	}
 
+	@Override
 	public int getSlots() {
 		return stacks.length;
 	}
 
+	@Override
 	public void setStackInSlot(int slot, ItemStack stack) {
 		stacks[slot] = stack;
 		onContentsChanged(slot);
 	}
 
 	// do not modify this stack!
+	@Override
 	public ItemStack getStackInSlot(int slot) {
 		return stacks[slot];
 	}
 
+	@Override
 	public int getSlotLimit(int slot) {
 		return getStackInSlot(slot).getMaxStackSize();
 	}
 
+	@Deprecated(forRemoval = true)
 	protected int getStackLimit(int slot, ItemVariant resource) {
 		return Math.min(getSlotLimit(slot), resource.getItem().getMaxStackSize());
 	}
 
+	@Override
+	public int getStackLimit(int slot, ItemVariant resource, long amount) {
+		return getStackLimit(slot, resource);
+	}
+
+
+	@Deprecated(forRemoval = true)
 	public boolean isItemValid(int slot, ItemVariant resource) {
 		return true;
+	}
+
+	@Override
+	public boolean isItemValid(int slot, ItemVariant resource, long amount) {
+		return isItemValid(slot, resource);
 	}
 
 	protected void onLoad() {
