@@ -11,6 +11,7 @@
     "BlockModelDeserializerMixin",
     "BlockModelMixin",
     "FaceBakeryMixin",
+    "ShaderInstanceMixin",
     "VertexConsumerMixin",
     "accessor.BlockModelAccessor"
   ],

@@ -166,7 +166,6 @@
     "client.RemotePlayerMixin",
     "client.RenderTargetMixin",
     "client.ScreenMixin",
-    "client.ShaderInstanceMixin",
     "client.SkullBlockRendererMixin",
     "client.TextureAtlasMixin",
     "client.TextureAtlasSpriteMixin",
