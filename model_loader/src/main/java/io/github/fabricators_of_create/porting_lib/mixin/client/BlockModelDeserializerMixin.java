@@ -8,6 +8,7 @@ import java.util.Map;
 import com.google.gson.JsonParseException;
 import com.mojang.math.Transformation;
 
+import io.github.fabricators_of_create.porting_lib.PortingConstants;
 import io.github.fabricators_of_create.porting_lib.model.geometry.GeometryLoaderManager;
 import net.minecraft.resources.ResourceLocation;
 
@@ -69,8 +70,11 @@ public abstract class BlockModelDeserializerMixin {
 
 		var name = new ResourceLocation(GsonHelper.getAsString(object, "loader"));
 		var loader = GeometryLoaderManager.get(name);
-		if (loader == null)
-			throw new JsonParseException(String.format(Locale.ENGLISH, "Model loader '%s' not found. Registered loaders: %s", name, GeometryLoaderManager.getLoaderList()));
+		if (loader == null) {
+			PortingConstants.LOGGER.warn(String.format(Locale.ENGLISH, "Model loader '%s' not found. Registered loaders: %s", name, GeometryLoaderManager.getLoaderList()));
+			PortingConstants.LOGGER.warn("Falling back to vanilla logic.");
+			return null;
+		}
 
 		return loader.read(object, deserializationContext);
 	}
