@@ -172,6 +172,9 @@ allprojects {
 		filesMatching("fabric.mod.json") {
 			expand properties
 		}
+		filesMatching("template.fabric.mod.json") {
+			expand properties
+		}
 	}
 
 	task buildOrPublish {
