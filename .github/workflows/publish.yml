@@ -3,6 +3,7 @@ on: [ push ]
 
 jobs:
   build:
+    runs-on: ubuntu-latest
     steps:
       - uses: Kir-Antipov/mc-publish@v3.2
         with:
