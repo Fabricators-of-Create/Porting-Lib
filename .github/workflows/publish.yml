@@ -1,0 +1,21 @@
+name: build
+on: [ push ]
+
+jobs:
+  build:
+    steps:
+      - uses: Kir-Antipov/mc-publish@v3.2
+        with:
+          modrinth-id: tEJPA4Ty
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-featured: true
+
+          curseforge-id: 696251
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+          loaders: |
+            fabric
+            quilt
+
+          version-type: alpha
+
