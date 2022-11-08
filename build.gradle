@@ -97,7 +97,7 @@ allprojects {
 		maven { url = "https://api.modrinth.com/maven" }
 		maven { url = "https://maven.bai.lol" }
 		maven { url = "https://maven.terraformersmc.com/releases/" }
-		maven { url = "https://maven.parchmentmc.org" }
+//		maven { url = "https://maven.parchmentmc.org" }
 		maven { url = "https://maven.shedaniel.me/" }
 		maven { url = "https://mvn.devos.one/releases/" }
 		maven { url = "https://mvn.devos.one/snapshots/" }
@@ -129,7 +129,7 @@ allprojects {
 		minecraft("com.mojang:minecraft:${project.minecraft_version}")
 		mappings(loom.layered {
 			it.mappings("org.quiltmc:quilt-mappings:${project.minecraft_version}+build.${project.qm_version}:intermediary-v2")
-			it.parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${project.parchment_version}@zip")
+//			it.parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${project.parchment_version}@zip")
 			it.officialMojangMappings { nameSyntheticMembers = false }
 		})
 		modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
