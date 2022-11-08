@@ -7,6 +7,10 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 
+/**
+ * @deprecated move to {@link InteractEvents#USE}
+ */
+@Deprecated(forRemoval = true)
 @Environment(EnvType.CLIENT)
 public interface OnStartUseItemCallback {
 	/**
