@@ -6,6 +6,10 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.InteractionResult;
 
+/**
+ * @deprecated switch to {@link MouseInputEvents}, this doesn't even work right
+ */
+@Deprecated(forRemoval = true)
 @Environment(EnvType.CLIENT)
 public interface MouseButtonCallback {
 	/**
