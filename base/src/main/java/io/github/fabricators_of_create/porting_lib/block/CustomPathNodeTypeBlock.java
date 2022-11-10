@@ -9,6 +9,13 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 
+/**
+ * @deprecated move to {@link LandPathNodeTypesRegistry }
+ */
+@Deprecated(forRemoval = true)
 public interface CustomPathNodeTypeBlock {
+	/**
+	 * @param entity ALWAYS null, only left for backwards compat
+	 */
 	BlockPathTypes getBlockPathType(BlockState state, BlockGetter world, BlockPos pos, @Nullable Mob entity);
 }
