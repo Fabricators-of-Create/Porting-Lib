@@ -1,6 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import io.github.fabricators_of_create.porting_lib.render.MapDecorationIterator;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -20,51 +23,23 @@ import net.minecraft.world.level.saveddata.maps.MapDecoration;
 
 @Mixin(MapRenderer.MapInstance.class)
 public abstract class MapRendererMapInstanceMixin {
-	@Unique
-	public Iterator<?> porting_Lib$cachedIterator = null;
-	@Unique public boolean porting_Lib$iteratorIsEmpty = false;
 
-	@Unique private boolean porting_Lib$updateIndexFromCache = false;
-	@Unique public int porting_Lib$cached_index = 0;
+	@Unique public AtomicInteger porting_Lib$cached_index = new AtomicInteger(0);
 
-	@Inject(method = "draw", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/saveddata/maps/MapItemSavedData;getDecorations()Ljava/lang/Iterable;", shift = At.Shift.BY, by = 3), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void porting_Lib$getLoopIteratorAndIndex(PoseStack poseStack, MultiBufferSource bufferSource, boolean active, int packedLight, CallbackInfo ci, int i, int j, float f, Matrix4f matrix4f, VertexConsumer vertexConsumer, int k, Iterator<?> var11){
-		this.porting_Lib$cachedIterator = var11;
-		this.porting_Lib$cached_index = k;
+	@ModifyVariable(method = "draw", at = @At(value = "INVOKE", target = "Ljava/lang/Iterable;iterator()Ljava/util/Iterator;", shift = At.Shift.BY, by = 2))
+	private Iterator<MapDecoration> porting_Lib$wrapIterator(Iterator<MapDecoration> iterator){
+		return new MapDecorationIterator(iterator, porting_Lib$cached_index);
 	}
 
-	@ModifyVariable(method = "draw", at = @At(value = "STORE"))
-	private MapDecoration porting_Lib$gatherNextValueIfCustomRender(MapDecoration value){
-		while(value.render(porting_Lib$cached_index)) {
-			this.porting_Lib$cached_index++;
-			this.porting_Lib$updateIndexFromCache = true;
+	//---------------------------------------------------
 
-			if (this.porting_Lib$cachedIterator.hasNext()) {
-				value = (MapDecoration) porting_Lib$cachedIterator.next();
-			} else {
-				this.porting_Lib$iteratorIsEmpty = true;
-
-				//Should this be the last value that was gathered incase someone injects between somehow?
-				return null;
-			}
-		}
-
-		return value;
-	}
-
-	@Inject(method = "draw", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/saveddata/maps/MapDecoration;renderOnFrame()Z"), cancellable = true)
-	public void porting_Lib$cancelIfIteratorIsEmpty(PoseStack poseStack, MultiBufferSource bufferSource, boolean active, int packedLight, CallbackInfo ci){
-		if(porting_Lib$iteratorIsEmpty) ci.cancel();
+	@Inject(method = "draw", at = @At(value = "INVOKE", target = "Ljava/util/Iterator;hasNext()Z", shift = At.Shift.BY, by = 3), locals = LocalCapture.CAPTURE_FAILHARD)
+	private void porting_Lib$getCurrentIndex(PoseStack poseStack, MultiBufferSource bufferSource, boolean active, int packedLight, CallbackInfo ci, int i, int j, float f, Matrix4f matrix4f, VertexConsumer vertexConsumer, int k, Iterator<?> var11){
+		this.porting_Lib$cached_index.set(k);
 	}
 
 	@ModifyVariable(method = "draw", at = @At(value = "LOAD", ordinal = 0), index = 10)
-	private int porting_Lib$updateKIfNeeded(int old_k){
-		if(porting_Lib$updateIndexFromCache){
-			this.porting_Lib$updateIndexFromCache = false;
-
-			return porting_Lib$cached_index;
-		}
-
-		return old_k;
+	private int porting_Lib$updateK(int old_k){
+		return porting_Lib$cached_index.get();
 	}
 }
