@@ -27,19 +27,23 @@ public class SlotItemHandler extends Slot {
 
 	@Override
 	public ItemStack getItem() {
-		return this.getItemHandler().getStackInSlot(index);
+		return itemHandler.getStackInSlot(index);
 	}
 
 	// Override if your IItemHandler does not implement IItemHandlerModifiable
 	@Override
 	public void set(ItemStack stack) {
-		this.getItemHandler().setStackInSlot(index, stack);
+		itemHandler.setStackInSlot(index, stack);
 		this.setChanged();
 	}
 
 	@Override
-	public void onQuickCraft(ItemStack oldStackIn, ItemStack newStackIn) {
+	public void initialize(ItemStack stack) {
+		set(stack);
+	}
 
+	@Override
+	public void onQuickCraft(ItemStack oldStackIn, ItemStack newStackIn) {
 	}
 
 	@Override
