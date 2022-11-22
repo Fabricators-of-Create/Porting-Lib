@@ -7,7 +7,10 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.nbt.CompoundTag;
 
+import java.util.function.Predicate;
+
 public class FluidTank extends SingleVariantStorage<FluidVariant> {
+	protected Predicate<FluidStack> validator;
 	protected long capacity;
 	protected FluidStack stack = FluidStack.EMPTY;
 
@@ -20,8 +23,26 @@ public class FluidTank extends SingleVariantStorage<FluidVariant> {
 		this.capacity = capacity;
 	}
 
+	public FluidTank(long capacity, Predicate<FluidStack> validator) {
+		this(capacity);
+		this.validator = validator;
+	}
+
+	public FluidTank setValidator(Predicate<FluidStack> validator) {
+		if (validator != null) {
+			this.validator = validator;
+		}
+		return this;
+	}
+
+	public boolean isFluidValid(FluidStack stack) {
+		return validator.test(stack);
+	}
+
 	@Override
 	public long insert(FluidVariant insertedVariant, long maxAmount, TransactionContext transaction) {
+		if (!isFluidValid(new FluidStack(insertedVariant, maxAmount)))
+			return 0;
 		long inserted = super.insert(insertedVariant, maxAmount, transaction);
 		updateStack();
 		return inserted;
