@@ -43,6 +43,7 @@
     "common.EntityMixin",
     "common.ExperienceOrbMixin",
     "common.ExplosionDamageCalculatorMixin",
+    "common.ExplosionMixin",
     "common.FireBlockMixin",
     "common.FlyingMobMixin",
     "common.ItemEntityMixin",
