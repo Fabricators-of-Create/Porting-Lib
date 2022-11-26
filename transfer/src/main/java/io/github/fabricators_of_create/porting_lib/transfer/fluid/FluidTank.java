@@ -20,11 +20,11 @@ public class FluidTank extends SingleVariantStorage<FluidVariant> {
 	}
 
 	public FluidTank(long capacity) {
-		this.capacity = capacity;
+		this(capacity, fluidStack -> true);
 	}
 
 	public FluidTank(long capacity, Predicate<FluidStack> validator) {
-		this(capacity);
+		this.capacity = capacity;
 		this.validator = validator;
 	}
 
