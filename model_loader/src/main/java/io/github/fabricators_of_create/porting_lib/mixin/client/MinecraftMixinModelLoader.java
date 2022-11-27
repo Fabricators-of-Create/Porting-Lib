@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
-public class MinecraftMixin {
+public class MinecraftMixinModelLoader {
 	@Inject(method = "<init>", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;resourceManager:Lnet/minecraft/server/packs/resources/ReloadableResourceManager;", ordinal = 0, shift = At.Shift.AFTER))
 	public void port_lib$initModelRegistry(GameConfig gameConfig, CallbackInfo ci) {
 		GeometryLoaderManager.init();

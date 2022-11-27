@@ -11,7 +11,7 @@
     "BlockModelDeserializerMixin",
     "BlockModelMixin",
     "FaceBakeryMixin",
-    "MinecraftMixin",
+    "MinecraftMixinModelLoader",
     "ShaderInstanceMixin",
     "VertexConsumerMixin",
     "accessor.BlockModelAccessor"
