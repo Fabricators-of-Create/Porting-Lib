@@ -65,11 +65,6 @@ public abstract class MinecraftMixin {
 		ParticleManagerRegistrationCallback.EVENT.invoker().onParticleManagerRegistration();
 	}
 
-	@Inject(method = "<init>", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;resourceManager:Lnet/minecraft/server/packs/resources/ReloadableResourceManager;", ordinal = 0, shift = Shift.AFTER))
-	public void port_lib$initModelRegistry(GameConfig gameConfig, CallbackInfo ci) {
-		GeometryLoaderManager.init();
-	}
-
 	@Inject(method = "<init>", at = @At("TAIL"))
 	public void port_lib$mcTail(GameConfig gameConfiguration, CallbackInfo ci) {
 		MinecraftTailCallback.EVENT.invoker().onMinecraftTail((Minecraft) (Object) this);
