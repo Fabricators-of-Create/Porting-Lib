@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#c:fences/nether_brick",
-    "#c:fences/wooden"
+    "#c:nether_brick_fences",
+    "#c:wooden_fences"
   ]
 }

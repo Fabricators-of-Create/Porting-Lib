@@ -190,7 +190,7 @@ public class ItemTagProvider extends FabricTagProvider.ItemTagProvider {
 	@SuppressWarnings("unchecked")
 	private TagKey<Block> getForgeBlockTag(String name) {
 		try {
-			name = name.toUpperCase(Locale.ENGLISH);
+			name = name.toUpperCase(Locale.ENGLISH).replace("_BLOCKS", "");;
 			return (TagKey<Block>) Tags.Blocks.class.getDeclaredField(name).get(null);
 		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
 			throw new IllegalStateException(Tags.Blocks.class.getName() + " is missing tag name: " + name);
@@ -200,7 +200,7 @@ public class ItemTagProvider extends FabricTagProvider.ItemTagProvider {
 	@SuppressWarnings("unchecked")
 	private TagKey<Item> getForgeItemTag(String name) {
 		try {
-			name = name.toUpperCase(Locale.ENGLISH);
+			name = name.toUpperCase(Locale.ENGLISH).replace("_BLOCKS", "");;
 			return (TagKey<Item>) Tags.Items.class.getDeclaredField(name).get(null);
 		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
 			throw new IllegalStateException(Tags.Items.class.getName() + " is missing tag name: " + name);

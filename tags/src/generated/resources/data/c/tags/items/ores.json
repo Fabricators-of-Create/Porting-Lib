@@ -1,15 +1,15 @@
 {
   "replace": false,
   "values": [
-    "#c:ores/coal",
-    "#c:ores/copper",
-    "#c:ores/diamond",
-    "#c:ores/emerald",
-    "#c:ores/gold",
-    "#c:ores/iron",
-    "#c:ores/lapis",
-    "#c:ores/redstone",
-    "#c:ores/quartz",
-    "#c:ores/netherite_scrap"
+    "#c:coal_ores",
+    "#c:copper_ores",
+    "#c:diamond_ores",
+    "#c:emerald_ores",
+    "#c:gold_ores",
+    "#c:iron_ores",
+    "#c:lapis_ores",
+    "#c:redstone_ores",
+    "#c:quartz_ores",
+    "#c:netherite_scrap_ores"
   ]
 }

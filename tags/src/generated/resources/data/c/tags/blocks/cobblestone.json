@@ -1,9 +1,9 @@
 {
   "replace": false,
   "values": [
-    "#c:cobblestone/normal",
-    "#c:cobblestone/infested",
-    "#c:cobblestone/mossy",
-    "#c:cobblestone/deepslate"
+    "#c:normal_cobblestone",
+    "#c:infested_cobblestone",
+    "#c:mossy_cobblestone",
+    "#c:deepslate_cobblestone"
   ]
 }

@@ -1,8 +1,8 @@
 {
   "replace": false,
   "values": [
-    "#c:raw_materials/copper",
-    "#c:raw_materials/gold",
-    "#c:raw_materials/iron"
+    "#c:copper_raw_materials",
+    "#c:gold_raw_materials",
+    "#c:iron_raw_materials"
   ]
 }

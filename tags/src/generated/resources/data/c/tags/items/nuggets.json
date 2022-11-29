@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#c:nuggets/iron",
-    "#c:nuggets/gold"
+    "#c:iron_nuggets",
+    "#c:gold_nuggets"
   ]
 }

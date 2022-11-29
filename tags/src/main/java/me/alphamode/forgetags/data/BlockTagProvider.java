@@ -178,7 +178,7 @@ public class BlockTagProvider extends FabricTagProvider.BlockTagProvider {
 	@SuppressWarnings("unchecked")
 	private TagKey<Block> getForgeTag(String name) {
 		try {
-			name = name.toUpperCase(Locale.ENGLISH);
+			name = name.toUpperCase(Locale.ENGLISH).replace("_BLOCKS", "");
 			return (TagKey<Block>) Tags.Blocks.class.getDeclaredField(name).get(null);
 		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
 			throw new IllegalStateException(Tags.Blocks.class.getName() + " is missing tag name: " + name);
