@@ -19,6 +19,8 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.resources.AssetIndex;
 import net.minecraft.client.resources.ClientPackSource;
 import net.minecraft.client.resources.DefaultClientPackResources;
@@ -34,13 +36,10 @@ import net.minecraft.server.packs.resources.MultiPackResourceManager;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.client.model.generators.ModelBuilder;
+import net.minecraftforge.resource.ResourcePackLoader;
 
 /**
- * Enables data providers to check if other data files currently exist. The
- * instance provided in the {@link GatherDataEvent} utilizes the standard
- * resources (via {@link VanillaPackResources}), forge's resources, as well as any
- * extra resource packs passed in via the {@code --existing} argument,
- * or mod resources via the {@code --existing-mod} argument.
+ * Enables data providers to check if other data files currently exist.
  */
 public class ExistingFileHelper {
 
@@ -77,26 +76,49 @@ public class ExistingFileHelper {
 	private final boolean enable;
 	private final Multimap<PackType, ResourceLocation> generated = HashMultimap.create();
 
+	// fabric: added factory methods
+
 	/**
-	 * Create a new helper. This should probably <em>NOT</em> be used by mods, as
-	 * the instance provided by forge is designed to be a central instance that
-	 * tracks existence of generated data.
-	 * <p>
-	 * Only create a new helper if you intentionally want to ignore the existence of
-	 * other generated files.
+	 * Create a helper for a standard mod environment.
+	 * Assumes a file tree of: <pre>
+	 *     - root
+	 *         - run
+	 *     - src
+	 *         - main
+	 *             - resources
+	 * </pre>
+	 */
+	public static ExistingFileHelper standard() {
+		return withResources(FabricLoader.getInstance()
+				.getGameDir()
+				.normalize()
+				.getParent() // root
+				.resolve("src")
+				.resolve("main")
+				.resolve("resources")
+		);
+	}
+
+	/**
+	 * Create a helper with the provided paths being used for resources.
+	 *
 	 * @param existingPacks a collection of paths to existing packs
 	 * @param existingMods a set of mod IDs for existing mods
 	 * @param enable {@code true} if validation is enabled
 	 * @param assetIndex the identifier for the asset index, generally Minecraft's current major version
 	 * @param assetsDir the directory in which to find vanilla assets and indexes
 	 */
+	public static ExistingFileHelper withResources(Path... paths) {
+		List<Path> resources = List.of(paths);
+		return new ExistingFileHelper(resources, Set.of(), true, null, null);
+	}
+
 	public ExistingFileHelper(Collection<Path> existingPacks, final Set<String> existingMods, boolean enable, @Nullable final String assetIndex, @Nullable final File assetsDir) {
 		List<PackResources> candidateClientResources = new ArrayList<>();
 		List<PackResources> candidateServerResources = new ArrayList<>();
 
 		candidateClientResources.add(new VanillaPackResources(ClientPackSource.BUILT_IN, "minecraft", "realms"));
-		if (assetIndex != null && assetsDir != null)
-		{
+		if (assetIndex != null && assetsDir != null) {
 			candidateClientResources.add(new DefaultClientPackResources(ClientPackSource.BUILT_IN, new AssetIndex(assetsDir, assetIndex)));
 		}
 		candidateServerResources.add(new VanillaPackResources(ServerPacksSource.BUILT_IN_METADATA, "minecraft"));
@@ -105,6 +127,14 @@ public class ExistingFileHelper {
 			PackResources pack = file.isDirectory() ? new FolderPackResources(file) : new FilePackResources(file);
 			candidateClientResources.add(pack);
 			candidateServerResources.add(pack);
+		}
+		for (String existingMod : existingMods) {
+			ModContainer modFileInfo = FabricLoader.getInstance().getModContainer(existingMod).orElse(null);
+			if (modFileInfo != null) {
+				PackResources pack = ResourcePackLoader.createPackForMod(modFileInfo);
+				candidateClientResources.add(pack);
+				candidateServerResources.add(pack);
+			}
 		}
 
 		this.clientResources = new MultiPackResourceManager(PackType.CLIENT_RESOURCES, candidateClientResources);

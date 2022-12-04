@@ -39,6 +39,22 @@ public class FluidTank extends SingleVariantStorage<FluidVariant> {
 		return validator.test(stack);
 	}
 
+	public FluidTank(long capacity, Predicate<FluidStack> validator) {
+		this(capacity);
+		this.validator = validator;
+	}
+
+	public FluidTank setValidator(Predicate<FluidStack> validator) {
+		if (validator != null) {
+			this.validator = validator;
+		}
+		return this;
+	}
+
+	public boolean isFluidValid(FluidStack stack) {
+		return validator.test(stack);
+	}
+
 	@Override
 	public long insert(FluidVariant insertedVariant, long maxAmount, TransactionContext transaction) {
 		if (!isFluidValid(new FluidStack(insertedVariant, maxAmount)))

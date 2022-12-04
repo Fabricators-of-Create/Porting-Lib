@@ -20,9 +20,20 @@ import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.LevelAccessor;
 
 public class LivingEntityEvents {
+	/**
+	 * Legacy method will be removed in 1.20 use below method {@link LivingEntityEvents#EXPERIENCE_DROP_WITH_ENTITY}
+	 */
 	public static final Event<ExperienceDrop> EXPERIENCE_DROP = EventFactory.createArrayBacked(ExperienceDrop.class, callbacks -> (i, player) -> {
 		for (ExperienceDrop callback : callbacks) {
 			return callback.onLivingEntityExperienceDrop(i, player);
+		}
+
+		return i;
+	});
+
+	public static final Event<ExperienceDropNew> EXPERIENCE_DROP_WITH_ENTITY = EventFactory.createArrayBacked(ExperienceDropNew.class, callbacks -> (i, attackingPlayer, entity) -> {
+		for (ExperienceDropNew callback : callbacks) {
+			return callback.onLivingEntityExperienceDrop(i, attackingPlayer, entity);
 		}
 
 		return i;
@@ -72,6 +83,11 @@ public class LivingEntityEvents {
 		}
 	});
 
+	/**
+	 * Use {@link LivingEntityEvents#ACTUALLY_HURT} instead.
+	 * Will be removed in 1.20
+	 */
+	@Deprecated(forRemoval = true, since = "1.19.2")
 	public static final Event<Hurt> HURT = EventFactory.createArrayBacked(Hurt.class, callbacks -> (source, amount) -> {
 		for (Hurt callback : callbacks) {
 			float newAmount = callback.onHurt(source, amount);
@@ -80,6 +96,9 @@ public class LivingEntityEvents {
 		return amount;
 	});
 
+	/**
+	 *Same as forge's LivingHurtEvent will be renamed to HURT in 1.20
+	 */
 	public static final Event<ActuallyHurt> ACTUALLY_HURT = EventFactory.createArrayBacked(ActuallyHurt.class, callbacks -> (source, damaged, amount) -> {
 		for (ActuallyHurt callback : callbacks) {
 			float newAmount = callback.onHurt(source, damaged, amount);
@@ -181,6 +200,11 @@ public class LivingEntityEvents {
 	@FunctionalInterface
 	public interface ExperienceDrop {
 		int onLivingEntityExperienceDrop(int i, Player player);
+	}
+
+	@FunctionalInterface
+	public interface ExperienceDropNew {
+		int onLivingEntityExperienceDrop(int i, Player attackingPlayer, LivingEntity entity);
 	}
 
 	@FunctionalInterface

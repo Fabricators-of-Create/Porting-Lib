@@ -17,6 +17,7 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.Level;
 
+import javax.annotation.Nonnull;
 import org.jetbrains.annotations.Nullable;
 
 public interface ItemExtensions {
@@ -122,5 +123,15 @@ public interface ItemExtensions {
 	@Nullable
 	default Entity createEntity(Level level, Entity location, ItemStack stack) {
 		return null;
+	}
+
+	/**
+	 * Get the tooltip parts that should be hidden by default on the given stack if the {@code HideFlags} tag is not set.
+	 * @see ItemStack.TooltipPart
+	 * @param stack the stack
+	 * @return the default hide flags
+	 */
+	default int getDefaultTooltipHideFlags(@Nonnull ItemStack stack) {
+		return 0;
 	}
 }
