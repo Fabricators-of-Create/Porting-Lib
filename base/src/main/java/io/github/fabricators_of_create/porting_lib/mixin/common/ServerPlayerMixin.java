@@ -4,6 +4,7 @@ import io.github.fabricators_of_create.porting_lib.event.common.PlayerTickEvents
 
 import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.ITeleporter;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundChangeDifficultyPacket;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
@@ -108,6 +109,16 @@ public abstract class ServerPlayerMixin extends Player implements EntityExtensio
 	@Inject(method = "tick", at = @At("TAIL"))
 	public void port_lib$clientEndTickEvent(CallbackInfo ci) {
 		PlayerTickEvents.END.invoker().onEndOfPlayerTick(this);
+	}
+
+	@Inject(method = "restoreFrom", at = @At("TAIL"))
+	private void port_lib$copyPersistentData(ServerPlayer oldPlayer, boolean alive, CallbackInfo ci) {
+		CompoundTag oldData = oldPlayer.getExtraCustomData();
+		CompoundTag persistent = oldData.getCompound("PlayerPersisted");
+		if (persistent != null) {
+			CompoundTag thisData = this.getExtraCustomData();
+			thisData.put("PlayerPersisted", persistent);
+		}
 	}
 
 	@Nullable
