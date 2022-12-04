@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraftforge.resource.ResourcePackLoader;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -36,7 +38,6 @@ import net.minecraft.server.packs.resources.MultiPackResourceManager;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.client.model.generators.ModelBuilder;
-import net.minecraftforge.resource.ResourcePackLoader;
 
 /**
  * Enables data providers to check if other data files currently exist.
@@ -101,6 +102,14 @@ public class ExistingFileHelper {
 
 	/**
 	 * Create a helper with the provided paths being used for resources.
+	 */
+	public static ExistingFileHelper withResources(Path... paths) {
+		List<Path> resources = List.of(paths);
+		return new ExistingFileHelper(resources, Set.of(), true, null, null);
+	}
+
+	/**
+	 * Create a new helper.
 	 *
 	 * @param existingPacks a collection of paths to existing packs
 	 * @param existingMods a set of mod IDs for existing mods
@@ -108,11 +117,6 @@ public class ExistingFileHelper {
 	 * @param assetIndex the identifier for the asset index, generally Minecraft's current major version
 	 * @param assetsDir the directory in which to find vanilla assets and indexes
 	 */
-	public static ExistingFileHelper withResources(Path... paths) {
-		List<Path> resources = List.of(paths);
-		return new ExistingFileHelper(resources, Set.of(), true, null, null);
-	}
-
 	public ExistingFileHelper(Collection<Path> existingPacks, final Set<String> existingMods, boolean enable, @Nullable final String assetIndex, @Nullable final File assetsDir) {
 		List<PackResources> candidateClientResources = new ArrayList<>();
 		List<PackResources> candidateServerResources = new ArrayList<>();

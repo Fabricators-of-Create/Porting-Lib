@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import com.mojang.datafixers.util.Pair;
 
 import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.PackRepositoryAccessor;
-import io.github.fabricators_of_create.porting_lib.util.PathResourcePack;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.fabricmc.loader.api.FabricLoader;
@@ -45,7 +44,7 @@ public class ResourcePackLoader {
 		modResourcePacks = FabricLoader.getInstance().getAllMods().stream()
 				.map(mf -> Pair.of(mf, createPackForMod(mf)))
 				.collect(Collectors.toMap(Pair::getFirst, Pair::getSecond, (u, v) -> { throw new IllegalStateException(String.format(Locale.ENGLISH, "Duplicate key %s", u)); },  LinkedHashMap::new));
-		((PackRepositoryAccessor)resourcePacks).getSources().add(packFinder.apply(modResourcePacks));
+		((PackRepositoryAccessor) resourcePacks).getSources().add(packFinder.apply(modResourcePacks));
 	}
 
 	@SuppressWarnings("deprecation")

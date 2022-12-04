@@ -30,6 +30,7 @@
     "common.accessor.LivingEntityAccessor",
     "common.accessor.MinecraftServerAccessor",
     "common.accessor.MobAccessor",
+    "common.accessor.PackRepositoryAccessor",
     "common.accessor.PaintingAccessor",
     "common.accessor.PlayerAccessor",
     "common.accessor.PotionBrewing$MixAccessor",
