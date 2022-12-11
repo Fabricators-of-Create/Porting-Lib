@@ -13,14 +13,14 @@ public class MapDecorationIterator implements Iterator<MapDecoration> {
 
 	public MapDecoration nextCached = null;
 
-	public MapDecorationIterator(Iterator<? extends MapDecoration> iterator, AtomicInteger index){
+	public MapDecorationIterator(Iterator<? extends MapDecoration> iterator, AtomicInteger index) {
 		this.wrapped = iterator;
 		this.index = index;
 	}
 
 	@Override
 	public boolean hasNext() {
-		if(wrapped.hasNext()) {
+		if (wrapped.hasNext()) {
 			MapDecoration value = wrapped.next();
 
 			while (value.render(index.get())) {
@@ -45,9 +45,9 @@ public class MapDecorationIterator implements Iterator<MapDecoration> {
 
 	@Override
 	public MapDecoration next() {
-		if(this.nextCached != null){
+		if (this.nextCached != null) {
 			return this.nextCached;
-		} else if(this.wrapped.hasNext()) {
+		} else if (this.wrapped.hasNext()) {
 			return wrapped.next();
 		} else {
 			throw new NoSuchElementException();
