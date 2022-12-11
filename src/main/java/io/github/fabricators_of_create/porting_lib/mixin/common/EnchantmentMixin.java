@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import io.github.fabricators_of_create.porting_lib.enchant.CustomEnchantingBehaviorItem;
 import io.github.fabricators_of_create.porting_lib.enchant.CustomEnchantingTableBehaviorEnchantment;
 
 import io.github.fabricators_of_create.porting_lib.extensions.RegistryNameProvider;
@@ -22,8 +23,13 @@ public abstract class EnchantmentMixin implements RegistryNameProvider {
 	@Inject(method = "canEnchant", at = @At("HEAD"), cancellable = true)
 	private void port_lib$canEnchant(ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
 		if (this instanceof CustomEnchantingTableBehaviorEnchantment custom) {
+			// custom enchantment? let the custom logic take over
 			cir.setReturnValue(custom.canApplyAtEnchantingTable(itemStack));
+		} else if (itemStack.getItem() instanceof CustomEnchantingBehaviorItem custom) {
+			// enchantment not custom, but item is - let item decide
+			cir.setReturnValue(custom.canApplyAtEnchantingTable(itemStack, (Enchantment) (Object) this));
 		}
+		// neither - vanilla logic
 	}
 
 	@Unique
