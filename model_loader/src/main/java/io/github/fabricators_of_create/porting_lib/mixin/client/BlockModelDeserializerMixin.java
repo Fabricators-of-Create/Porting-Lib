@@ -10,6 +10,7 @@ import com.mojang.math.Transformation;
 
 import io.github.fabricators_of_create.porting_lib.PortingConstants;
 import io.github.fabricators_of_create.porting_lib.model.geometry.GeometryLoaderManager;
+import io.github.fabricators_of_create.porting_lib.model.geometry.IGeometryLoader;
 import net.minecraft.resources.ResourceLocation;
 
 import org.jetbrains.annotations.Nullable;
@@ -49,7 +50,7 @@ public abstract class BlockModelDeserializerMixin {
 		}
 
 		if (jsonobject.has("render_type")) {
-			var renderTypeHintName = GsonHelper.getAsString(jsonobject, "render_type");
+			String renderTypeHintName = GsonHelper.getAsString(jsonobject, "render_type");
 			model.getGeometry().setRenderTypeHint(new ResourceLocation(renderTypeHintName));
 		}
 
@@ -68,11 +69,14 @@ public abstract class BlockModelDeserializerMixin {
 		if (!object.has("loader"))
 			return null;
 
-		var name = new ResourceLocation(GsonHelper.getAsString(object, "loader"));
-		var loader = GeometryLoaderManager.get(name);
+		ResourceLocation name = new ResourceLocation(GsonHelper.getAsString(object, "loader"));
+		IGeometryLoader<?> loader = GeometryLoaderManager.get(name);
 		if (loader == null) {
-			PortingConstants.LOGGER.warn(String.format(Locale.ENGLISH, "Model loader '%s' not found. Registered loaders: %s", name, GeometryLoaderManager.getLoaderList()));
-			PortingConstants.LOGGER.warn("Falling back to vanilla logic.");
+			if (!GeometryLoaderManager.KNOWN_MISSING_LOADERS.contains(name)) {
+				GeometryLoaderManager.KNOWN_MISSING_LOADERS.add(name);
+				PortingConstants.LOGGER.warn(String.format(Locale.ENGLISH, "Model loader '%s' not found. Registered loaders: %s", name, GeometryLoaderManager.getLoaderList()));
+				PortingConstants.LOGGER.warn("Falling back to vanilla logic.");
+			}
 			return null;
 		}
 
