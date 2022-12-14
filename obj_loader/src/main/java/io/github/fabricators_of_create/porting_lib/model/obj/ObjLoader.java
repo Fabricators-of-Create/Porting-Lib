@@ -30,8 +30,8 @@ import org.jetbrains.annotations.Nullable;
 public class ObjLoader implements IGeometryLoader<ObjModel>, ResourceManagerReloadListener, IdentifiableResourceReloadListener {
 	public static ObjLoader INSTANCE = new ObjLoader();
 
-	private final Map<ObjModel.ModelSettings, ObjModel> modelCache = Maps.newHashMap();
-	private final Map<ResourceLocation, ObjMaterialLibrary> materialCache = Maps.newHashMap();
+	private final Map<ObjModel.ModelSettings, ObjModel> modelCache = Maps.newConcurrentMap();
+	private final Map<ResourceLocation, ObjMaterialLibrary> materialCache = Maps.newConcurrentMap();
 
 	private ResourceManager manager = Minecraft.getInstance().getResourceManager();
 
