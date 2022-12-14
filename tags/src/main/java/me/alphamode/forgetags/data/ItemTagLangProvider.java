@@ -21,13 +21,13 @@ import java.util.stream.Collectors;
 public class ItemTagLangProvider extends FabricLanguageProvider {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ItemTagLangProvider.class);
 	private final Class<?> tagClass;
-	public final Map<TagKey<Item>, String> specialCases;
+	private final Map<TagKey<Item>, String> specialCases;
 
-	protected ItemTagLangProvider(FabricDataGenerator dataGenerator, Class<?> tagClass) {
+	public ItemTagLangProvider(FabricDataGenerator dataGenerator, Class<?> tagClass) {
 		this(dataGenerator, tagClass, Map.of());
 	}
 
-	protected ItemTagLangProvider(FabricDataGenerator dataGenerator, Class<?> tagClass, Map<TagKey<Item>, String> specialCases) {
+	public ItemTagLangProvider(FabricDataGenerator dataGenerator, Class<?> tagClass, Map<TagKey<Item>, String> specialCases) {
 		super(dataGenerator);
 		this.tagClass = tagClass;
 		this.specialCases = specialCases;
