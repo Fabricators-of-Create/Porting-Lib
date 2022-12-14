@@ -52,6 +52,10 @@ def moduleDependencies(Project project, List<String> depNames) {
 }
 
 def setupDatagen(Project module) {
+	setupDatagen(module, "porting_lib_" + module.name)
+}
+
+def setupDatagen(Project module, String modId) {
 	module.loom {
 		runs {
 			datagen {
@@ -60,7 +64,7 @@ def setupDatagen(Project module) {
 				source module.sourceSets.main
 				vmArg "-Dfabric-api.datagen"
 				vmArg "-Dfabric-api.datagen.output-dir=${module.file("src/generated/resources")}"
-				vmArg "-Dfabric-api.datagen.modid=porting_lib_$module.name"
+				vmArg "-Dfabric-api.datagen.modid=$modId"
 				runDir "build/datagen"
 				ideConfigGenerated true // loom will only make run configs for the root project by default
 			}
