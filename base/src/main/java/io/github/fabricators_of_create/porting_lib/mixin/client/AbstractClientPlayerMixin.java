@@ -1,21 +1,24 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
-import io.github.fabricators_of_create.porting_lib.event.client.FOVModifierCallback;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+
+import io.github.fabricators_of_create.porting_lib.event.client.FieldOfViewEvents;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.world.entity.player.Player;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(AbstractClientPlayer.class)
 public abstract class AbstractClientPlayerMixin {
-  @Inject(method = "getFieldOfViewModifier", at = @At(value = "RETURN", ordinal = 1), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
-  public void newFov(CallbackInfoReturnable<Float> cir, float fov) {
-    float newFov = FOVModifierCallback.EVENT.invoker().getNewFOV((Player) (Object) this, fov);
-    if(newFov != fov)
-      cir.setReturnValue(newFov);
+  @ModifyExpressionValue(
+		  method = "getFieldOfViewModifier",
+		  at = @At(
+				  value = "INVOKE",
+				  target = "Lnet/minecraft/util/Mth;lerp(FFF)F"
+		  )
+  )
+  private float port_lib$modifyFovModifier(float fov) {
+	  // returns original if unchanged, this is safe
+	  return FieldOfViewEvents.MODIFY.invoker().modifyFov((AbstractClientPlayer) (Object) this, fov);
   }
 }
