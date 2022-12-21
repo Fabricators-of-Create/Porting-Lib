@@ -29,25 +29,6 @@ import net.minecraft.world.level.Level;
 
 @Mixin(ServerLevel.class)
 public abstract class ServerLevelMixin implements LevelExtensions, io.github.fabricators_of_create.porting_lib.extensions.entity.LevelExtensions {
-	@Inject(
-			method = "explode",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/Explosion;explode()V",
-					shift = At.Shift.BEFORE
-			),
-			locals = LocalCapture.CAPTURE_FAILHARD,
-			cancellable = true
-	)
-	@SuppressWarnings("InvalidInjectorMethodSignature")
-	public void port_lib$onStartExplosion(Entity exploder, DamageSource damageSource,
-										ExplosionDamageCalculator context, double x,
-										double y, double z, float size, boolean causesFire,
-										Explosion.BlockInteraction mode, CallbackInfoReturnable<Explosion> cir,
-										Explosion explosion) {
-		if (ExplosionEvents.START.invoker().onExplosionStart((Level) (Object) this, explosion))
-			cir.setReturnValue(explosion);
-	}
 
 	@ModifyReturnValue(method = "getEntityOrPart", at = @At("RETURN"))
 	public Entity port_lib$getMultipart(Entity entity, int id) {

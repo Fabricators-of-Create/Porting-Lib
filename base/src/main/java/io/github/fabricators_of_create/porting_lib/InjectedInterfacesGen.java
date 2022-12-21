@@ -15,11 +15,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
 
+import io.github.fabricators_of_create.porting_lib.common.extensions.LanguageInfoExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.AbstractMinecartExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.AbstractTextureExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.BaseRailBlockExtensions;
@@ -27,20 +26,15 @@ import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockEn
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockItemExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.CameraExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.EntityCollisionContextExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.INBTSerializableCompound;
-import io.github.fabricators_of_create.porting_lib.common.util.IPlantable;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.IShearable;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.ItemExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.ItemStackExtensions;
-import io.github.fabricators_of_create.porting_lib.common.extensions.LanguageInfoExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.LevelExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.LevelReaderExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.MapDecorationExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.extensions.Matrix3fExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.extensions.Matrix4fExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.MobEffectExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.MobEffectInstanceExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.ModelStateExtensions;
@@ -48,13 +42,12 @@ import io.github.fabricators_of_create.porting_lib.extensions.extensions.Particl
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.RenderTargetExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.ResourceLocationExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.SlotExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.SpriteContentsExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.StructureProcessorExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.StructureTemplateExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.TagAppenderExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.extensions.SpriteContentsExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.TierExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.TransformationExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.extensions.Vector3fExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.VertexFormatExtensions;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -83,16 +76,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.BambooBlock;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.BushBlock;
-import net.minecraft.world.level.block.CactusBlock;
 import net.minecraft.world.level.block.DeadBushBlock;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.SeagrassBlock;
-import net.minecraft.world.level.block.StemBlock;
-import net.minecraft.world.level.block.SugarCaneBlock;
 import net.minecraft.world.level.block.TallGrassBlock;
 import net.minecraft.world.level.block.VineBlock;
 import net.minecraft.world.level.block.WebBlock;
@@ -158,7 +146,7 @@ public class InjectedInterfacesGen {
 		builder.inject(EntityCollisionContext.class, EntityCollisionContextExtensions.class);
 		builder.inject(Entity.class, EntityExtensions.class);
 		builder.injectReversed(INBTSerializableCompound.class, Entity.class, BlockEntity.class, ItemStack.class);
-		builder.injectReversed(IPlantable.class, BambooBlock.class, BushBlock.class, CactusBlock.class, StemBlock.class, SugarCaneBlock.class);
+//		builder.injectReversed(IPlantable.class, BambooBlock.class, BushBlock.class, CactusBlock.class, StemBlock.class, SugarCaneBlock.class);
 		builder.injectReversed(IShearable.class, DeadBushBlock.class, LeavesBlock.class, MushroomCow.class, SeagrassBlock.class, Sheep.class, SnowGolem.class, TallGrassBlock.class, VineBlock.class, WebBlock.class);
 		// note: ITeleporter has no impl
 		builder.inject(Item.class, ItemExtensions.class);
@@ -167,8 +155,6 @@ public class InjectedInterfacesGen {
 		builder.inject(Level.class, LevelExtensions.class);
 		builder.inject(LevelReader.class, LevelReaderExtensions.class);
 		builder.inject(MapDecoration.class, MapDecorationExtensions.class);
-		builder.inject(Matrix3f.class, Matrix3fExtensions.class);
-		builder.inject(Matrix4f.class, Matrix4fExtensions.class);
 		builder.inject(MobEffect.class, MobEffectExtensions.class);
 		builder.inject(MobEffectInstance.class, MobEffectInstanceExtensions.class);
 		builder.inject(ModelState.class, ModelStateExtensions.class);
@@ -182,7 +168,6 @@ public class InjectedInterfacesGen {
 		builder.inject(TextureAtlasSprite.class, SpriteContentsExtensions.class);
 		builder.inject(Tier.class, TierExtensions.class);
 		builder.inject(Transformation.class, TransformationExtensions.class);
-		builder.inject(Vector3f.class, Vector3fExtensions.class);
 		builder.inject(VertexFormat.class, VertexFormatExtensions.class);
 
 		// aaaaaaaaaaaaaaaaaaaaaaaaaaaa

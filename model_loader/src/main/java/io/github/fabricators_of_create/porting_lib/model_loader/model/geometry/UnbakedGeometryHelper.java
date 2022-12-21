@@ -17,7 +17,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
 
 import io.github.fabricators_of_create.porting_lib.model_loader.model.IModelBuilder;
 import io.github.fabricators_of_create.porting_lib.model_loader.model.SimpleModelState;
@@ -38,6 +37,8 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+
+import org.joml.Vector3f;
 
 /**
  * Helper for dealing with unbaked models and geometries.

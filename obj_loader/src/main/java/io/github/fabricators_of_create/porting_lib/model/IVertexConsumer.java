@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.model_loader.model;
+package io.github.fabricators_of_create.porting_lib.model;
 
 import com.mojang.blaze3d.vertex.VertexFormat;
 

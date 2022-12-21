@@ -64,21 +64,10 @@ public abstract class BlockModelMixin implements BlockModelExtensions {
 		return this.overrides.isEmpty() ? ItemOverrides.EMPTY : new ItemOverrides(pModelBaker, pModel/*, textureGetter*/, this.overrides);
 	}
 
-	@Inject(method = "resolveParents", at = @At(value = "JUMP", opcode = Opcodes.IFNULL), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
-	public void port_lib$getModelMaterials(Function<ResourceLocation, UnbakedModel> modelGetter, CallbackInfo ci, Set<UnbakedModel> set) {
+	@Inject(method = "resolveParents", at = @At(value = "JUMP", opcode = Opcodes.IFNULL))
+	public void port_lib$getModelMaterials(Function<ResourceLocation, UnbakedModel> modelGetter, CallbackInfo ci) {
 		if(data.hasCustomGeometry()) {
-			set.addAll(data.getTextureDependencies(modelGetter));
-			this.overrides.forEach((p_111475_) -> {
-				UnbakedModel unbakedmodel1 = modelGetter.apply(p_111475_.getModel());
-				if (!Objects.equals(unbakedmodel1, this)) {
-					unbakedmodel1.resolveParents(modelGetter);
-				}
-			});
-//			if (this.getRootModel() == ModelBakery.GENERATION_MARKER) {
-//				ItemModelGenerator.LAYERS.forEach((p_111467_) -> {
-//					materials.add(this.getMaterial(p_111467_));
-//				});
-//			}
+			data.getCustomGeometry().resolveParents(modelGetter, data);
 		}
 	}
 

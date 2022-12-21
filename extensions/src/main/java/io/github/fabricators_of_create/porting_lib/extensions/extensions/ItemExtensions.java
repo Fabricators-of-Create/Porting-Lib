@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.extensions.extensions;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +18,7 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.Level;
 
+import javax.annotation.Nonnull;
 import org.jetbrains.annotations.Nullable;
 
 public interface ItemExtensions {
@@ -66,7 +68,7 @@ public interface ItemExtensions {
 	@Nullable
 	default String getCreatorModId(ItemStack itemStack) {
 		Item item = itemStack.getItem();
-		ResourceLocation registryName = Registry.ITEM.getKey(item);
+		ResourceLocation registryName = BuiltInRegistries.ITEM.getKey(item);
 		String modId = registryName == null ? null : registryName.getNamespace();
 		if ("minecraft".equals(modId)) {
 			if (item instanceof EnchantedBookItem) {
@@ -74,18 +76,18 @@ public interface ItemExtensions {
 				if (enchantmentsNbt.size() == 1) {
 					CompoundTag nbttagcompound = enchantmentsNbt.getCompound(0);
 					ResourceLocation resourceLocation = ResourceLocation.tryParse(nbttagcompound.getString("id"));
-					if (resourceLocation != null && Registry.ENCHANTMENT.containsKey(resourceLocation)) {
+					if (resourceLocation != null && BuiltInRegistries.ENCHANTMENT.containsKey(resourceLocation)) {
 						return resourceLocation.getNamespace();
 					}
 				}
 			} else if (item instanceof PotionItem || item instanceof TippedArrowItem) {
 				Potion potionType = PotionUtils.getPotion(itemStack);
-				ResourceLocation resourceLocation = Registry.POTION.getKey(potionType);
+				ResourceLocation resourceLocation = BuiltInRegistries.POTION.getKey(potionType);
 				if (resourceLocation != null) {
 					return resourceLocation.getNamespace();
 				}
 			} else if (item instanceof SpawnEggItem) {
-				ResourceLocation resourceLocation = Registry.ENTITY_TYPE.getKey(((SpawnEggItem) item).getType(null));
+				ResourceLocation resourceLocation = BuiltInRegistries.ENTITY_TYPE.getKey(((SpawnEggItem) item).getType(null));
 				if (resourceLocation != null) {
 					return resourceLocation.getNamespace();
 				}
@@ -122,5 +124,15 @@ public interface ItemExtensions {
 	@Nullable
 	default Entity createEntity(Level level, Entity location, ItemStack stack) {
 		return null;
+	}
+
+	/**
+	 * Get the tooltip parts that should be hidden by default on the given stack if the {@code HideFlags} tag is not set.
+	 * @see ItemStack.TooltipPart
+	 * @param stack the stack
+	 * @return the default hide flags
+	 */
+	default int getDefaultTooltipHideFlags(@Nonnull ItemStack stack) {
+		return 0;
 	}
 }

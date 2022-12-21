@@ -5,10 +5,10 @@ import com.mojang.math.Transformation;
 import io.github.fabricators_of_create.porting_lib.client_events.event.client.RegisterShadersCallback;
 import io.github.fabricators_of_create.porting_lib.model_loader.mixin.client.accessor.BlockModelAccessor;
 import io.github.fabricators_of_create.porting_lib.model_loader.model.PortingLibRenderTypes;
-import io.github.fabricators_of_create.porting_lib.model_loader.util.TransformationHelper;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraftforge.client.model.generators.TransformationHelper;
 
 @Environment(EnvType.CLIENT)
 public class PortingLibModelsClient implements ClientModInitializer {

@@ -5,10 +5,11 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "common.ItemMixin",
-    "common.Matrix4fMixin",
     "common.TransformationMixin"
   ],
   "client": [
+    "client.ItemTransformDeserializerMixin",
+    "client.ItemTransformMixin",
     "client.VertexFormatMixin"
   ],
   "injectors": {

@@ -9,10 +9,10 @@ import net.minecraft.world.item.ItemStack;
 
 public class SlotItemHandler extends Slot {
 	private static final Container emptyInventory = new SimpleContainer(0);
-	private final ItemStackHandler itemHandler;
+	private final SlotExposedStorage itemHandler;
 	private final int index;
 
-	public SlotItemHandler(ItemStackHandler itemHandler, int index, int xPosition, int yPosition) {
+	public SlotItemHandler(SlotExposedStorage itemHandler, int index, int xPosition, int yPosition) {
 		super(emptyInventory, index, xPosition, yPosition);
 		this.itemHandler = itemHandler;
 		this.index = index;
@@ -22,24 +22,28 @@ public class SlotItemHandler extends Slot {
 	public boolean mayPlace(ItemStack stack) {
 		if (stack.isEmpty())
 			return false;
-		return itemHandler.isItemValid(index, ItemVariant.of(stack));
+		return itemHandler.isItemValid(index, ItemVariant.of(stack), stack.getCount());
 	}
 
 	@Override
 	public ItemStack getItem() {
-		return this.getItemHandler().getStackInSlot(index);
+		return itemHandler.getStackInSlot(index);
 	}
 
 	// Override if your IItemHandler does not implement IItemHandlerModifiable
 	@Override
 	public void set(ItemStack stack) {
-		this.getItemHandler().setStackInSlot(index, stack);
+		itemHandler.setStackInSlot(index, stack);
 		this.setChanged();
 	}
 
 	@Override
-	public void onQuickCraft(ItemStack oldStackIn, ItemStack newStackIn) {
+	public void initialize(ItemStack stack) {
+		set(stack);
+	}
 
+	@Override
+	public void onQuickCraft(ItemStack oldStackIn, ItemStack newStackIn) {
 	}
 
 	@Override
@@ -49,7 +53,7 @@ public class SlotItemHandler extends Slot {
 
 	@Override
 	public int getMaxStackSize(ItemStack stack) {
-		return getItemHandler().getStackLimit(index, ItemVariant.of(stack));
+		return getItemHandler().getStackLimit(index, ItemVariant.of(stack), stack.getCount());
 	}
 
 	@Override
@@ -65,7 +69,7 @@ public class SlotItemHandler extends Slot {
 		return removed;
 	}
 
-	public ItemStackHandler getItemHandler() {
+	public SlotExposedStorage getItemHandler() {
 		return itemHandler;
 	}
 }

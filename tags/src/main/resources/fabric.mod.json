@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib_tags",
-  "version": "${version}",
+  "id": "forge_tags",
+  "version": "3.0",
   "name": "Porting Lib Tags",
   "description": "Adds tags from Forge that Fabric is missing.",
   "authors": [
     "AlphaMode"
   ],
   "provides": [
-    "forge_tags"
+    "porting_lib_tags"
   ],
   "entrypoints": {
     "main": [

@@ -2,24 +2,38 @@ package io.github.fabricators_of_create.porting_lib.event.common;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.LevelAccessor;
 
 public class LivingEntityEvents {
+	/**
+	 * Legacy method will be removed in 1.20 use below method {@link LivingEntityEvents#EXPERIENCE_DROP_WITH_ENTITY}
+	 */
 	public static final Event<ExperienceDrop> EXPERIENCE_DROP = EventFactory.createArrayBacked(ExperienceDrop.class, callbacks -> (i, player) -> {
 		for (ExperienceDrop callback : callbacks) {
 			return callback.onLivingEntityExperienceDrop(i, player);
+		}
+
+		return i;
+	});
+
+	public static final Event<ExperienceDropNew> EXPERIENCE_DROP_WITH_ENTITY = EventFactory.createArrayBacked(ExperienceDropNew.class, callbacks -> (i, attackingPlayer, entity) -> {
+		for (ExperienceDropNew callback : callbacks) {
+			return callback.onLivingEntityExperienceDrop(i, attackingPlayer, entity);
 		}
 
 		return i;
@@ -69,8 +83,8 @@ public class LivingEntityEvents {
 		}
 	});
 
-	public static final Event<Hurt> HURT = EventFactory.createArrayBacked(Hurt.class, callbacks -> (source, damaged, amount) -> {
-		for (Hurt callback : callbacks) {
+	public static final Event<ActuallyHurt> HURT = EventFactory.createArrayBacked(ActuallyHurt.class, callbacks -> (source, damaged, amount) -> {
+		for (ActuallyHurt callback : callbacks) {
 			float newAmount = callback.onHurt(source, damaged, amount);
 			if (newAmount != amount) return newAmount;
 		}
@@ -100,6 +114,11 @@ public class LivingEntityEvents {
 		return false;
 	});
 
+	public static final Event<EquipmentChange> EQUIPMENT_CHANGE = EventFactory.createArrayBacked(EquipmentChange.class, callbacks -> ((entity, slot, from, to) -> {
+		for (EquipmentChange callback : callbacks)
+			callback.onEquipmentChange(entity, slot, from, to);
+	}));
+
 	public static final Event<Visibility> VISIBILITY = EventFactory.createArrayBacked(Visibility.class, callbacks -> (entity, lookingEntity, originalMultiplier) -> {
 		for (Visibility e : callbacks) {
 			double newMultiplier = e.getEntityVisibilityMultiplier(entity, lookingEntity, originalMultiplier);
@@ -110,12 +129,22 @@ public class LivingEntityEvents {
 	});
 
 	@FunctionalInterface
+	public interface EquipmentChange {
+		void onEquipmentChange(LivingEntity entity, EquipmentSlot slot, @Nonnull ItemStack from, @Nonnull ItemStack to);
+	}
+
+	@FunctionalInterface
 	public interface Attack {
 		boolean onAttack(LivingEntity entity, DamageSource source, float amount);
 	}
 
 	@FunctionalInterface
 	public interface Hurt {
+		float onHurt(DamageSource source, float amount);
+	}
+
+	@FunctionalInterface
+	public interface ActuallyHurt {
 		float onHurt(DamageSource source, LivingEntity damaged, float amount);
 	}
 
@@ -155,6 +184,11 @@ public class LivingEntityEvents {
 	@FunctionalInterface
 	public interface ExperienceDrop {
 		int onLivingEntityExperienceDrop(int i, Player player);
+	}
+
+	@FunctionalInterface
+	public interface ExperienceDropNew {
+		int onLivingEntityExperienceDrop(int i, Player attackingPlayer, LivingEntity entity);
 	}
 
 	@FunctionalInterface

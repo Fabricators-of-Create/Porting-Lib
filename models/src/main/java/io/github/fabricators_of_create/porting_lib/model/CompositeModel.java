@@ -1,9 +1,8 @@
-package io.github.fabricators_of_create.porting_lib.model_loader.model;
+package io.github.fabricators_of_create.porting_lib.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,14 +10,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import io.github.fabricators_of_create.porting_lib.model_loader.client.RenderTypeGroup;
-import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.IGeometryBakingContext;
-import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.IGeometryLoader;
-import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.IUnbakedGeometry;
-import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.UnbakedGeometryHelper;
-import net.minecraft.core.Direction;
-import net.minecraft.world.item.ItemStack;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,10 +21,16 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.mojang.datafixers.util.Pair;
 
-import io.github.fabricators_of_create.porting_lib.model_loader.model.data.ModelData;
-import io.github.fabricators_of_create.porting_lib.model_loader.model.data.ModelProperty;
+import io.github.fabricators_of_create.porting_lib.model.data.ModelData;
+import io.github.fabricators_of_create.porting_lib.model.data.ModelProperty;
+import io.github.fabricators_of_create.porting_lib.model_loader.client.RenderTypeGroup;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.IModelBuilder;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.SimpleModelState;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.IGeometryBakingContext;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.IGeometryLoader;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.IUnbakedGeometry;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.UnbakedGeometryHelper;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
@@ -44,12 +41,14 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -77,7 +76,7 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel> {
 	}
 
 	@Override
-	public BakedModel bake(IGeometryBakingContext context, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
+	public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
 		if (logWarning)
 			LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated \"parts\" field in its composite model instead of \"children\". This field will be removed in 1.20.");
 
@@ -94,7 +93,7 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel> {
 			if (!context.isComponentVisible(name, true))
 				continue;
 			var model = entry.getValue();
-			bakedPartsBuilder.put(name, UnbakedGeometryHelper.bake(model, bakery, model, spriteGetter, modelState, modelLocation, true));
+			bakedPartsBuilder.put(name, UnbakedGeometryHelper.bake(model, baker, model, spriteGetter, modelState, modelLocation, true));
 		}
 		var bakedParts = bakedPartsBuilder.build();
 
@@ -110,13 +109,8 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel> {
 	}
 
 	@Override
-	public Collection<Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
-		Set<Material> textures = new HashSet<>();
-		if (context.hasMaterial("particle"))
-			textures.add(context.getMaterial("particle"));
-		for (BlockModel part : children.values())
-			textures.addAll(part.getMaterials(modelGetter, missingTextureErrors));
-		return textures;
+	public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, IGeometryBakingContext context) {
+		children.values().forEach(child -> child.resolveParents(modelGetter));
 	}
 
 	@Override

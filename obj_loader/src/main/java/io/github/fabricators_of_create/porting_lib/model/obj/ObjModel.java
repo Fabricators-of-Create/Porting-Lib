@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.model_loader.model.obj;
+package io.github.fabricators_of_create.porting_lib.model.obj;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +21,7 @@ import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.server.packs.resources.ResourceManager;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -33,8 +34,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 
 import io.github.fabricators_of_create.porting_lib.model_loader.client.textures.UnitTextureAtlasSprite;
 import io.github.fabricators_of_create.porting_lib.model_loader.model.IModelBuilder;
@@ -55,6 +54,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
+
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 /**
  * A model loaded from an OBJ file.
@@ -312,17 +314,9 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 				};
 	}
 
-	@Override
-	public Collection<Material> getMaterials(Function<ResourceLocation, UnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors) {
-		Set<Material> combined = Sets.newHashSet();
-		for (ModelGroup part : parts.values())
-			combined.addAll(part.getTextures(modelGetter, missingTextureErrors));
-		return combined;
-	}
-
 	@Nullable
 	@Override
-	public BakedModel bake(ModelBakery modelBakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState transform, ResourceLocation location) {
+	public BakedModel bake(ModelBaker modelBaker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState transform, ResourceLocation location) {
 		List<ObjBakedModel.MeshInfo> meshes = new ArrayList<>();
 
 		for (var entry : parts.entrySet()) {
@@ -334,20 +328,12 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 	}
 
 	@Override
-	protected void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
+	protected void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
 		for (var entry : deprecationWarnings.entrySet())
 			LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated \"" + entry.getKey() + "\" field in its OBJ model instead of \"" + entry.getValue() + "\". This field will be removed in 1.20.");
 
 		parts.values().stream().filter(part -> owner.isComponentVisible(part.name(), true))
-				.forEach(part -> part.addQuads(owner, modelBuilder, bakery, spriteGetter, modelTransform, modelLocation));
-	}
-
-	@Override
-	public Collection<Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors) {
-		Set<Material> combined = Sets.newHashSet();
-		for (ModelGroup part : parts.values())
-			combined.addAll(part.getTextures(context, modelGetter, missingTextureErrors));
-		return combined;
+				.forEach(part -> part.addQuads(owner, modelBuilder, baker, spriteGetter, modelTransform, modelLocation));
 	}
 
 	public Set<String> getRootComponentNames() {
@@ -374,9 +360,9 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 			Vector3f a = positions.get(indices[0][0]);
 			Vector3f ab = positions.get(indices[1][0]);
 			Vector3f ac = positions.get(indices[2][0]);
-			Vector3f abs = ab.copy();
+			Vector3f abs = new Vector3f(ab);
 			abs.sub(a);
-			Vector3f acs = ac.copy();
+			Vector3f acs = new Vector3f(ac);
 			acs.sub(a);
 			abs.cross(acs);
 			abs.normalize();
@@ -407,13 +393,13 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 
 		for (int i = 0; i < 4; i++) {
 			int[] index = indices[Math.min(i, indices.length - 1)];
-			Vector4f position = new Vector4f(positions.get(index[0]));
+			Vector4f position = new Vector4f(positions.get(index[0]), 1);
 			Vec2 texCoord = index.length >= 2 && texCoords.size() > 0 ? texCoords.get(index[1]) : DEFAULT_COORDS[i];
 			Vector3f norm0 = !needsNormalRecalculation && index.length >= 3 && normals.size() > 0 ? normals.get(index[2]) : faceNormal;
 			Vector3f normal = norm0;
 			Vector4f color = index.length >= 4 && colors.size() > 0 ? colors.get(index[3]) : COLOR_WHITE;
 			if (hasTransform) {
-				normal = norm0.copy();
+				normal = new Vector3f(norm0);
 				transformation.transformPosition(position);
 				transformation.transformNormal(normal);
 			}
@@ -504,6 +490,9 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 		return Collections.emptyList();
 	}
 
+	@Override
+	public void resolveParents(Function<ResourceLocation, UnbakedModel> function) {}
+
 	public class ModelObject {
 		public final String name;
 
@@ -517,7 +506,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 			return name;
 		}
 
-		public void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
+		public void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
 			for (ModelMesh mesh : meshes) {
 				mesh.addQuads(owner, modelBuilder, spriteGetter, modelTransform);
 			}
@@ -564,11 +553,11 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 		}
 
 		@Override
-		public void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
-			super.addQuads(owner, modelBuilder, bakery, spriteGetter, modelTransform, modelLocation);
+		public void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
+			super.addQuads(owner, modelBuilder, baker, spriteGetter, modelTransform, modelLocation);
 
 			parts.values().stream().filter(part -> owner.isComponentVisible(part.name(), true))
-					.forEach(part -> part.addQuads(owner, modelBuilder, bakery, spriteGetter, modelTransform, modelLocation));
+					.forEach(part -> part.addQuads(owner, modelBuilder, baker, spriteGetter, modelTransform, modelLocation));
 		}
 
 		@Override

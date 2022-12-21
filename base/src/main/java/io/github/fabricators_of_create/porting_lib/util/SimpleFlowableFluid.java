@@ -9,6 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -28,7 +29,6 @@ public abstract class SimpleFlowableFluid extends FlowingFluid {
 	private final Supplier<? extends Item> bucket;
 	@Nullable
 	private final Supplier<? extends LiquidBlock> block;
-	private final boolean infinite;
 	private final int flowSpeed;
 	private final int levelDecreasePerBlock;
 	private final float blastResistance;
@@ -37,7 +37,6 @@ public abstract class SimpleFlowableFluid extends FlowingFluid {
 	protected SimpleFlowableFluid(Properties properties) {
 		this.flowing = properties.flowing;
 		this.still = properties.still;
-		this.infinite = properties.infinite;
 		this.bucket = properties.bucket;
 		this.block = properties.block;
 		this.flowSpeed = properties.flowSpeed;
@@ -57,8 +56,8 @@ public abstract class SimpleFlowableFluid extends FlowingFluid {
 	}
 
 	@Override
-	protected boolean canConvertToSource() {
-		return infinite;
+	protected boolean canConvertToSource(Level level) {
+		return false;
 	}
 
 	@Override
@@ -152,7 +151,6 @@ public abstract class SimpleFlowableFluid extends FlowingFluid {
 	public static class Properties {
 		private Supplier<? extends Fluid> still;
 		private Supplier<? extends Fluid> flowing;
-		private boolean infinite;
 		private Supplier<? extends Item> bucket;
 		private Supplier<? extends LiquidBlock> block;
 		private int flowSpeed = 4;
@@ -163,11 +161,6 @@ public abstract class SimpleFlowableFluid extends FlowingFluid {
 		public Properties(Supplier<? extends Fluid> still, Supplier<? extends Fluid> flowing) {
 			this.still = still;
 			this.flowing = flowing;
-		}
-
-		public Properties canMultiply() {
-			infinite = true;
-			return this;
 		}
 
 		public Properties bucket(Supplier<? extends Item> bucket) {

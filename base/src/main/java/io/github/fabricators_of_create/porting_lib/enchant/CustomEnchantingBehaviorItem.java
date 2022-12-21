@@ -11,7 +11,6 @@ public interface CustomEnchantingBehaviorItem {
 	 * @param book  The book
 	 * @return if the enchantment is allowed
 	 */
-	// TODO: Needs asm
 	default boolean isBookEnchantable(ItemStack stack, ItemStack book) {
 		return true;
 	}

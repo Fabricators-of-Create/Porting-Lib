@@ -51,8 +51,8 @@ public class WrappedStorage<T> implements Storage<T> {
 	}
 
 	@Override
-	public @Nullable StorageView<T> exactView(TransactionContext transaction, T resource) {
-		return wrapped.exactView(transaction, resource);
+	public @Nullable StorageView<T> exactView(T resource) {
+		return wrapped.exactView(resource);
 	}
 
 	@Override

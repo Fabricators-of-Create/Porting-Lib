@@ -1,8 +1,7 @@
-package io.github.fabricators_of_create.porting_lib.model_loader.model.mixin.client;
+package io.github.fabricators_of_create.porting_lib.model.mixin.client;
 
 import java.io.InputStreamReader;
 
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,12 +14,12 @@ import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
 
 import io.github.fabricators_of_create.porting_lib.PortingConstants;
-import io.github.fabricators_of_create.porting_lib.model_loader.model.obj.ObjLoader;
-import io.github.fabricators_of_create.porting_lib.model_loader.model.obj.ObjModel;
+import io.github.fabricators_of_create.porting_lib.model.obj.ObjLoader;
+import io.github.fabricators_of_create.porting_lib.model.obj.ObjModel;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
 
 @Mixin(ModelBakery.class)
@@ -28,20 +27,16 @@ public abstract class ModelBakeryMixin {
 	@Shadow
 	protected abstract void cacheAndQueueDependencies(ResourceLocation location, UnbakedModel model);
 
-	@Shadow
-	@Final
-	private ResourceManager resourceManager;
-
 	@Inject(method = "loadModel", at = @At("HEAD"), cancellable = true)
 	public void port_lib$loadObjModels(ResourceLocation modelLocation, CallbackInfo ci) {
 		if (!modelLocation.getPath().contains(".json"))
 			return;
-		resourceManager.getResource(new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath())).ifPresent(resource -> {
+		Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath())).ifPresent(resource -> {
 			try {
 				JsonObject jsonObject = Streams.parse(new JsonReader(new InputStreamReader(resource.open(), Charsets.UTF_8))).getAsJsonObject();
 				if (jsonObject.has(PortingConstants.ID + ":" + "obj_marker")) {
 					ResourceLocation objLocation = new ResourceLocation(GsonHelper.getAsString(jsonObject, "model"));
-					ObjModel model = ObjLoader.INSTANCE.loadModel(resourceManager.getResource(objLocation).orElseThrow(), new ObjModel.ModelSettings(objLocation, true, true, true, true, null));
+					ObjModel model = ObjLoader.INSTANCE.loadModel(Minecraft.getInstance().getResourceManager().getResource(objLocation).orElseThrow(), new ObjModel.ModelSettings(objLocation, true, true, true, true, null));
 					if (model != null) {
 						cacheAndQueueDependencies(modelLocation, model);
 						ci.cancel();

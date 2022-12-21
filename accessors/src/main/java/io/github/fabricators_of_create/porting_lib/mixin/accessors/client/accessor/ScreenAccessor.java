@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 
@@ -22,5 +22,5 @@ public interface ScreenAccessor {
 	Minecraft port_lib$getMinecraft();
 
 	@Accessor("renderables")
-	List<Widget> port_lib$getRenderables();
+	List<Renderable> port_lib$getRenderables();
 }

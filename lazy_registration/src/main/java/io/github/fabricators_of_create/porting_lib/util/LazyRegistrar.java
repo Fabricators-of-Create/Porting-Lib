@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.Registry;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -94,8 +94,8 @@ public class LazyRegistrar<T> {
 		private RegistryHolder(ResourceKey<? extends Registry<V>> registryKey) {
 			this.registryKey = registryKey;
 			this.registries = new ArrayList<>();
-			registerRegistry(Registry.REGISTRY);
-			registerRegistry(BuiltinRegistries.REGISTRY);
+			registerRegistry(BuiltInRegistries.REGISTRY);
+//			registerRegistry(BuiltinRegistries.REGISTRY);
 		}
 
 		public void registerRegistry(Registry<? extends Registry<?>> registry) {

@@ -1,17 +1,20 @@
 package me.alphamode.forgetags.data;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import java.util.concurrent.CompletableFuture;
+
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.minecraft.core.HolderLookup;
 
 public class FluidTagProvider extends FabricTagProvider.FluidTagProvider {
-	public FluidTagProvider(FabricDataGenerator dataGenerator) {
-		super(dataGenerator);
+	public FluidTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> completableFuture) {
+		super(output, completableFuture);
 	}
 
 	@Override
-	protected void generateTags() {
-//        if(Registry.FLUID.get(new Identifier("c:milk")) != null) {
-//            getOrCreateTagBuilder(Tags.Fluids.MILK).add(Registry.FLUID.get(new Identifier("c:milk")));
+	protected void addTags(HolderLookup.Provider arg) {
+//        if(BuiltInRegistries.FLUID.get(new ResourceLocation("c:milk")) != null) {
+//            getOrCreateTagBuilder(Tags.Fluids.MILK).add(BuiltInRegistries.FLUID.get(new ResourceLocation("c:milk")));
 //        }
 	}
 }

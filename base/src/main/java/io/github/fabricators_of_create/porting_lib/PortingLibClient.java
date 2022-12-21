@@ -19,7 +19,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackType;
@@ -66,7 +66,7 @@ public class PortingLibClient implements ClientModInitializer {
 
 	private void openScreen(int typeId, int syncId, Component title, FriendlyByteBuf buf) {
 		try {
-			MenuType<?> type = Registry.MENU.byId(typeId);
+			MenuType<?> type = BuiltInRegistries.MENU.byId(typeId);
 
 			if (type == null) {
 				LOGGER.warn("Unknown screen handler ID: {}", typeId);

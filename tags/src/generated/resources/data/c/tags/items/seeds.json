@@ -1,9 +1,9 @@
 {
   "replace": false,
   "values": [
-    "#c:seeds/beetroot",
-    "#c:seeds/melon",
-    "#c:seeds/pumpkin",
-    "#c:seeds/wheat"
+    "#c:beetroot_seeds",
+    "#c:melon_seeds",
+    "#c:pumpkin_seeds",
+    "#c:wheat_seeds"
   ]
 }

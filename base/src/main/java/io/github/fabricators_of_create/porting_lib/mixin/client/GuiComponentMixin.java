@@ -14,7 +14,7 @@ import net.minecraft.client.gui.GuiComponent;
 @Mixin(GuiComponent.class)
 public abstract class GuiComponentMixin {
 	@ModifyVariable(
-			method = "fillGradient(Lcom/mojang/math/Matrix4f;Lcom/mojang/blaze3d/vertex/BufferBuilder;IIIIIII)V",
+			method = "fillGradient(Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/vertex/BufferBuilder;IIIIIII)V",
 			at = @At("HEAD"),
 			ordinal = 5,
 			argsOnly = true
@@ -24,7 +24,7 @@ public abstract class GuiComponentMixin {
 	}
 
 	@ModifyVariable(
-			method = "fillGradient(Lcom/mojang/math/Matrix4f;Lcom/mojang/blaze3d/vertex/BufferBuilder;IIIIIII)V",
+			method = "fillGradient(Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/vertex/BufferBuilder;IIIIIII)V",
 			at = @At("HEAD"),
 			ordinal = 6,
 			argsOnly = true

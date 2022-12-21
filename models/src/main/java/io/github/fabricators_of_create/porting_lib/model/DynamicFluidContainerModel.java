@@ -1,19 +1,31 @@
-package io.github.fabricators_of_create.porting_lib.model_loader.model;
+package io.github.fabricators_of_create.porting_lib.model;
+
+import java.util.Map;
+import java.util.function.Function;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import com.mojang.datafixers.util.Pair;
-import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
 
 import io.github.fabricators_of_create.porting_lib.model_loader.client.RenderTypeGroup;
-import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.*;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.PortingLibRenderTypes;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.QuadTransformers;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.SimpleModelState;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.IGeometryBakingContext;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.IGeometryLoader;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.IUnbakedGeometry;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.StandaloneGeometryBakingContext;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.UnbakedGeometryHelper;
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
-import io.github.fabricators_of_create.porting_lib.model_loader.util.FluidUtil;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
@@ -25,25 +37,15 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
 
 /**
  * A dynamic fluid container model, capable of re-texturing itself at runtime to match the contained fluid.
@@ -59,8 +61,8 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 	private static final Logger LOGGER = LogManager.getLogger();
 
 	// Depth offsets to prevent Z-fighting
-	private static final Transformation FLUID_TRANSFORM = new Transformation(Vector3f.ZERO, Quaternion.ONE, new Vector3f(1, 1, 1.002f), Quaternion.ONE);
-	private static final Transformation COVER_TRANSFORM = new Transformation(Vector3f.ZERO, Quaternion.ONE, new Vector3f(1, 1, 1.004f), Quaternion.ONE);
+	private static final Transformation FLUID_TRANSFORM = new Transformation(new Vector3f(), new Quaternionf(), new Vector3f(1, 1, 1.002f), new Quaternionf());
+	private static final Transformation COVER_TRANSFORM = new Transformation(new Vector3f(), new Quaternionf(), new Vector3f(1, 1, 1.004f), new Quaternionf());
 
 	private final Fluid fluid;
 	private final boolean flipGas;
@@ -95,7 +97,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 	}
 
 	@Override
-	public BakedModel bake(IGeometryBakingContext context, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
+	public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
 		if (deprecatedLoader)
 			LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated loader \"forge:bucket\" instead of \"forge:fluid_container\". This loader will be removed in 1.20.");
 		for (var entry : deprecationWarnings.entrySet())
@@ -120,18 +122,18 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 		if (flipGas && fluid != Fluids.EMPTY && FluidVariantAttributes.isLighterThanAir(FluidVariant.of(fluid))) {
 			modelState = new SimpleModelState(
 					modelState.getRotation().compose(
-							new Transformation(null, new Quaternion(0, 0, 1, 0), null, null)));
+							new Transformation(null, new Quaternionf(0, 0, 1, 0), null, null)));
 		}
 
 		// We need to disable GUI 3D and block lighting for this to render properly
 		var itemContext = StandaloneGeometryBakingContext.builder(context).withGui3d(false).withUseBlockLight(false).build(modelLocation);
-		var modelBuilder = CompositeModel.Baked.builder(itemContext, particleSprite, new ContainedFluidOverrideHandler(overrides, bakery, itemContext, this), context.getTransforms());
+		var modelBuilder = CompositeModel.Baked.builder(itemContext, particleSprite, new ContainedFluidOverrideHandler(overrides, baker, itemContext, this), context.getTransforms());
 
 		var normalRenderTypes = getLayerRenderTypes(false);
 
 		if (baseLocation != null && baseSprite != null) {
 			// Base texture
-			var unbaked = UnbakedGeometryHelper.createUnbakedItemElements(0, baseSprite);
+			var unbaked = UnbakedGeometryHelper.createUnbakedItemElements(0, baseSprite.contents());
 			var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> baseSprite, modelState, modelLocation);
 			modelBuilder.addQuads(normalRenderTypes, quads);
 		}
@@ -141,7 +143,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 			if (templateSprite != null) {
 				// Fluid layer
 				var transformedState = new SimpleModelState(modelState.getRotation().compose(FLUID_TRANSFORM), modelState.isUvLocked());
-				var unbaked = UnbakedGeometryHelper.createUnbakedItemMaskElements(1, templateSprite); // Use template as mask
+				var unbaked = UnbakedGeometryHelper.createUnbakedItemMaskElements(1, templateSprite.contents()); // Use template as mask
 				var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> fluidSprite, transformedState, modelLocation); // Bake with fluid texture
 
 				var emissive = applyFluidLuminosity && FluidVariantAttributes.getLuminance(FluidVariant.of(fluid)) > 0;
@@ -157,7 +159,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 			if (sprite != null) {
 				// Cover/overlay
 				var transformedState = new SimpleModelState(modelState.getRotation().compose(COVER_TRANSFORM), modelState.isUvLocked());
-				var unbaked = UnbakedGeometryHelper.createUnbakedItemMaskElements(2, coverSprite); // Use cover as mask
+				var unbaked = UnbakedGeometryHelper.createUnbakedItemMaskElements(2, coverSprite.contents()); // Use cover as mask
 				var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> sprite, transformedState, modelLocation); // Bake with selected texture
 				modelBuilder.addQuads(normalRenderTypes, quads);
 			}
@@ -166,16 +168,6 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 		modelBuilder.setParticle(particleSprite);
 
 		return modelBuilder.build();
-	}
-
-	@Override
-	public Collection<Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
-		Set<Material> textures = Sets.newHashSet();
-		if (context.hasMaterial("particle")) textures.add(context.getMaterial("particle"));
-		if (context.hasMaterial("base")) textures.add(context.getMaterial("base"));
-		if (context.hasMaterial("fluid")) textures.add(context.getMaterial("fluid"));
-		if (context.hasMaterial("cover")) textures.add(context.getMaterial("cover"));
-		return textures;
 	}
 
 	public static final class Loader implements IGeometryLoader<DynamicFluidContainerModel> {
@@ -198,7 +190,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 
 			ResourceLocation fluidName = new ResourceLocation(jsonObject.get("fluid").getAsString());
 
-			Fluid fluid = Registry.FLUID.get(fluidName);
+			Fluid fluid = BuiltInRegistries.FLUID.get(fluidName);
 
 			boolean flip = GsonHelper.getAsBoolean(jsonObject, "flip_gas", false);
 			boolean coverIsMask = GsonHelper.getAsBoolean(jsonObject, "cover_is_mask", true);
@@ -206,13 +198,11 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 
 			// TODO: Deprecated names. To be removed in 1.20
 			var deprecationWarningsBuilder = ImmutableMap.<String, String>builder();
-			if (jsonObject.has("flipGas"))
-			{
+			if (jsonObject.has("flipGas")) {
 				flip = GsonHelper.getAsBoolean(jsonObject, "flipGas");
 				deprecationWarningsBuilder.put("flipGas", "flip_gas");
 			}
-			if (jsonObject.has("coverIsMask"))
-			{
+			if (jsonObject.has("coverIsMask")) {
 				coverIsMask = GsonHelper.getAsBoolean(jsonObject, "coverIsMask");
 				deprecationWarningsBuilder.put("coverIsMask", "cover_is_mask");
 			}
@@ -230,13 +220,13 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 	private static final class ContainedFluidOverrideHandler extends ItemOverrides {
 		private final Map<String, BakedModel> cache = Maps.newHashMap(); // contains all the baked models since they'll never change
 		private final ItemOverrides nested;
-		private final ModelBakery bakery;
+		private final ModelBaker baker;
 		private final IGeometryBakingContext owner;
 		private final DynamicFluidContainerModel parent;
 
-		private ContainedFluidOverrideHandler(ItemOverrides nested, ModelBakery bakery, IGeometryBakingContext owner, DynamicFluidContainerModel parent) {
+		private ContainedFluidOverrideHandler(ItemOverrides nested, ModelBaker baker, IGeometryBakingContext owner, DynamicFluidContainerModel parent) {
 			this.nested = nested;
-			this.bakery = bakery;
+			this.baker = baker;
 			this.owner = owner;
 			this.parent = parent;
 		}
@@ -248,12 +238,11 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 			return TransferUtil.getFluidContained(stack)
 					.map(fluidStack -> {
 						Fluid fluid = fluidStack.getFluid();
-						String name = Registry.FLUID.getKey(fluid).toString();
+						String name = BuiltInRegistries.FLUID.getKey(fluid).toString();
 
-						if (!cache.containsKey(name))
-						{
+						if (!cache.containsKey(name)) {
 							DynamicFluidContainerModel unbaked = this.parent.withFluid(fluid);
-							BakedModel bakedModel = unbaked.bake(owner, bakery, Material::sprite, BlockModelRotation.X0_Y0, this, new ResourceLocation("forge:bucket_override"));
+							BakedModel bakedModel = unbaked.bake(owner, baker, Material::sprite, BlockModelRotation.X0_Y0, this, new ResourceLocation("forge:bucket_override"));
 							cache.put(name, bakedModel);
 							return bakedModel;
 						}

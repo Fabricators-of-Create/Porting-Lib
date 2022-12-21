@@ -71,12 +71,14 @@ import static me.alphamode.forgetags.Tags.Blocks.STORAGE_BLOCKS_RAW_IRON;
 import static me.alphamode.forgetags.Tags.Blocks.STORAGE_BLOCKS_REDSTONE;
 
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import me.alphamode.forgetags.Tags;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
-import net.minecraft.core.Registry;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -85,12 +87,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 public class BlockTagProvider extends FabricTagProvider.BlockTagProvider {
-	public BlockTagProvider(FabricDataGenerator dataGenerator) {
-		super(dataGenerator);
+	public BlockTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+		super(output, registriesFuture);
 	}
 
 	@Override
-	protected void generateTags() {
+	protected void addTags(HolderLookup.Provider arg) {
 		tag(BARRELS).addTag(BARRELS_WOODEN);
 		tag(BARRELS_WOODEN).add(Blocks.BARREL);
 		tag(CHESTS).addTag(CHESTS_ENDER).addTag(CHESTS_TRAPPED).addTag(CHESTS_WOODEN);
@@ -167,7 +169,7 @@ public class BlockTagProvider extends FabricTagProvider.BlockTagProvider {
 		for (DyeColor color : DyeColor.values()) {
 			ResourceLocation key = new ResourceLocation("minecraft", pattern.replace("{color}", color.getName()));
 			TagKey<Block> tag = getForgeTag(prefix + color.getName());
-			Block block = Registry.BLOCK.get(key);
+			Block block = BuiltInRegistries.BLOCK.get(key);
 			if (block == null || block == Blocks.AIR)
 				throw new IllegalStateException("Unknown vanilla block: " + key.toString());
 			tag(tag).add(block);
@@ -178,7 +180,7 @@ public class BlockTagProvider extends FabricTagProvider.BlockTagProvider {
 	@SuppressWarnings("unchecked")
 	private TagKey<Block> getForgeTag(String name) {
 		try {
-			name = name.toUpperCase(Locale.ENGLISH);
+			name = name.toUpperCase(Locale.ENGLISH).replace("_BLOCKS", "");
 			return (TagKey<Block>) Tags.Blocks.class.getDeclaredField(name).get(null);
 		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
 			throw new IllegalStateException(Tags.Blocks.class.getName() + " is missing tag name: " + name);
@@ -186,7 +188,7 @@ public class BlockTagProvider extends FabricTagProvider.BlockTagProvider {
 	}
 
 
-	public FabricTagBuilder<Block> tag(TagKey<Block> tag) {
+	public FabricTagBuilder tag(TagKey<Block> tag) {
 		return getOrCreateTagBuilder(tag);
 	}
 }

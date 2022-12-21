@@ -109,62 +109,46 @@ public class BlockGeometryBakingContext implements IGeometryBakingContext {
 
 	@Nullable
 	@Override
-	public ResourceLocation getRenderTypeHint()
-	{
+	public ResourceLocation getRenderTypeHint() {
 		if (renderTypeHint != null)
 			return renderTypeHint;
 		return owner.parent != null ? owner.parent.getGeometry().getRenderTypeHint() : null;
 	}
 
-	public void setRenderTypeHint(ResourceLocation renderTypeHint)
-	{
+	public void setRenderTypeHint(ResourceLocation renderTypeHint) {
 		this.renderTypeHint = renderTypeHint;
 	}
 
-	public void copyFrom(BlockGeometryBakingContext other)
-	{
+	public void copyFrom(BlockGeometryBakingContext other) {
 		this.customGeometry = other.customGeometry;
 		this.rootTransform = other.rootTransform;
 		this.visibilityData.copyFrom(other.visibilityData);
 		this.renderTypeHint = other.renderTypeHint;
 	}
 
-	public Collection<UnbakedModel> getTextureDependencies(Function<ResourceLocation, UnbakedModel> modelGetter)
-	{
-		IUnbakedGeometry<?> geometry = getCustomGeometry();
-		return geometry == null ? Collections.emptySet() :
-				geometry.getMaterials(this, modelGetter);
-	}
-
-	public BakedModel bake(ModelBaker baker, Function<Material, TextureAtlasSprite> bakedTextureGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
-	{
+	public BakedModel bake(ModelBaker baker, Function<Material, TextureAtlasSprite> bakedTextureGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation) {
 		IUnbakedGeometry<?> geometry = getCustomGeometry();
 		if (geometry == null)
 			throw new IllegalStateException("Can not use custom baking without custom geometry");
 		return geometry.bake(this, baker, bakedTextureGetter, modelTransform, overrides, modelLocation);
 	}
 
-	public static class VisibilityData
-	{
+	public static class VisibilityData {
 		private final Map<String, Boolean> data = new HashMap<>();
 
-		public boolean hasCustomVisibility(String part)
-		{
+		public boolean hasCustomVisibility(String part) {
 			return data.containsKey(part);
 		}
 
-		public boolean isVisible(String part, boolean fallback)
-		{
+		public boolean isVisible(String part, boolean fallback) {
 			return data.getOrDefault(part, fallback);
 		}
 
-		public void setVisibilityState(String partName, boolean type)
-		{
+		public void setVisibilityState(String partName, boolean type) {
 			data.put(partName, type);
 		}
 
-		public void copyFrom(VisibilityData visibilityData)
-		{
+		public void copyFrom(VisibilityData visibilityData) {
 			data.clear();
 			data.putAll(visibilityData.data);
 		}

@@ -1,17 +1,17 @@
 package io.github.fabricators_of_create.porting_lib.extensions.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.extensions.extensions.TransformationExtensions;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.TransformationExtensions;
 import net.minecraft.core.Direction;
 
 @Mixin(Transformation.class)
@@ -43,7 +43,7 @@ public abstract class TransformationMixin implements TransformationExtensions {
 
 	@Override
 	public void transformPosition(Vector4f position) {
-		position.transform(this.getMatrix());
+		position.mul(this.getMatrix());
 	}
 
 	@Override
@@ -56,11 +56,10 @@ public abstract class TransformationMixin implements TransformationExtensions {
 		if (isIdentity()) return Transformation.identity();
 
 		Matrix4f ret = this.getMatrix();
-		Matrix4f tmp = Matrix4f.createTranslateMatrix(origin.x(), origin.y(), origin.z());
-		ret.multiplyBackward(tmp);
-		tmp.setIdentity();
-		tmp.setTranslation(-origin.x(), -origin.y(), -origin.z());
-		ret.multiply(tmp);
+		Matrix4f tmp = new Matrix4f().translation(origin.x(), origin.y(), origin.z());
+		tmp.mul(ret, ret);
+		tmp.translation(-origin.x(), -origin.y(), -origin.z());
+		ret.mul(tmp);
 		return new Transformation(ret);
 	}
 }

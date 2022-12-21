@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
+import java.util.List;
+
 import javax.annotation.Nullable;
 
 import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
@@ -15,7 +17,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryRemovedCallback;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.resources.ResourceLocation;
@@ -35,8 +38,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.storage.loot.LootContext;
 
-import java.util.List;
-
 @SuppressWarnings({"removal", "UnstableApiUsage"})
 public class PortingHooks {
 	public static int onBlockBreakEvent(Level world, GameType gameType, ServerPlayer entityPlayer, BlockPos pos) {
@@ -52,7 +53,7 @@ public class PortingHooks {
 				preCancelEvent = true;
 
 			if (!entityPlayer.mayBuild()) {
-				if (itemstack.isEmpty() || !itemstack.hasAdventureModeBreakTagForBlock(world.registryAccess().registryOrThrow(Registry.BLOCK_REGISTRY), new BlockInWorld(world, pos, false)))
+				if (itemstack.isEmpty() || !itemstack.hasAdventureModeBreakTagForBlock(world.registryAccess().registryOrThrow(Registries.BLOCK), new BlockInWorld(world, pos, false)))
 					preCancelEvent = true;
 			}
 		}
@@ -163,7 +164,7 @@ public class PortingHooks {
 			}
 			return true;
 		});
-		RegistryEntryRemovedCallback.event(Registry.ITEM).register((rawId, id, item) -> {
+		RegistryEntryRemovedCallback.event(BuiltInRegistries.ITEM).register((rawId, id, item) -> {
 			if (item instanceof BlockItemExtensions blockItem) {
 				blockItem.removeFromBlockToItemMap(Item.BY_BLOCK, item);
 			}

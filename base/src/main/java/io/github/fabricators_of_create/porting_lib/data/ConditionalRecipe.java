@@ -13,6 +13,7 @@ import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
 import net.fabricmc.fabric.api.resource.conditions.v1.ConditionJsonProvider;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -24,7 +25,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import javax.annotation.Nullable;
 
 public class ConditionalRecipe {
-	public static final RecipeSerializer<Recipe<?>> SERIALZIER = Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation("forge:conditional"), new Serializer<>());
+	public static final RecipeSerializer<Recipe<?>> SERIALZIER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation("forge:conditional"), new Serializer<>());
 
 	public static Builder builder() {
 		return new Builder();

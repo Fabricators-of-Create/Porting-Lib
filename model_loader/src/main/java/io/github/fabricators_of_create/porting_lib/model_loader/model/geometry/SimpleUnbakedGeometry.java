@@ -1,6 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.model_loader.model.geometry;
 
-import java.util.Collection;
 import java.util.function.Function;
 
 import io.github.fabricators_of_create.porting_lib.model_loader.client.RenderTypeGroup;
@@ -12,7 +11,6 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -35,7 +33,4 @@ public abstract class SimpleUnbakedGeometry<T extends SimpleUnbakedGeometry<T>> 
 	}
 
 	protected abstract void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation);
-
-	@Override
-	public abstract Collection<UnbakedModel> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter);
 }

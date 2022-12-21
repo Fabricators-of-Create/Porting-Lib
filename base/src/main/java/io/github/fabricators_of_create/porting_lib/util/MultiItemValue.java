@@ -6,27 +6,23 @@ import java.util.Collections;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient.Value;
 
-public class MultiItemValue implements Value
-{
+public class MultiItemValue implements Value {
 	private Collection<ItemStack> items;
-	public MultiItemValue(Collection<ItemStack> items)
-	{
+	public MultiItemValue(Collection<ItemStack> items) {
 		this.items = Collections.unmodifiableCollection(items);
 	}
 
 	@Override
-	public Collection<ItemStack> getItems()
-	{
+	public Collection<ItemStack> getItems() {
 		return items;
 	}
 
 	@Override
-	public JsonObject serialize()
-	{
+	public JsonObject serialize() {
 		if (items.size() == 1)
 			return toJson(items.iterator().next());
 
@@ -37,10 +33,9 @@ public class MultiItemValue implements Value
 		return ret;
 	}
 
-	private JsonObject toJson(ItemStack stack)
-	{
+	private JsonObject toJson(ItemStack stack) {
 		JsonObject ret = new JsonObject();
-		ret.addProperty("item", Registry.ITEM.getKey(stack.getItem()).toString());
+		ret.addProperty("item", BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
 		if (stack.getCount() != 1)
 			ret.addProperty("count", stack.getCount());
 		if (stack.getTag() != null)

@@ -1,17 +1,19 @@
-package io.github.fabricators_of_create.porting_lib.model_loader.model.obj;
+package io.github.fabricators_of_create.porting_lib.model.obj;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 import com.google.common.collect.Maps;
-import com.mojang.math.Vector4f;
+
 import joptsimple.internal.Strings;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.material.MaterialFinder;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
 import net.minecraft.resources.ResourceLocation;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import org.joml.Vector4f;
 
 /**
  * An OBJ material library (MTL), composed of named {@link Material materials}.

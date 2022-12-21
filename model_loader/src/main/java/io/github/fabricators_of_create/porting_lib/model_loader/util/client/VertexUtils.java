@@ -3,17 +3,15 @@ package io.github.fabricators_of_create.porting_lib.model_loader.util.client;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-
-import com.mojang.math.Vector4f;
 
 import io.github.fabricators_of_create.porting_lib.model_loader.util.LightUtil;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.core.Vec3i;
 
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.Buffer;
@@ -42,7 +40,7 @@ public class VertexUtils {
 		Vec3i faceNormal = bakedQuad.getDirection().getNormal();
 		Vector3f normal = new Vector3f((float)faceNormal.getX(), (float)faceNormal.getY(), (float)faceNormal.getZ());
 		Matrix4f matrix4f = pose.pose();
-		normal.transform(pose.normal());
+		normal.mul(pose.normal());
 		int intSize = DefaultVertexFormat.BLOCK.getIntegerSize();
 		int vertexCount = aint.length / intSize;
 
@@ -80,7 +78,7 @@ public class VertexUtils {
 				float f9 = bytebuffer.getFloat(16);
 				float f10 = bytebuffer.getFloat(20);
 				Vector4f pos = new Vector4f(f, f1, f2, 1.0F);
-				pos.transform(matrix4f);
+				pos.mul(matrix4f);
 				applyBakedNormals(normal, bytebuffer, pose.normal());
 				builder.vertex(pos.x(), pos.y(), pos.z(), cr, cg, cb, ca, f9, f10, packedOverlay, lightmapCoord, normal.x(), normal.y(), normal.z());
 			}
@@ -104,7 +102,7 @@ public class VertexUtils {
 		byte nz = data.get(30);
 		if (nx != 0 || ny != 0 || nz != 0) {
 			generated.set(nx / 127f, ny / 127f, nz / 127f);
-			generated.transform(normalTransform);
+			generated.mul(normalTransform);
 		}
 	}
 }

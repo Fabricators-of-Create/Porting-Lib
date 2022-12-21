@@ -1,9 +1,11 @@
-package io.github.fabricators_of_create.porting_lib.model_loader.model;
+package io.github.fabricators_of_create.porting_lib.model;
 
-import com.google.common.collect.ImmutableMap;
-import com.mojang.math.Matrix4f;
+import io.github.fabricators_of_create.porting_lib.model.IMultipartRenderValues;
 
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * A context value that provides {@link Matrix4f} transforms for certain parts of the model.

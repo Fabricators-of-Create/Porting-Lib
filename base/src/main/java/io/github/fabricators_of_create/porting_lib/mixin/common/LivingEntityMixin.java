@@ -142,6 +142,7 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 	private void create$dropExperience(Args args) {
 		int amount = args.get(2);
 		int newAmount = LivingEntityEvents.EXPERIENCE_DROP.invoker().onLivingEntityExperienceDrop(amount, lastHurtByPlayer);
+		newAmount = LivingEntityEvents.EXPERIENCE_DROP_WITH_ENTITY.invoker().onLivingEntityExperienceDrop(newAmount, lastHurtByPlayer, (LivingEntity) (Object) this);
 		if (amount != newAmount) args.set(2, newAmount);
 	}
 
@@ -254,7 +255,7 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 		}
 	}
 
-	@ModifyExpressionValue(method = "updatingUsingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isSameIgnoreDurability(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
+	@ModifyExpressionValue(method = "updatingUsingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isSame(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
 	public boolean port_lib$canContinueUsing(boolean original) {
 		if (useItem.getItem() instanceof ContinueUsingItem continueUsingItem) {
 			ItemStack to = this.getItemInHand(this.getUsedItemHand());

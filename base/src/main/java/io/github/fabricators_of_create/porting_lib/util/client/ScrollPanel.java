@@ -8,6 +8,8 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
+
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.renderer.GameRenderer;
 
@@ -17,12 +19,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.components.Widget;
 
 /**
  * Abstract scroll panel class.
  */
-public abstract class ScrollPanel extends AbstractContainerEventHandler implements Widget, NarratableEntry {
+public abstract class ScrollPanel extends AbstractContainerEventHandler implements Renderable, NarratableEntry {
 	private final Minecraft client;
 	protected final int width;
 	protected final int height;

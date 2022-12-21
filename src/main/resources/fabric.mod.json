@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "template",
+  "id": "porting_lib",
   "version": "${version}",
-  "name": "TEMPLATE",
-  "description": "TEMPLATE",
+  "name": "Porting Lib",
+  "description": "A collection of utilities for porting mods from Forge to Fabric.",
   "authors": [
     "The Create Fabric Team"
   ],
@@ -19,14 +19,7 @@
   },
   "custom": {
     "modmenu": {
-      "badges": [ "library" ],
-      "parent": {
-        "id": "porting_lib",
-        "name": "Porting Lib",
-        "description": "A collection of utilities for porting mods from Forge to Fabric.",
-        "icon": "assets/porting_lib/icon.png",
-        "badges": [ "library" ]
-      }
+      "badges": [ "library" ]
     }
   }
 }

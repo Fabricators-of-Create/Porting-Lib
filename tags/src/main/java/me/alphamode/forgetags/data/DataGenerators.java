@@ -6,10 +6,12 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 public class DataGenerators implements DataGeneratorEntrypoint {
 	@Override
 	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
-		fabricDataGenerator.addProvider(FluidTagProvider::new);
-		BlockTagProvider blockTagProvider = fabricDataGenerator.addProvider(BlockTagProvider::new);
-		fabricDataGenerator.addProvider(new ItemTagProvider(fabricDataGenerator, blockTagProvider));
-		fabricDataGenerator.addProvider(BiomeTagsProvider::new);
-		fabricDataGenerator.addProvider(EntityTagProvider::new);
+		FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
+		pack.addProvider(FluidTagProvider::new);
+		pack.addProvider(BlockTagProvider::new);
+		pack.addProvider(ItemTagProvider::new);
+		pack.addProvider(BiomeTagsProvider::new);
+		pack.addProvider(EntityTagProvider::new);
+		pack.addProvider(ItemTagLangProvider::new);
 	}
 }

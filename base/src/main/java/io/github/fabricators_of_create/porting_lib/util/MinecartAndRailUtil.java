@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.BaseRailBlockExtensions;
 import io.github.fabricators_of_create.porting_lib.mixin.accessors.common.accessor.AbstractMinecartAccessor;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
@@ -19,7 +19,7 @@ public class MinecartAndRailUtil {
 
 	// rails
 
-	public static final TagKey<Block> ACTIVATOR_RAILS = TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation("c", "rails/activator"));
+	public static final TagKey<Block> ACTIVATOR_RAILS = TagKey.create(Registries.BLOCK, new ResourceLocation("c", "rails/activator"));
 
 	public static boolean isActivatorRail(Block rail) {
 		return rail.builtInRegistryHolder().is(ACTIVATOR_RAILS);

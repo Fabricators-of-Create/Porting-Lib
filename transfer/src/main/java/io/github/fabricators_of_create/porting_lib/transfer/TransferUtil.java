@@ -123,13 +123,9 @@ public class TransferUtil implements ModInitializer {
 			level = be.getLevel();
 			pos = be.getBlockPos();
 		}
-		boolean libOnly = level == null || level.isClientSide();
-		if (libOnly) {
-			// on the client we only allow lib handling.
-			if (be instanceof SidedStorageBlockEntity t) {
-				return t.getItemStorage(side);
-			}
-			return null;
+		// on the client we only allow lib handling.
+		if (be instanceof SidedStorageBlockEntity t) {
+			return t.getItemStorage(side);
 		}
 		List<Storage<ItemVariant>> itemStorages = new ArrayList<>();
 		BlockState state = be == null ? level.getBlockState(pos) : be.getBlockState();
@@ -216,13 +212,8 @@ public class TransferUtil implements ModInitializer {
 			level = be.getLevel();
 			pos = be.getBlockPos();
 		}
-		boolean libOnly = level == null || level.isClientSide();
-		if (libOnly) {
-			// on the client we only allow lib handling.
-			if (be instanceof SidedStorageBlockEntity t) {
-				return t.getFluidStorage(side);
-			}
-			return null;
+		if (be instanceof SidedStorageBlockEntity t) {
+			return t.getFluidStorage(side); // only query if on client and client transfer allowed
 		}
 		List<Storage<FluidVariant>> fluidStorages = new ArrayList<>();
 		BlockState state = be == null ? level.getBlockState(pos) : be.getBlockState();
@@ -654,9 +645,6 @@ public class TransferUtil implements ModInitializer {
 		return level.port_lib$getFluidApiCache(pos);
 	}
 
-	/**
-	 * Initialize the ItemTransferable and FluidTransferable fallback callbacks. }
-	 */
 	@Override
 	public void onInitialize() {
 

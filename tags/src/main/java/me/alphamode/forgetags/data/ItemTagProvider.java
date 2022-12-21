@@ -1,14 +1,14 @@
 package me.alphamode.forgetags.data;
 
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-import org.jetbrains.annotations.Nullable;
-
 import me.alphamode.forgetags.Tags;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
-import net.minecraft.core.Registry;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
@@ -17,12 +17,12 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 
 public class ItemTagProvider extends FabricTagProvider.ItemTagProvider {
-	public ItemTagProvider(FabricDataGenerator dataGenerator, @Nullable BlockTagProvider blockTagProvider) {
-		super(dataGenerator, blockTagProvider);
+	public ItemTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+		super(output, registriesFuture);
 	}
 
 	@Override
-	protected void generateTags() {
+	protected void addTags(HolderLookup.Provider arg) {
 		copy(Tags.Blocks.BARRELS, Tags.Items.BARRELS);
 		copy(Tags.Blocks.BARRELS_WOODEN, Tags.Items.BARRELS_WOODEN);
 		tag(Tags.Items.BONES).add(Items.BONE);
@@ -168,7 +168,7 @@ public class ItemTagProvider extends FabricTagProvider.ItemTagProvider {
 		for (DyeColor color : DyeColor.values()) {
 			ResourceLocation key = new ResourceLocation("minecraft", pattern.replace("{color}", color.getName()));
 			TagKey<Item> tag = getForgeItemTag(prefix + color.getName());
-			Item item = Registry.ITEM.get(key);
+			Item item = BuiltInRegistries.ITEM.get(key);
 			if (item == null || item == Items.AIR)
 				throw new IllegalStateException("Unknown vanilla item: " + key.toString());
 			tag(tag).add(item);
@@ -190,7 +190,7 @@ public class ItemTagProvider extends FabricTagProvider.ItemTagProvider {
 	@SuppressWarnings("unchecked")
 	private TagKey<Block> getForgeBlockTag(String name) {
 		try {
-			name = name.toUpperCase(Locale.ENGLISH);
+			name = name.toUpperCase(Locale.ENGLISH).replace("_BLOCKS", "");;
 			return (TagKey<Block>) Tags.Blocks.class.getDeclaredField(name).get(null);
 		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
 			throw new IllegalStateException(Tags.Blocks.class.getName() + " is missing tag name: " + name);
@@ -200,14 +200,14 @@ public class ItemTagProvider extends FabricTagProvider.ItemTagProvider {
 	@SuppressWarnings("unchecked")
 	private TagKey<Item> getForgeItemTag(String name) {
 		try {
-			name = name.toUpperCase(Locale.ENGLISH);
+			name = name.toUpperCase(Locale.ENGLISH).replace("_BLOCKS", "");;
 			return (TagKey<Item>) Tags.Items.class.getDeclaredField(name).get(null);
 		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
 			throw new IllegalStateException(Tags.Items.class.getName() + " is missing tag name: " + name);
 		}
 	}
 
-	public FabricTagBuilder<Item> tag(TagKey<Item> tag) {
+	public FabricTagBuilder tag(TagKey<Item> tag) {
 		return getOrCreateTagBuilder(tag);
 	}
 }

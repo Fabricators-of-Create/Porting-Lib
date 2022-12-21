@@ -13,6 +13,6 @@ public interface ContinueUsingItem {
 	 * @return true to set the new stack to active and continue using it
 	 */
 	default boolean canContinueUsing(ItemStack oldStack, ItemStack newStack) {
-		return ItemStack.isSameIgnoreDurability(oldStack, newStack);
+		return ItemStack.isSame(oldStack, newStack);
 	}
 }

@@ -1,6 +1,8 @@
-package io.github.fabricators_of_create.porting_lib.model_loader.model;
+package io.github.fabricators_of_create.porting_lib.model;
 
-import io.github.fabricators_of_create.porting_lib.model_loader.model.data.ModelData;
+import org.jetbrains.annotations.Nullable;
+
+import io.github.fabricators_of_create.porting_lib.model.data.ModelData;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -9,8 +11,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.minecraft.world.level.material.FluidState;
-
-import org.jetbrains.annotations.Nullable;
 
 public class CustomDataBlockView implements RenderAttachedBlockView {
 

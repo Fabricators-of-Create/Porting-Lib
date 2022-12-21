@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_ingredients",
+  "version": "${version}",
+  "name": "Porting Lib Ingredients",
+  "description": "Provides custom ingredients.",
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.PortingLibIngredients"
+    ]
+  }
+}

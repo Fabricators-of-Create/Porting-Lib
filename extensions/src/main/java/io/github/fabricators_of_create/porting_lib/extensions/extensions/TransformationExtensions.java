@@ -1,10 +1,11 @@
 package io.github.fabricators_of_create.porting_lib.extensions.extensions;
 
+import org.joml.Matrix3f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix3f;
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -37,7 +38,7 @@ public interface TransformationExtensions {
 	}
 
 	default void transformNormal(Vector3f normal) {
-		normal.transform(getNormalMatrix());
+		normal.mul(getNormalMatrix());
 		normal.normalize();
 	}
 

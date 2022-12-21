@@ -137,7 +137,7 @@ public class ForgeSlider extends AbstractSliderButton {
 	}
 
 	private void setValueFromMouse(double mouseX) {
-		this.setSliderValue((mouseX - (this.x + 4)) / (this.width - 8));
+		this.setSliderValue((mouseX - (this.getX() + 4)) / (this.width - 8));
 	}
 
 	/**

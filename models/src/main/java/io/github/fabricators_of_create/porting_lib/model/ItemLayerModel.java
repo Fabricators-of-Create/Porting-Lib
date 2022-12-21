@@ -1,13 +1,22 @@
-package io.github.fabricators_of_create.porting_lib.model_loader.model;
+package io.github.fabricators_of_create.porting_lib.model;
+
+import java.util.Map;
+import java.util.function.Function;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.mojang.datafixers.util.Pair;
 
 import io.github.fabricators_of_create.porting_lib.model_loader.client.RenderTypeGroup;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.PortingLibRenderTypes;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.QuadTransformers;
+import io.github.fabricators_of_create.porting_lib.model_loader.model.SimpleModelState;
 import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.IGeometryBakingContext;
 import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.IGeometryLoader;
 import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.IUnbakedGeometry;
@@ -22,18 +31,9 @@ import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
 
 /**
  * Forge reimplementation of vanilla's {@link ItemModelGenerator}, i.e. builtin/generated models with some tweaks:
@@ -63,7 +63,7 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel> {
 	}
 
 	@Override
-	public BakedModel bake(IGeometryBakingContext context, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
+	public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
 		if (textures == null)
 			throw new IllegalStateException("Textures have not been initialized. Either pass them in through the constructor or call getMaterials(...) first.");
 
@@ -83,7 +83,7 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel> {
 		CompositeModel.Baked.Builder builder = CompositeModel.Baked.builder(context, particle, overrides, context.getTransforms());
 		for (int i = 0; i < textures.size(); i++) {
 			TextureAtlasSprite sprite = spriteGetter.apply(textures.get(i));
-			var unbaked = UnbakedGeometryHelper.createUnbakedItemElements(i, sprite);
+			var unbaked = UnbakedGeometryHelper.createUnbakedItemElements(i, sprite.contents());
 			var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> sprite, modelState, modelLocation);
 			if (emissiveLayers.contains(i)) QuadTransformers.settingMaxEmissivity().processInPlace(quads);
 			var renderTypeName = renderTypeNames.get(i);
@@ -92,20 +92,6 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel> {
 		}
 
 		return builder.build();
-	}
-
-	@Override
-	public Collection<Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
-		if (textures != null)
-			return textures;
-
-		ImmutableList.Builder<Material> builder = ImmutableList.builder();
-		if (context.hasMaterial("particle"))
-			builder.add(context.getMaterial("particle"));
-		for (int i = 0; context.hasMaterial("layer" + i); i++) {
-			builder.add(context.getMaterial("layer" + i));
-		}
-		return textures = builder.build();
 	}
 
 	public static final class Loader implements IGeometryLoader<ItemLayerModel> {

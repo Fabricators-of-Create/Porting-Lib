@@ -2,11 +2,12 @@ package io.github.fabricators_of_create.porting_lib.model_loader.model;
 
 import com.google.common.base.Preconditions;
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import java.util.Arrays;
 
@@ -45,7 +46,7 @@ public final class QuadTransformers {
 
 				Vector4f pos = new Vector4f(x, y, z, 1);
 				transform.transformPosition(pos);
-				pos.perspectiveDivide();
+				pos.div(pos.w);
 
 				vertices[offset] = Float.floatToRawIntBits(pos.x());
 				vertices[offset + 1] = Float.floatToRawIntBits(pos.y());

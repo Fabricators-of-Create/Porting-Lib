@@ -1,15 +1,15 @@
 package io.github.fabricators_of_create.porting_lib.client.armor;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.core.Registry;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.ItemLike;
+import java.util.HashMap;
+import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Objects;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
 
 @Environment(EnvType.CLIENT)
 public class ArmorRendererRegistry {
@@ -26,7 +26,7 @@ public class ArmorRendererRegistry {
 			Objects.requireNonNull(item.asItem(), "armor item is null");
 
 			if (RENDERERS.putIfAbsent(item.asItem(), renderer) != null) {
-				throw new IllegalArgumentException("Custom armor renderer already exists for " + Registry.ITEM.getId(item.asItem()));
+				throw new IllegalArgumentException("Custom armor renderer already exists for " + BuiltInRegistries.ITEM.getId(item.asItem()));
 			}
 		}
 	}

@@ -4,12 +4,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Vector3f;
-
 import io.github.fabricators_of_create.porting_lib.model_loader.model.IQuadTransformer;
 import io.github.fabricators_of_create.porting_lib.model_loader.util.client.VertexUtils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+
+import org.joml.Matrix3f;
+import org.joml.Vector3f;
 
 import java.nio.ByteBuffer;
 
@@ -53,7 +53,7 @@ public interface VertexConsumerExtension {
 		if (nx != 0 || ny != 0 || nz != 0)
 		{
 			generated.set(nx / 127f, ny / 127f, nz / 127f);
-			generated.transform(normalTransform);
+			generated.mul(normalTransform);
 		}
 	}
 }

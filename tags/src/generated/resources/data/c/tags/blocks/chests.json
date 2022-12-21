@@ -1,8 +1,8 @@
 {
   "replace": false,
   "values": [
-    "#c:chests/ender",
-    "#c:chests/trapped",
-    "#c:chests/wooden"
+    "#c:ender_chests",
+    "#c:trapped_chests",
+    "#c:wooden_chests"
   ]
 }

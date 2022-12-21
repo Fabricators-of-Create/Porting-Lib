@@ -5,7 +5,7 @@ sourceSets.main.resources {
 	srcDir 'src/generated/resources'
 }
 
-setupDatagen(project)
+setupDatagen(project, "forge_tags")
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN

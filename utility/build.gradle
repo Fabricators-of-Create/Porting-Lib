@@ -1,0 +1,10 @@
+archivesBaseName = "utility"
+version = getSubprojectVersion(project)
+
+moduleDependencies(project, [
+		"constants"
+])
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}

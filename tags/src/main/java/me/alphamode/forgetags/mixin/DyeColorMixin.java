@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import me.alphamode.forgetags.extensions.DyeExtension;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
@@ -26,7 +26,7 @@ public class DyeColorMixin implements DyeExtension {
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	public void addTag(String woolId, int id, int color, String mapColor, int fireworkColor, MaterialColor signColor, int j, int k, CallbackInfo ci) {
-		tag = TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation("c", name + "_dyes"));
+		tag = TagKey.create(Registries.ITEM, new ResourceLocation("c", name + "_dyes"));
 	}
 
 	@Override

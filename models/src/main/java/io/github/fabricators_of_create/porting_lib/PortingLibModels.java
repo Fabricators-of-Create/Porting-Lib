@@ -1,10 +1,10 @@
 package io.github.fabricators_of_create.porting_lib;
 
+import io.github.fabricators_of_create.porting_lib.model.CompositeModel;
+import io.github.fabricators_of_create.porting_lib.model.DynamicFluidContainerModel;
+import io.github.fabricators_of_create.porting_lib.model.ElementsModel;
+import io.github.fabricators_of_create.porting_lib.model.ItemLayerModel;
 import io.github.fabricators_of_create.porting_lib.model_loader.event.client.RegisterGeometryLoadersCallback;
-import io.github.fabricators_of_create.porting_lib.model_loader.model.CompositeModel;
-import io.github.fabricators_of_create.porting_lib.model_loader.model.DynamicFluidContainerModel;
-import io.github.fabricators_of_create.porting_lib.model_loader.model.ElementsModel;
-import io.github.fabricators_of_create.porting_lib.model_loader.model.ItemLayerModel;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.resources.ResourceLocation;
 

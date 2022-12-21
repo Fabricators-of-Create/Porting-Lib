@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#c:sand/colorless",
-    "#c:sand/red"
+    "#c:colorless_sand",
+    "#c:red_sand"
   ]
 }

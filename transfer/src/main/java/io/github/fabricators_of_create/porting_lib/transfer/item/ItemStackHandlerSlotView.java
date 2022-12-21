@@ -17,7 +17,11 @@ public class ItemStackHandlerSlotView extends SnapshotParticipant<ItemStack> imp
 	public ItemStackHandlerSlotView(ItemStackHandler handler, int index) {
 		this.handler = handler;
 		this.index = index;
-		this.stack = handler.stacks[index];
+		ItemStack stack = handler.stacks[index];
+		if (stack == null) { // FIXME: don't know how this is possible, temp fix
+			stack = ItemStack.EMPTY;
+		}
+		this.stack = stack;
 		this.variant = ItemVariant.of(stack);
 	}
 

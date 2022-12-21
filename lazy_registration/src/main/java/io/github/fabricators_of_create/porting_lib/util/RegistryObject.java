@@ -3,16 +3,16 @@ package io.github.fabricators_of_create.porting_lib.util;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.base.Suppliers;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("CanBeRecord")
 public final class RegistryObject<T> implements Supplier<T> {
@@ -54,19 +54,16 @@ public final class RegistryObject<T> implements Supplier<T> {
 	public Optional<Holder<T>> getHolder() {
 		if (this.holder == null && this.key != null && registryExists(this.key.registry())) {
 			ResourceLocation registryName = this.key.registry();
-			Registry<T> registry = (Registry<T>) Registry.REGISTRY.get(registryName);
-			if (registry == null)
-				registry = (Registry<T>) BuiltinRegistries.REGISTRY.get(registryName);
+			Registry<T> registry = (Registry<T>) BuiltInRegistries.REGISTRY.get(registryName);
 
 			if (registry != null)
-				this.holder = registry.getOrCreateHolder(this.key).result().get();
+				this.holder = registry.getHolder(this.key).orElse(null);
 		}
 
 		return Optional.ofNullable(this.holder);
 	}
 
 	private static boolean registryExists(ResourceLocation registryName) {
-		return Registry.REGISTRY.containsKey(registryName)
-				|| BuiltinRegistries.REGISTRY.containsKey(registryName);
+		return BuiltInRegistries.REGISTRY.containsKey(registryName);
 	}
 }

@@ -3,20 +3,19 @@ package io.github.fabricators_of_create.porting_lib.util;
 import java.util.Objects;
 import java.util.Optional;
 
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
-import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
-import net.minecraft.network.chat.Component;
-
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
-import net.minecraft.core.Registry;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
@@ -25,7 +24,7 @@ import net.minecraft.world.level.material.Fluid;
 public class FluidStack {
 	public static final Codec<FluidStack> CODEC = RecordCodecBuilder.create(
 			instance -> instance.group(
-					Registry.FLUID.byNameCodec().fieldOf("FluidName").forGetter(FluidStack::getFluid),
+					BuiltInRegistries.FLUID.byNameCodec().fieldOf("FluidName").forGetter(FluidStack::getFluid),
 					Codec.LONG.fieldOf("Amount").forGetter(FluidStack::getAmount),
 					CompoundTag.CODEC.optionalFieldOf("VariantTag", null).forGetter(fluidStack -> fluidStack.getType().copyNbt()),
 					CompoundTag.CODEC.optionalFieldOf("Tag").forGetter(stack -> Optional.ofNullable(stack.getTag()))
@@ -173,7 +172,7 @@ public class FluidStack {
 	public static FluidStack loadFluidStackFromNBT(CompoundTag tag) {
 		FluidStack stack;
 		if (tag.contains("FluidName")) { // legacy forge loading
-			Fluid fluid = Registry.FLUID.get(new ResourceLocation(tag.getString("FluidName")));
+			Fluid fluid = BuiltInRegistries.FLUID.get(new ResourceLocation(tag.getString("FluidName")));
 			int amount = tag.getInt("Amount");
 			if (tag.contains("Tag")) {
 				stack = new FluidStack(fluid, amount, tag.getCompound("Tag"));

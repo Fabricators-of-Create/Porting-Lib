@@ -7,7 +7,7 @@ import io.github.fabricators_of_create.porting_lib.mixin.accessors.common.access
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,7 +31,7 @@ public class NetworkUtil {
 		extraData.readerIndex(0); // reset to beginning in case modders read for whatever reason
 		FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
 		AbstractContainerMenu menu = factory.createMenu(openContainerId, player.getInventory(), player);
-		buf.writeVarInt(Registry.MENU.getId(menu.getType()));
+		buf.writeVarInt(BuiltInRegistries.MENU.getId(menu.getType()));
 		buf.writeVarInt(openContainerId);
 		buf.writeComponent(factory.getDisplayName());
 		buf.writeVarInt(extraData.readableBytes());

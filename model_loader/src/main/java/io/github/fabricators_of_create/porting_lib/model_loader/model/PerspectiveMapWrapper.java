@@ -3,12 +3,15 @@ package io.github.fabricators_of_create.porting_lib.model_loader.model;
 import java.util.EnumMap;
 import java.util.List;
 
+import net.minecraftforge.client.model.generators.TransformationHelper;
+
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Transformation;
 
 import io.github.fabricators_of_create.porting_lib.model_loader.render.TransformTypeDependentItemBakedModel;
-import io.github.fabricators_of_create.porting_lib.model_loader.util.TransformationHelper;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -21,8 +24,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-
-import org.jetbrains.annotations.Nullable;
 
 public class PerspectiveMapWrapper implements BakedModel, TransformTypeDependentItemBakedModel {
 	private final BakedModel parent;

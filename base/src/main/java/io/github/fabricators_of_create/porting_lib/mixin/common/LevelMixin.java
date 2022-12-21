@@ -191,7 +191,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	}
 
 	@Inject(
-			method = "explode(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/level/ExplosionDamageCalculator;DDDFZLnet/minecraft/world/level/Explosion$BlockInteraction;)Lnet/minecraft/world/level/Explosion;",
+			method = "explode(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/level/ExplosionDamageCalculator;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;Z)Lnet/minecraft/world/level/Explosion;",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/Explosion;explode()V",
@@ -199,8 +199,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	@SuppressWarnings("ALL")
-	public void port_lib$onStartExplosion(@Nullable Entity exploder, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator context, double x, double y, double z, float size, boolean causesFire, Explosion.BlockInteraction mode, CallbackInfoReturnable<Explosion> cir, Explosion explosion) {
+	public void port_lib$onStartExplosion(Entity entity, DamageSource damageSource, ExplosionDamageCalculator explosionDamageCalculator, double x, double y, double z, float radius, boolean causesFire, Level.ExplosionInteraction explosionInteraction, boolean spawnParticles, CallbackInfoReturnable<Explosion> cir, Explosion.BlockInteraction blockInteraction, Explosion explosion) {
 		if (ExplosionEvents.START.invoker().onExplosionStart((Level) (Object) this, explosion)) cir.setReturnValue(explosion);
 	}
 

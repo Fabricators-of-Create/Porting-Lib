@@ -30,7 +30,7 @@ public abstract class MushroomCowMixin implements IShearable {
 	public abstract void shear(SoundSource category);
 
 	@Shadow
-	public abstract MushroomCow.MushroomType getMushroomType();
+	public abstract MushroomCow.MushroomType getVariant();
 
 	@Unique
 	@Override
@@ -44,7 +44,7 @@ public abstract class MushroomCowMixin implements IShearable {
 		shear(player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS);
 		List<ItemStack> items = new ArrayList<>();
 		for (int i = 0; i < 5; ++i) {
-			items.add(new ItemStack(this.getMushroomType().getBlockState().getBlock()));
+			items.add(new ItemStack(this.getVariant().getBlockState().getBlock()));
 		}
 		return items;
 	}

@@ -5,6 +5,9 @@ import java.util.function.Supplier;
 
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.tag.convention.v1.ConventionalBlockTags;
+import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 
 import org.jetbrains.annotations.Nullable;
@@ -33,66 +36,66 @@ public class Tags implements ModInitializer {
 		}
 
 		public static final TagKey<Block> BARRELS = tag("barrels");
-		public static final TagKey<Block> BARRELS_WOODEN = tag("barrels/wooden");
-		public static final TagKey<Block> CHESTS = tag("chests");
-		public static final TagKey<Block> CHESTS_ENDER = tag("chests/ender");
-		public static final TagKey<Block> CHESTS_TRAPPED = tag("chests/trapped");
-		public static final TagKey<Block> CHESTS_WOODEN = tag("chests/wooden");
+		public static final TagKey<Block> BARRELS_WOODEN = tag("wooden_barrels");
+		public static final TagKey<Block> CHESTS = ConventionalBlockTags.CHESTS;
+		public static final TagKey<Block> CHESTS_ENDER = tag("ender_chests");
+		public static final TagKey<Block> CHESTS_TRAPPED = tag("trapped_chests");
+		public static final TagKey<Block> CHESTS_WOODEN = tag("wooden_chests");
 		public static final TagKey<Block> COBBLESTONE = tag("cobblestone");
-		public static final TagKey<Block> COBBLESTONE_NORMAL = tag("cobblestone/normal");
-		public static final TagKey<Block> COBBLESTONE_INFESTED = tag("cobblestone/infested");
-		public static final TagKey<Block> COBBLESTONE_MOSSY = tag("cobblestone/mossy");
-		public static final TagKey<Block> COBBLESTONE_DEEPSLATE = tag("cobblestone/deepslate");
+		public static final TagKey<Block> COBBLESTONE_NORMAL = tag("normal_cobblestone");
+		public static final TagKey<Block> COBBLESTONE_INFESTED = tag("infested_cobblestone");
+		public static final TagKey<Block> COBBLESTONE_MOSSY = tag("mossy_cobblestone");
+		public static final TagKey<Block> COBBLESTONE_DEEPSLATE = tag("deepslate_cobblestone");
 		public static final TagKey<Block> END_STONES = tag("end_stones");
 		public static final TagKey<Block> ENDERMAN_PLACE_ON_BLACKLIST = tag("enderman_place_on_blacklist");
 		public static final TagKey<Block> FENCE_GATES = tag("fence_gates");
-		public static final TagKey<Block> FENCE_GATES_WOODEN = tag("fence_gates/wooden");
+		public static final TagKey<Block> FENCE_GATES_WOODEN = tag("wooden_fence_gates");
 		public static final TagKey<Block> FENCES = tag("fences");
-		public static final TagKey<Block> FENCES_NETHER_BRICK = tag("fences/nether_brick");
-		public static final TagKey<Block> FENCES_WOODEN = tag("fences/wooden");
+		public static final TagKey<Block> FENCES_NETHER_BRICK = tag("nether_brick_fences");
+		public static final TagKey<Block> FENCES_WOODEN = tag("wooden_fences");
 
-		public static final TagKey<Block> GLASS = tag("glass");
-		public static final TagKey<Block> GLASS_BLACK = tag("glass/black");
-		public static final TagKey<Block> GLASS_BLUE = tag("glass/blue");
-		public static final TagKey<Block> GLASS_BROWN = tag("glass/brown");
-		public static final TagKey<Block> GLASS_COLORLESS = tag("glass/colorless");
-		public static final TagKey<Block> GLASS_CYAN = tag("glass/cyan");
-		public static final TagKey<Block> GLASS_GRAY = tag("glass/gray");
-		public static final TagKey<Block> GLASS_GREEN = tag("glass/green");
-		public static final TagKey<Block> GLASS_LIGHT_BLUE = tag("glass/light_blue");
-		public static final TagKey<Block> GLASS_LIGHT_GRAY = tag("glass/light_gray");
-		public static final TagKey<Block> GLASS_LIME = tag("glass/lime");
-		public static final TagKey<Block> GLASS_MAGENTA = tag("glass/magenta");
-		public static final TagKey<Block> GLASS_ORANGE = tag("glass/orange");
-		public static final TagKey<Block> GLASS_PINK = tag("glass/pink");
-		public static final TagKey<Block> GLASS_PURPLE = tag("glass/purple");
-		public static final TagKey<Block> GLASS_RED = tag("glass/red");
+		public static final TagKey<Block> GLASS = ConventionalBlockTags.GLASS_BLOCKS;
+		public static final TagKey<Block> GLASS_BLACK = tag("black_glass");
+		public static final TagKey<Block> GLASS_BLUE = tag("blue_glass");
+		public static final TagKey<Block> GLASS_BROWN = tag("brown_glass");
+		public static final TagKey<Block> GLASS_COLORLESS = tag("colorless_glass");
+		public static final TagKey<Block> GLASS_CYAN = tag("cyan_glass");
+		public static final TagKey<Block> GLASS_GRAY = tag("gray_glass");
+		public static final TagKey<Block> GLASS_GREEN = tag("green_glass");
+		public static final TagKey<Block> GLASS_LIGHT_BLUE = tag("light_blue_glass");
+		public static final TagKey<Block> GLASS_LIGHT_GRAY = tag("light_gray_glass");
+		public static final TagKey<Block> GLASS_LIME = tag("lime_glass");
+		public static final TagKey<Block> GLASS_MAGENTA = tag("magenta_glass");
+		public static final TagKey<Block> GLASS_ORANGE = tag("orange_glass");
+		public static final TagKey<Block> GLASS_PINK = tag("pink_glass");
+		public static final TagKey<Block> GLASS_PURPLE = tag("purple_glass");
+		public static final TagKey<Block> GLASS_RED = tag("red_glass");
 		/**
 		 * Glass which is made from sand and only minor additional ingredients like dyes
 		 */
-		public static final TagKey<Block> GLASS_SILICA = tag("glass/silica");
-		public static final TagKey<Block> GLASS_TINTED = tag("glass/tinted");
-		public static final TagKey<Block> GLASS_WHITE = tag("glass/white");
-		public static final TagKey<Block> GLASS_YELLOW = tag("glass/yellow");
+		public static final TagKey<Block> GLASS_SILICA = tag("silica_glass");
+		public static final TagKey<Block> GLASS_TINTED = tag("tinted_glass");
+		public static final TagKey<Block> GLASS_WHITE = tag("white_glass");
+		public static final TagKey<Block> GLASS_YELLOW = tag("yellow_glass");
 
-		public static final TagKey<Block> GLASS_PANES = tag("glass_panes");
-		public static final TagKey<Block> GLASS_PANES_BLACK = tag("glass_panes/black");
-		public static final TagKey<Block> GLASS_PANES_BLUE = tag("glass_panes/blue");
-		public static final TagKey<Block> GLASS_PANES_BROWN = tag("glass_panes/brown");
-		public static final TagKey<Block> GLASS_PANES_COLORLESS = tag("glass_panes/colorless");
-		public static final TagKey<Block> GLASS_PANES_CYAN = tag("glass_panes/cyan");
-		public static final TagKey<Block> GLASS_PANES_GRAY = tag("glass_panes/gray");
-		public static final TagKey<Block> GLASS_PANES_GREEN = tag("glass_panes/green");
-		public static final TagKey<Block> GLASS_PANES_LIGHT_BLUE = tag("glass_panes/light_blue");
-		public static final TagKey<Block> GLASS_PANES_LIGHT_GRAY = tag("glass_panes/light_gray");
-		public static final TagKey<Block> GLASS_PANES_LIME = tag("glass_panes/lime");
-		public static final TagKey<Block> GLASS_PANES_MAGENTA = tag("glass_panes/magenta");
-		public static final TagKey<Block> GLASS_PANES_ORANGE = tag("glass_panes/orange");
-		public static final TagKey<Block> GLASS_PANES_PINK = tag("glass_panes/pink");
-		public static final TagKey<Block> GLASS_PANES_PURPLE = tag("glass_panes/purple");
-		public static final TagKey<Block> GLASS_PANES_RED = tag("glass_panes/red");
-		public static final TagKey<Block> GLASS_PANES_WHITE = tag("glass_panes/white");
-		public static final TagKey<Block> GLASS_PANES_YELLOW = tag("glass_panes/yellow");
+		public static final TagKey<Block> GLASS_PANES = ConventionalBlockTags.GLASS_PANES;
+		public static final TagKey<Block> GLASS_PANES_BLACK = tag("black_glass_panes");
+		public static final TagKey<Block> GLASS_PANES_BLUE = tag("blue_glass_panes");
+		public static final TagKey<Block> GLASS_PANES_BROWN = tag("brown_glass_panes");
+		public static final TagKey<Block> GLASS_PANES_COLORLESS = tag("colorless_glass_panes");
+		public static final TagKey<Block> GLASS_PANES_CYAN = tag("cyan_glass_panes");
+		public static final TagKey<Block> GLASS_PANES_GRAY = tag("gray_glass_panes");
+		public static final TagKey<Block> GLASS_PANES_GREEN = tag("green_glass_panes");
+		public static final TagKey<Block> GLASS_PANES_LIGHT_BLUE = tag("light_blue_glass_panes");
+		public static final TagKey<Block> GLASS_PANES_LIGHT_GRAY = tag("light_gray_glass_panes");
+		public static final TagKey<Block> GLASS_PANES_LIME = tag("lime_glass_panes");
+		public static final TagKey<Block> GLASS_PANES_MAGENTA = tag("magenta_glass_panes");
+		public static final TagKey<Block> GLASS_PANES_ORANGE = tag("orange_glass_panes");
+		public static final TagKey<Block> GLASS_PANES_PINK = tag("pink_glass_panes");
+		public static final TagKey<Block> GLASS_PANES_PURPLE = tag("purple_glass_panes");
+		public static final TagKey<Block> GLASS_PANES_RED = tag("red_glass_panes");
+		public static final TagKey<Block> GLASS_PANES_WHITE = tag("white_glass_panes");
+		public static final TagKey<Block> GLASS_PANES_YELLOW = tag("yellow_glass_panes");
 
 		public static final TagKey<Block> GRAVEL = tag("gravel");
 		public static final TagKey<Block> NETHERRACK = tag("netherrack");
@@ -122,16 +125,16 @@ public class Tags implements ModInitializer {
 		 */
 		public static final TagKey<Block> ORE_RATES_SPARSE = tag("ore_rates/sparse");
 		public static final TagKey<Block> ORES = tag("ores");
-		public static final TagKey<Block> ORES_COAL = tag("ores/coal");
-		public static final TagKey<Block> ORES_COPPER = tag("ores/copper");
-		public static final TagKey<Block> ORES_DIAMOND = tag("ores/diamond");
-		public static final TagKey<Block> ORES_EMERALD = tag("ores/emerald");
-		public static final TagKey<Block> ORES_GOLD = tag("ores/gold");
-		public static final TagKey<Block> ORES_IRON = tag("ores/iron");
-		public static final TagKey<Block> ORES_LAPIS = tag("ores/lapis");
-		public static final TagKey<Block> ORES_NETHERITE_SCRAP = tag("ores/netherite_scrap");
-		public static final TagKey<Block> ORES_QUARTZ = tag("ores/quartz");
-		public static final TagKey<Block> ORES_REDSTONE = tag("ores/redstone");
+		public static final TagKey<Block> ORES_COAL = tag("coal_ores");
+		public static final TagKey<Block> ORES_COPPER = tag("copper_ores");
+		public static final TagKey<Block> ORES_DIAMOND = tag("diamond_ores");
+		public static final TagKey<Block> ORES_EMERALD = tag("emerald_ores");
+		public static final TagKey<Block> ORES_GOLD = tag("gold_ores");
+		public static final TagKey<Block> ORES_IRON = tag("iron_ores");
+		public static final TagKey<Block> ORES_LAPIS = tag("lapis_ores");
+		public static final TagKey<Block> ORES_NETHERITE_SCRAP = tag("netherite_scrap_ores");
+		public static final TagKey<Block> ORES_QUARTZ = ConventionalBlockTags.QUARTZ_ORES;
+		public static final TagKey<Block> ORES_REDSTONE = tag("redstone_ores");
 		/**
 		 * Ores in deepslate (or in equivalent blocks in the tag {@link #ORE_BEARING_GROUND_DEEPSLATE}) which could logically use deepslate as recipe input or output
 		 */
@@ -146,35 +149,35 @@ public class Tags implements ModInitializer {
 		public static final TagKey<Block> ORES_IN_GROUND_STONE = tag("ores_in_ground/stone");
 
 		public static final TagKey<Block> SAND = tag("sand");
-		public static final TagKey<Block> SAND_COLORLESS = tag("sand/colorless");
-		public static final TagKey<Block> SAND_RED = tag("sand/red");
+		public static final TagKey<Block> SAND_COLORLESS = tag("colorless_sand");
+		public static final TagKey<Block> SAND_RED = tag("red_sand");
 
 		public static final TagKey<Block> SANDSTONE = tag("sandstone");
 		public static final TagKey<Block> STAINED_GLASS = tag("stained_glass");
 		public static final TagKey<Block> STAINED_GLASS_PANES = tag("stained_glass_panes");
 		public static final TagKey<Block> STONE = tag("stone");
 		public static final TagKey<Block> STORAGE_BLOCKS = tag("storage_blocks");
-		public static final TagKey<Block> STORAGE_BLOCKS_AMETHYST = tag("storage_blocks/amethyst");
-		public static final TagKey<Block> STORAGE_BLOCKS_COAL = tag("storage_blocks/coal");
-		public static final TagKey<Block> STORAGE_BLOCKS_COPPER = tag("storage_blocks/copper");
-		public static final TagKey<Block> STORAGE_BLOCKS_DIAMOND = tag("storage_blocks/diamond");
-		public static final TagKey<Block> STORAGE_BLOCKS_EMERALD = tag("storage_blocks/emerald");
-		public static final TagKey<Block> STORAGE_BLOCKS_GOLD = tag("storage_blocks/gold");
-		public static final TagKey<Block> STORAGE_BLOCKS_IRON = tag("storage_blocks/iron");
-		public static final TagKey<Block> STORAGE_BLOCKS_LAPIS = tag("storage_blocks/lapis");
-		public static final TagKey<Block> STORAGE_BLOCKS_NETHERITE = tag("storage_blocks/netherite");
-		public static final TagKey<Block> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
-		public static final TagKey<Block> STORAGE_BLOCKS_RAW_COPPER = tag("storage_blocks/raw_copper");
-		public static final TagKey<Block> STORAGE_BLOCKS_RAW_GOLD = tag("storage_blocks/raw_gold");
-		public static final TagKey<Block> STORAGE_BLOCKS_RAW_IRON = tag("storage_blocks/raw_iron");
-		public static final TagKey<Block> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
+		public static final TagKey<Block> STORAGE_BLOCKS_AMETHYST = tag("amethyst_blocks");
+		public static final TagKey<Block> STORAGE_BLOCKS_COAL = tag("coal_blocks");
+		public static final TagKey<Block> STORAGE_BLOCKS_COPPER = tag("copper_blocks");
+		public static final TagKey<Block> STORAGE_BLOCKS_DIAMOND = tag("diamond_blocks");
+		public static final TagKey<Block> STORAGE_BLOCKS_EMERALD = tag("emerald_blocks");
+		public static final TagKey<Block> STORAGE_BLOCKS_GOLD = tag("gold_blocks");
+		public static final TagKey<Block> STORAGE_BLOCKS_IRON = tag("iron_blocks");
+		public static final TagKey<Block> STORAGE_BLOCKS_LAPIS = tag("lapis_blocks");
+		public static final TagKey<Block> STORAGE_BLOCKS_NETHERITE = tag("netherite_blocks");
+		public static final TagKey<Block> STORAGE_BLOCKS_QUARTZ = tag("quartz_blocks");
+		public static final TagKey<Block> STORAGE_BLOCKS_RAW_COPPER = tag("raw_copper_blocks");
+		public static final TagKey<Block> STORAGE_BLOCKS_RAW_GOLD = tag("raw_gold_blocks");
+		public static final TagKey<Block> STORAGE_BLOCKS_RAW_IRON = tag("raw_iron_blocks");
+		public static final TagKey<Block> STORAGE_BLOCKS_REDSTONE = tag("redstone_blocks");
 
 		public static final TagKey<Block> NEEDS_WOOD_TOOL = tag("needs_wood_tool");
 		public static final TagKey<Block> NEEDS_GOLD_TOOL = tag("needs_gold_tool");
 		public static final TagKey<Block> NEEDS_NETHERITE_TOOL = tag("needs_netherite_tool");
 
 		private static TagKey<Block> tag(String name) {
-			return TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation("c", name));
+			return TagKey.create(Registries.BLOCK, new ResourceLocation("c", name));
 		}
 	}
 
@@ -184,7 +187,7 @@ public class Tags implements ModInitializer {
 		public static final TagKey<EntityType<?>> BOSSES = tag("bosses");
 
 		private static TagKey<EntityType<?>> tag(String name) {
-			return TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation("c", name));
+			return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("c", name));
 		}
 	}
 
@@ -193,18 +196,18 @@ public class Tags implements ModInitializer {
 		}
 
 		public static final TagKey<Item> BARRELS = tag("barrels");
-		public static final TagKey<Item> BARRELS_WOODEN = tag("barrels/wooden");
+		public static final TagKey<Item> BARRELS_WOODEN = tag("wooden_barrels");
 		public static final TagKey<Item> BONES = tag("bones");
 		public static final TagKey<Item> BOOKSHELVES = tag("bookshelves");
 		public static final TagKey<Item> CHESTS = tag("chests");
-		public static final TagKey<Item> CHESTS_ENDER = tag("chests/ender");
-		public static final TagKey<Item> CHESTS_TRAPPED = tag("chests/trapped");
-		public static final TagKey<Item> CHESTS_WOODEN = tag("chests/wooden");
+		public static final TagKey<Item> CHESTS_ENDER = tag("ender_chests");
+		public static final TagKey<Item> CHESTS_TRAPPED = tag("trapped_chests");
+		public static final TagKey<Item> CHESTS_WOODEN = tag("wooden_chests");
 		public static final TagKey<Item> COBBLESTONE = tag("cobblestone");
-		public static final TagKey<Item> COBBLESTONE_NORMAL = tag("cobblestone/normal");
-		public static final TagKey<Item> COBBLESTONE_INFESTED = tag("cobblestone/infested");
-		public static final TagKey<Item> COBBLESTONE_MOSSY = tag("cobblestone/mossy");
-		public static final TagKey<Item> COBBLESTONE_DEEPSLATE = tag("cobblestone/deepslate");
+		public static final TagKey<Item> COBBLESTONE_NORMAL = tag("normal_cobblestone");
+		public static final TagKey<Item> COBBLESTONE_INFESTED = tag("infested_cobblestone");
+		public static final TagKey<Item> COBBLESTONE_MOSSY = tag("mossy_cobblestone");
+		public static final TagKey<Item> COBBLESTONE_DEEPSLATE = tag("deepslate_cobblestone");
 		public static final TagKey<Item> CROPS = tag("crops");
 		public static final TagKey<Item> CROPS_BEETROOT = tag("crops/beetroot");
 		public static final TagKey<Item> CROPS_CARROT = tag("crops/carrot");
@@ -243,78 +246,78 @@ public class Tags implements ModInitializer {
 		public static final TagKey<Item> ENDER_PEARLS = tag("ender_pearls");
 		public static final TagKey<Item> FEATHERS = tag("feathers");
 		public static final TagKey<Item> FENCE_GATES = tag("fence_gates");
-		public static final TagKey<Item> FENCE_GATES_WOODEN = tag("fence_gates/wooden");
+		public static final TagKey<Item> FENCE_GATES_WOODEN = tag("wooden_fence_gates");
 		public static final TagKey<Item> FENCES = tag("fences");
-		public static final TagKey<Item> FENCES_NETHER_BRICK = tag("fences/nether_brick");
-		public static final TagKey<Item> FENCES_WOODEN = tag("fences/wooden");
+		public static final TagKey<Item> FENCES_NETHER_BRICK = tag("nether_brick_fences");
+		public static final TagKey<Item> FENCES_WOODEN = tag("wooden_fences");
 		public static final TagKey<Item> GEMS = tag("gems");
-		public static final TagKey<Item> GEMS_DIAMOND = tag("gems/diamond");
-		public static final TagKey<Item> GEMS_EMERALD = tag("gems/emerald");
-		public static final TagKey<Item> GEMS_AMETHYST = tag("gems/amethyst");
-		public static final TagKey<Item> GEMS_LAPIS = tag("gems/lapis");
-		public static final TagKey<Item> GEMS_PRISMARINE = tag("gems/prismarine");
-		public static final TagKey<Item> GEMS_QUARTZ = tag("gems/quartz");
+		public static final TagKey<Item> GEMS_DIAMOND = ConventionalItemTags.DIAMONDS;
+		public static final TagKey<Item> GEMS_EMERALD = ConventionalItemTags.EMERALDS;
+		public static final TagKey<Item> GEMS_AMETHYST = tag("amethyst");
+		public static final TagKey<Item> GEMS_LAPIS = ConventionalItemTags.LAPIS;
+		public static final TagKey<Item> GEMS_PRISMARINE = tag("prismarine");
+		public static final TagKey<Item> GEMS_QUARTZ = ConventionalItemTags.QUARTZ;
 
-		public static final TagKey<Item> GLASS = tag("glass");
-		public static final TagKey<Item> GLASS_BLACK = tag("glass/black");
-		public static final TagKey<Item> GLASS_BLUE = tag("glass/blue");
-		public static final TagKey<Item> GLASS_BROWN = tag("glass/brown");
-		public static final TagKey<Item> GLASS_COLORLESS = tag("glass/colorless");
-		public static final TagKey<Item> GLASS_CYAN = tag("glass/cyan");
-		public static final TagKey<Item> GLASS_GRAY = tag("glass/gray");
-		public static final TagKey<Item> GLASS_GREEN = tag("glass/green");
-		public static final TagKey<Item> GLASS_LIGHT_BLUE = tag("glass/light_blue");
-		public static final TagKey<Item> GLASS_LIGHT_GRAY = tag("glass/light_gray");
-		public static final TagKey<Item> GLASS_LIME = tag("glass/lime");
-		public static final TagKey<Item> GLASS_MAGENTA = tag("glass/magenta");
-		public static final TagKey<Item> GLASS_ORANGE = tag("glass/orange");
-		public static final TagKey<Item> GLASS_PINK = tag("glass/pink");
-		public static final TagKey<Item> GLASS_PURPLE = tag("glass/purple");
-		public static final TagKey<Item> GLASS_RED = tag("glass/red");
+		public static final TagKey<Item> GLASS = ConventionalItemTags.GLASS_BLOCKS;
+		public static final TagKey<Item> GLASS_BLACK = tag("black_glass");
+		public static final TagKey<Item> GLASS_BLUE = tag("blue_glass");
+		public static final TagKey<Item> GLASS_BROWN = tag("brown_glass");
+		public static final TagKey<Item> GLASS_COLORLESS = tag("colorless_glass");
+		public static final TagKey<Item> GLASS_CYAN = tag("cyan_glass");
+		public static final TagKey<Item> GLASS_GRAY = tag("gray_glass");
+		public static final TagKey<Item> GLASS_GREEN = tag("green_glass");
+		public static final TagKey<Item> GLASS_LIGHT_BLUE = tag("light_blue_glass");
+		public static final TagKey<Item> GLASS_LIGHT_GRAY = tag("light_gray_glass");
+		public static final TagKey<Item> GLASS_LIME = tag("lime_glass");
+		public static final TagKey<Item> GLASS_MAGENTA = tag("magenta_glass");
+		public static final TagKey<Item> GLASS_ORANGE = tag("orange_glass");
+		public static final TagKey<Item> GLASS_PINK = tag("pink_glass");
+		public static final TagKey<Item> GLASS_PURPLE = tag("purple_glass");
+		public static final TagKey<Item> GLASS_RED = tag("red_glass");
 		/**
 		 * Glass which is made from sand and only minor additional ingredients like dyes
 		 */
-		public static final TagKey<Item> GLASS_SILICA = tag("glass/silica");
-		public static final TagKey<Item> GLASS_TINTED = tag("glass/tinted");
-		public static final TagKey<Item> GLASS_WHITE = tag("glass/white");
-		public static final TagKey<Item> GLASS_YELLOW = tag("glass/yellow");
+		public static final TagKey<Item> GLASS_SILICA = tag("silica_glass");
+		public static final TagKey<Item> GLASS_TINTED = tag("tinted_glass");
+		public static final TagKey<Item> GLASS_WHITE = tag("white_glass");
+		public static final TagKey<Item> GLASS_YELLOW = tag("yellow_glass");
 
-		public static final TagKey<Item> GLASS_PANES = tag("glass_panes");
-		public static final TagKey<Item> GLASS_PANES_BLACK = tag("glass_panes/black");
-		public static final TagKey<Item> GLASS_PANES_BLUE = tag("glass_panes/blue");
-		public static final TagKey<Item> GLASS_PANES_BROWN = tag("glass_panes/brown");
-		public static final TagKey<Item> GLASS_PANES_COLORLESS = tag("glass_panes/colorless");
-		public static final TagKey<Item> GLASS_PANES_CYAN = tag("glass_panes/cyan");
-		public static final TagKey<Item> GLASS_PANES_GRAY = tag("glass_panes/gray");
-		public static final TagKey<Item> GLASS_PANES_GREEN = tag("glass_panes/green");
-		public static final TagKey<Item> GLASS_PANES_LIGHT_BLUE = tag("glass_panes/light_blue");
-		public static final TagKey<Item> GLASS_PANES_LIGHT_GRAY = tag("glass_panes/light_gray");
-		public static final TagKey<Item> GLASS_PANES_LIME = tag("glass_panes/lime");
-		public static final TagKey<Item> GLASS_PANES_MAGENTA = tag("glass_panes/magenta");
-		public static final TagKey<Item> GLASS_PANES_ORANGE = tag("glass_panes/orange");
-		public static final TagKey<Item> GLASS_PANES_PINK = tag("glass_panes/pink");
-		public static final TagKey<Item> GLASS_PANES_PURPLE = tag("glass_panes/purple");
-		public static final TagKey<Item> GLASS_PANES_RED = tag("glass_panes/red");
-		public static final TagKey<Item> GLASS_PANES_WHITE = tag("glass_panes/white");
-		public static final TagKey<Item> GLASS_PANES_YELLOW = tag("glass_panes/yellow");
+		public static final TagKey<Item> GLASS_PANES = ConventionalItemTags.GLASS_PANES;
+		public static final TagKey<Item> GLASS_PANES_BLACK = tag("black_glass_panes");
+		public static final TagKey<Item> GLASS_PANES_BLUE = tag("blue_glass_panes");
+		public static final TagKey<Item> GLASS_PANES_BROWN = tag("brown_glass_panes");
+		public static final TagKey<Item> GLASS_PANES_COLORLESS = tag("colorless_glass_panes");
+		public static final TagKey<Item> GLASS_PANES_CYAN = tag("cyan_glass_panes");
+		public static final TagKey<Item> GLASS_PANES_GRAY = tag("gray_glass_panes");
+		public static final TagKey<Item> GLASS_PANES_GREEN = tag("green_glass_panes");
+		public static final TagKey<Item> GLASS_PANES_LIGHT_BLUE = tag("light_blue_glass_panes");
+		public static final TagKey<Item> GLASS_PANES_LIGHT_GRAY = tag("light_gray_glass_panes");
+		public static final TagKey<Item> GLASS_PANES_LIME = tag("lime_glass_panes");
+		public static final TagKey<Item> GLASS_PANES_MAGENTA = tag("magenta_glass_panes");
+		public static final TagKey<Item> GLASS_PANES_ORANGE = tag("orange_glass_panes");
+		public static final TagKey<Item> GLASS_PANES_PINK = tag("pink_glass_panes");
+		public static final TagKey<Item> GLASS_PANES_PURPLE = tag("purple_glass_panes");
+		public static final TagKey<Item> GLASS_PANES_RED = tag("red_glass_panes");
+		public static final TagKey<Item> GLASS_PANES_WHITE = tag("white_glass_panes");
+		public static final TagKey<Item> GLASS_PANES_YELLOW = tag("yellow_glass_panes");
 
 		public static final TagKey<Item> GRAVEL = tag("gravel");
 		public static final TagKey<Item> GUNPOWDER = tag("gunpowder");
 		public static final TagKey<Item> HEADS = tag("heads");
 		public static final TagKey<Item> INGOTS = tag("ingots");
-		public static final TagKey<Item> INGOTS_BRICK = tag("ingots/brick");
-		public static final TagKey<Item> INGOTS_COPPER = tag("ingots/copper");
-		public static final TagKey<Item> INGOTS_GOLD = tag("ingots/gold");
-		public static final TagKey<Item> INGOTS_IRON = tag("ingots/iron");
-		public static final TagKey<Item> INGOTS_NETHERITE = tag("ingots/netherite");
-		public static final TagKey<Item> INGOTS_NETHER_BRICK = tag("ingots/nether_brick");
+		public static final TagKey<Item> INGOTS_BRICK = tag("brick_ingots");
+		public static final TagKey<Item> INGOTS_COPPER = tag("copper_ingots");
+		public static final TagKey<Item> INGOTS_GOLD = tag("gold_ingots");
+		public static final TagKey<Item> INGOTS_IRON = ConventionalItemTags.IRON_INGOTS;
+		public static final TagKey<Item> INGOTS_NETHERITE = ConventionalItemTags.NETHERITE_INGOTS;
+		public static final TagKey<Item> INGOTS_NETHER_BRICK = tag("nether_brick_ingots");
 		public static final TagKey<Item> LEATHER = tag("leather");
 		public static final TagKey<Item> MUSHROOMS = tag("mushrooms");
 		public static final TagKey<Item> NETHER_STARS = tag("nether_stars");
 		public static final TagKey<Item> NETHERRACK = tag("netherrack");
 		public static final TagKey<Item> NUGGETS = tag("nuggets");
-		public static final TagKey<Item> NUGGETS_GOLD = tag("nuggets/gold");
-		public static final TagKey<Item> NUGGETS_IRON = tag("nuggets/iron");
+		public static final TagKey<Item> NUGGETS_GOLD = tag("gold_nuggets");
+		public static final TagKey<Item> NUGGETS_IRON = tag("iron_nuggets");
 		public static final TagKey<Item> OBSIDIAN = tag("obsidian");
 		/**
 		 * Blocks which are often replaced by deepslate ores, i.e. the ores in the tag {@link #ORES_IN_GROUND_DEEPSLATE}, during world generation
@@ -340,17 +343,17 @@ public class Tags implements ModInitializer {
 		 * Ores which on average result in less than one resource worth of materials
 		 */
 		public static final TagKey<Item> ORE_RATES_SPARSE = tag("ore_rates/sparse");
-		public static final TagKey<Item> ORES = tag("ores");
-		public static final TagKey<Item> ORES_COAL = tag("ores/coal");
-		public static final TagKey<Item> ORES_COPPER = tag("ores/copper");
-		public static final TagKey<Item> ORES_DIAMOND = tag("ores/diamond");
-		public static final TagKey<Item> ORES_EMERALD = tag("ores/emerald");
-		public static final TagKey<Item> ORES_GOLD = tag("ores/gold");
-		public static final TagKey<Item> ORES_IRON = tag("ores/iron");
-		public static final TagKey<Item> ORES_LAPIS = tag("ores/lapis");
-		public static final TagKey<Item> ORES_NETHERITE_SCRAP = tag("ores/netherite_scrap");
-		public static final TagKey<Item> ORES_QUARTZ = tag("ores/quartz");
-		public static final TagKey<Item> ORES_REDSTONE = tag("ores/redstone");
+		public static final TagKey<Item> ORES = ConventionalItemTags.ORES;
+		public static final TagKey<Item> ORES_COAL = tag("coal_ores");
+		public static final TagKey<Item> ORES_COPPER = tag("copper_ores");
+		public static final TagKey<Item> ORES_DIAMOND = tag("diamond_ores");
+		public static final TagKey<Item> ORES_EMERALD = tag("emerald_ores");
+		public static final TagKey<Item> ORES_GOLD = tag("gold_ores");
+		public static final TagKey<Item> ORES_IRON = tag("iron_ores");
+		public static final TagKey<Item> ORES_LAPIS = tag("lapis_ores");
+		public static final TagKey<Item> ORES_NETHERITE_SCRAP = tag("netherite_scrap_ores");
+		public static final TagKey<Item> ORES_QUARTZ = ConventionalItemTags.QUARTZ_ORES;
+		public static final TagKey<Item> ORES_REDSTONE = tag("redstone_ores");
 		/**
 		 * Ores in deepslate (or in equivalent blocks in the tag {@link #ORE_BEARING_GROUND_DEEPSLATE}) which could logically use deepslate as recipe input or output
 		 */
@@ -364,43 +367,43 @@ public class Tags implements ModInitializer {
 		 */
 		public static final TagKey<Item> ORES_IN_GROUND_STONE = tag("ores_in_ground/stone");
 		public static final TagKey<Item> RAW_MATERIALS = tag("raw_materials");
-		public static final TagKey<Item> RAW_MATERIALS_COPPER = tag("raw_materials/copper");
-		public static final TagKey<Item> RAW_MATERIALS_GOLD = tag("raw_materials/gold");
-		public static final TagKey<Item> RAW_MATERIALS_IRON = tag("raw_materials/iron");
+		public static final TagKey<Item> RAW_MATERIALS_COPPER = tag("copper_raw_materials");
+		public static final TagKey<Item> RAW_MATERIALS_GOLD = tag("gold_raw_materials");
+		public static final TagKey<Item> RAW_MATERIALS_IRON = tag("iron_raw_materials");
 		public static final TagKey<Item> RODS = tag("rods");
-		public static final TagKey<Item> RODS_BLAZE = tag("rods/blaze");
-		public static final TagKey<Item> RODS_WOODEN = tag("rods/wooden");
+		public static final TagKey<Item> RODS_BLAZE = tag("blaze_rods");
+		public static final TagKey<Item> RODS_WOODEN = tag("wooden_rods");
 
 		public static final TagKey<Item> SAND = tag("sand");
-		public static final TagKey<Item> SAND_COLORLESS = tag("sand/colorless");
-		public static final TagKey<Item> SAND_RED = tag("sand/red");
+		public static final TagKey<Item> SAND_COLORLESS = tag("colorless_sand");
+		public static final TagKey<Item> SAND_RED = tag("red_sand");
 
 		public static final TagKey<Item> SANDSTONE = tag("sandstone");
 		public static final TagKey<Item> SEEDS = tag("seeds");
-		public static final TagKey<Item> SEEDS_BEETROOT = tag("seeds/beetroot");
-		public static final TagKey<Item> SEEDS_MELON = tag("seeds/melon");
-		public static final TagKey<Item> SEEDS_PUMPKIN = tag("seeds/pumpkin");
-		public static final TagKey<Item> SEEDS_WHEAT = tag("seeds/wheat");
-		public static final TagKey<Item> SHEARS = tag("shears");
+		public static final TagKey<Item> SEEDS_BEETROOT = tag("beetroot_seeds");
+		public static final TagKey<Item> SEEDS_MELON = tag("melon_seeds");
+		public static final TagKey<Item> SEEDS_PUMPKIN = tag("pumpkin_seeds");
+		public static final TagKey<Item> SEEDS_WHEAT = tag("wheat_seeds");
+		public static final TagKey<Item> SHEARS = ConventionalItemTags.SHEARS;
 		public static final TagKey<Item> SLIMEBALLS = tag("slimeballs");
 		public static final TagKey<Item> STAINED_GLASS = tag("stained_glass");
 		public static final TagKey<Item> STAINED_GLASS_PANES = tag("stained_glass_panes");
 		public static final TagKey<Item> STONE = tag("stone");
 		public static final TagKey<Item> STORAGE_BLOCKS = tag("storage_blocks");
-		public static final TagKey<Item> STORAGE_BLOCKS_AMETHYST = tag("storage_blocks/amethyst");
-		public static final TagKey<Item> STORAGE_BLOCKS_COAL = tag("storage_blocks/coal");
-		public static final TagKey<Item> STORAGE_BLOCKS_COPPER = tag("storage_blocks/copper");
-		public static final TagKey<Item> STORAGE_BLOCKS_DIAMOND = tag("storage_blocks/diamond");
-		public static final TagKey<Item> STORAGE_BLOCKS_EMERALD = tag("storage_blocks/emerald");
-		public static final TagKey<Item> STORAGE_BLOCKS_GOLD = tag("storage_blocks/gold");
-		public static final TagKey<Item> STORAGE_BLOCKS_IRON = tag("storage_blocks/iron");
-		public static final TagKey<Item> STORAGE_BLOCKS_LAPIS = tag("storage_blocks/lapis");
-		public static final TagKey<Item> STORAGE_BLOCKS_NETHERITE = tag("storage_blocks/netherite");
-		public static final TagKey<Item> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
-		public static final TagKey<Item> STORAGE_BLOCKS_RAW_COPPER = tag("storage_blocks/raw_copper");
-		public static final TagKey<Item> STORAGE_BLOCKS_RAW_GOLD = tag("storage_blocks/raw_gold");
-		public static final TagKey<Item> STORAGE_BLOCKS_RAW_IRON = tag("storage_blocks/raw_iron");
-		public static final TagKey<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
+		public static final TagKey<Item> STORAGE_BLOCKS_AMETHYST = tag("amethyst_blocks");
+		public static final TagKey<Item> STORAGE_BLOCKS_COAL = tag("coal_blocks");
+		public static final TagKey<Item> STORAGE_BLOCKS_COPPER = tag("copper_blocks");
+		public static final TagKey<Item> STORAGE_BLOCKS_DIAMOND = tag("diamond_blocks");
+		public static final TagKey<Item> STORAGE_BLOCKS_EMERALD = tag("emerald_blocks");
+		public static final TagKey<Item> STORAGE_BLOCKS_GOLD = tag("gold_blocks");
+		public static final TagKey<Item> STORAGE_BLOCKS_IRON = tag("iron_blocks");
+		public static final TagKey<Item> STORAGE_BLOCKS_LAPIS = tag("lapis_blocks");
+		public static final TagKey<Item> STORAGE_BLOCKS_NETHERITE = tag("netherite_blocks");
+		public static final TagKey<Item> STORAGE_BLOCKS_QUARTZ = tag("quartz_blocks");
+		public static final TagKey<Item> STORAGE_BLOCKS_RAW_COPPER = ConventionalItemTags.RAW_COPPER_BLOCKS;
+		public static final TagKey<Item> STORAGE_BLOCKS_RAW_GOLD = ConventionalItemTags.RAW_GOLD_BLOCKS;
+		public static final TagKey<Item> STORAGE_BLOCKS_RAW_IRON = ConventionalItemTags.RAW_IRON_BLOCKS;
+		public static final TagKey<Item> STORAGE_BLOCKS_REDSTONE = tag("redstone_blocks");
 		public static final TagKey<Item> STRING = tag("string");
 		/**
 		 * A tag containing all existing tools.
@@ -409,43 +412,43 @@ public class Tags implements ModInitializer {
 		/**
 		 * A tag containing all existing swords.
 		 */
-		public static final TagKey<Item> TOOLS_SWORDS = tag("tools/swords");
+		public static final TagKey<Item> TOOLS_SWORDS = ConventionalItemTags.SWORDS;
 		/**
 		 * A tag containing all existing axes.
 		 */
-		public static final TagKey<Item> TOOLS_AXES = tag("tools/axes");
+		public static final TagKey<Item> TOOLS_AXES = ConventionalItemTags.AXES;
 		/**
 		 * A tag containing all existing pickaxes.
 		 */
-		public static final TagKey<Item> TOOLS_PICKAXES = tag("tools/pickaxes");
+		public static final TagKey<Item> TOOLS_PICKAXES = ConventionalItemTags.PICKAXES;
 		/**
 		 * A tag containing all existing shovels.
 		 */
-		public static final TagKey<Item> TOOLS_SHOVELS = tag("tools/shovels");
+		public static final TagKey<Item> TOOLS_SHOVELS = ConventionalItemTags.SHOVELS;
 		/**
 		 * A tag containing all existing hoes.
 		 */
-		public static final TagKey<Item> TOOLS_HOES = tag("tools/hoes");
+		public static final TagKey<Item> TOOLS_HOES = ConventionalItemTags.HOES;
 		/**
 		 * A tag containing all existing shields.
 		 */
-		public static final TagKey<Item> TOOLS_SHIELDS = tag("tools/shields");
+		public static final TagKey<Item> TOOLS_SHIELDS = tag("shields");
 		/**
 		 * A tag containing all existing bows.
 		 */
-		public static final TagKey<Item> TOOLS_BOWS = tag("tools/bows");
+		public static final TagKey<Item> TOOLS_BOWS = ConventionalItemTags.BOWS;
 		/**
 		 * A tag containing all existing crossbows.
 		 */
-		public static final TagKey<Item> TOOLS_CROSSBOWS = tag("tools/crossbows");
+		public static final TagKey<Item> TOOLS_CROSSBOWS = tag("crossbows");
 		/**
 		 * A tag containing all existing fishing rods.
 		 */
-		public static final TagKey<Item> TOOLS_FISHING_RODS = tag("tools/fishing_rods");
+		public static final TagKey<Item> TOOLS_FISHING_RODS = tag("fishing_rods");
 		/**
 		 * A tag containing all existing tridents.
 		 */
-		public static final TagKey<Item> TOOLS_TRIDENTS = tag("tools/tridents");
+		public static final TagKey<Item> TOOLS_TRIDENTS = tag("tridents");
 		/**
 		 * A tag containing all existing armors.
 		 */
@@ -453,22 +456,22 @@ public class Tags implements ModInitializer {
 		/**
 		 * A tag containing all existing helmets.
 		 */
-		public static final TagKey<Item> ARMORS_HELMETS = tag("armors/helmets");
+		public static final TagKey<Item> ARMORS_HELMETS = tag("helmets");
 		/**
 		 * A tag containing all chestplates.
 		 */
-		public static final TagKey<Item> ARMORS_CHESTPLATES = tag("armors/chestplates");
+		public static final TagKey<Item> ARMORS_CHESTPLATES = tag("chestplates");
 		/**
 		 * A tag containing all existing leggings.
 		 */
-		public static final TagKey<Item> ARMORS_LEGGINGS = tag("armors/leggings");
+		public static final TagKey<Item> ARMORS_LEGGINGS = tag("leggings");
 		/**
 		 * A tag containing all existing boots.
 		 */
-		public static final TagKey<Item> ARMORS_BOOTS = tag("armors/boots");
+		public static final TagKey<Item> ARMORS_BOOTS = tag("boots");
 
 		private static TagKey<Item> tag(String name, @Nullable Set<Supplier<Item>> defaults) {
-			return TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation("c", name));
+			return TagKey.create(Registries.ITEM, new ResourceLocation("c", name));
 		}
 
 		private static TagKey<Item> tag(String name) {
@@ -490,7 +493,7 @@ public class Tags implements ModInitializer {
 		public static final TagKey<Fluid> GASEOUS = tag("gaseous");
 
 		private static TagKey<Fluid> tag(String name) {
-			return TagKey.create(Registry.FLUID_REGISTRY, new ResourceLocation("c", name));
+			return TagKey.create(Registries.FLUID, new ResourceLocation("c", name));
 		}
 	}
 
@@ -538,7 +541,7 @@ public class Tags implements ModInitializer {
 		public static final TagKey<Biome> IS_MODIFIED = tag("is_modified");
 
 		public static final TagKey<Biome> IS_WATER = tag("is_water");
-
+		public static final TagKey<Biome> IS_DESERT = tag("is_desert");
 		public static final TagKey<Biome> IS_PLAINS = tag("is_plains");
 		public static final TagKey<Biome> IS_SWAMP = tag("is_swamp");
 		public static final TagKey<Biome> IS_SANDY = tag("is_sandy");
@@ -547,12 +550,13 @@ public class Tags implements ModInitializer {
 		public static final TagKey<Biome> IS_VOID = tag("is_void");
 		public static final TagKey<Biome> IS_UNDERGROUND = tag("is_underground");
 
+		public static final TagKey<Biome> IS_CAVE = tag("is_cave");
 		public static final TagKey<Biome> IS_PEAK = tag("is_peak");
 		public static final TagKey<Biome> IS_SLOPE = tag("is_slope");
 		public static final TagKey<Biome> IS_MOUNTAIN = tag("is_mountain");
 
 		private static TagKey<Biome> tag(String name) {
-			return TagKey.create(Registry.BIOME_REGISTRY, new ResourceLocation("c", name));
+			return TagKey.create(Registries.BIOME, new ResourceLocation("c", name));
 		}
 	}
 }

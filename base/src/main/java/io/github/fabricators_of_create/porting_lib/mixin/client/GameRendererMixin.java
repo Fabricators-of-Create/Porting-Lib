@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import com.mojang.math.Axis;
+
 import io.github.fabricators_of_create.porting_lib.event.client.CameraSetupCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.FOVModifierCallback;
 import org.spongepowered.asm.mixin.Final;
@@ -13,7 +15,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -40,6 +41,6 @@ public abstract class GameRendererMixin {
 		CameraSetupCallback.CameraInfo info = new CameraSetupCallback.CameraInfo((GameRenderer) (Object) this, cam, partialTicks, cam.getYRot(), cam.getXRot(), 0);
 		CameraSetupCallback.EVENT.invoker().onCameraSetup(info);
 		cam.setAnglesInternal(info.yaw, info.pitch);
-		poseStack.mulPose(Vector3f.ZP.rotationDegrees(info.roll));
+		poseStack.mulPose(Axis.ZP.rotationDegrees(info.roll));
 	}
 }

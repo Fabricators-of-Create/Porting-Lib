@@ -5,6 +5,7 @@ moduleDependencies(project, [
 		"client_events",
 		"extensions",
 		"accessors",
+		"utility",
 		"common"
 ])
 
