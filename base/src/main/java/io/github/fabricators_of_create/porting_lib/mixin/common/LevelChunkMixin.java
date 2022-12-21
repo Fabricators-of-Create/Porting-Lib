@@ -1,5 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
 import io.github.fabricators_of_create.porting_lib.block.ChunkUnloadListeningBlockEntity;
 import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
 
@@ -14,7 +17,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomUpdateTagHandlingBlockEntity;
@@ -80,11 +82,15 @@ public abstract class LevelChunkMixin extends ChunkAccess {
 		this.level.addFreshBlockEntities(this.blockEntities.values());
 	}
 
-	@Inject(method = { "method_12217", "m_eaodltdq", "lambda$getLights$4" }, at = @At("HEAD"), cancellable = true)
-	public void port_lib$lightBlock(BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
-		BlockState state = getBlockState(blockPos);
-		if (state.getBlock() instanceof LightEmissiveBlock lightEmissiveBlock) {
-			cir.setReturnValue(lightEmissiveBlock.getLightEmission(state, getLevel(), blockPos) != 0);
+	// stream lambda in getLights
+	@WrapOperation(
+			method = { "method_12217", "m_eaodltdq", "lambda$getLights$4" },
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getLightEmission()I")
+	)
+	private int port_lib$customLight(BlockState state, Operation<Integer> original, BlockPos pos) {
+		if (state.getBlock() instanceof LightEmissiveBlock custom) {
+			return custom.getLightEmission(state, getLevel(), pos);
 		}
+		return original.call(state);
 	}
 }

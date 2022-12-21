@@ -1,31 +1,41 @@
 package me.alphamode.forgetags.data;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import me.alphamode.forgetags.Tags;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/**
+ * Generate tag translations given a class.
+ * The class is expected to contain static fields holding TagKeys of Items.
+ */
 public class ItemTagLangProvider extends FabricLanguageProvider {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ItemTagLangProvider.class);
-	public static final Map<TagKey<Item>, String> SPECIAL_CASES = Map.of();
+	private final Class<?> tagClass;
+	private final Map<TagKey<Item>, String> specialCases;
 
-	protected ItemTagLangProvider(FabricDataOutput output) {
-		super(output);
+	public ItemTagLangProvider(FabricDataGenerator dataGenerator, Class<?> tagClass) {
+		this(dataGenerator, tagClass, Map.of());
+	}
+
+	public ItemTagLangProvider(FabricDataGenerator dataGenerator, Class<?> tagClass, Map<TagKey<Item>, String> specialCases) {
+		super(dataGenerator);
+		this.tagClass = tagClass;
+		this.specialCases = specialCases;
 	}
 
 	@Override
 	public void generateTranslations(TranslationBuilder translationBuilder) {
-		for (Field field : Tags.Items.class.getDeclaredFields()) {
+		for (Field field : tagClass.getDeclaredFields()) {
 			field.setAccessible(true);
 			try {
 				Object o = field.get(null);
@@ -34,8 +44,8 @@ public class ItemTagLangProvider extends FabricLanguageProvider {
 					String path = id.getPath().replaceAll("/", ".");
 					String key = "tag.%s.%s".formatted(id.getNamespace(), path);
 
-					String english = SPECIAL_CASES.containsKey(tag)
-							? SPECIAL_CASES.get(tag)
+					String english = specialCases.containsKey(tag)
+							? specialCases.get(tag)
 							: toEnglish(id.getPath());
 
 					translationBuilder.add(key, english);

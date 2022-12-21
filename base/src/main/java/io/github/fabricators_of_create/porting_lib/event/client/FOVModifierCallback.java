@@ -6,6 +6,10 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.entity.player.Player;
 
+/**
+ * @deprecated move to {@link FieldOfViewEvents}
+ */
+@Deprecated(forRemoval = true)
 @FunctionalInterface
 public interface FOVModifierCallback {
   Event<FOVModifierCallback> EVENT = EventFactory.createArrayBacked(FOVModifierCallback.class, callbacks -> (player, fov) -> {

@@ -1,9 +1,17 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Consumer;
+
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.mojang.blaze3d.vertex.PoseStack;
+
+import com.mojang.math.Vector3f;
 import com.mojang.math.Axis;
 
 import io.github.fabricators_of_create.porting_lib.event.client.CameraSetupCallback;
-import io.github.fabricators_of_create.porting_lib.event.client.FOVModifierCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.FieldOfViewEvents;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -11,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -28,11 +35,23 @@ public abstract class GameRendererMixin {
 	@Final
 	private Camera mainCamera;
 
-	@Inject(method = "getFov", at = @At(value = "RETURN", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	private void port_lib$modifyFOV(Camera activeRenderInfo, float partialTicks, boolean useFOVSetting, CallbackInfoReturnable<Double> cir, double oldFov) {
-		double newFov = FOVModifierCallback.PARTIAL_FOV.invoker().getNewFOV((GameRenderer) (Object) this, activeRenderInfo, partialTicks, oldFov);
-		if (newFov != oldFov)
-			cir.setReturnValue(newFov);
+	@Inject(method = "reloadShaders", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;shutdownShaders()V"), locals = LocalCapture.CAPTURE_FAILHARD)
+	private void port_lib$registerShaders(ResourceManager manager, CallbackInfo ci, List<Program> list, List<Pair<ShaderInstance, Consumer<ShaderInstance>>> shaderRegistry) {
+		try {
+			RegisterShadersCallback.EVENT.invoker().onShaderReload(manager, new RegisterShadersCallback.ShaderRegistry(shaderRegistry));
+		} catch (IOException e) {
+			throw new RuntimeException("[Porting Lib] failed to reload modded shaders", e);
+		}
+	}
+
+	@ModifyReturnValue(
+			method = "getFov",
+			at = @At(value = "RETURN", ordinal = 1) // skip the early exit
+	)
+	private double port_lib$modifyFov(double fov,
+									Camera camera, float partialTicks, boolean usedFovSetting) {
+		// returns original if not changed, this is safe
+		return FieldOfViewEvents.COMPUTE.invoker().getFov((GameRenderer) (Object) this, camera, partialTicks, usedFovSetting, fov);
 	}
 
 	@Inject(method = "renderLevel", at = @At(value = "INVOKE", shift = Shift.AFTER, target = "Lnet/minecraft/client/Camera;setup(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/world/entity/Entity;ZZF)V"))

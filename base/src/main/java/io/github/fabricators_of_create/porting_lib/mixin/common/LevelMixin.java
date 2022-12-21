@@ -8,6 +8,9 @@ import java.util.List;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
 import io.github.fabricators_of_create.porting_lib.PortingConstants;
 import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
@@ -25,7 +28,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 
 import org.jetbrains.annotations.Nullable;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -57,6 +59,9 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	private final ArrayList<BlockEntity> port_lib$freshBlockEntities = new ArrayList<>();
 	@Unique
 	private final ArrayList<BlockEntity> port_lib$pendingFreshBlockEntities = new ArrayList<>();
+	@Unique
+	@Nullable
+	private Integer port_lib$oldStateLight = null;
 
 	@Unique
 	private final SnapshotParticipant<LevelSnapshotData> port_lib$snapshotParticipant = new SnapshotParticipant<>() {
@@ -147,19 +152,59 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		}
 	}
 
-	@Inject(method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z", at = @At(value = "JUMP", opcode = Opcodes.IF_ACMPEQ), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void port_lib$lightBlock(BlockPos pos, BlockState state, int flags, int recursionLeft, CallbackInfoReturnable<Boolean> cir, LevelChunk levelChunk, Block block, BlockState blockstate, BlockState blockstate1) {
-		BlockState old = getBlockState(pos);
-		if (old.getBlock() instanceof LightEmissiveBlock lightEmissiveBlock) {
-
-			int oldLight = lightEmissiveBlock.getLightEmission(old, this, pos);
-			int oldOpacity = old.getLightBlock(this, pos);
-			if (blockstate1 != blockstate && (blockstate1.getLightBlock(this, pos) != oldOpacity || (blockstate1.getBlock() instanceof LightEmissiveBlock lm ? lm.getLightEmission(blockstate1, this, pos) : blockstate1.getLightEmission()) != oldLight || blockstate1.useShapeForLightOcclusion() || blockstate.useShapeForLightOcclusion())) {
-				this.getProfiler().push("queueCheckLight");
-				this.getChunkSource().getLightEngine().checkBlock(pos);
-				this.getProfiler().pop();
-			}
+	// by the time light is checked, the new state has already been set
+	// grab the light earlier and save it for later to avoid this
+	@Inject(
+			method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/Level;getChunkAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/chunk/LevelChunk;"
+			)
+	)
+	private void port_lib$grabOldStateLight(BlockPos pos, BlockState state, int flags, int maxUpdateDepth, CallbackInfoReturnable<Boolean> cir) {
+		BlockState oldState = getBlockState(pos);
+		if (oldState.getBlock() instanceof LightEmissiveBlock custom) {
+			port_lib$oldStateLight = custom.getLightEmission(oldState, this, pos);
+		} else {
+			// not custom? store nothing to not interfere
+			port_lib$oldStateLight = null;
 		}
+	}
+
+	// replace the old state's light
+	@WrapOperation(
+			method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/block/state/BlockState;getLightEmission()I",
+					ordinal = 1
+			)
+	)
+	private int port_lib$oldCustomLight(BlockState state, Operation<Integer> original,
+										BlockPos pos, BlockState state2, int flags, int maxUpdateDepth) {
+		Integer light = port_lib$oldStateLight;
+		if (light != null) {
+			return light;
+		}
+		return original.call(state);
+		// no need to clear the stored light, will be reset on the next call
+	}
+
+	// replace the new state's light
+	@WrapOperation(
+			method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/block/state/BlockState;getLightEmission()I",
+					ordinal = 0
+			)
+	)
+	private int port_lib$newCustomLight(BlockState state, Operation<Integer> original,
+										BlockPos pos, BlockState state2, int flags, int maxUpdateDepth) {
+		if (state.getBlock() instanceof LightEmissiveBlock custom) {
+			return custom.getLightEmission(state, this, pos);
+		}
+		return original.call(state);
 	}
 
 	@ModifyExpressionValue(method = "getSignal", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;isRedstoneConductor(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z"))
