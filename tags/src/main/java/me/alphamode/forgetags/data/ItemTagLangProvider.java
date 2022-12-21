@@ -1,6 +1,8 @@
 package me.alphamode.forgetags.data;
 
+import me.alphamode.forgetags.Tags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -23,12 +25,12 @@ public class ItemTagLangProvider extends FabricLanguageProvider {
 	private final Class<?> tagClass;
 	private final Map<TagKey<Item>, String> specialCases;
 
-	public ItemTagLangProvider(FabricDataGenerator dataGenerator, Class<?> tagClass) {
-		this(dataGenerator, tagClass, Map.of());
+	public ItemTagLangProvider(FabricDataOutput output, Class<?> tagClass) {
+		this(output, tagClass, Map.of());
 	}
 
-	public ItemTagLangProvider(FabricDataGenerator dataGenerator, Class<?> tagClass, Map<TagKey<Item>, String> specialCases) {
-		super(dataGenerator);
+	public ItemTagLangProvider(FabricDataOutput output, Class<?> tagClass, Map<TagKey<Item>, String> specialCases) {
+		super(output);
 		this.tagClass = tagClass;
 		this.specialCases = specialCases;
 	}
