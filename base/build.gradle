@@ -8,7 +8,6 @@ moduleDependencies(project, [
 		"extensions",
 		"obj_loader",
 		"transfer",
-		"datagen",
 		"utility",
 		"entity",
 		"common",
