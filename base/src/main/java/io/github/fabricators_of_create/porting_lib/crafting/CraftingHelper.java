@@ -2,9 +2,11 @@ package io.github.fabricators_of_create.porting_lib.crafting;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
+import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -48,6 +50,40 @@ public class CraftingHelper {
 	@Nullable
 	public static ResourceLocation getID(IngredientDeserializer serializer) {
 		return IngredientDeserializer.REGISTRY.getKey(serializer);
+	}
+
+	public static Ingredient getIngredient(JsonElement json) {
+		if (json == null || json.isJsonNull())
+			throw new JsonSyntaxException("Json cannot be null");
+
+		if (json.isJsonArray()) {
+			List<Ingredient> ingredients = Lists.newArrayList();
+			List<Ingredient> vanilla = Lists.newArrayList();
+			json.getAsJsonArray().forEach((ele) -> {
+				Ingredient ing = CraftingHelper.getIngredient(ele);
+
+				if (ing.getClass() == Ingredient.class) //Vanilla, Due to how we read it splits each itemstack, so we pull out to re-merge later
+					vanilla.add(ing);
+				else
+					ingredients.add(ing);
+			});
+
+			if (!vanilla.isEmpty())
+				ingredients.add(Ingredient.fromValues(vanilla.stream().flatMap((i) -> Arrays.stream(i.values))));
+
+			if (ingredients.size() == 0)
+				throw new JsonSyntaxException("Item array cannot be empty, at least one item must be defined");
+
+			if (ingredients.size() == 1)
+				return ingredients.get(0);
+
+			return new CombinedIngredient(ingredients);
+		}
+
+		if (!json.isJsonObject())
+			throw new JsonSyntaxException("Expcted ingredient to be a object or array of objects");
+
+		return Ingredient.fromJson(json);
 	}
 
 	public static ItemStack getItemStack(JsonObject json, boolean readNBT) {
