@@ -3,23 +3,22 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 import java.util.Iterator;
 
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 
 import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
-import io.github.fabricators_of_create.porting_lib.event.client.FogEvents;
 import io.github.fabricators_of_create.porting_lib.event.client.DrawSelectionEvents;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 
@@ -41,7 +40,6 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Environment(EnvType.CLIENT)
 @Mixin(LevelRenderer.class)
@@ -95,21 +93,18 @@ public abstract class LevelRendererMixin {
 		}
 	}
 
-	@Inject(
+	@WrapOperation(
 			method = "getLightColor(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)I",
-			at = @At("HEAD"),
-			cancellable = true
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/block/state/BlockState;getLightEmission()I"
+			)
 	)
-	private static void port_lib$lightLevel(BlockAndTintGetter level, BlockState state, BlockPos pos, CallbackInfoReturnable<Integer> cir) {
-		if(!state.emissiveRendering(level, pos) && state.getBlock() instanceof LightEmissiveBlock lightEmissiveBlock) {
-			int i = level.getBrightness(LightLayer.SKY, pos);
-			int j = level.getBrightness(LightLayer.BLOCK, pos);
-			int k = lightEmissiveBlock.getLightEmission(state, level, pos);
-			if (j < k) {
-				j = k;
-			}
-
-			cir.setReturnValue(i << 20 | j << 4);
+	private static int port_lib$customLight(BlockState state, Operation<Integer> original,
+											BlockAndTintGetter world, BlockState state2, BlockPos pos) {
+		if (state.getBlock() instanceof LightEmissiveBlock custom) {
+			return custom.getLightEmission(state, world, pos);
 		}
+		return original.call(state);
 	}
 }
