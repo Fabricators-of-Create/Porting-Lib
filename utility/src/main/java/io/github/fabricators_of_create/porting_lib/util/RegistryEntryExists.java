@@ -21,7 +21,7 @@ public class RegistryEntryExists implements ConditionJsonProvider {
 		ResourceConditions.register(ID, jsonObject -> {
 			ResourceLocation registry = new ResourceLocation(GsonHelper.getAsString(jsonObject, "registry"));
 			ResourceLocation id = new ResourceLocation(GsonHelper.getAsString(jsonObject, "id"));
-			return BuiltInRegistries.REGISTRY.get(registry).get(id) != null;
+			return BuiltInRegistries.REGISTRY.get(registry).getOptional(id).isPresent();
 		});
 	}
 
