@@ -21,7 +21,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 
-public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implements Storage<ItemVariant>, INBTSerializable<CompoundTag>, SlotExposedStorage {
+public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implements INBTSerializable<CompoundTag>, SlotExposedStorage {
 	public ItemStack[] stacks;
 
 	public ItemStackHandler() {
@@ -41,7 +41,7 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 	public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
 		long inserted = 0;
 		updateSnapshots(transaction);
-		for (int i = 0; i < stacks.length; i++) {
+		for (int i = 0; i < getSlots(); i++) {
 			if (isItemValid(i, resource, maxAmount)) {
 				ItemStack held = stacks[i];
 				if (held.isEmpty()) { // just throw in a full stack
