@@ -12,7 +12,7 @@ public class ItemStackHandlerContainerItemContext implements ContainerItemContex
 	protected final SingleSlotStorage<ItemVariant> wrapped;
 
 	public ItemStackHandlerContainerItemContext(ItemStackHandler handler, int slot) {
-		this.wrapped = new SingleSlotStorage<ItemVariant>() {
+		this.wrapped = new SingleSlotStorage<>() {
 			@Override
 			public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
 				return handler.insert(resource, maxAmount, transaction);
