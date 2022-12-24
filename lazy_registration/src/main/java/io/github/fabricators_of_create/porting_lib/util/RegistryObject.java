@@ -60,14 +60,7 @@ public final class RegistryObject<T> implements Supplier<T> {
 	}
 
 	public void updateRef() {
-		Registry<? extends T> vanillaRegistry = (Registry<? extends T>) Registry.REGISTRY.get(key.registry());
-		if (vanillaRegistry != null) {
-			this.value = vanillaRegistry.get(id);
-			this.holder = ((Registry<T>) vanillaRegistry).getHolder(key).orElse(null);
-			return;
-		}
-
-		Registry<? extends T> builtinRegistry = (Registry<? extends T>) BuiltinRegistries.REGISTRY.get(key.registry());
+		Registry<? extends T> builtinRegistry = (Registry<? extends T>) BuiltInRegistries.REGISTRY.get(key.registry());
 		if (builtinRegistry != null) {
 			this.value = builtinRegistry.get(id);
 			this.holder = ((Registry<T>) builtinRegistry).getHolder(key).orElse(null);
