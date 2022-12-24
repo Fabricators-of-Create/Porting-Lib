@@ -1,7 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import com.google.common.base.Suppliers;
 
@@ -18,16 +23,35 @@ import org.jetbrains.annotations.Nullable;
 public final class RegistryObject<T> implements Supplier<T> {
 
 	private final ResourceLocation id;
-	private Supplier<T> wrappedEntry;
+	private T value;
 	@Nullable
 	private final ResourceKey<T> key;
 
 	@Nullable
 	private Holder<T> holder;
 
+	private static final RegistryObject<?> EMPTY = new RegistryObject<>();
+
+	private static <T> RegistryObject<T> empty() {
+		@SuppressWarnings("unchecked")
+		RegistryObject<T> t = (RegistryObject<T>) EMPTY;
+		return t;
+	}
+
+	private RegistryObject() {
+		this.id = null;
+		this.key = null;
+	}
+
+	public RegistryObject(ResourceLocation id, ResourceKey<?> key) {
+		this.id = id;
+		this.key = (ResourceKey<T>) key;
+	}
+
+	@Deprecated(forRemoval = true)
 	public RegistryObject(ResourceLocation id, Supplier<T> wrappedEntry, ResourceKey<?> key) {
 		this.id = id;
-		this.wrappedEntry = Suppliers.memoize(wrappedEntry::get);
+		this.value = wrappedEntry.get();
 		this.key = (ResourceKey<T>) key;
 	}
 
@@ -35,18 +59,92 @@ public final class RegistryObject<T> implements Supplier<T> {
 		return id;
 	}
 
-	public void setWrappedEntry(Supplier<?> wrappedEntry) {
-		this.wrappedEntry = () -> (T) Suppliers.memoize(wrappedEntry::get).get();
+	public void updateRef() {
+		Registry<? extends T> vanillaRegistry = (Registry<? extends T>) Registry.REGISTRY.get(key.registry());
+		if (vanillaRegistry != null) {
+			this.value = vanillaRegistry.get(id);
+			this.holder = ((Registry<T>) vanillaRegistry).getHolder(key).orElse(null);
+			return;
+		}
+
+		Registry<? extends T> builtinRegistry = (Registry<? extends T>) BuiltinRegistries.REGISTRY.get(key.registry());
+		if (builtinRegistry != null) {
+			this.value = builtinRegistry.get(id);
+			this.holder = ((Registry<T>) builtinRegistry).getHolder(key).orElse(null);
+			return;
+		}
 	}
 
 	@Override
 	public T get() {
-		return wrappedEntry.get();
+		T ret = this.value;
+		Objects.requireNonNull(ret, () -> "Registry Object not present: " + this.id);
+		return ret;
 	}
 
 	@Nullable
 	public ResourceKey<T> getKey() {
 		return this.key;
+	}
+
+	public Stream<T> stream() {
+		return isPresent() ? Stream.of(get()) : Stream.of();
+	}
+
+	public boolean isPresent() {
+		return this.value != null;
+	}
+
+	public void ifPresent(Consumer<? super T> consumer) {
+		if (isPresent())
+			consumer.accept(get());
+	}
+
+	public RegistryObject<T> filter(Predicate<? super T> predicate) {
+		Objects.requireNonNull(predicate);
+		if (!isPresent())
+			return this;
+		else
+			return predicate.test(get()) ? this : empty();
+	}
+
+	public<U> Optional<U> map(Function<? super T, ? extends U> mapper) {
+		Objects.requireNonNull(mapper);
+		if (!isPresent())
+			return Optional.empty();
+		else {
+			return Optional.ofNullable(mapper.apply(get()));
+		}
+	}
+
+	public<U> Optional<U> flatMap(Function<? super T, Optional<U>> mapper) {
+		Objects.requireNonNull(mapper);
+		if (!isPresent())
+			return Optional.empty();
+		else {
+			return Objects.requireNonNull(mapper.apply(get()));
+		}
+	}
+
+	public<U> Supplier<U> lazyMap(Function<? super T, ? extends U> mapper) {
+		Objects.requireNonNull(mapper);
+		return () -> isPresent() ? mapper.apply(get()) : null;
+	}
+
+	public T orElse(T other) {
+		return isPresent() ? get() : other;
+	}
+
+	public T orElseGet(Supplier<? extends T> other) {
+		return isPresent() ? get() : other.get();
+	}
+
+	public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
+		if (isPresent()) {
+			return get();
+		} else {
+			throw exceptionSupplier.get();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
