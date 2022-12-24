@@ -4,6 +4,8 @@ import net.minecraft.world.level.block.Blocks;
 
 import net.minecraft.world.level.block.state.BlockState;
 
+import net.minecraft.world.phys.Vec3;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,6 +34,9 @@ public abstract class CameraMixin implements CameraExtensions {
 	@Final
 	private BlockPos.MutableBlockPos blockPosition;
 
+	@Shadow
+	private Vec3 position;
+
 	@Unique
 	@Override
 	public void setAnglesInternal(float yaw, float pitch) {
@@ -45,6 +50,6 @@ public abstract class CameraMixin implements CameraExtensions {
 		if (!this.initialized)
 			return Blocks.AIR.defaultBlockState();
 		else
-			return this.level.getBlockState(this.blockPosition);
+			return this.level.getBlockState(this.blockPosition).getStateAtViewpoint(this.level, this.blockPosition, this.position);
 	}
 }

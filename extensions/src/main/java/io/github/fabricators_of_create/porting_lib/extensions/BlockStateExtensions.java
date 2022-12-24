@@ -3,6 +3,7 @@ package io.github.fabricators_of_create.porting_lib.extensions;
 import io.github.fabricators_of_create.porting_lib.util.IPlantable;
 import io.github.fabricators_of_create.porting_lib.util.ToolAction;
 import io.github.fabricators_of_create.porting_lib.util.ToolActions;
+import net.minecraft.client.Camera;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -11,6 +12,8 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.Vec3;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -66,5 +69,19 @@ public interface BlockStateExtensions {
 	 */
 	default boolean canSustainPlant(BlockGetter level, BlockPos pos, Direction facing, IPlantable plantable) {
 		return ((BlockState)this).getBlock().canSustainPlant(((BlockState)this), level, pos, facing, plantable);
+	}
+
+	/**
+	 * Used to determine the state 'viewed' by an entity (see
+	 * {@link Camera#getBlockAtCamera()}).
+	 * Can be used by fluid blocks to determine if the viewpoint is within the fluid or not.
+	 *
+	 * @param level     the level
+	 * @param pos       the position
+	 * @param viewpoint the viewpoint
+	 * @return the block state that should be 'seen'
+	 */
+	default BlockState getStateAtViewpoint(BlockGetter level, BlockPos pos, Vec3 viewpoint) {
+		return ((BlockState)this).getBlock().getStateAtViewpoint(((BlockState)this), level, pos, viewpoint);
 	}
 }

@@ -4,6 +4,7 @@ import io.github.fabricators_of_create.porting_lib.util.IPlantable;
 import io.github.fabricators_of_create.porting_lib.util.PlantType;
 import io.github.fabricators_of_create.porting_lib.util.ToolAction;
 import io.github.fabricators_of_create.porting_lib.util.ToolActions;
+import net.minecraft.client.Camera;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
@@ -22,6 +23,8 @@ import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.GlazedTerracottaBlock;
 import net.minecraft.world.level.block.WeatheringCopper;
 import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.Vec3;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -130,5 +133,20 @@ public interface BlockExtensions {
 			//else if(ToolActions.HOE_TILL.equals(toolAction)) return HoeItem.getHoeTillingState(state); //TODO HoeItem bork
 		else if (ToolActions.SHOVEL_FLATTEN.equals(toolAction)) return ShovelItem.FLATTENABLES.get(state.getBlock());
 		return null;
+	}
+
+	/**
+	 * Used to determine the state 'viewed' by an entity (see
+	 * {@link Camera#getBlockAtCamera()}).
+	 * Can be used by fluid blocks to determine if the viewpoint is within the fluid or not.
+	 *
+	 * @param state     the state
+	 * @param level     the level
+	 * @param pos       the position
+	 * @param viewpoint the viewpoint
+	 * @return the block state that should be 'seen'
+	 */
+	default BlockState getStateAtViewpoint(BlockState state, BlockGetter level, BlockPos pos, Vec3 viewpoint) {
+		return state;
 	}
 }
