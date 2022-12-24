@@ -6,7 +6,7 @@
   "description": "Allows creating fake players for methods that require a player.",
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_3222": ["io/github/fabricators_of_create/porting_lib/fake_players/extensions/ServerPlayerExtension"]
+      "net/minecraft/class_3222": ["io/github/fabricators_of_create/porting_lib/fake_players/extensions/ServerPlayerExtensions"]
     }
   }
 }
