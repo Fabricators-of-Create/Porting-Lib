@@ -5,6 +5,7 @@ moduleDependencies(project, [
 		"lazy_registration",
 		"model_generators",
 		"model_loader",
+		"fake_players",
 		"extensions",
 		"obj_loader",
 		"transfer",
