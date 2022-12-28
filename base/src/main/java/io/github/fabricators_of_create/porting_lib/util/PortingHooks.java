@@ -25,6 +25,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -35,10 +36,19 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.storage.loot.LootContext;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 @SuppressWarnings({"removal", "UnstableApiUsage"})
 public class PortingHooks {
+	public static boolean isCorrectToolForDrops(@NotNull BlockState state, @NotNull Player player) {
+		if (!state.requiresCorrectToolForDrops())
+			return true;
+
+		return player.hasCorrectToolForDrops(state);
+	}
+
 	public static int onBlockBreakEvent(Level world, GameType gameType, ServerPlayer entityPlayer, BlockPos pos) {
 		// Logic from tryHarvestBlock for pre-canceling the event
 		boolean preCancelEvent = false;

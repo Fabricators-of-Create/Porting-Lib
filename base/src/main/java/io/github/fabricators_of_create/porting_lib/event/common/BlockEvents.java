@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.event.common;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomExpBlock;
 import io.github.fabricators_of_create.porting_lib.event.BaseEvent;
+import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.core.BlockPos;
@@ -66,7 +67,7 @@ public abstract class BlockEvents extends BaseEvent {
 			super(world, pos, state);
 			this.player = player;
 
-			if (state == null || !player.hasCorrectToolForDrops(state)) {// Handle empty block or player unable to break block scenario{
+			if (state == null || !PortingHooks.isCorrectToolForDrops(state, player)) { // Handle empty block or player unable to break block scenario
 				this.exp = 0;
 			} else{
 				int bonusLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, player.getMainHandItem());
