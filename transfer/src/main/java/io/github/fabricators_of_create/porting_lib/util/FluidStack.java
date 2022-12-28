@@ -145,10 +145,13 @@ public class FluidStack {
 	}
 
 	public boolean isFluidEqual(FluidVariant other) {
-		if (this.getType() == other) return true;
+		return isFluidEqual(getType(), other);
+	}
+
+	public static boolean isFluidEqual(FluidVariant mine, FluidVariant other) {
+		if (mine == other) return true;
 		if (other == null) return false;
 
-		FluidVariant mine = getType();
 		boolean fluidsEqual = mine.isOf(other.getFluid());
 
 		CompoundTag myTag = mine.getNbt();
