@@ -135,6 +135,7 @@
     "accessor.BucketItemAccessor",
     "accessor.BundleItemAccessor",
     "accessor.ClientboundPlayerAbilitiesPacketAccessor",
+    "accessor.ConnectionAccessor",
     "accessor.CubeVoxelShapeAccessor",
     "accessor.DamageSourceAccessor",
     "accessor.DimensionTypeAccessor",

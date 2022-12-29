@@ -1,11 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-
 import io.github.fabricators_of_create.porting_lib.event.common.EntityInteractCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.PlayerTickEvents;
-import io.github.fabricators_of_create.porting_lib.extensions.ItemExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.PlayerExtensions;
 import io.github.fabricators_of_create.porting_lib.util.ShieldBlockItem;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -33,7 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(Player.class)
-public abstract class PlayerMixin extends LivingEntity {
+public abstract class PlayerMixin extends LivingEntity implements PlayerExtensions {
 
 	@Shadow
 	public abstract void disableShield(boolean sprinting);

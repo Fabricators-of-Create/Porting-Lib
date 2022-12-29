@@ -68,6 +68,7 @@
       "net/minecraft/class_1438": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
       "net/minecraft/class_1472": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
       "net/minecraft/class_1473": ["io/github/fabricators_of_create/porting_lib/extensions/IShearable"],
+      "net/minecraft/class_1657": ["io/github/fabricators_of_create/porting_lib/extensions/PlayerExtensions"],
       "net/minecraft/class_1688": ["io/github/fabricators_of_create/porting_lib/extensions/AbstractMinecartExtensions"],
       "net/minecraft/class_1735": ["io/github/fabricators_of_create/porting_lib/extensions/SlotExtensions"],
       "net/minecraft/class_1747": ["io/github/fabricators_of_create/porting_lib/extensions/BlockItemExtensions"],
