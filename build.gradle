@@ -49,6 +49,23 @@ def moduleDependencies(Project project, List<String> depNames) {
 			api(include(it))
 		}
 	}
+
+	project.publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				pom.withXml {
+					def depsNode = asNode().appendNode("dependencies")
+					deps.each {
+						def depNode = depsNode.appendNode("dependency")
+						depNode.appendNode("groupId", it.group)
+						depNode.appendNode("artifactId", it.name)
+						depNode.appendNode("version", it.version)
+						depNode.appendNode("scope", "compile")
+					}
+				}
+			}
+		}
+	}
 }
 
 def setupDatagen(Project module) {
@@ -143,7 +160,6 @@ allprojects {
 //		modLocalRuntime("maven.modrinth:lithium:${project.lithium_version}")
 //		modLocalRuntime("maven.modrinth:vmp-fabric:${project.vmp_version}")
 		//	modLocalRuntime("maven.modrinth:iris:${project.iris_version}")
-		//	modLocalRuntime("dev.monarkhes:myron:1.6.3+1.18.1") { transitive = false }
 		modLocalRuntime("com.terraformersmc:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
 
 		// common dependencies
@@ -153,13 +169,6 @@ allprojects {
 		implementation("javax.annotation:javax.annotation-api:1.3.2")
 		implementation("com.google.code.findbugs:jsr305:3.0.2")
 	}
-
-	// todo why?
-//	allprojects.each { p ->
-//		loom.mods.register(p.name) {
-//			sourceSet p.sourceSets.main
-//		}
-//	}
 
 	tasks.withType(ProcessResources).configureEach {
 		Map<String, String> properties = new HashMap<>()
@@ -207,43 +216,7 @@ allprojects {
 		reproducibleFileOrder = true
 	}
 
-	// todo why?
-//	tasks.withType(GenerateModuleMetadata) {
-//		enabled = false
-//	}
-
-	// fixme uncommenting this causes everything to explode, but this might be important
-//	tasks.withType(JavaCompile).configureEach {
-//		it.options.setRelease(Integer.parseInt(sourceCompatibility))
-//	}
-
-	java {
-		withSourcesJar()
-	}
-
-	jar {
-		from("LICENSE") {
-			rename { "${it}_${project.archivesBaseName}" }
-		}
-	}
-
 	publishing {
-		publications {
-			mavenJava(MavenPublication) {
-				artifact(remapJar) {
-					builtBy(remapJar)
-				}
-
-				artifact(remapSourcesJar) {
-					builtBy remapSourcesJar
-				}
-
-				loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
-
-				javadoc.enabled = false
-			}
-		}
-
 		repositories {
 			maven {
 				url = "https://mvn.devos.one/snapshots/"
@@ -255,6 +228,24 @@ allprojects {
 					basic(BasicAuthentication)
 				}
 			}
+		}
+	}
+
+	tasks.withType(GenerateModuleMetadata) {
+		enabled = false
+	}
+
+	tasks.withType(JavaCompile).configureEach {
+		it.options.release = 17
+	}
+
+	java {
+		withSourcesJar()
+	}
+
+	jar {
+		from("LICENSE") {
+			rename { "${it}_${project.archivesBaseName}" }
 		}
 	}
 }
@@ -304,7 +295,6 @@ loom {
 	}
 }
 
-// todo why?
 javadoc {
 	options {
 		source = "17"
@@ -324,8 +314,6 @@ javadoc {
 	}
 
 	allprojects.each {
-		if (it.getName() == "networking") return
-
 		source(it.sourceSets.main.allJava.srcDirs)
 	}
 
@@ -347,24 +335,48 @@ subprojects.each {
 	remapJar.dependsOn("${it.path}:remapJar")
 }
 
-//void setupRepositories(RepositoryHandler repositories) {
-//	//repositories.mavenLocal() // uncomment for testing
-//	repositories.maven {
-//		url = "https://mvn.devos.one/${System.getenv().PUBLISH_SUFFIX}/"
-//		credentials {
-//			username = System.getenv().MAVEN_USER
-//			password = System.getenv().MAVEN_PASS
-//		}
-//		authentication {
-//			basic(BasicAuthentication)
-//		}
-//	}
-//}
+subprojects {
+	publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				artifact(remapJar) {
+					builtBy(remapJar)
+				}
+				artifact(remapSourcesJar) {
+					builtBy remapSourcesJar
+				}
+			}
+		}
+	}
 
-//task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: jar) {
-//	input = jar.archiveFile
-//	archiveFileName = "${archivesBaseName}-${project.version}-maven.jar"
-//	addNestedDependencies = false
-//}
-//build.dependsOn remapMavenJar
+	javadoc.enabled = false
+}
 
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			artifact(remapJar) {
+				builtBy(remapJar)
+			}
+			artifact(sourcesJar) {
+				builtBy remapSourcesJar
+			}
+
+			artifact javadocJar
+
+			pom.withXml {
+				def depsNode = asNode().appendNode("dependencies")
+				subprojects.each {
+					// Dont depend on the deprecated modules in the main artifact.
+					if (it.path.startsWith(":deprecated")) return
+
+					def depNode = depsNode.appendNode("dependency")
+					depNode.appendNode("groupId", it.group)
+					depNode.appendNode("artifactId", it.name)
+					depNode.appendNode("version", it.version)
+					depNode.appendNode("scope", "compile")
+				}
+			}
+		}
+	}
+}
