@@ -31,7 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(Player.class)
-public abstract class PlayerMixin extends LivingEntity {
+public abstract class PlayerMixin extends LivingEntity implements PlayerExtensions {
 
 	@Shadow
 	public abstract void disableShield(boolean sprinting);
