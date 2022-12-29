@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.mixin.common.accessor;
+package io.github.fabricators_of_create.porting_lib.fake_players.mixin.common.accessor;
 
 import io.netty.channel.Channel;
 import net.minecraft.network.Connection;

@@ -17,7 +17,7 @@ public class FakePlayer extends ServerPlayer {
 	}
 
 	@Override
-	public boolean isFakePlayer() {
+	public boolean isFake() {
 		return true;
 	}
 

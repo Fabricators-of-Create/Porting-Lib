@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "fake_players",
+  "id": "porting_lib_fake_players",
   "version": "${version}",
   "name": "Porting Lib Fake Players",
   "description": "Allows creating fake players for methods that require a player.",
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_3222": ["io/github/fabricators_of_create/porting_lib/fake_players/extensions/ServerPlayerExtensions"]
+      "net/minecraft/class_1657": ["io/github/fabricators_of_create/porting_lib/fake_players/extensions/PlayerExtensions"]
     }
   }
 }

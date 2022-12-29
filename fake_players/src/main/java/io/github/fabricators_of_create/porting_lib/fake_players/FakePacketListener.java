@@ -59,7 +59,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 public class FakePacketListener extends ServerGamePacketListenerImpl {
-	private static final Connection DUMMY_CONNECTION = new Connection(PacketFlow.CLIENTBOUND);
+	private static final Connection DUMMY_CONNECTION = new FakeConnection(PacketFlow.CLIENTBOUND);
 
 	public FakePacketListener(MinecraftServer server, ServerPlayer player) {
 		super(server, DUMMY_CONNECTION, player);
@@ -220,4 +220,27 @@ public class FakePacketListener extends ServerGamePacketListenerImpl {
 
 	@Override
 	public void handleLockDifficulty(ServerboundLockDifficultyPacket packet) {}
+
+	// these are not overriden on forge. We won't override them for parity, but they're here for reference.
+
+//	@Override
+//	public void handlePong(ServerboundPongPacket packet) {}
+//
+//	@Override
+//	public void teleport(double x, double y, double z, float yaw, float pitch, Set<RelativeArgument> flags, boolean shouldDismount) {}
+//
+//	@Override
+//	public void ackBlockChangesUpTo(int blockChangeSequence) {}
+//
+//	@Override
+//	public void addPendingMessage(PlayerChatMessage playerChatMessage) {}
+//
+//	@Override
+//	public void handleChatAck(ServerboundChatAckPacket serverboundChatAckPacket) {}
+//
+//	@Override
+//	public void handleChatCommand(ServerboundChatCommandPacket packet) {}
+//
+//	@Override
+//	public void handleChatPreview(ServerboundChatPreviewPacket packet) {}
 }

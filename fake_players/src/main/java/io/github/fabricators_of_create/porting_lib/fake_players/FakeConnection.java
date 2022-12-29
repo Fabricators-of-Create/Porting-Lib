@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.fake_players;
 
-import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.ConnectionAccessor;
+import io.github.fabricators_of_create.porting_lib.fake_players.mixin.common.accessor.ConnectionAccessor;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.PacketFlow;

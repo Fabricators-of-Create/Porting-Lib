@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.extensions;
+package io.github.fabricators_of_create.porting_lib.fake_players.extensions;
 
 import net.minecraft.server.level.ServerPlayer;
 
