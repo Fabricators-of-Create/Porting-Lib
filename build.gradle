@@ -230,7 +230,17 @@ allprojects {
 	publishing {
 		publications {
 			mavenJava(MavenPublication) {
-				from components.java
+				artifact(remapJar) {
+					builtBy(remapJar)
+				}
+
+				artifact(remapSourcesJar) {
+					builtBy remapSourcesJar
+				}
+
+				loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
+
+				javadoc.enabled = false
 			}
 		}
 
@@ -295,67 +305,47 @@ loom {
 }
 
 // todo why?
-//javadoc {
-//	options {
-//		source = "17"
-//		encoding = "UTF-8"
-//		charSet = "UTF-8"
-//		memberLevel = JavadocMemberLevel.PACKAGE
-//		links(
-//				"https://guava.dev/releases/21.0/api/docs/",
-//				"https://asm.ow2.io/javadoc/",
-//				"https://docs.oracle.com/javase/8/docs/api/",
-//				"http://jenkins.liteloader.com/job/Mixin/javadoc/",
-//				"https://logging.apache.org/log4j/2.x/log4j-api/apidocs/"
-//				// Need to add minecraft jd publication etc once there is one available
-//		)
-//		// Disable the crazy super-strict doclint tool in Java 8
-//		addStringOption("Xdoclint:none", "-quiet")
-//	}
-//
-//	allprojects.each {
-//		if (it.getName() == "networking") return
-//
-//		source(it.sourceSets.main.allJava.srcDirs)
-//	}
-//
-//	classpath = files(sourceSets.main.compileClasspath)
-//	include("**/api/**")
-//	failOnError false
-//}
+javadoc {
+	options {
+		source = "17"
+		encoding = "UTF-8"
+		charSet = "UTF-8"
+		memberLevel = JavadocMemberLevel.PACKAGE
+		links(
+				"https://guava.dev/releases/21.0/api/docs/",
+				"https://asm.ow2.io/javadoc/",
+				"https://docs.oracle.com/javase/8/docs/api/",
+				"http://jenkins.liteloader.com/job/Mixin/javadoc/",
+				"https://logging.apache.org/log4j/2.x/log4j-api/apidocs/"
+				// Need to add minecraft jd publication etc once there is one available
+		)
+		// Disable the crazy super-strict doclint tool in Java 8
+		addStringOption("Xdoclint:none", "-quiet")
+	}
 
-//task javadocJar(type: Jar) {
-//	dependsOn javadoc
-//	from javadoc.destinationDir
-//	//Set as `fatjavadoc` to prevent an ide form trying to use this javadoc, over using the modules javadoc
-//	archiveClassifier = "fatjavadoc"
-//}
+	allprojects.each {
+		if (it.getName() == "networking") return
 
-//build.dependsOn javadocJar
+		source(it.sourceSets.main.allJava.srcDirs)
+	}
 
-//subprojects.each {
-//	remapJar.dependsOn("${it.path}:remapJar")
-//}
+	classpath = files(sourceSets.main.compileClasspath)
+	include("**/api/**")
+	failOnError false
+}
 
-//subprojects {
-//	publishing {
-//		publications {
-//			mavenJava(MavenPublication) {
-//				artifact(remapJar) {
-//					builtBy(remapJar)
-//				}
-//
-//				artifact(remapSourcesJar) {
-//					builtBy remapSourcesJar
-//				}
-//			}
-//		}
-//	}
-//
-//	loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
-//
-//	javadoc.enabled = false
-//}
+task javadocJar(type: Jar) {
+	dependsOn javadoc
+	from javadoc.destinationDir
+	//Set as `fatjavadoc` to prevent an ide form trying to use this javadoc, over using the modules javadoc
+	archiveClassifier = "fatjavadoc"
+}
+
+build.dependsOn javadocJar
+
+subprojects.each {
+	remapJar.dependsOn("${it.path}:remapJar")
+}
 
 //void setupRepositories(RepositoryHandler repositories) {
 //	//repositories.mavenLocal() // uncomment for testing
