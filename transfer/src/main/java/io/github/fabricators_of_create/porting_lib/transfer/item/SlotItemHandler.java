@@ -53,7 +53,7 @@ public class SlotItemHandler extends Slot {
 
 	@Override
 	public int getMaxStackSize(ItemStack stack) {
-		return getItemHandler().getStackLimit(index, ItemVariant.of(stack), stack.getCount());
+		return getItemHandler().getSlotLimit(index);
 	}
 
 	@Override
