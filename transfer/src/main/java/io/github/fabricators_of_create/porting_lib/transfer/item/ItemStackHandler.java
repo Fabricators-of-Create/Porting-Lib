@@ -13,7 +13,6 @@ import io.github.fabricators_of_create.porting_lib.transfer.callbacks.Transactio
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler.SnapshotData;
 import io.github.fabricators_of_create.porting_lib.util.ItemStackUtil;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
@@ -156,7 +155,7 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 
 	@Override
 	public Iterator<StorageView<ItemVariant>> iterator() {
-		return new ItemStackHandlerIterator(this);
+		return new SlotExposedIterator(this);
 	}
 
 	@Override
@@ -274,5 +273,10 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 	@Override
 	protected void onFinalCommit() {
 		super.onFinalCommit();
+	}
+
+	@Override
+	public void onFinalViewCommit() {
+		onFinalCommit();
 	}
 }

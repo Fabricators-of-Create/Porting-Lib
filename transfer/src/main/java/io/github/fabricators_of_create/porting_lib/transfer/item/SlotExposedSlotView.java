@@ -8,16 +8,16 @@ import net.minecraft.world.item.ItemStack;
 
 import org.jetbrains.annotations.Nullable;
 
-public class ItemStackHandlerSlotView extends SnapshotParticipant<ItemStack> implements StorageView<ItemVariant> {
-	protected ItemStackHandler handler;
+public class SlotExposedSlotView extends SnapshotParticipant<ItemStack> implements StorageView<ItemVariant> {
+	protected SlotExposedStorage handler;
 	protected int index;
 	protected ItemStack stack;
 	protected ItemVariant variant;
 
-	public ItemStackHandlerSlotView(ItemStackHandler handler, int index) {
+	public SlotExposedSlotView(SlotExposedStorage handler, int index) {
 		this.handler = handler;
 		this.index = index;
-		ItemStack stack = handler.stacks[index];
+		ItemStack stack = handler.getStackInSlot(index);
 		if (stack == null) { // FIXME: don't know how this is possible, temp fix
 			stack = ItemStack.EMPTY;
 		}
@@ -26,7 +26,7 @@ public class ItemStackHandlerSlotView extends SnapshotParticipant<ItemStack> imp
 	}
 
 	private void setStack(ItemStack stack, @Nullable TransactionContext ctx) {
-		handler.contentsChangedInternal(index, stack, ctx);
+		handler.setStackInSlot(index, stack);
 		this.stack = stack;
 		this.variant = ItemVariant.of(stack);
 	}
@@ -91,6 +91,6 @@ public class ItemStackHandlerSlotView extends SnapshotParticipant<ItemStack> imp
 
 	@Override
 	protected void onFinalCommit() {
-		handler.onFinalCommit();
+		handler.onFinalViewCommit();
 	}
 }

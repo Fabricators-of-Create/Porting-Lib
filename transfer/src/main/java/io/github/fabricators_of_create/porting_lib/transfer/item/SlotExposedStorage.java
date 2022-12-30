@@ -1,12 +1,14 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
 import io.github.fabricators_of_create.porting_lib.PortingConstants;
+import io.github.fabricators_of_create.porting_lib.transfer.callbacks.TransactionCallback;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.world.item.ItemStack;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface SlotExposedStorage extends Storage<ItemVariant> {
 	ItemStack getStackInSlot(int slot);
@@ -29,4 +31,6 @@ public interface SlotExposedStorage extends Storage<ItemVariant> {
 		PortingConstants.LOGGER.warn("Tried to extract from a slotted storage without a implementation! Implementations will be forced to implement this in 1.19.3");
 		return extract(resource, maxAmount, transaction);
 	}
+
+	default void onFinalViewCommit() {}
 }
