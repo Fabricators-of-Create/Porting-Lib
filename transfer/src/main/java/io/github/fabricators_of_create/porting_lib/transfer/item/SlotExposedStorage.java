@@ -14,7 +14,6 @@ public interface SlotExposedStorage extends Storage<ItemVariant> {
 	ItemStack getStackInSlot(int slot);
 	int getSlots();
 	int getSlotLimit(int slot);
-	int getStackLimit(int slot, ItemVariant resource, long amount);
 	default void setStackInSlot(int slot, @NotNull ItemStack stack) {
 
 	}

@@ -202,7 +202,6 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 		return Math.min(getSlotLimit(slot), resource.getItem().getMaxStackSize());
 	}
 
-	@Override
 	public int getStackLimit(int slot, ItemVariant resource, long amount) {
 		return getStackLimit(slot, resource);
 	}
