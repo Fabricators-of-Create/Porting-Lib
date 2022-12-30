@@ -8,8 +8,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.google.common.base.Suppliers;
-
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
@@ -59,7 +57,13 @@ public final class RegistryObject<T> implements Supplier<T> {
 		return id;
 	}
 
+	public void setValue(T value) {
+		this.value = value;
+	}
+
 	public void updateRef() {
+		if (value != null)
+			return;
 		Registry<? extends T> vanillaRegistry = (Registry<? extends T>) Registry.REGISTRY.get(key.registry());
 		if (vanillaRegistry != null) {
 			this.value = vanillaRegistry.get(id);

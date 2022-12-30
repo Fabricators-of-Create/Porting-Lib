@@ -56,17 +56,18 @@ public class LazyRegistrar<T> {
 	}
 
 	public <R extends T> RegistryObject<R> register(ResourceLocation id, final Supplier<? extends R> entry) {
-		RegistryObject<? extends R> obj = new RegistryObject<>(id, ResourceKey.create(getRegistryKey(), id));
+		RegistryObject<R> obj = new RegistryObject<>(id, ResourceKey.create(getRegistryKey(), id));
+		obj.setValue(entry.get());
 		if (entries.putIfAbsent((RegistryObject<T>) obj, entry) != null) {
 			throw new IllegalArgumentException("Duplicate registration " + id);
 		}
-		return (RegistryObject<R>) obj;
+		return obj;
 	}
 
 	public void register() {
 		Registry<T> registry = makeRegistry().get();
 		entries.forEach((entry, sup) -> {
-			Registry.register(registry, entry.getId(), sup.get());
+			Registry.register(registry, entry.getId(), entry.get());
 			entry.updateRef();
 		});
 	}
