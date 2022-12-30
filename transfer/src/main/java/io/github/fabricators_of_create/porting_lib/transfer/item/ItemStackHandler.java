@@ -71,6 +71,34 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 	}
 
 	@Override
+	public long insertSlot(int slot, ItemVariant resource, long maxAmount, TransactionContext transaction) {
+		long inserted = 0;
+		updateSnapshots(transaction);
+		if (isItemValid(slot, resource, maxAmount)) {
+			ItemStack held = stacks[slot];
+			if (held.isEmpty()) { // just throw in a full stack
+				int toFill = (int) Math.min(getStackLimit(slot, resource, maxAmount), maxAmount);
+				maxAmount -= toFill;
+				inserted += toFill;
+				ItemStack stack = resource.toStack(toFill);
+				contentsChangedInternal(slot, stack, transaction);
+			} else if (ItemStackUtil.canItemStacksStack(held, resource.toStack())) { // already filled, but can stack
+				int max = getStackLimit(slot, resource, maxAmount); // total possible
+				int canInsert = max - held.getCount(); // room available
+				int actuallyInsert = Math.min(canInsert, (int) maxAmount);
+				if (actuallyInsert > 0) {
+					maxAmount -= actuallyInsert;
+					inserted += actuallyInsert;
+					held = held.copy();
+					held.grow(actuallyInsert);
+					contentsChangedInternal(slot, held, transaction);
+				}
+			}
+		}
+		return inserted;
+	}
+
+	@Override
 	public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
 		long extracted = 0;
 		updateSnapshots(transaction);
@@ -94,6 +122,29 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 				if (maxAmount == 0) // nothing left to extract - exit
 					break;
 			}
+		}
+		return extracted;
+	}
+
+	@Override
+	public long extractSlot(int slot, ItemVariant resource, long maxAmount, TransactionContext transaction) {
+		long extracted = 0;
+		updateSnapshots(transaction);
+		TransactionSuccessCallback callback = new TransactionSuccessCallback(transaction);
+		ItemStack stack = stacks[slot];
+		if (resource.matches(stack)) {
+			// find how much to remove
+			int stored = stack.getCount();
+			int toRemove = (int) Math.min(stored, maxAmount);
+			maxAmount -= toRemove;
+			extracted += toRemove;
+			// remove from storage
+			stack = stack.copy();
+			stack.setCount(stack.getCount() - toRemove);
+			callback.addCallback(() -> onContentsChanged(slot));
+			if (stack.isEmpty()) // set to empty for a clean list
+				stack = ItemStack.EMPTY;
+			stacks[slot] = stack;
 		}
 		return extracted;
 	}

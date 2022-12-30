@@ -90,8 +90,18 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
+	public long insertSlot(int slot, ItemVariant resource, long maxAmount, TransactionContext transaction) {
+		return handler.insertSlot(slot, resource, maxAmount, transaction);
+	}
+
+	@Override
 	public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
 		return handler.extract(resource, maxAmount, transaction);
+	}
+
+	@Override
+	public long extractSlot(int slot, ItemVariant resource, long maxAmount, TransactionContext transaction) {
+		return handler.extractSlot(slot, resource, maxAmount, transaction);
 	}
 
 	@Override
