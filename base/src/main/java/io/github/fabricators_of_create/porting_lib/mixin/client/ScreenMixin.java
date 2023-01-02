@@ -2,7 +2,9 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import java.util.List;
 
+import io.github.fabricators_of_create.porting_lib.event.client.PreRenderTooltipCallback;
 import io.github.fabricators_of_create.porting_lib.util.ScreenHelper;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 
@@ -35,7 +37,7 @@ public abstract class ScreenMixin {
 	private ItemStack port_lib$cachedStack = ItemStack.EMPTY;
 
 	@Inject(method = "renderTooltipInternal", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", shift = At.Shift.AFTER), cancellable = true)
-	private void port_lib$preTooltipRender(PoseStack matrices, List<ClientTooltipComponent> components, int x, int y, CallbackInfo ci) {
+	private void port_lib$preTooltipRender(PoseStack matrices, List<ClientTooltipComponent> components, int x, int y, ClientTooltipPositioner clientTooltipPositioner, CallbackInfo ci) {
 		if (PreRenderTooltipCallback.EVENT.invoker().onPreRenderTooltip(port_lib$cachedStack, matrices, x, y, width, height, this.font, components))
 			ci.cancel();
 	}
@@ -50,7 +52,7 @@ public abstract class ScreenMixin {
 		port_lib$cachedStack = ItemStack.EMPTY;
 	}
 
-	@Inject(method = "renderTooltipInternal", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack$Pose;pose()Lcom/mojang/math/Matrix4f;"))
+	@Inject(method = "renderTooltipInternal", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack$Pose;pose()Lorg/joml/Matrix4f;"))
 	private void port_lib$cacheBorderColors(PoseStack poseStack, List<ClientTooltipComponent> list, int i, int j, ClientTooltipPositioner clientTooltipPositioner, CallbackInfo ci) {
 		ScreenHelper.CURRENT_COLOR = RenderTooltipBorderColorCallback.EVENT.invoker()
 				.onTooltipBorderColor(port_lib$cachedStack, ScreenHelper.DEFAULT_BORDER_COLOR_START, ScreenHelper.DEFAULT_BORDER_COLOR_END);

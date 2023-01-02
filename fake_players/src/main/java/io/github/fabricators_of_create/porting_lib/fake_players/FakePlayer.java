@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Player;
 
 public class FakePlayer extends ServerPlayer {
 	public FakePlayer(ServerLevel world, GameProfile gameProfile) {
-		super(world.getServer(), world, gameProfile, null);
+		super(world.getServer(), world, gameProfile);
 		this.connection = new FakePacketListener(world.getServer(), this);
 	}
 
