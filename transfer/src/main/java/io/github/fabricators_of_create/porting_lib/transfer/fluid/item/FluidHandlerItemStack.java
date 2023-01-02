@@ -1,20 +1,25 @@
 package io.github.fabricators_of_create.porting_lib.transfer.fluid.item;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import io.github.fabricators_of_create.porting_lib.util.FluidStack;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
-public class FluidHandlerItemStack implements SingleSlotStorage<FluidVariant> {
+@ApiStatus.Experimental
+public class FluidHandlerItemStack implements Storage<FluidVariant> {
 	public static final String FLUID_NBT_KEY = "Fluid";
-
 
 	@NotNull
 	protected ContainerItemContext container;
@@ -106,23 +111,53 @@ public class FluidHandlerItemStack implements SingleSlotStorage<FluidVariant> {
 	}
 
 	@Override
-	public boolean isResourceBlank() {
-		return getResource().isBlank();
+	public Iterator<StorageView<FluidVariant>> iterator() {
+		return new Iterator<>() {
+			boolean hasNext = true;
+
+			@Override
+			public boolean hasNext() {
+				return hasNext;
+			}
+
+			@Override
+			public StorageView<FluidVariant> next() {
+				if (!hasNext) {
+					throw new NoSuchElementException();
+				}
+
+				hasNext = false;
+				return new FluidHandlerItemStackView();
+			}
+		};
 	}
 
-	@Override
-	public FluidVariant getResource() {
-		return getFluid().getType();
-	}
+	public class FluidHandlerItemStackView implements StorageView<FluidVariant> {
 
-	@Override
-	public long getAmount() {
-		return getFluid().getAmount();
-	}
+		@Override
+		public long extract(FluidVariant resource, long maxAmount, TransactionContext transaction) {
+			return FluidHandlerItemStack.this.extract(resource, maxAmount, transaction);
+		}
 
-	@Override
-	public long getCapacity() {
-		return capacity;
+		@Override
+		public boolean isResourceBlank() {
+			return getResource().isBlank();
+		}
+
+		@Override
+		public FluidVariant getResource() {
+			return getFluid().getType();
+		}
+
+		@Override
+		public long getAmount() {
+			return getFluid().getAmount();
+		}
+
+		@Override
+		public long getCapacity() {
+			return capacity;
+		}
 	}
 
 	public boolean canFillFluidType(FluidVariant variant, long amount) {
