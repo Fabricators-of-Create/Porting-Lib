@@ -2,6 +2,12 @@ package io.github.fabricators_of_create.porting_lib.transfer.cache;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientBlockEntityEvents;
 
+/**
+ * This system is busted and dangerous.
+ * - getWorld returns null
+ * - misses Levels that aren't ClientLevel or ServerLevel
+ */
+@Deprecated(forRemoval = true)
 public interface ClientBlockApiCache {
 	void invalidate();
 

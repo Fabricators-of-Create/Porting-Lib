@@ -19,8 +19,10 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * A {@link BlockApiLookup} for fluid storage on the client. can only access API provided through TransferUtil. Null directions allowed.
+ * @deprecated see ClientBlockApiCache
  */
 @SuppressWarnings("NonExtendableApiUsage")
+@Deprecated(forRemoval = true)
 public class ClientFluidLookupCache implements BlockApiCache<Storage<FluidVariant>, Direction>, ClientBlockApiCache {
 	private final ClientLevel world;
 	private final BlockPos pos;
