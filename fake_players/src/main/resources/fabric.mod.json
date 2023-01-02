@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_fake_players",
+  "version": "${version}",
+  "name": "Porting Lib Fake Players",
+  "description": "Allows creating fake players for methods that require a player.",
+  "mixins": [
+    "porting_lib_fake_players.mixins.json"
+  ],
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_1657": ["io/github/fabricators_of_create/porting_lib/fake_players/extensions/PlayerExtensions"]
+    }
+  }
+}

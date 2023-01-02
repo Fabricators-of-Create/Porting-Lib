@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SidedStorageBlockEntity;
 
 import org.jetbrains.annotations.NotNull;
@@ -632,7 +631,9 @@ public class TransferUtil implements ModInitializer {
 	/**
 	 * Get a BlockApiCache for ItemStorage.SIDED. If on client, will return a client-side cache,
 	 * which can only interact with BlockEntities using the ItemTransferable interface.
+	 * @deprecated use StorageProvider
 	 */
+	@Deprecated(forRemoval = true)
 	public static BlockApiCache<Storage<ItemVariant>, Direction> getItemCache(Level level, BlockPos pos) {
 		return level.port_lib$getItemCache(pos);
 	}
@@ -640,7 +641,9 @@ public class TransferUtil implements ModInitializer {
 	/**
 	 * Get a BlockApiCache for FluidStorage.SIDED. If on client, will return a client-side cache,
 	 * which can only interact with BlockEntities using the FluidTransferable interface.
+	 * @deprecated use StorageProvider
 	 */
+	@Deprecated(forRemoval = true)
 	public static BlockApiCache<Storage<FluidVariant>, Direction> getFluidCache(Level level, BlockPos pos) {
 		return level.port_lib$getFluidApiCache(pos);
 	}

@@ -18,8 +18,10 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * A {@link BlockApiLookup} for item storage on the client. can only access API provided through TransferUtil. Null directions allowed.
+ * @deprecated see ClientBlockApiCache
  */
 @SuppressWarnings("NonExtendableApiUsage")
+@Deprecated(forRemoval = true)
 public class ClientItemLookupCache implements BlockApiCache<Storage<ItemVariant>, Direction>, ClientBlockApiCache {
 	private final ClientLevel world;
 	private final BlockPos pos;

@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "io.github.fabricators_of_create.porting_lib.fake_players.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "common.PlayerMixin",
+    "common.accessor.ConnectionAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

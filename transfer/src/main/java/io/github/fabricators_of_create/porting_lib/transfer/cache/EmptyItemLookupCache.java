@@ -13,7 +13,11 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * @deprecated see ClientBlockApiCache
+ */
 @SuppressWarnings("NonExtendableApiUsage")
+@Deprecated(forRemoval = true)
 public enum EmptyItemLookupCache implements BlockApiCache<Storage<ItemVariant>, Direction> {
 	INSTANCE;
 

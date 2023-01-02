@@ -8,11 +8,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.google.common.base.Suppliers;
-
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -59,7 +54,13 @@ public final class RegistryObject<T> implements Supplier<T> {
 		return id;
 	}
 
+	public void setValue(T value) {
+		this.value = value;
+	}
+
 	public void updateRef() {
+		if (value != null)
+			return;
 		Registry<? extends T> builtinRegistry = (Registry<? extends T>) BuiltInRegistries.REGISTRY.get(key.registry());
 		if (builtinRegistry != null) {
 			this.value = builtinRegistry.get(id);

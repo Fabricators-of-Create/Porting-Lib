@@ -12,7 +12,6 @@ import io.github.fabricators_of_create.porting_lib.transfer.callbacks.Transactio
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler.SnapshotData;
 import io.github.fabricators_of_create.porting_lib.util.ItemStackUtil;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
@@ -70,6 +69,34 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 	}
 
 	@Override
+	public long insertSlot(int slot, ItemVariant resource, long maxAmount, TransactionContext transaction) {
+		long inserted = 0;
+		updateSnapshots(transaction);
+		if (isItemValid(slot, resource, maxAmount)) {
+			ItemStack held = stacks[slot];
+			if (held.isEmpty()) { // just throw in a full stack
+				int toFill = (int) Math.min(getStackLimit(slot, resource, maxAmount), maxAmount);
+				maxAmount -= toFill;
+				inserted += toFill;
+				ItemStack stack = resource.toStack(toFill);
+				contentsChangedInternal(slot, stack, transaction);
+			} else if (ItemStackUtil.canItemStacksStack(held, resource.toStack())) { // already filled, but can stack
+				int max = getStackLimit(slot, resource, maxAmount); // total possible
+				int canInsert = max - held.getCount(); // room available
+				int actuallyInsert = Math.min(canInsert, (int) maxAmount);
+				if (actuallyInsert > 0) {
+					maxAmount -= actuallyInsert;
+					inserted += actuallyInsert;
+					held = held.copy();
+					held.grow(actuallyInsert);
+					contentsChangedInternal(slot, held, transaction);
+				}
+			}
+		}
+		return inserted;
+	}
+
+	@Override
 	public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
 		long extracted = 0;
 		updateSnapshots(transaction);
@@ -97,6 +124,29 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 		return extracted;
 	}
 
+	@Override
+	public long extractSlot(int slot, ItemVariant resource, long maxAmount, TransactionContext transaction) {
+		long extracted = 0;
+		updateSnapshots(transaction);
+		TransactionSuccessCallback callback = new TransactionSuccessCallback(transaction);
+		ItemStack stack = stacks[slot];
+		if (resource.matches(stack)) {
+			// find how much to remove
+			int stored = stack.getCount();
+			int toRemove = (int) Math.min(stored, maxAmount);
+			maxAmount -= toRemove;
+			extracted += toRemove;
+			// remove from storage
+			stack = stack.copy();
+			stack.setCount(stack.getCount() - toRemove);
+			callback.addCallback(() -> onContentsChanged(slot));
+			if (stack.isEmpty()) // set to empty for a clean list
+				stack = ItemStack.EMPTY;
+			stacks[slot] = stack;
+		}
+		return extracted;
+	}
+
 	protected void contentsChangedInternal(int slot, ItemStack newStack, @Nullable TransactionContext ctx) {
 		stacks[slot] = newStack;
 		if (ctx != null) TransactionCallback.onSuccess(ctx, () -> onContentsChanged(slot));
@@ -104,7 +154,7 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 
 	@Override
 	public Iterator<StorageView<ItemVariant>> iterator() {
-		return new ItemStackHandlerIterator(this);
+		return new SlotExposedIterator(this);
 	}
 
 	@Override
@@ -151,7 +201,6 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 		return Math.min(getSlotLimit(slot), resource.getItem().getMaxStackSize());
 	}
 
-	@Override
 	public int getStackLimit(int slot, ItemVariant resource, long amount) {
 		return getStackLimit(slot, resource);
 	}
@@ -222,5 +271,10 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 	@Override
 	protected void onFinalCommit() {
 		super.onFinalCommit();
+	}
+
+	@Override
+	public void onFinalViewCommit() {
+		onFinalCommit();
 	}
 }

@@ -278,12 +278,12 @@ loom {
 		// make default run configs run all modules
 		client {
 			client()
-			name "Minecraft Client"
+			name "Minecraft Client (all modules)"
 			source sourceSets.allModules
 		}
 		server {
 			server()
-			name "Minecraft Server"
+			name "Minecraft Server (all modules)"
 			source sourceSets.allModules
 		}
 	}
