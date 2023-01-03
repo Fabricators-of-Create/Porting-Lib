@@ -30,7 +30,10 @@ import java.util.Map;
 public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implements Storage<ItemVariant>, INBTSerializable<CompoundTag> {
 	private static final ItemVariant blank = ItemVariant.blank();
 
-	@Internal // touching this directly is discouraged
+	/**
+	 * Do not directly access this array. It must be kept in sync with the others. Restricting access may break existing mods.
+	 */
+	@Deprecated
 	public ItemStack[] stacks;
 	protected ItemVariant[] variants;
 	protected Map<Item, IntSortedSet> lookup;
