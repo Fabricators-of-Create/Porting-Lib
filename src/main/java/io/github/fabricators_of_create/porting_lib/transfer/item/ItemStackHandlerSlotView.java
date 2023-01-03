@@ -18,14 +18,12 @@ public class ItemStackHandlerSlotView extends SnapshotParticipant<ItemStack> imp
 	public ItemStackHandlerSlotView(ItemStackHandler handler, int index) {
 		this.handler = handler;
 		this.index = index;
-		this.stack = handler.stacks[index];
-		this.variant = ItemVariant.of(stack);
+		updateContents();
 	}
 
 	private void setStack(ItemStack stack, @Nullable TransactionContext ctx) {
 		handler.contentsChangedInternal(index, stack, ctx);
-		this.stack = stack;
-		this.variant = ItemVariant.of(stack);
+		updateContents();
 	}
 
 	@Override
@@ -83,11 +81,17 @@ public class ItemStackHandlerSlotView extends SnapshotParticipant<ItemStack> imp
 		return "ItemStackHandlerSlotView{" +
 				"index=" + index +
 				", stack=" + stack +
+				", variant=" + variant +
 				'}';
 	}
 
 	@Override
 	protected void onFinalCommit() {
 		handler.onFinalCommit();
+	}
+
+	private void updateContents() {
+		this.stack = handler.getStackInSlot(index);
+		this.variant = handler.getVariantInSlot(index);
 	}
 }

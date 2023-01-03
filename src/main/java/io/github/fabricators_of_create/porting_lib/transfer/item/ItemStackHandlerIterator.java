@@ -18,7 +18,7 @@ public class ItemStackHandlerIterator implements Iterator<StorageView<ItemVarian
 
 	@Override
 	public boolean hasNext() {
-		return open && index < handler.stacks.length;
+		return open && index < handler.getSlots();
 	}
 
 	@Override

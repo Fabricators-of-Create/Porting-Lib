@@ -27,14 +27,15 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 
 	@Override
 	public int getContainerSize() {
-		return handler.stacks.length;
+		return handler.getSlots();
 	}
 
 	@Override
 	public boolean isEmpty() {
-		for (ItemStack stack : handler.stacks) {
-			if (!stack.isEmpty())
+		for (int i = 0; i < handler.getSlots(); i++) {
+			if (!handler.getStackInSlot(i).isEmpty()) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -46,11 +47,14 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 
 	@Override
 	public ItemStack removeItem(int index, int count) {
-		ItemStack[] stacks = handler.stacks;
-		if (index >= 0 && index < stacks.length) {
-			ItemStack current = stacks[index];
-			stacks[index] = ItemStack.EMPTY;
-			return current.split(count);
+		if (index >= 0 && index < handler.getSlots()) {
+			ItemStack current = handler.getStackInSlot(index);
+			if (current.isEmpty())
+				return ItemStack.EMPTY;
+			current = current.copy();
+			ItemStack extracted = current.split(count);
+			handler.setStackInSlot(index, current);
+			return extracted;
 		}
 		return ItemStack.EMPTY;
 	}
@@ -62,15 +66,12 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 
 	@Override
 	public void setItem(int index, ItemStack stack) {
-		ItemStack[] stacks = handler.stacks;
-		if (index >= 0 && index < stacks.length) {
-			stacks[index] = stack;
-		}
+		handler.contentsChangedInternal(index, stack, null);
 	}
 
 	@Override
 	public void clearContent() {
-		Arrays.fill(handler.stacks, ItemStack.EMPTY);
+		handler.setSize(handler.getSlots());
 	}
 
 	@Override
