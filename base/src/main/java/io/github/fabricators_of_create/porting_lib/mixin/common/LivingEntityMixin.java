@@ -82,6 +82,9 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 	@Shadow
 	public abstract InteractionHand getUsedItemHand();
 
+	@Shadow
+	protected int lastHurtByPlayerTime;
+
 	public LivingEntityMixin(EntityType<?> entityType, Level world) {
 		super(entityType, world);
 	}
@@ -106,11 +109,21 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 		captureDrops(new ArrayList<>());
 	}
 
-	@Inject(method = "dropAllDeathLoot", at = @At("TAIL"))
+	private final ThreadLocal<Integer> port_lib$looting_level = new ThreadLocal<>();
+
+	@Inject(method = "dropAllDeathLoot", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;dropFromLootTable(Lnet/minecraft/world/damagesource/DamageSource;Z)V"), locals = LocalCapture.CAPTURE_FAILHARD)
+	private void port_lib$spawnDropsCapture(DamageSource source, CallbackInfo ci, Entity entity, int lootingLevel) {
+		port_lib$looting_level.set(lootingLevel);
+	}
+
+
+	@Inject(method = "dropAllDeathLoot", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void port_lib$spawnDropsTAIL(DamageSource source, CallbackInfo ci) {
 		Collection<ItemEntity> drops = this.captureDrops(null);
-		if (!LivingEntityEvents.DROPS.invoker().onLivingEntityDrops((LivingEntity) (Object) this, source, drops))
+		if (!LivingEntityEvents.DROPS_WITH_LEVEL.invoker().onLivingEntityDrops((LivingEntity) (Object) this, source, drops, port_lib$looting_level.get(), lastHurtByPlayerTime > 0)
+		|| !LivingEntityEvents.DROPS.invoker().onLivingEntityDrops((LivingEntity) (Object) this, source, drops))
 			drops.forEach(e -> level.addFreshEntity(e));
+		port_lib$looting_level.remove();
 	}
 
 	@Unique
