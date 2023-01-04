@@ -2,10 +2,10 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
+import io.github.fabricators_of_create.porting_lib.common.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.event.common.PlayerEvents;
 import io.github.fabricators_of_create.porting_lib.item.XpRepairItem;
 
-import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
