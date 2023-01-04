@@ -1,0 +1,12 @@
+archivesBaseName = "data"
+version = getSubprojectVersion(project)
+
+loom.accessWidenerPath = file("src/main/resources/porting-lib-data.accesswidener")
+
+moduleDependencies(project, [
+		"utility"
+])
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}

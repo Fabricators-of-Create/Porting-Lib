@@ -1,0 +1,7 @@
+accessWidener v2 named
+transitive-accessible field net/minecraft/data/loot/BlockLootSubProvider map Ljava/util/Map;
+transitive-accessible field net/minecraft/data/loot/EntityLootSubProvider enabledFeatures Lnet/minecraft/world/flag/FeatureFlagSet;
+transitive-accessible field net/minecraft/data/loot/EntityLootSubProvider SPECIAL_LOOT_TABLE_TYPES Ljava/util/Set;
+transitive-accessible field net/minecraft/data/loot/EntityLootSubProvider map Ljava/util/Map;
+
+transitive-accessible field net/minecraft/data/loot/LootTableProvider pathProvider Lnet/minecraft/data/PackOutput$PathProvider;
