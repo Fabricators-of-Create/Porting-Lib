@@ -3,16 +3,13 @@ version = getSubprojectVersion(project)
 
 moduleDependencies(project, [
 		"lazy_registration",
-		"model_loader",
 		"fake_players",
 		"ingredients",
 		"extensions",
-		"obj_loader",
 		"transfer",
 		"utility",
 		"entity",
 		"common",
-		"models",
 		"tags"
 ])
 
