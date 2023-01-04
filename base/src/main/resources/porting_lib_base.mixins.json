@@ -157,6 +157,7 @@
     "client.MultiPlayerGameModeMixin",
     "client.ParticleEngineMixin",
     "client.ParticleMixin",
+    "client.PlayerRendererMixin",
     "client.PostChainMixin",
     "client.RemotePlayerMixin",
     "client.RenderTargetMixin",

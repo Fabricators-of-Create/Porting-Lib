@@ -223,12 +223,6 @@ allprojects {
 	}
 
 	publishing {
-		publications {
-			mavenJava(MavenPublication) {
-				from components.java
-			}
-		}
-
 		repositories {
 			maven {
 				url = "https://mvn.devos.one/snapshots/"
@@ -332,25 +326,46 @@ loom {
 //	remapJar.dependsOn("${it.path}:remapJar")
 //}
 
-//subprojects {
-//	publishing {
-//		publications {
-//			mavenJava(MavenPublication) {
-//				artifact(remapJar) {
-//					builtBy(remapJar)
-//				}
-//
-//				artifact(remapSourcesJar) {
-//					builtBy remapSourcesJar
-//				}
-//			}
-//		}
-//	}
-//
-//	loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
-//
-//	javadoc.enabled = false
-//}
+subprojects {
+	publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				artifact(remapJar) {
+					builtBy(remapJar)
+				}
+
+				artifact(remapSourcesJar) {
+					builtBy remapSourcesJar
+				}
+			}
+		}
+	}
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			artifact(remapJar) {
+				builtBy(remapJar)
+			}
+
+			artifact(sourcesJar) {
+				builtBy remapSourcesJar
+			}
+
+			pom.withXml {
+				def depsNode = asNode().appendNode("dependencies")
+				subprojects.each {
+					def depNode = depsNode.appendNode("dependency")
+					depNode.appendNode("groupId", it.group)
+					depNode.appendNode("artifactId", it.name)
+					depNode.appendNode("version", it.version)
+					depNode.appendNode("scope", "compile")
+				}
+			}
+		}
+	}
+}
 
 //void setupRepositories(RepositoryHandler repositories) {
 //	//repositories.mavenLocal() // uncomment for testing
