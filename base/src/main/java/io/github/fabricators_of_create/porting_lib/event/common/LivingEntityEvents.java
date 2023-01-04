@@ -20,20 +20,8 @@ import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.LevelAccessor;
 
 public class LivingEntityEvents {
-	/**
-	 * Legacy method will be removed in 1.19.3 use below method {@link LivingEntityEvents#EXPERIENCE_DROP_WITH_ENTITY}
-	 */
-	@Deprecated(forRemoval = true)
-	public static final Event<ExperienceDrop> EXPERIENCE_DROP = EventFactory.createArrayBacked(ExperienceDrop.class, callbacks -> (i, player) -> {
+	public static final Event<ExperienceDrop> EXPERIENCE_DROP = EventFactory.createArrayBacked(ExperienceDrop.class, callbacks -> (i, attackingPlayer, entity) -> {
 		for (ExperienceDrop callback : callbacks) {
-			return callback.onLivingEntityExperienceDrop(i, player);
-		}
-
-		return i;
-	});
-
-	public static final Event<ExperienceDropNew> EXPERIENCE_DROP_WITH_ENTITY = EventFactory.createArrayBacked(ExperienceDropNew.class, callbacks -> (i, attackingPlayer, entity) -> {
-		for (ExperienceDropNew callback : callbacks) {
 			return callback.onLivingEntityExperienceDrop(i, attackingPlayer, entity);
 		}
 
@@ -48,22 +36,8 @@ public class LivingEntityEvents {
 		return strength;
 	});
 
-	/**
-	 * Legacy method will be removed in 1.19.3 use below method {@link LivingEntityEvents#DROPS_WITH_LEVEL}
-	 */
-	@Deprecated(forRemoval = true)
-	public static final Event<Drops> DROPS = EventFactory.createArrayBacked(Drops.class, callbacks -> (target, source, drops) -> {
+	public static final Event<Drops> DROPS = EventFactory.createArrayBacked(Drops.class, callbacks -> (target, source, drops, lootingLevel, recentlyHit) -> {
 		for (Drops callback : callbacks) {
-			if (callback.onLivingEntityDrops(target, source, drops)) {
-				return true;
-			}
-		}
-
-		return false;
-	});
-
-	public static final Event<DropsWithLevel> DROPS_WITH_LEVEL = EventFactory.createArrayBacked(DropsWithLevel.class, callbacks -> (target, source, drops, lootingLevel, recentlyHit) -> {
-		for (DropsWithLevel callback : callbacks) {
 			if (callback.onLivingEntityDrops(target, source, drops, lootingLevel, recentlyHit)) {
 				return true;
 			}
@@ -198,11 +172,6 @@ public class LivingEntityEvents {
 
 	@FunctionalInterface
 	public interface ExperienceDrop {
-		int onLivingEntityExperienceDrop(int i, Player player);
-	}
-
-	@FunctionalInterface
-	public interface ExperienceDropNew {
 		int onLivingEntityExperienceDrop(int i, Player attackingPlayer, LivingEntity entity);
 	}
 
@@ -213,11 +182,6 @@ public class LivingEntityEvents {
 
 	@FunctionalInterface
 	public interface Drops {
-		boolean onLivingEntityDrops(LivingEntity target, DamageSource source, Collection<ItemEntity> drops);
-	}
-
-	@FunctionalInterface
-	public interface DropsWithLevel {
 		boolean onLivingEntityDrops(LivingEntity target, DamageSource source, Collection<ItemEntity> drops, int lootingLevel, boolean recentlyHit);
 	}
 

@@ -11,7 +11,6 @@ import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import io.github.fabricators_of_create.porting_lib.event.client.MouseButtonCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.MouseInputEvents;
 import io.github.fabricators_of_create.porting_lib.event.client.MouseInputEvents.Action;
 import net.fabricmc.api.EnvType;
@@ -102,21 +101,5 @@ public abstract class MouseHandlerMixin {
 		// copied processing for deltaY, but for X
 		return (this.minecraft.options.discreteMouseScroll().get() ? Math.signum(xOffset) : xOffset)
 				* this.minecraft.options.mouseWheelSensitivity().get();
-	}
-
-	// First return opcode is jumped over if condition is met.
-	@Inject(
-			method = "onPress",
-			slice = @Slice(
-					from = @At(
-							value = "RETURN",
-							ordinal = 0,
-							shift = Shift.AFTER
-					)
-			),
-			at = @At(value = "RETURN")
-	)
-	private void port_lib$onHandleMouseButton(long window, int button, int action, int modifiers, CallbackInfo ci) {
-		MouseButtonCallback.EVENT.invoker().onMouseButton(button, action, modifiers);
 	}
 }

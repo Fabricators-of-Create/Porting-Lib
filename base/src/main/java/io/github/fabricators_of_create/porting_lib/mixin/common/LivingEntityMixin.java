@@ -110,8 +110,7 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 	@Inject(method = "dropAllDeathLoot", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void port_lib$spawnDropsTAIL(DamageSource source, CallbackInfo ci) {
 		Collection<ItemEntity> drops = this.captureDrops(null);
-		if (!LivingEntityEvents.DROPS_WITH_LEVEL.invoker().onLivingEntityDrops((LivingEntity) (Object) this, source, drops, port_lib$looting_level.get(), lastHurtByPlayerTime > 0)
-		|| !LivingEntityEvents.DROPS.invoker().onLivingEntityDrops((LivingEntity) (Object) this, source, drops))
+		if (!LivingEntityEvents.DROPS.invoker().onLivingEntityDrops((LivingEntity) (Object) this, source, drops, port_lib$looting_level.get(), lastHurtByPlayerTime > 0))
 			drops.forEach(e -> level.addFreshEntity(e));
 		port_lib$looting_level.remove();
 	}
@@ -154,8 +153,7 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 	@ModifyArgs(method = "dropExperience", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ExperienceOrb;award(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/phys/Vec3;I)V"))
 	private void create$dropExperience(Args args) {
 		int amount = args.get(2);
-		int newAmount = LivingEntityEvents.EXPERIENCE_DROP.invoker().onLivingEntityExperienceDrop(amount, lastHurtByPlayer);
-		newAmount = LivingEntityEvents.EXPERIENCE_DROP_WITH_ENTITY.invoker().onLivingEntityExperienceDrop(newAmount, lastHurtByPlayer, (LivingEntity) (Object) this);
+		int newAmount = LivingEntityEvents.EXPERIENCE_DROP.invoker().onLivingEntityExperienceDrop(amount, lastHurtByPlayer, (LivingEntity) (Object) this);
 		if (amount != newAmount) args.set(2, newAmount);
 	}
 

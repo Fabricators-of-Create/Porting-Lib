@@ -118,7 +118,6 @@
     "common.TiersMixin",
     "common.TransientEntitySectionManager$CallbackMixin",
     "common.VineBlockMixin",
-    "common.WalkNodeEvaluatorMixin",
     "common.WebBlockMixin",
     "common.WitherBossMixin",
     "common.WitherSkullMixin"

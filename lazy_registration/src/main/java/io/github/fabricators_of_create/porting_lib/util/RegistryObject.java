@@ -46,13 +46,6 @@ public final class RegistryObject<T> implements Supplier<T> {
 		this.key = (ResourceKey<T>) key;
 	}
 
-	@Deprecated(forRemoval = true)
-	public RegistryObject(ResourceLocation id, Supplier<T> wrappedEntry, ResourceKey<?> key) {
-		this.id = id;
-		this.value = wrappedEntry.get();
-		this.key = (ResourceKey<T>) key;
-	}
-
 	public ResourceLocation getId() {
 		return id;
 	}

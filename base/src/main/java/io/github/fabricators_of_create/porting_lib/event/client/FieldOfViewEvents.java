@@ -17,7 +17,7 @@ public class FieldOfViewEvents {
 		for (Modify callback : callbacks) {
 			fov = callback.modifyFov(player, fov);
 		}
-		return FOVModifierCallback.EVENT.invoker().getNewFOV(player, fov);
+		return fov;
 	});
 
 	/**
@@ -29,7 +29,7 @@ public class FieldOfViewEvents {
 		for (Compute callback : callbacks) {
 			fov = callback.getFov(renderer, camera, partialTicks, usedFovSetting, fov);
 		}
-		return FOVModifierCallback.PARTIAL_FOV.invoker().getNewFOV(renderer, camera, partialTicks, fov);
+		return fov;
 	});
 
 	public interface Modify {

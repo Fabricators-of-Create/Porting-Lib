@@ -8,7 +8,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import io.github.fabricators_of_create.porting_lib.event.common.PlayerBreakSpeedCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
@@ -22,9 +21,7 @@ public abstract class BlockBehaviourMixin {
 		float original = player.getDestroySpeed(state);
 		PlayerEvents.BreakSpeed breakSpeed = new PlayerEvents.BreakSpeed(player, state, original, pos);
 		breakSpeed.sendEvent();
-		PlayerBreakSpeedCallback.BreakSpeed speed = new PlayerBreakSpeedCallback.BreakSpeed(player, state, breakSpeed.getNewSpeed(), pos);
-		PlayerBreakSpeedCallback.EVENT.invoker().setBreakSpeed(speed);
-		float newSpeed = speed.newSpeed;
+		float newSpeed = breakSpeed.getNewSpeed();
 		if (newSpeed != original) {
 			if (f == -1.0F) {
 				cir.setReturnValue(0.0F);
