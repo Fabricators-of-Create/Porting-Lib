@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import io.github.fabricators_of_create.porting_lib.event.common.PlayerEvents;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,7 +20,9 @@ public abstract class BlockBehaviourMixin {
 	@Inject(method = "getDestroyProgress", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getDestroySpeed(Lnet/minecraft/world/level/block/state/BlockState;)F", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	public void getDestroySpeed(BlockState state, Player player, BlockGetter level, BlockPos pos, CallbackInfoReturnable<Float> cir, float f) {
 		float original = player.getDestroySpeed(state);
-		PlayerBreakSpeedCallback.BreakSpeed speed = new PlayerBreakSpeedCallback.BreakSpeed(player, state, original, pos);
+		PlayerEvents.BreakSpeed breakSpeed = new PlayerEvents.BreakSpeed(player, state, original, pos);
+		breakSpeed.sendEvent();
+		PlayerBreakSpeedCallback.BreakSpeed speed = new PlayerBreakSpeedCallback.BreakSpeed(player, state, breakSpeed.getNewSpeed(), pos);
 		PlayerBreakSpeedCallback.EVENT.invoker().setBreakSpeed(speed);
 		float newSpeed = speed.newSpeed;
 		if (newSpeed != original) {

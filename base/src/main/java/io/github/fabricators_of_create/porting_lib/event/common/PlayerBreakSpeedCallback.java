@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 
+@Deprecated(forRemoval = true)
 public interface PlayerBreakSpeedCallback {
 	Event<PlayerBreakSpeedCallback> EVENT = EventFactory.createArrayBacked(PlayerBreakSpeedCallback.class, callbacks -> breakSpeed -> {
 		for (PlayerBreakSpeedCallback event : callbacks)
