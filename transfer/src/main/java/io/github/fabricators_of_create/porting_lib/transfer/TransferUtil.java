@@ -5,7 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SidedStorageBlockEntity;
+
+import net.minecraft.world.item.Items;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -652,9 +656,23 @@ public class TransferUtil implements ModInitializer {
 		}
 	}
 
-	/** Less clunky way to convert a {@link StorageView<FluidVariant>} to a {@link FluidStack}. */
+	/**
+	 * Gets the filled bucket for the specified fluid.
+	 * @param variant contents used to fill the bucket. {@link FluidVariant} is used instead of Fluid to preserve fluid NBT.
+	 * @return the filled bucket.
+	 */
+	public static ItemStack getFilledBucket(FluidVariant variant) {
+		ContainerItemContext context = ContainerItemContext.withInitial(Items.BUCKET.getDefaultInstance());
+		try (Transaction tx = TransferUtil.getTransaction()) {
+			context.find(FluidStorage.ITEM).insert(variant, FluidConstants.BUCKET, tx);
+			tx.commit();
+		}
+		return context.getItemVariant().toStack();
+	}
+
+	@Deprecated(forRemoval = true)
 	public static FluidStack convertViewToFluidStack(StorageView<FluidVariant> view) {
-		return new FluidStack(view.getResource(), view.getAmount());
+		return new FluidStack(view);
 	}
 
 	/**
