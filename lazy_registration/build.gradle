@@ -1,6 +1,3 @@
-archivesBaseName = "lazy_registration"
-version = getSubprojectVersion(project)
-
 moduleDependencies(project, [
 
 ])

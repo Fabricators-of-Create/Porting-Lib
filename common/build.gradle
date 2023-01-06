@@ -1,6 +1,3 @@
-archivesBaseName = "common"
-version = getSubprojectVersion(project)
-
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }

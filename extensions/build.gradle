@@ -1,6 +1,3 @@
-archivesBaseName = "extensions"
-version = getSubprojectVersion(project)
-
 moduleDependencies(project, [
 		"attributes",
 		"accessors",

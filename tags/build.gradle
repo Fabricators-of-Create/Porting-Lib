@@ -1,6 +1,3 @@
-archivesBaseName = "tags"
-version = getSubprojectVersion(project)
-
 sourceSets.main.resources {
 	srcDir 'src/generated/resources'
 }
