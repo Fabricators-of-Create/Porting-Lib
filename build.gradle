@@ -28,11 +28,6 @@ if (grgit != null) {
 	version += "+custom_unknown"
 }
 
-
-def getSubprojectVersion(project) {
-	return version
-}
-
 def moduleDependencies(Project project, List<String> depNames) {
 	def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: "namedElements") }
 
@@ -260,6 +255,8 @@ subprojects.forEach {
 			.dependsOn(processResources)
 	// make them always run, because if they don't, extreme weirdness with caching occurs with every other task
 			.outputs.upToDateWhen { false }
+	// archive base name is porting_lib_<subproject name>
+	it.extensions.findByType(BasePluginExtension.class).archivesName = "${archivesBaseName}_${it.name}"
 }
 
 sourceSets {

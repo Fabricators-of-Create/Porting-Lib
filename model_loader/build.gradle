@@ -1,6 +1,3 @@
-archivesBaseName = "model_loader"
-version = getSubprojectVersion(project)
-
 moduleDependencies(project, [
 		"extensions",
 		"accessors",

@@ -1,6 +1,3 @@
-archivesBaseName = "accessors"
-version = getSubprojectVersion(project)
-
 loom {
 	accessWidenerPath = file("src/main/resources/porting_lib.accesswidener")
 }

@@ -1,6 +1,3 @@
-archivesBaseName = "constants" // Yes I really did create another module for this :ioa:
-version = getSubprojectVersion(project)
-
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }
