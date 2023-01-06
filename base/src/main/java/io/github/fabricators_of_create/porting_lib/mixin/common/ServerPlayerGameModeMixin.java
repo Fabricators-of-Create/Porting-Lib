@@ -1,5 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
+import io.github.fabricators_of_create.porting_lib.block.HarvestableBlock;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -62,6 +69,14 @@ public abstract class ServerPlayerGameModeMixin {
 			InteractionResult result = first.onItemUseFirst(itemStack, useoncontext);
 			if (result != InteractionResult.PASS) cir.setReturnValue(result);
 		}
+	}
+
+	@WrapOperation(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;hasCorrectToolForDrops(Lnet/minecraft/world/level/block/state/BlockState;)Z"))
+	private boolean port_lib$canHarvestBlock(ServerPlayer player, BlockState blockstate, Operation<Boolean> operation, BlockPos pos) {
+		if (blockstate.getBlock() instanceof HarvestableBlock harvestableBlock)
+			return harvestableBlock.canHarvestBlock(blockstate, this.level, pos, player);
+		else
+			return operation.call(player, blockstate);
 	}
 
 	@Unique

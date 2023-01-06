@@ -273,9 +273,4 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 	protected void onFinalCommit() {
 		super.onFinalCommit();
 	}
-
-	@Override
-	public void onFinalViewCommit() {
-		onFinalCommit();
-	}
 }

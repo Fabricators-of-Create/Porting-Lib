@@ -2,8 +2,10 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.event.common.EntityInteractCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEvents;
+import io.github.fabricators_of_create.porting_lib.event.common.PlayerEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.PlayerTickEvents;
 import io.github.fabricators_of_create.porting_lib.item.ShieldBlockItem;
+import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -90,5 +92,12 @@ public abstract class PlayerMixin extends LivingEntity {
 	@ModifyVariable(method = "hurt", at = @At("HEAD"), argsOnly = true)
 	private float port_lib$onHurt(float amount, DamageSource source, float amount2) {
 		return LivingEntityEvents.HURT.invoker().onHurt(source, amount);
+	}
+
+	@ModifyVariable(method = "giveExperiencePoints", at = @At("HEAD"))
+	private int port_lib$xpChange(int experience) {
+		PlayerEvents.XpChange xpChange = new PlayerEvents.XpChange(MixinHelper.cast(this), experience);
+		xpChange.sendEvent();
+		return xpChange.getAmount();
 	}
 }
