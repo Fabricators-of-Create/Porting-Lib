@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
@@ -111,7 +112,7 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 
 	private final ThreadLocal<Integer> port_lib$looting_level = new ThreadLocal<>();
 
-	@Inject(method = "dropAllDeathLoot", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;dropFromLootTable(Lnet/minecraft/world/damagesource/DamageSource;Z)V"), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "dropAllDeathLoot", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;shouldDropLoot()Z"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void port_lib$spawnDropsCapture(DamageSource source, CallbackInfo ci, Entity entity, int lootingLevel) {
 		port_lib$looting_level.set(lootingLevel);
 	}
