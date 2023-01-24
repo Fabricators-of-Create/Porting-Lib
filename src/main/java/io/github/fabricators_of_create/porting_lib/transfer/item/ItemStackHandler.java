@@ -18,8 +18,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-import org.jetbrains.annotations.ApiStatus.Internal;
-
 import javax.annotation.Nullable;
 
 import java.util.Arrays;
@@ -80,8 +78,8 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 		int space = getSpace(index, resource, stack);
 		if (space <= 0)
 			return 0; // no room? skip
-		if (stack.hasTag() && !resource.matches(stack))
-			return 0; // nbt doesn't allow stacking? skip
+		if (!resource.matches(stack))
+			return 0; // can't stack? skip
 		int toInsert = (int) Math.min(space, maxAmount);
 		updateSnapshots(ctx);
 		stack = ItemHandlerHelper.growCopy(stack, toInsert);
@@ -91,8 +89,7 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 	}
 
 	protected long insertToNewStack(int index, ItemVariant resource, long maxAmount, TransactionContext ctx) {
-		Item item = resource.getItem();
-		int maxSize = item.getMaxStackSize();
+		int maxSize = getStackLimit(index, resource);
 		int toInsert = (int) Math.min(maxSize, maxAmount);
 		ItemStack stack = resource.toStack(toInsert);
 		updateSnapshots(ctx);
