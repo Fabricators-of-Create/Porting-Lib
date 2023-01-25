@@ -1,12 +1,15 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
+import it.unimi.dsi.fastutil.ints.IntSortedSet;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext.Result;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +19,9 @@ import java.util.Iterator;
 
 /**
  * Wraps an ItemStackHandler in a Container for use in recipes and crafting.
+ * @deprecated use of this class is discouraged, ItemStackHandlerContainer should fit all use cases.
  */
+@Deprecated
 public class RecipeWrapper extends ItemStackHandler implements Container {
 	protected final ItemStackHandler handler;
 
@@ -91,13 +96,43 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
+	protected long insertToNewStack(int index, ItemVariant resource, long maxAmount, TransactionContext ctx) {
+		return handler.insertToNewStack(index, resource, maxAmount, ctx);
+	}
+
+	@Override
+	protected long insertToExistingStack(int index, ItemStack stack, ItemVariant resource, long maxAmount, TransactionContext ctx) {
+		return handler.insertToExistingStack(index, stack, resource, maxAmount, ctx);
+	}
+
+	@Override
+	protected int getSpace(int index, ItemVariant resource, ItemStack stack) {
+		return handler.getSpace(index, resource, stack);
+	}
+
+	@Override
 	public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
 		return handler.extract(resource, maxAmount, transaction);
 	}
 
 	@Override
+	public ResourceAmount<ItemVariant> extractAny(long maxAmount, TransactionContext transaction) {
+		return handler.extractAny(maxAmount, transaction);
+	}
+
+	@Override
 	public Iterator<StorageView<ItemVariant>> iterator(TransactionContext transaction) {
 		return handler.iterator(transaction);
+	}
+
+	@Override
+	public Iterator<? extends StorageView<ItemVariant>> nonEmptyViews() {
+		return handler.nonEmptyViews();
+	}
+
+	@Override
+	public Iterable<? extends StorageView<ItemVariant>> nonEmptyIterable() {
+		return handler.nonEmptyIterable();
 	}
 
 	@Override
@@ -118,6 +153,11 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	@Override
 	public ItemStack getStackInSlot(int slot) {
 		return handler.getStackInSlot(slot);
+	}
+
+	@Override
+	public ItemVariant getVariantInSlot(int slot) {
+		return handler.getVariantInSlot(slot);
 	}
 
 	@Override
@@ -153,6 +193,16 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	@Override
 	public void deserializeNBT(CompoundTag nbt) {
 		handler.deserializeNBT(nbt);
+	}
+
+	@Override
+	protected void updateLookup(Item oldItem, Item newItem, int index) {
+		handler.updateLookup(oldItem, newItem, index);
+	}
+
+	@Override
+	protected IntSortedSet getIndices(Item item) {
+		return handler.getIndices(item);
 	}
 
 	@Override

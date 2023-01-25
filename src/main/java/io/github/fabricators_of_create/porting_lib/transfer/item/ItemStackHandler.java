@@ -1,15 +1,18 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
+import io.github.fabricators_of_create.porting_lib.transfer.ExtendedStorage;
 import io.github.fabricators_of_create.porting_lib.transfer.callbacks.TransactionCallback;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler.SnapshotData;
 import io.github.fabricators_of_create.porting_lib.util.INBTSerializable;
 import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
 import it.unimi.dsi.fastutil.ints.IntIterator;
 import it.unimi.dsi.fastutil.ints.IntSortedSet;
+import it.unimi.dsi.fastutil.objects.ObjectAVLTreeSet;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.nbt.CompoundTag;
@@ -21,11 +24,13 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nullable;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.SortedSet;
 
-public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implements Storage<ItemVariant>, INBTSerializable<CompoundTag> {
+public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implements Storage<ItemVariant>, ExtendedStorage<ItemVariant>, INBTSerializable<CompoundTag> {
 	private static final ItemVariant blank = ItemVariant.blank();
 
 	/**
@@ -35,6 +40,8 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 	public ItemStack[] stacks;
 	protected ItemVariant[] variants;
 	protected Map<Item, IntSortedSet> lookup;
+	protected ItemStackHandlerSlotView[] views;
+	protected SortedSet<ItemStackHandlerSlotView> nonEmptyViews;
 
 	public ItemStackHandler() {
 		this(1);
@@ -48,10 +55,16 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 		this.stacks = stacks;
 		this.variants = new ItemVariant[stacks.length];
 		this.lookup = new HashMap<>();
+		this.views = new ItemStackHandlerSlotView[stacks.length];
+		this.nonEmptyViews = makeViewSet(null);
 		for (int i = 0; i < stacks.length; i++) {
 			ItemStack stack = stacks[i];
 			this.variants[i] = ItemVariant.of(stack);
 			getIndices(stack.getItem()).add(i);
+			ItemStackHandlerSlotView view = new ItemStackHandlerSlotView(this, i);
+			this.views[i] = view;
+			if (!stack.isEmpty())
+				nonEmptyViews.add(view);
 		}
 	}
 
@@ -129,6 +142,16 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 	}
 
 	@Override
+	public ResourceAmount<ItemVariant> extractAny(long maxAmount, TransactionContext transaction) {
+		if (nonEmptyViews.isEmpty())
+			return new ResourceAmount<>(blank, 0);
+		ItemStackHandlerSlotView first = nonEmptyViews.first();
+		ItemVariant variant = first.getResource();
+		long extracted = extract(variant, maxAmount, transaction);
+		return new ResourceAmount<>(variant, extracted);
+	}
+
+	@Override
 	@Nullable
 	public StorageView<ItemVariant> exactView(TransactionContext transaction, ItemVariant resource) {
 		StoragePreconditions.notBlank(resource);
@@ -153,17 +176,30 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 			// item changed, update the lookup
 			updateLookup(oldStack.getItem(), newStack.getItem(), slot);
 		}
+		boolean oldEmpty = oldStack.isEmpty();
+		boolean newEmpty = newStack.isEmpty();
+		// if empty status changed, the non-empty views must be updated
+		if (oldEmpty && !newEmpty) {
+			nonEmptyViews.add(views[slot]);
+		} else if (!oldEmpty && newEmpty) {
+			nonEmptyViews.remove(views[slot]);
+		}
 		if (ctx != null) TransactionCallback.onSuccess(ctx, () -> onContentsChanged(slot));
 	}
 
 	@Override
 	public Iterator<StorageView<ItemVariant>> iterator(TransactionContext transaction) {
-		return new ItemStackHandlerIterator(this, transaction);
+		return new StorageViewArrayIterator<>(views);
+	}
+
+	@Override
+	public Iterator<? extends StorageView<ItemVariant>> nonEmptyViews() {
+		return nonEmptyViews.iterator();
 	}
 
 	@Override
 	protected SnapshotData createSnapshot() {
-		return SnapshotData.of(this.stacks, this.variants, this.lookup);
+		return SnapshotData.of(this);
 	}
 
 	@Override
@@ -171,6 +207,7 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 		this.stacks = snapshot.stacks;
 		this.variants = snapshot.variants;
 		this.lookup = snapshot.lookup;
+		this.nonEmptyViews = snapshot.nonEmptyViews;
 	}
 
 	@Override
@@ -223,6 +260,8 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 			stacks[i] = ItemStack.EMPTY;
 			variants[i] = blank;
 		}
+		lookup.clear();
+		nonEmptyViews.clear();
 	}
 
 	@Override
@@ -246,7 +285,6 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 	@Override
 	public void deserializeNBT(CompoundTag nbt) {
 		setSize(nbt.contains("Size", Tag.TAG_INT) ? nbt.getInt("Size") : stacks.length);
-		lookup.clear();
 		ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
 		for (int i = 0; i < tagList.size(); i++) {
 			CompoundTag itemTags = tagList.getCompound(i);
@@ -282,6 +320,12 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 		return new IntAVLTreeSet(Integer::compareTo);
 	}
 
+	protected static SortedSet<ItemStackHandlerSlotView> makeViewSet(@Nullable SortedSet<ItemStackHandlerSlotView> original) {
+		return original != null
+				? new ObjectAVLTreeSet<>(original)
+				: new ObjectAVLTreeSet<>(Comparator.comparingInt(view -> view.index));
+	}
+
 	public static ItemStack[] emptyStackArray(int size) {
 		ItemStack[] stacks = new ItemStack[size];
 		Arrays.fill(stacks, ItemStack.EMPTY);
@@ -292,30 +336,25 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 		public final ItemStack[] stacks;
 		public final ItemVariant[] variants;
 		public final Map<Item, IntSortedSet> lookup;
+		public final SortedSet<ItemStackHandlerSlotView> nonEmptyViews;
 
-		@Deprecated(forRemoval = true)
-		public SnapshotData(ItemStack[] stacks) {
-			this.stacks = stacks;
-			this.variants = new ItemVariant[stacks.length];
-			this.lookup = new HashMap<>();
-			for (int i = 0; i < stacks.length; i++) {
-				ItemStack stack = stacks[i];
-				variants[i] = ItemVariant.of(stack);
-				getIndices(lookup, stack.getItem()).add(i);
-			}
-		}
-
-		public SnapshotData(ItemStack[] stacks, ItemVariant[] variants, Map<Item, IntSortedSet> lookup) {
+		protected SnapshotData(ItemStack[] stacks, ItemVariant[] variants, Map<Item, IntSortedSet> lookup, SortedSet<ItemStackHandlerSlotView> nonEmptyViews) {
 			this.stacks = stacks;
 			this.variants = variants;
 			this.lookup = lookup;
+			this.nonEmptyViews = nonEmptyViews;
 		}
 
-		public static SnapshotData of(ItemStack[] stacks, ItemVariant[] variants, Map<Item, IntSortedSet> lookup) {
+		public static SnapshotData of(ItemStackHandler handler) {
+			ItemStack[] stacks = handler.stacks;
 			ItemStack[] items = new ItemStack[stacks.length];
 			System.arraycopy(stacks, 0, items, 0, stacks.length);
+
+			ItemVariant[] variants = handler.variants;
 			ItemVariant[] vars = new ItemVariant[variants.length];
 			System.arraycopy(variants, 0, vars, 0, variants.length);
+
+			Map<Item, IntSortedSet> lookup = handler.lookup;
 			Map<Item, IntSortedSet> map = new HashMap<>();
 			// a deep copy here seems unavoidable
 			lookup.forEach((item, set) -> {
@@ -323,7 +362,10 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 				copy.addAll(set);
 				map.put(item, copy);
 			});
-			return new SnapshotData(items, vars, map);
+
+			SortedSet<ItemStackHandlerSlotView> nonEmptyViews = handler.nonEmptyViews;
+			SortedSet<ItemStackHandlerSlotView> views = makeViewSet(nonEmptyViews);
+			return new SnapshotData(items, vars, map, views);
 		}
 	}
 
