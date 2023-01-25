@@ -14,6 +14,19 @@ import java.util.Set;
  * An {@link ItemStackHandler} that is also a {@link Container}.
  */
 public class ItemStackHandlerContainer extends ItemStackHandler implements Container {
+
+	public ItemStackHandlerContainer() {
+		super(1);
+	}
+
+	public ItemStackHandlerContainer(int stacks) {
+		super(stacks);
+	}
+
+	public ItemStackHandlerContainer(ItemStack[] stacks) {
+		super(stacks);
+	}
+
 	@Override
 	public int getContainerSize() {
 		return getSlots();
