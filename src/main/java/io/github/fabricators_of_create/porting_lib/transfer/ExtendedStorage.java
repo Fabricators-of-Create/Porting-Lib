@@ -11,6 +11,8 @@ import java.util.Iterator;
  * An extension of {@link Storage} providing extra functionality that implementations may control.
  */
 public interface ExtendedStorage<T> extends Storage<T> {
+	ResourceAmount<T> extractAny(long maxAmount, TransactionContext transaction);
+
 	/**
 	 * @return an iterator of only StorageViews that are not empty.
 	 */
@@ -21,5 +23,12 @@ public interface ExtendedStorage<T> extends Storage<T> {
 		return () -> (Iterator) nonEmptyViews();
 	}
 
-	ResourceAmount<T> extractAny(long maxAmount, TransactionContext transaction);
+	/**
+	 * @return non-empty views if provided, falling back to all views if unavailable
+	 */
+	static <T> Iterable<? extends StorageView<T>> tryGetNonEmpty(Storage<T> storage, TransactionContext t) {
+		if (storage instanceof ExtendedStorage<T> extended)
+			return extended.nonEmptyIterable();
+		return storage.iterable(t);
+	}
 }

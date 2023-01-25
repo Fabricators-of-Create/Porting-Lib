@@ -24,6 +24,7 @@ import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
@@ -40,6 +41,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+
+import static io.github.fabricators_of_create.porting_lib.transfer.ExtendedStorage.tryGetNonEmpty;
 
 /**
  * Utilities for transferring things.
@@ -375,7 +378,7 @@ public class TransferUtil {
 	public static List<FluidStack> getFluids(Storage<FluidVariant> storage, int cutoff) {
 		List<FluidStack> stacks = new ArrayList<>();
 		try (Transaction t = getTransaction()) {
-			for (StorageView<FluidVariant> view : storage.iterable(t)) {
+			for (StorageView<FluidVariant> view : tryGetNonEmpty(storage, t)) {
 				if (!view.isResourceBlank()) {
 					stacks.add(new FluidStack(view));
 				}
@@ -400,7 +403,7 @@ public class TransferUtil {
 	public static List<ItemStack> getItems(Storage<ItemVariant> storage, int cutoff) {
 		List<ItemStack> stacks = new ArrayList<>();
 		try (Transaction t = getTransaction()) {
-			for (StorageView<ItemVariant> view : storage.iterable(t)) {
+			for (StorageView<ItemVariant> view : tryGetNonEmpty(storage, t)) {
 				if (!view.isResourceBlank()) {
 					long contained = view.getAmount();
 					ItemVariant item = view.getResource();
@@ -430,12 +433,12 @@ public class TransferUtil {
 		}
 		boolean success = true;
 		try (Transaction t = getTransaction()) {
-			Iterator<? extends StorageView<T>> itr = storage.iterator(t);
+			Iterator<? extends StorageView<T>> itr = tryGetNonEmpty(storage, t).iterator();
 			StorageView<T> currentView = itr.hasNext() ? itr.next() : null;
 			int attempts = 0;
 			while (currentView != null) {
 				if (currentView.isResourceBlank() || // noting to extract
-						attempts >= 10) { // or it's probably infinite - skip
+						attempts > 3) { // or it's probably infinite - skip
 					currentView = itr.hasNext() ? itr.next() : null;
 					attempts = 0;
 					continue;
@@ -467,7 +470,9 @@ public class TransferUtil {
 	public static FluidStack extractAnyFluid(Storage<FluidVariant> storage, long maxAmount, Transaction tx) {
 		FluidStack fluid = FluidStack.EMPTY;
 		if (!storage.supportsExtraction()) return fluid;
-		for (StorageView<FluidVariant> view : storage.iterable(tx)) {
+		if (storage instanceof ExtendedStorage<FluidVariant> extended)
+			return new FluidStack(extended.extractAny(maxAmount, tx));
+		for (StorageView<FluidVariant> view : tryGetNonEmpty(storage, tx)) {
 			if (!view.isResourceBlank()) {
 				FluidVariant var = view.getResource();
 				long amount = Math.min(maxAmount, view.getAmount());
@@ -511,6 +516,11 @@ public class TransferUtil {
 	public static ItemStack extractAnyItem(Storage<ItemVariant> storage, long maxAmount, Transaction tx) {
 		ItemStack stack = ItemStack.EMPTY;
 		if (!storage.supportsExtraction()) return stack;
+		if (storage instanceof ExtendedStorage<ItemVariant> extended) {
+			int max = truncateLong(maxAmount);
+			ResourceAmount<ItemVariant> extracted = extended.extractAny(max, tx);
+			return extracted.resource().toStack(truncateLong(extracted.amount()));
+		}
 		for (StorageView<ItemVariant> view : storage.iterable(tx)) {
 			if (!view.isResourceBlank()) {
 				ItemVariant var = view.getResource();
@@ -617,7 +627,7 @@ public class TransferUtil {
 		List<ItemStack> stacks = new ArrayList<>();
 		if (!storage.supportsExtraction()) return stacks;
 		try (Transaction t = getTransaction()) {
-			Iterator<? extends StorageView<ItemVariant>> itr = storage.iterator(t);
+			Iterator<? extends StorageView<ItemVariant>> itr = tryGetNonEmpty(storage, t).iterator();
 			StorageView<ItemVariant> currentView = itr.hasNext() ? itr.next() : null;
 			while (currentView != null) {
 				if (currentView.isResourceBlank()) {
@@ -673,6 +683,18 @@ public class TransferUtil {
 			return ClientFluidLookupCache.get(level, pos);
 		}
 		return EmptyFluidLookupCache.INSTANCE;
+	}
+
+	/**
+	 * Restrict a long to the integer range and avoid overflow from casting.
+	 */
+	public static int truncateLong(long l) {
+		if (l > Integer.MAX_VALUE) {
+			return Integer.MAX_VALUE;
+		} else if (l < Integer.MIN_VALUE) {
+			return Integer.MIN_VALUE;
+		}
+		return (int) l;
 	}
 
 	/**
