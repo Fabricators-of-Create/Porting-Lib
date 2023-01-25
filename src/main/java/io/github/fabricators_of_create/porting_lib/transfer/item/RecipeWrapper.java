@@ -136,12 +136,12 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
-	protected SnapshotData createSnapshot() {
+	protected ItemStackHandlerSnapshot createSnapshot() {
 		return handler.createSnapshot();
 	}
 
 	@Override
-	protected void readSnapshot(SnapshotData snapshot) {
+	protected void readSnapshot(ItemStackHandlerSnapshot snapshot) {
 		handler.readSnapshot(snapshot);
 	}
 
