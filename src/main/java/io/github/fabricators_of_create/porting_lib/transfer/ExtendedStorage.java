@@ -22,13 +22,4 @@ public interface ExtendedStorage<T> extends Storage<T> {
 	default Iterable<? extends StorageView<T>> nonEmptyIterable() {
 		return () -> (Iterator) nonEmptyViews();
 	}
-
-	/**
-	 * @return non-empty views if provided, falling back to all views if unavailable
-	 */
-	static <T> Iterable<? extends StorageView<T>> tryGetNonEmpty(Storage<T> storage, TransactionContext t) {
-		if (storage instanceof ExtendedStorage<T> extended)
-			return extended.nonEmptyIterable();
-		return storage.iterable(t);
-	}
 }
