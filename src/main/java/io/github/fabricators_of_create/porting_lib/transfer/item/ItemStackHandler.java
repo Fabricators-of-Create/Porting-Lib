@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
 import io.github.fabricators_of_create.porting_lib.transfer.ExtendedStorage;
+import io.github.fabricators_of_create.porting_lib.transfer.StorageViewArrayIterator;
 import io.github.fabricators_of_create.porting_lib.transfer.callbacks.TransactionCallback;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler.SnapshotData;
 import io.github.fabricators_of_create.porting_lib.util.INBTSerializable;

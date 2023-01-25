@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.transfer.item;
+package io.github.fabricators_of_create.porting_lib.transfer;
 
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 
