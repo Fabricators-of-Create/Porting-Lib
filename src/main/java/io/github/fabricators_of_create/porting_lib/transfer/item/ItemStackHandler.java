@@ -30,9 +30,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedSet;
+import java.util.function.Predicate;
 
 public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapshot> implements Storage<ItemVariant>, ExtendedStorage<ItemVariant>, INBTSerializable<CompoundTag> {
 	private static final ItemVariant blank = ItemVariant.blank();
+	private static final ResourceAmount<ItemVariant> blankAmount = new ResourceAmount<>(blank, 0);
 
 	/**
 	 * Do not directly access this array. It must be kept in sync with the others. Restricting access may break existing mods.
@@ -143,12 +145,22 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapsh
 	}
 
 	@Override
-	public ResourceAmount<ItemVariant> extractAny(long maxAmount, TransactionContext transaction) {
+	public ResourceAmount<ItemVariant> extractMatching(Predicate<ItemVariant> predicate, long maxAmount, TransactionContext transaction) {
 		if (nonEmptyViews.isEmpty())
-			return new ResourceAmount<>(blank, 0);
-		ItemStackHandlerSlotView first = nonEmptyViews.first();
-		ItemVariant variant = first.getResource();
+			return blankAmount;
+		ItemVariant variant = blank;
+		for (ItemStackHandlerSlotView view : nonEmptyViews) {
+			ItemVariant resource = view.getResource();
+			if (predicate.test(resource)) {
+				variant = resource;
+				break;
+			}
+		}
+		if (variant == blank)
+			return blankAmount;
 		long extracted = extract(variant, maxAmount, transaction);
+		if (extracted == 0)
+			return blankAmount;
 		return new ResourceAmount<>(variant, extracted);
 	}
 

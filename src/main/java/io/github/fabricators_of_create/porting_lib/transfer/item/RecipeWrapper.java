@@ -14,8 +14,8 @@ import net.minecraft.world.item.ItemStack;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Iterator;
+import java.util.function.Predicate;
 
 /**
  * Wraps an ItemStackHandler in a Container for use in recipes and crafting.
@@ -116,8 +116,8 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
-	public ResourceAmount<ItemVariant> extractAny(long maxAmount, TransactionContext transaction) {
-		return handler.extractAny(maxAmount, transaction);
+	public ResourceAmount<ItemVariant> extractMatching(Predicate<ItemVariant> predicate, long maxAmount, TransactionContext transaction) {
+		return handler.extractMatching(predicate, maxAmount, transaction);
 	}
 
 	@Override
