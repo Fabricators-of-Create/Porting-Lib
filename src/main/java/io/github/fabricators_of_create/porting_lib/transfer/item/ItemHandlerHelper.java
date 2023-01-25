@@ -15,4 +15,8 @@ public class ItemHandlerHelper {
 		copy.setCount(size);
 		return copy;
 	}
+
+	public static ItemStack growCopy(ItemStack stack, int amount) {
+		return copyStackWithSize(stack, stack.getCount() + amount);
+	}
 }

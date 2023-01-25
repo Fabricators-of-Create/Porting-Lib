@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
 import net.minecraft.network.chat.Component;
 
 import org.jetbrains.annotations.Nullable;
@@ -87,6 +88,10 @@ public class FluidStack {
 
 	public FluidStack(StorageView<FluidVariant> view) {
 		this(view.getResource(), view.getAmount());
+	}
+
+	public FluidStack(ResourceAmount<FluidVariant> resource) {
+		this(resource.resource(), resource.amount());
 	}
 
 	/**
