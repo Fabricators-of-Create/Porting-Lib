@@ -31,7 +31,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedSet;
 
-public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implements Storage<ItemVariant>, ExtendedStorage<ItemVariant>, INBTSerializable<CompoundTag> {
+public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapshot> implements Storage<ItemVariant>, ExtendedStorage<ItemVariant>, INBTSerializable<CompoundTag> {
 	private static final ItemVariant blank = ItemVariant.blank();
 
 	/**
@@ -199,16 +199,13 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 	}
 
 	@Override
-	protected SnapshotData createSnapshot() {
+	protected ItemStackHandlerSnapshot createSnapshot() {
 		return SnapshotData.of(this);
 	}
 
 	@Override
-	protected void readSnapshot(SnapshotData snapshot) {
-		this.stacks = snapshot.stacks;
-		this.variants = snapshot.variants;
-		this.lookup = snapshot.lookup;
-		this.nonEmptyViews = snapshot.nonEmptyViews;
+	protected void readSnapshot(ItemStackHandlerSnapshot snapshot) {
+		snapshot.apply(this);
 	}
 
 	@Override
@@ -333,7 +330,7 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 		return stacks;
 	}
 
-	public static class SnapshotData {
+	public static class SnapshotData implements ItemStackHandlerSnapshot {
 		public final ItemStack[] stacks;
 		public final ItemVariant[] variants;
 		public final Map<Item, IntSortedSet> lookup;
@@ -344,6 +341,14 @@ public class ItemStackHandler extends SnapshotParticipant<SnapshotData> implemen
 			this.variants = variants;
 			this.lookup = lookup;
 			this.nonEmptyViews = nonEmptyViews;
+		}
+
+		@Override
+		public void apply(ItemStackHandler handler) {
+			handler.stacks = stacks;
+			handler.variants = variants;
+			handler.lookup = lookup;
+			handler.nonEmptyViews = nonEmptyViews;
 		}
 
 		public static SnapshotData of(ItemStackHandler handler) {
