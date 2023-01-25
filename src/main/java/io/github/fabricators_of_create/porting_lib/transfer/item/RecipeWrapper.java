@@ -116,6 +116,7 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
+	@Nullable
 	public ResourceAmount<ItemVariant> extractMatching(Predicate<ItemVariant> predicate, long maxAmount, TransactionContext transaction) {
 		return handler.extractMatching(predicate, maxAmount, transaction);
 	}

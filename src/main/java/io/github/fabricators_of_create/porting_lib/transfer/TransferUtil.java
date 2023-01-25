@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import com.google.common.collect.Iterators;
 
@@ -649,6 +650,29 @@ public class TransferUtil {
 	@Deprecated
 	public static FluidStack convertViewToFluidStack(StorageView<FluidVariant> view) {
 		return new FluidStack(view);
+	}
+
+	/**
+	 * Extract anything matching the given predicate, or null if none available.
+	 */
+	@Nullable
+	public static <T> ResourceAmount<T> extractMatching(Storage<T> storage, Predicate<T> predicate, long maxAmount, TransactionContext t) {
+		if (storage instanceof ExtendedStorage<T> extended)
+			return extended.extractMatching(predicate, maxAmount, t);
+		T variant = null;
+		for (StorageView<T> view : storage.iterable(t)) {
+			T resource = view.getResource();
+			if (predicate.test(resource)) {
+				variant = resource;
+				break;
+			}
+		}
+		if (variant == null)
+			return null;
+		long extracted = storage.extract(variant, maxAmount, t);
+		if (extracted == 0)
+			return null;
+		return new ResourceAmount<>(variant, extracted);
 	}
 
 	/**

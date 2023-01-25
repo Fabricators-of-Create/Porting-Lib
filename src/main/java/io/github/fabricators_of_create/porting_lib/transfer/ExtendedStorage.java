@@ -5,6 +5,8 @@ import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 
+import javax.annotation.Nullable;
+
 import java.util.Iterator;
 import java.util.function.Predicate;
 
@@ -13,13 +15,15 @@ import java.util.function.Predicate;
  */
 public interface ExtendedStorage<T> extends Storage<T> {
 	/**
-	 * Extract the first thing from this storage that matches the given predicate.
+	 * Extract the first thing from this storage that matches the given predicate, or null if none available.
 	 */
+	@Nullable
 	ResourceAmount<T> extractMatching(Predicate<T> predicate, long maxAmount, TransactionContext transaction);
 
 	/**
-	 * Extract anything from this storage.
+	 * Extract anything from this storage, or null if empty.
 	 */
+	@Nullable
 	default ResourceAmount<T> extractAny(long maxAmount, TransactionContext transaction) {
 		return extractMatching($ -> true, maxAmount, transaction);
 	}
