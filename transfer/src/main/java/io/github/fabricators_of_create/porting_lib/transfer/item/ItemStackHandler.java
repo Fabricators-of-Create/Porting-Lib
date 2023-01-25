@@ -1,10 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
+import io.github.fabricators_of_create.porting_lib.extensions.INBTSerializable;
 import io.github.fabricators_of_create.porting_lib.transfer.ExtendedStorage;
 import io.github.fabricators_of_create.porting_lib.transfer.StorageViewArrayIterator;
 import io.github.fabricators_of_create.porting_lib.transfer.callbacks.TransactionCallback;
-import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler.SnapshotData;
-import io.github.fabricators_of_create.porting_lib.util.INBTSerializable;
 import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
 import it.unimi.dsi.fastutil.ints.IntIterator;
 import it.unimi.dsi.fastutil.ints.IntSortedSet;
@@ -32,7 +31,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.function.Predicate;
 
-public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapshot> implements Storage<ItemVariant>, ExtendedStorage<ItemVariant>, INBTSerializable<CompoundTag> {
+public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapshot> implements Storage<ItemVariant>, ExtendedStorage<ItemVariant>, INBTSerializable<CompoundTag>, SlotExposedStorage {
 	private static final ItemVariant blank = ItemVariant.blank();
 
 	/**
@@ -75,7 +74,7 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapsh
 		StoragePreconditions.notBlankNotNegative(resource, maxAmount);
 		long inserted = 0;
 		for (int i = 0; i < stacks.length; i++) {
-			if (!isItemValid(i, resource))
+			if (!isItemValid(i, resource, maxAmount))
 				continue;
 			ItemStack stack = stacks[i];
 			if (!stack.isEmpty()) { // add to an existing stack
@@ -119,6 +118,20 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapsh
 	}
 
 	@Override
+	public long insertSlot(int slot, ItemVariant resource, long maxAmount, TransactionContext transaction) {
+		if (slot < 0 || slot > getSlots())
+			return 0;
+		ItemStack stack = stacks[slot];
+		if (!isItemValid(slot, resource, maxAmount))
+			return 0;
+		if (!stack.isEmpty()) { // add to an existing stack
+			return insertToExistingStack(slot, stack, resource, maxAmount, transaction);
+		} else { // create a new stack
+			return insertToNewStack(slot, resource, maxAmount, transaction);
+		}
+	}
+
+	@Override
 	public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
 		StoragePreconditions.notBlankNotNegative(resource, maxAmount);
 		Item item = resource.getItem();
@@ -140,6 +153,22 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapsh
 			updateSnapshots(transaction);
 			contentsChangedInternal(i, stack, transaction);
 		}
+		return extracted;
+	}
+
+	@Override
+	public long extractSlot(int slot, ItemVariant resource, long maxAmount, TransactionContext transaction) {
+		if (slot < 0 || slot > getSlots())
+			return 0;
+		ItemStack stack = stacks[slot];
+		if (stack.isEmpty() || !resource.matches(stack))
+			return 0;
+		int count = stack.getCount();
+		int extracted = (int) Math.min(maxAmount, count);
+		boolean empty = extracted >= count;
+		ItemStack newStack = empty ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(stack, count - extracted);
+		updateSnapshots(transaction);
+		contentsChangedInternal(slot, newStack, transaction);
 		return extracted;
 	}
 
@@ -166,7 +195,7 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapsh
 
 	@Override
 	@Nullable
-	public StorageView<ItemVariant> exactView(TransactionContext transaction, ItemVariant resource) {
+	public StorageView<ItemVariant> exactView(ItemVariant resource) {
 		StoragePreconditions.notBlank(resource);
 		IntSortedSet indices = lookup.get(resource.getItem());
 		if (indices == null || indices.isEmpty())
@@ -201,7 +230,7 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapsh
 	}
 
 	@Override
-	public Iterator<StorageView<ItemVariant>> iterator(TransactionContext transaction) {
+	public Iterator<StorageView<ItemVariant>> iterator() {
 		return new StorageViewArrayIterator<>(views);
 	}
 
@@ -253,7 +282,7 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapsh
 		return Math.min(getSlotLimit(slot), resource.getItem().getMaxStackSize());
 	}
 
-	public boolean isItemValid(int slot, ItemVariant resource) {
+	public boolean isItemValid(int slot, ItemVariant resource, long amount) {
 		return true;
 	}
 

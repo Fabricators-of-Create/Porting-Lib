@@ -58,6 +58,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * 	}
  * }</pre>
  */
+@SuppressWarnings("removal")
 public class TransferUtil implements ModInitializer {
 	/**
 	 * @return Either an outer transaction or a nested one in the current open one
@@ -684,7 +685,7 @@ public class TransferUtil implements ModInitializer {
 		if (storage instanceof ExtendedStorage<T> extended)
 			return extended.extractMatching(predicate, maxAmount, t);
 		T variant = null;
-		for (StorageView<T> view : storage.iterable(t)) {
+		for (StorageView<T> view : storage) {
 			T resource = view.getResource();
 			if (predicate.test(resource)) {
 				variant = resource;
@@ -703,10 +704,10 @@ public class TransferUtil implements ModInitializer {
 	 * @return all non-empty StorageViews of the given storage
 	 */
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	public static <T> Iterable<? extends StorageView<T>> getNonEmpty(Storage<T> storage, TransactionContext t) {
+	public static <T> Iterable<? extends StorageView<T>> getNonEmpty(Storage<T> storage) {
 		if (storage instanceof ExtendedStorage<T> extended)
 			return extended.nonEmptyIterable();
-		return () -> (Iterator) Iterators.filter(storage.iterator(t), view -> !view.isResourceBlank());
+		return () -> (Iterator) Iterators.filter(storage.iterator(), view -> !view.isResourceBlank());
 	}
 
 	/**

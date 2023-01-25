@@ -81,7 +81,7 @@ public class ItemStackHandlerContainer extends ItemStackHandler implements Conta
 	public boolean canPlaceItem(int index, ItemStack stack) {
 		if (indexInvalid(index))
 			return false;
-		return isItemValid(index, ItemVariant.of(stack));
+		return isItemValid(index, ItemVariant.of(stack), stack.getCount());
 	}
 
 	@Override

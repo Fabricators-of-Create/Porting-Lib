@@ -106,6 +106,11 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
+	public long insertSlot(int slot, ItemVariant resource, long maxAmount, TransactionContext transaction) {
+		return handler.insertSlot(slot, resource, maxAmount, transaction);
+	}
+
+	@Override
 	protected int getSpace(int index, ItemVariant resource, ItemStack stack) {
 		return handler.getSpace(index, resource, stack);
 	}
@@ -172,8 +177,8 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
-	public int getStackLimit(int slot, ItemVariant resource, long amount) {
-		return handler.getStackLimit(slot, resource, amount);
+	protected int getStackLimit(int slot, ItemVariant resource) {
+		return handler.getStackLimit(slot, resource);
 	}
 
 	@Override
@@ -237,8 +242,8 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
-	public @Nullable StorageView<ItemVariant> exactView(TransactionContext transaction, ItemVariant resource) {
-		return handler.exactView(transaction, resource);
+	public @Nullable StorageView<ItemVariant> exactView(ItemVariant resource) {
+		return handler.exactView(resource);
 	}
 
 	@Override
