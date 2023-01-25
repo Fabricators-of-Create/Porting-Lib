@@ -655,7 +655,7 @@ public class TransferUtil {
 	 * @return all non-empty StorageViews of the given storage
 	 */
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	static <T> Iterable<? extends StorageView<T>> getNonEmpty(Storage<T> storage, TransactionContext t) {
+	public static <T> Iterable<? extends StorageView<T>> getNonEmpty(Storage<T> storage, TransactionContext t) {
 		if (storage instanceof ExtendedStorage<T> extended)
 			return extended.nonEmptyIterable();
 		return () -> (Iterator) Iterators.filter(storage.iterator(t), view -> !view.isResourceBlank());
