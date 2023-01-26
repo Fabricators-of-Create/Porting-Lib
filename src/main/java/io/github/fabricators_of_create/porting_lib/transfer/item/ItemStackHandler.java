@@ -266,9 +266,11 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapsh
 	public void setSize(int size) {
 		this.stacks = new ItemStack[size];
 		this.variants = new ItemVariant[size];
+		this.views = new ItemStackHandlerSlotView[size];
 		for (int i = 0; i < this.stacks.length; i++) {
 			stacks[i] = ItemStack.EMPTY;
 			variants[i] = blank;
+			views[i] = new ItemStackHandlerSlotView(this, i);
 		}
 		lookup.clear();
 		nonEmptyViews.clear();
