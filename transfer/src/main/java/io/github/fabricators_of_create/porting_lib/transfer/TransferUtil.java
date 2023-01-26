@@ -10,7 +10,6 @@ import java.util.function.Predicate;
 import com.google.common.collect.Iterators;
 
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.SidedStorageBlockEntity;
 
 import net.minecraft.world.item.Items;
 
@@ -136,9 +135,6 @@ public class TransferUtil implements ModInitializer {
 		boolean libOnly = level == null || level.isClientSide();
 		if (libOnly) {
 			// on the client we only allow lib handling.
-			if (be instanceof SidedStorageBlockEntity t) {
-				return t.getItemStorage(side);
-			}
 			if (be instanceof ItemTransferable t) {
 				boolean client = level != null && level.isClientSide();
 				if (client) {
@@ -238,9 +234,6 @@ public class TransferUtil implements ModInitializer {
 		boolean libOnly = level == null || level.isClientSide();
 		if (libOnly) {
 			// on the client we only allow lib handling.
-			if (be instanceof SidedStorageBlockEntity t) {
-				return t.getFluidStorage(side); // only query if on client and client transfer allowed
-			}
 			if (be instanceof FluidTransferable t) {
 				boolean client = level != null && level.isClientSide();
 					if (client) {
