@@ -21,7 +21,9 @@ package net.minecraftforge.common.data;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -93,6 +95,23 @@ public class ExistingFileHelper {
 
 	// fabric: added factory methods
 
+	public static final String EXISTING_RESOURCES = "porting_lib.datagen.existing_resources";
+
+	/**
+	 * Create a helper with existing resources provided from a JVM argument.
+	 * To use, a JVM argument mapping {@link ExistingFileHelper#EXISTING_RESOURCES the key}
+	 * to the desired resource directory is required.
+	 */
+	public static ExistingFileHelper withResourcesFromArg() {
+		String property = System.getProperty(EXISTING_RESOURCES);
+		if (property == null)
+			throw new IllegalArgumentException("Existing resources not specified with '" + EXISTING_RESOURCES + "' argument");
+		Path path = Paths.get(property);
+		if (!Files.isDirectory(path))
+			throw new IllegalStateException("Path " + property + " is not a directory or does not exist");
+		return withResources(path);
+	}
+
 	/**
 	 * Create a helper for a standard mod environment.
 	 * Assumes a file tree of: <pre>
@@ -102,7 +121,9 @@ public class ExistingFileHelper {
 	 *         - main
 	 *             - resources
 	 * </pre>
+	 * @deprecated use withResourcesFromArg
 	 */
+	@Deprecated(forRemoval = true)
 	public static ExistingFileHelper standard() {
 		return withResources(FabricLoader.getInstance()
 				.getGameDir()
