@@ -132,20 +132,8 @@ public class TransferUtil implements ModInitializer {
 			level = be.getLevel();
 			pos = be.getBlockPos();
 		}
-		boolean libOnly = level == null || level.isClientSide();
-		if (libOnly) {
-			// on the client we only allow lib handling.
-			if (be instanceof ItemTransferable t) {
-				boolean client = level != null && level.isClientSide();
-				if (client) {
-					if (t.canTransferItemsClientSide())
-						return t.getItemStorage(side); // only query if on client and client transfer allowed
-				} else {
-					return t.getItemStorage(side); // null level - hope for the best
-				}
-			}
+		if (level == null)
 			return null;
-		}
 		List<Storage<ItemVariant>> itemStorages = new ArrayList<>();
 		BlockState state = be == null ? level.getBlockState(pos) : be.getBlockState();
 		for (Direction direction : getDirections(side)) {
@@ -231,20 +219,8 @@ public class TransferUtil implements ModInitializer {
 			level = be.getLevel();
 			pos = be.getBlockPos();
 		}
-		boolean libOnly = level == null || level.isClientSide();
-		if (libOnly) {
-			// on the client we only allow lib handling.
-			if (be instanceof FluidTransferable t) {
-				boolean client = level != null && level.isClientSide();
-					if (client) {
-						if (t.canTransferFluidsClientSide())
-							return t.getFluidStorage(side); // only query if on client and client transfer allowed
-					} else {
-						return t.getFluidStorage(side); // null level - hope for the best
-					}
-			}
+		if (level == null)
 			return null;
-		}
 		List<Storage<FluidVariant>> fluidStorages = new ArrayList<>();
 		BlockState state = be == null ? level.getBlockState(pos) : be.getBlockState();
 		for (Direction direction : getDirections(side)) {
