@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.List;
 
+import io.github.fabricators_of_create.porting_lib.compat.YungsAPICompat;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.RandomSource;
 
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +45,8 @@ public abstract class StructureTemplateMixin implements StructureTemplateExtensi
 		return entityInfoList;
 	}
 
+	private final ThreadLocal<BlockPos> PIVOT_SAVED = new ThreadLocal<>();
+
 	@Inject(
 			method = "placeInWorld",
 			at = @At(
@@ -53,7 +57,9 @@ public abstract class StructureTemplateMixin implements StructureTemplateExtensi
 			cancellable = true
 	)
 	public void port_lib$place(ServerLevelAccessor iServerWorld, BlockPos blockPos, BlockPos pivot, StructurePlaceSettings placementSettings, RandomSource random, int flags, CallbackInfoReturnable<Boolean> cir) {
+		PIVOT_SAVED.set(pivot);
 		addEntitiesToWorld(iServerWorld, blockPos, placementSettings);
+		PIVOT_SAVED.remove();
 		cir.setReturnValue(true);
 	}
 
@@ -65,12 +71,16 @@ public abstract class StructureTemplateMixin implements StructureTemplateExtensi
 	@Override
 	public List<StructureTemplate.StructureEntityInfo> processEntityInfos(@Nullable StructureTemplate template, LevelAccessor world, BlockPos blockPos, StructurePlaceSettings settings, List<StructureTemplate.StructureEntityInfo> infos) {
 		List<StructureTemplate.StructureEntityInfo> list = Lists.newArrayList();
+		BlockPos pivot = PIVOT_SAVED.get();
 		for(StructureTemplate.StructureEntityInfo entityInfo : infos) {
 			Vec3 pos = transformedVec3d(settings, entityInfo.pos).add(Vec3.atLowerCornerOf(blockPos));
 			BlockPos blockpos = StructureTemplate.calculateRelativePosition(settings, entityInfo.blockPos).offset(blockPos);
 			StructureTemplate.StructureEntityInfo info = new StructureTemplate.StructureEntityInfo(pos, blockpos, entityInfo.nbt);
 			for (StructureProcessor proc : settings.getProcessors()) {
-				info = proc.processEntity(world, blockPos, entityInfo, info, settings, template);
+				if (FabricLoader.getInstance().isModLoaded("yungsapi"))
+					info = YungsAPICompat.processEntity(proc, (ServerLevelAccessor) world, blockPos, pivot, entityInfo, info, settings, template);
+				else
+					info = proc.processEntity(world, blockPos, entityInfo, info, settings, template);
 				if (info == null)
 					break;
 			}
