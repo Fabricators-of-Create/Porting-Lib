@@ -5,3 +5,6 @@ transitive-accessible field net/minecraft/data/loot/EntityLootSubProvider SPECIA
 transitive-accessible field net/minecraft/data/loot/EntityLootSubProvider map Ljava/util/Map;
 
 transitive-accessible field net/minecraft/data/loot/LootTableProvider pathProvider Lnet/minecraft/data/PackOutput$PathProvider;
+
+transitive-accessible method net/minecraft/server/packs/repository/ServerPacksSource createVanillaPackSource ()Lnet/minecraft/server/packs/VanillaPackResources;
+transitive-accessible method net/minecraft/client/resources/ClientPackSource createVanillaPackSource (Ljava/nio/file/Path;)Lnet/minecraft/server/packs/VanillaPackResources;
