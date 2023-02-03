@@ -1,17 +1,6 @@
-package io.github.fabricators_of_create.porting_lib.mixin.common;
-
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+package io.github.fabricators_of_create.porting_lib.extensions.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.IShearable;
-
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -23,6 +12,16 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
+
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import java.util.Map;
 
 @Mixin(Sheep.class)
 public abstract class SheepMixin extends Entity implements IShearable {
