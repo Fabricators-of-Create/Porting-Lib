@@ -2,7 +2,9 @@ package io.github.fabricators_of_create.porting_lib.data;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -93,26 +95,11 @@ public class ExistingFileHelper {
 	}
 
 	/**
-	 * Create a helper for a standard mod environment.
-	 * Assumes a file tree of: <pre>
-	 *     - root
-	 *         - run
-	 *     - src
-	 *         - main
-	 *             - resources
-	 * </pre>
-	 * @deprecated use withResourcesFromArg
+	 * Create a helper with the provided paths being used for resources.
 	 */
-	@Deprecated(forRemoval = true)
-	public static ExistingFileHelper standard() {
-		return withResources(FabricLoader.getInstance()
-				.getGameDir()
-				.normalize()
-				.getParent() // root
-				.resolve("src")
-				.resolve("main")
-				.resolve("resources")
-		);
+	public static ExistingFileHelper withResources(Path... paths) {
+		List<Path> resources = List.of(paths);
+		return new ExistingFileHelper(resources, Set.of(), true, null, null);
 	}
 
 	/**
