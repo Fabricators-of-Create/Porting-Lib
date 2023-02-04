@@ -144,7 +144,6 @@
     "client.MinecraftMixin",
     "client.ModelBakeryMixin",
     "client.ModelBlockRendererMixin",
-    "client.ModelManagerMixin",
     "client.ModelStateMixin",
     "client.MouseHandlerMixin",
     "client.MultiPlayerGameModeMixin",
