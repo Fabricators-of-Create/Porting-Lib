@@ -379,7 +379,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
 		return ret;
 	}
 
-	protected void clear() {
+	public void clear() {
 		generatedModels.clear();
 	}
 
@@ -390,7 +390,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
 		return generateAll(cache);
 	}
 
-	protected CompletableFuture<?> generateAll(CachedOutput cache) {
+	public CompletableFuture<?> generateAll(CachedOutput cache) {
 		CompletableFuture<?>[] futures = new CompletableFuture<?>[this.generatedModels.size()];
 		int i = 0;
 
