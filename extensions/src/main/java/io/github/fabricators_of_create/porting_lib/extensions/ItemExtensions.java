@@ -137,6 +137,10 @@ public interface ItemExtensions {
 
 	/**
 	 * Called to tick armor in the armor slot. Override to do something
+	 *
+	 * @param stack The stack
+	 * @param level The level object
+	 * @param player The player wearing the armor
 	 */
 	default void onArmorTick(ItemStack stack, Level level, Player player) {
 
