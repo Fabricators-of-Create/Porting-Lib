@@ -40,9 +40,6 @@ public abstract class PlayerMixin extends LivingEntity {
 	@Shadow
 	public abstract void disableShield(boolean sprinting);
 
-	@Shadow
-	public abstract Iterable<ItemStack> getArmorSlots();
-
 	protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level level) {
 		super(entityType, level);
 	}
