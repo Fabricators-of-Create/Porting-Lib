@@ -2,10 +2,8 @@ package io.github.fabricators_of_create.porting_lib.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -21,8 +19,7 @@ public class LazyRegistrar<T> {
 	public final String mod_id;
 	public final String modId;
 	private final ResourceKey<? extends Registry<T>> registryKey;
-	private final Map<RegistryObject<T>, Supplier<? extends T>> entries = new LinkedHashMap<>();
-	private final Set<RegistryObject<T>> entriesView = Collections.unmodifiableSet(entries.keySet());
+	private final Set<RegistryObject<T>> entries = new HashSet<>();
 
 	LazyRegistrar(ResourceKey<? extends Registry<T>> registryKey, String modid) {
 		this.registryKey = registryKey;
@@ -55,7 +52,8 @@ public class LazyRegistrar<T> {
 
 	public <R extends T> RegistryObject<R> register(ResourceLocation id, final Supplier<? extends R> entry) {
 		RegistryObject<R> obj = new RegistryObject<>(id, ResourceKey.create(getRegistryKey(), id));
-		if (entries.putIfAbsent((RegistryObject<T>) obj, entry) != null) {
+		obj.setValue(entry.get());
+		if (!entries.add((RegistryObject<T>) obj)) {
 			throw new IllegalArgumentException("Duplicate registration " + id);
 		}
 		return obj;
@@ -63,9 +61,7 @@ public class LazyRegistrar<T> {
 
 	public void register() {
 		Registry<T> registry = makeRegistry().get();
-		entries.forEach((entry, sup) -> {
-			T value = sup.get();
-			entry.setValue(value);
+		entries.forEach((entry) -> {
 			Registry.register(registry, entry.getId(), entry.get());
 		});
 	}
@@ -75,7 +71,7 @@ public class LazyRegistrar<T> {
 	}
 
 	public Collection<RegistryObject<T>> getEntries() {
-		return entriesView;
+		return entries;
 	}
 
 	/**
