@@ -50,7 +50,6 @@ public abstract class PlayerMixin extends LivingEntity {
 	@Inject(method = "tick", at = @At("HEAD"))
 	public void port_lib$playerStartTickEvent(CallbackInfo ci) {
 		PlayerTickEvents.START.invoker().onStartOfPlayerTick((Player) (Object) this);
-		getArmorSlots().forEach(stack -> stack.getItem().onArmorTick(stack, level, (Player)(Object)(this)));
 	}
 
 	@Inject(method = "tick", at = @At("TAIL"))
