@@ -134,4 +134,11 @@ public interface ItemExtensions {
 	default int getDefaultTooltipHideFlags(@Nonnull ItemStack stack) {
 		return 0;
 	}
+
+	/**
+	 * Called to tick armor in the armor slot. Override to do something
+	 */
+	default void onArmorTick(ItemStack stack, Level level, Player player) {
+
+	}
 }

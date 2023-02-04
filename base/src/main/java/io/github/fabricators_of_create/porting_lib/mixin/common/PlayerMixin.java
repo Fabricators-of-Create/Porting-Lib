@@ -16,6 +16,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
+import net.minecraft.world.item.ItemStack;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,6 +40,9 @@ public abstract class PlayerMixin extends LivingEntity {
 	@Shadow
 	public abstract void disableShield(boolean sprinting);
 
+	@Shadow
+	public abstract Iterable<ItemStack> getArmorSlots();
+
 	protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level level) {
 		super(entityType, level);
 	}
@@ -45,6 +50,7 @@ public abstract class PlayerMixin extends LivingEntity {
 	@Inject(method = "tick", at = @At("HEAD"))
 	public void port_lib$playerStartTickEvent(CallbackInfo ci) {
 		PlayerTickEvents.START.invoker().onStartOfPlayerTick((Player) (Object) this);
+		getArmorSlots().forEach(stack -> stack.getItem().onArmorTick(stack, level, (Player)(Object)(this)));
 	}
 
 	@Inject(method = "tick", at = @At("TAIL"))
