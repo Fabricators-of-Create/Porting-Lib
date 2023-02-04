@@ -73,6 +73,48 @@ public class ExistingFileHelper {
 	private final boolean enable;
 	private final Multimap<PackType, ResourceLocation> generated = HashMultimap.create();
 
+	// fabric: added factory methods
+
+	public static final String EXISTING_RESOURCES = "porting_lib.datagen.existing_resources";
+
+	/**
+	 * Create a helper with existing resources provided from a JVM argument.
+	 * To use, a JVM argument mapping {@link ExistingFileHelper#EXISTING_RESOURCES the key}
+	 * to the desired resource directory is required.
+	 */
+	public static ExistingFileHelper withResourcesFromArg() {
+		String property = System.getProperty(EXISTING_RESOURCES);
+		if (property == null)
+			throw new IllegalArgumentException("Existing resources not specified with '" + EXISTING_RESOURCES + "' argument");
+		Path path = Paths.get(property);
+		if (!Files.isDirectory(path))
+			throw new IllegalStateException("Path " + property + " is not a directory or does not exist");
+		return withResources(path);
+	}
+
+	/**
+	 * Create a helper for a standard mod environment.
+	 * Assumes a file tree of: <pre>
+	 *     - root
+	 *         - run
+	 *     - src
+	 *         - main
+	 *             - resources
+	 * </pre>
+	 * @deprecated use withResourcesFromArg
+	 */
+	@Deprecated(forRemoval = true)
+	public static ExistingFileHelper standard() {
+		return withResources(FabricLoader.getInstance()
+				.getGameDir()
+				.normalize()
+				.getParent() // root
+				.resolve("src")
+				.resolve("main")
+				.resolve("resources")
+		);
+	}
+
 	/**
 	 * Create a new helper. This should probably <em>NOT</em> be used by mods, as
 	 * the instance provided by forge is designed to be a central instance that

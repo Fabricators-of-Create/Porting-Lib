@@ -46,30 +46,17 @@ public final class RegistryObject<T> implements Supplier<T> {
 		this.key = (ResourceKey<T>) key;
 	}
 
+	void setValue(T value) {
+		this.value = value;
+	}
+
 	public ResourceLocation getId() {
 		return id;
 	}
 
-	public void setValue(T value) {
-		this.value = value;
-	}
-
-	public void updateRef() {
-		if (value != null)
-			return;
-		Registry<? extends T> builtinRegistry = (Registry<? extends T>) BuiltInRegistries.REGISTRY.get(key.registry());
-		if (builtinRegistry != null) {
-			this.value = builtinRegistry.get(id);
-			this.holder = ((Registry<T>) builtinRegistry).getHolder(key).orElse(null);
-			return;
-		}
-	}
-
 	@Override
 	public T get() {
-		T ret = this.value;
-		Objects.requireNonNull(ret, () -> "Registry Object not present: " + this.id);
-		return ret;
+		return Objects.requireNonNull(this.value, () -> "Registry Object not present: " + this.id);
 	}
 
 	@Nullable

@@ -17,19 +17,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 
 public class LazyRegistrar<T> {
+	@Deprecated
 	public final String mod_id;
+	public final String modId;
 	private final ResourceKey<? extends Registry<T>> registryKey;
 	private final Map<RegistryObject<T>, Supplier<? extends T>> entries = new LinkedHashMap<>();
 	private final Set<RegistryObject<T>> entriesView = Collections.unmodifiableSet(entries.keySet());
 
 	LazyRegistrar(ResourceKey<? extends Registry<T>> registryKey, String modid) {
 		this.registryKey = registryKey;
-		this.mod_id = modid;
+		this.modId = mod_id = modid;
 	}
-
-//    public <U extends T> RegistryObject<U> register(String id, Supplier<U> entry) {
-//        return () -> Registry.register(registry, new ResourceLocation(mod_id, id), entry.get());
-//    }
 
 	public static <R> LazyRegistrar<R> create(Registry<R> registry, String id) {
 		return new LazyRegistrar<>(registry.key(), id);
@@ -52,12 +50,11 @@ public class LazyRegistrar<T> {
 	}
 
 	public <R extends T> RegistryObject<R> register(String id, Supplier<? extends R> entry) {
-		return register(new ResourceLocation(mod_id, id), entry);
+		return register(new ResourceLocation(modId, id), entry);
 	}
 
 	public <R extends T> RegistryObject<R> register(ResourceLocation id, final Supplier<? extends R> entry) {
 		RegistryObject<R> obj = new RegistryObject<>(id, ResourceKey.create(getRegistryKey(), id));
-		obj.setValue(entry.get());
 		if (entries.putIfAbsent((RegistryObject<T>) obj, entry) != null) {
 			throw new IllegalArgumentException("Duplicate registration " + id);
 		}
@@ -67,8 +64,9 @@ public class LazyRegistrar<T> {
 	public void register() {
 		Registry<T> registry = makeRegistry().get();
 		entries.forEach((entry, sup) -> {
+			T value = sup.get();
+			entry.setValue(value);
 			Registry.register(registry, entry.getId(), entry.get());
-			entry.updateRef();
 		});
 	}
 

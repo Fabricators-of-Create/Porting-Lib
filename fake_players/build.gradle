@@ -1,6 +1,3 @@
-archivesBaseName = "fake_players"
-version = getSubprojectVersion(project)
-
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }

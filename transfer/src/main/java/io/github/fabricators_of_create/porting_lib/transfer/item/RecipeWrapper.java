@@ -1,22 +1,27 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
+import it.unimi.dsi.fastutil.ints.IntSortedSet;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext.Result;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Iterator;
+import java.util.function.Predicate;
 
 /**
  * Wraps an ItemStackHandler in a Container for use in recipes and crafting.
+ * @deprecated use of this class is discouraged, ItemStackHandlerContainer should fit all use cases.
  */
+@Deprecated
 public class RecipeWrapper extends ItemStackHandler implements Container {
 	protected final ItemStackHandler handler;
 
@@ -27,14 +32,15 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 
 	@Override
 	public int getContainerSize() {
-		return handler.stacks.length;
+		return handler.getSlots();
 	}
 
 	@Override
 	public boolean isEmpty() {
-		for (ItemStack stack : handler.stacks) {
-			if (!stack.isEmpty())
+		for (int i = 0; i < handler.getSlots(); i++) {
+			if (!handler.getStackInSlot(i).isEmpty()) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -46,11 +52,14 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 
 	@Override
 	public ItemStack removeItem(int index, int count) {
-		ItemStack[] stacks = handler.stacks;
-		if (index >= 0 && index < stacks.length) {
-			ItemStack current = stacks[index];
-			stacks[index] = ItemStack.EMPTY;
-			return current.split(count);
+		if (index >= 0 && index < handler.getSlots()) {
+			ItemStack current = handler.getStackInSlot(index);
+			if (current.isEmpty())
+				return ItemStack.EMPTY;
+			current = current.copy();
+			ItemStack extracted = current.split(count);
+			handler.setStackInSlot(index, current);
+			return extracted;
 		}
 		return ItemStack.EMPTY;
 	}
@@ -62,15 +71,12 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 
 	@Override
 	public void setItem(int index, ItemStack stack) {
-		ItemStack[] stacks = handler.stacks;
-		if (index >= 0 && index < stacks.length) {
-			stacks[index] = stack;
-		}
+		handler.contentsChangedInternal(index, stack, null);
 	}
 
 	@Override
 	public void clearContent() {
-		Arrays.fill(handler.stacks, ItemStack.EMPTY);
+		handler.setSize(handler.getSlots());
 	}
 
 	@Override
@@ -90,13 +96,34 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
+	protected long insertToNewStack(int index, ItemVariant resource, long maxAmount, TransactionContext ctx) {
+		return handler.insertToNewStack(index, resource, maxAmount, ctx);
+	}
+
+	@Override
+	protected long insertToExistingStack(int index, ItemStack stack, ItemVariant resource, long maxAmount, TransactionContext ctx) {
+		return handler.insertToExistingStack(index, stack, resource, maxAmount, ctx);
+	}
+
+	@Override
 	public long insertSlot(int slot, ItemVariant resource, long maxAmount, TransactionContext transaction) {
 		return handler.insertSlot(slot, resource, maxAmount, transaction);
 	}
 
 	@Override
+	protected int getSpace(int index, ItemVariant resource, ItemStack stack) {
+		return handler.getSpace(index, resource, stack);
+	}
+
+	@Override
 	public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
 		return handler.extract(resource, maxAmount, transaction);
+	}
+
+	@Override
+	@Nullable
+	public ResourceAmount<ItemVariant> extractMatching(Predicate<ItemVariant> predicate, long maxAmount, TransactionContext transaction) {
+		return handler.extractMatching(predicate, maxAmount, transaction);
 	}
 
 	@Override
@@ -110,12 +137,22 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
-	protected SnapshotData createSnapshot() {
+	public Iterator<? extends StorageView<ItemVariant>> nonEmptyViews() {
+		return handler.nonEmptyViews();
+	}
+
+	@Override
+	public Iterable<? extends StorageView<ItemVariant>> nonEmptyIterable() {
+		return handler.nonEmptyIterable();
+	}
+
+	@Override
+	protected ItemStackHandlerSnapshot createSnapshot() {
 		return handler.createSnapshot();
 	}
 
 	@Override
-	protected void readSnapshot(SnapshotData snapshot) {
+	protected void readSnapshot(ItemStackHandlerSnapshot snapshot) {
 		handler.readSnapshot(snapshot);
 	}
 
@@ -130,13 +167,18 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
+	public ItemVariant getVariantInSlot(int slot) {
+		return handler.getVariantInSlot(slot);
+	}
+
+	@Override
 	public int getSlotLimit(int slot) {
 		return handler.getSlotLimit(slot);
 	}
 
 	@Override
-	public int getStackLimit(int slot, ItemVariant resource, long amount) {
-		return handler.getStackLimit(slot, resource, amount);
+	protected int getStackLimit(int slot, ItemVariant resource) {
+		return handler.getStackLimit(slot, resource);
 	}
 
 	@Override
@@ -162,6 +204,16 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	@Override
 	public void deserializeNBT(CompoundTag nbt) {
 		handler.deserializeNBT(nbt);
+	}
+
+	@Override
+	protected void updateLookup(Item oldItem, Item newItem, int index) {
+		handler.updateLookup(oldItem, newItem, index);
+	}
+
+	@Override
+	protected IntSortedSet getIndices(Item item) {
+		return handler.getIndices(item);
 	}
 
 	@Override

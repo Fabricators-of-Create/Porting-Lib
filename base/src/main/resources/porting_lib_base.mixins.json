@@ -45,6 +45,7 @@
     "common.ExplosionMixin",
     "common.FireBlockMixin",
     "common.FlyingMobMixin",
+    "common.InventoryMixin",
     "common.ItemEntityMixin",
     "common.ItemPredicateMixin",
     "common.ItemStackMixin",

@@ -3,6 +3,11 @@ package io.github.fabricators_of_create.porting_lib.util;
 import java.util.Objects;
 import java.util.Optional;
 
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
+import net.minecraft.network.chat.Component;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -86,6 +91,10 @@ public class FluidStack {
 
 	public FluidStack(StorageView<FluidVariant> view) {
 		this(view.getResource(), view.getAmount());
+	}
+
+	public FluidStack(ResourceAmount<FluidVariant> resource) {
+		this(resource.resource(), resource.amount());
 	}
 
 	/**

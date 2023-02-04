@@ -1,5 +1,16 @@
 package io.github.fabricators_of_create.porting_lib;
 
+import io.github.fabricators_of_create.porting_lib.loot.LootModifierManager;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.Items;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes;
+import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
 import io.github.fabricators_of_create.porting_lib.data.ConditionalRecipe;
 import io.github.fabricators_of_create.porting_lib.loot.CanToolPerformAction;
 import io.github.fabricators_of_create.porting_lib.loot.LootModifierManager;
@@ -11,6 +22,8 @@ import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.Arrays;
 
 public class PortingLib implements ModInitializer {
 	@Override
