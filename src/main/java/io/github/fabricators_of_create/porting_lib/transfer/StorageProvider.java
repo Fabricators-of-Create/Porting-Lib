@@ -11,6 +11,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiPredicate;
@@ -35,10 +38,13 @@ public class StorageProvider<T> implements Function<Direction, Storage<T>> {
 		return lookup.find(level, pos, direction);
 	}
 
-	@Override
 	@Nullable
-	public Storage<T> apply(Direction direction) {
-		return get(direction);
+	public BlockEntity findBlockEntity() {
+		return level.getBlockEntity(pos);
+	}
+
+	public BlockState findBlockState() {
+		return level.getBlockState(pos);
 	}
 
 	/**
@@ -46,6 +52,12 @@ public class StorageProvider<T> implements Function<Direction, Storage<T>> {
 	 */
 	public StorageProvider<T> filter(BiPredicate<StorageProvider<T>, Storage<T>> filter) {
 		return new FilteringStorageProvider<>(this, filter);
+	}
+
+	@Override
+	@Nullable
+	public Storage<T> apply(Direction direction) {
+		return get(direction);
 	}
 
 	/**
@@ -91,6 +103,12 @@ public class StorageProvider<T> implements Function<Direction, Storage<T>> {
 		@Override
 		public Storage<T> get(Direction direction) {
 			return cache.find(direction);
+		}
+
+		@Override
+		@Nullable
+		public BlockEntity findBlockEntity() {
+			return cache.getBlockEntity();
 		}
 	}
 
