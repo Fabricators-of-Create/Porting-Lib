@@ -18,12 +18,14 @@ public enum EmptyItemLookupCache implements BlockApiCache<Storage<ItemVariant>, 
 	INSTANCE;
 
 	@Override
-	public @Nullable Storage<ItemVariant> find(@Nullable BlockState state, Direction context) {
+	@Nullable
+	public Storage<ItemVariant> find(@Nullable BlockState state, Direction context) {
 		return null;
 	}
 
 	@Override
-	public @Nullable BlockEntity getBlockEntity() {
+	@Nullable
+	public BlockEntity getBlockEntity() {
 		return null;
 	}
 
@@ -34,11 +36,11 @@ public enum EmptyItemLookupCache implements BlockApiCache<Storage<ItemVariant>, 
 
 	@Override
 	public ServerLevel getWorld() {
-		return null;
+		throw new UnsupportedOperationException("Cannot call getWorld on an empty cache as no world is associated with it");
 	}
 
 	@Override
 	public BlockPos getPos() {
-		return null;
+		return BlockPos.ZERO;
 	}
 }

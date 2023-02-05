@@ -1,6 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.transfer.cache;
 
-import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
@@ -26,7 +25,6 @@ public class ClientFluidLookupCache implements BlockApiCache<Storage<FluidVarian
 	private final BlockPos pos;
 	private boolean blockEntityCacheValid = false;
 	private BlockEntity cachedBlockEntity = null;
-	private BlockState lastState = null;
 
 	public static BlockApiCache<Storage<FluidVariant>, Direction> get(Level level, BlockPos pos) {
 		if (level instanceof ClientLevel c)
@@ -35,7 +33,7 @@ public class ClientFluidLookupCache implements BlockApiCache<Storage<FluidVarian
 	}
 
 	public ClientFluidLookupCache(ClientLevel world, BlockPos pos) {
-		((ClientLevelExtensions) world).port_lib$registerCache(pos ,this);
+		world.port_lib$registerCache(pos ,this);
 		this.world = world;
 		this.pos = pos.immutable();
 	}
@@ -43,7 +41,6 @@ public class ClientFluidLookupCache implements BlockApiCache<Storage<FluidVarian
 	public void invalidate() {
 		blockEntityCacheValid = false;
 		cachedBlockEntity = null;
-		lastState = null;
 	}
 
 	@Nullable
@@ -51,24 +48,10 @@ public class ClientFluidLookupCache implements BlockApiCache<Storage<FluidVarian
 	public Storage<FluidVariant> find(@Nullable BlockState state, @Nullable Direction context) {
 		// Update block entity cache
 		getBlockEntity();
-
-		// Get block state
-		if (state == null) {
-			if (cachedBlockEntity != null) {
-				state = cachedBlockEntity.getBlockState();
-			} else {
-				state = world.getBlockState(pos);
-			}
-		}
-
-		if (lastState != state) {
-			lastState = state;
-		}
-
 		// Query the provider
 		if (cachedBlockEntity == null)
 			return null;
-		return TransferUtil.getFluidStorage(cachedBlockEntity, context);
+		return TransferUtil.getFluidStorage(world, pos, cachedBlockEntity, context);
 	}
 
 	@Override
@@ -89,7 +72,7 @@ public class ClientFluidLookupCache implements BlockApiCache<Storage<FluidVarian
 
 	@Override
 	public ServerLevel getWorld() {
-		return null; // why
+		throw new UnsupportedOperationException("Cannot call getWorld on a client-side cache as only ServerLevels are supported");
 	}
 
 	@Override

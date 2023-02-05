@@ -21,12 +21,14 @@ public enum EmptyFluidLookupCache implements BlockApiCache<Storage<FluidVariant>
 	INSTANCE;
 
 	@Override
-	public @Nullable Storage<FluidVariant> find(@Nullable BlockState state, Direction context) {
+	@Nullable
+	public Storage<FluidVariant> find(@Nullable BlockState state, Direction context) {
 		return null;
 	}
 
 	@Override
-	public @Nullable BlockEntity getBlockEntity() {
+	@Nullable
+	public BlockEntity getBlockEntity() {
 		return null;
 	}
 
@@ -37,11 +39,11 @@ public enum EmptyFluidLookupCache implements BlockApiCache<Storage<FluidVariant>
 
 	@Override
 	public ServerLevel getWorld() {
-		return null;
+		throw new UnsupportedOperationException("Cannot call getWorld on an empty cache as no world is associated with it");
 	}
 
 	@Override
 	public BlockPos getPos() {
-		return null;
+		return BlockPos.ZERO;
 	}
 }
