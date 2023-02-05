@@ -88,13 +88,11 @@ public class DatapackBuiltinEntriesProvider extends RegistriesDatapackGenerator 
 
 	private <T> Optional<CompletableFuture<?>> dumpRegistryCap(CachedOutput p_256502_, HolderLookup.Provider p_256492_, DynamicOps<JsonElement> p_256000_, RegistryDataLoader.RegistryData<T> p_256449_) {
 		ResourceKey<? extends Registry<T>> resourcekey = p_256449_.key();
-		return p_256492_.lookup(resourcekey).map((p_255847_) -> {
+		return p_256492_.lookup(resourcekey).map((registryLookup) -> {
 			PackOutput.PathProvider packoutput$pathprovider = this.output.createPathProvider(PackOutput.Target.DATA_PACK, prefixNamespace(resourcekey.location()));
-			return CompletableFuture.allOf(p_255847_.listElements().filter(holder -> this.namespacePredicate.test(holder.key().location().getNamespace())).map((p_256105_) -> {
+			return CompletableFuture.allOf(registryLookup.listElements().filter(holder -> this.namespacePredicate.test(holder.key().location().getNamespace())).map((p_256105_) -> {
 				return dumpValue(packoutput$pathprovider.json(p_256105_.key().location()), p_256502_, p_256000_, p_256449_.elementCodec(), p_256105_.value());
-			}).toArray((p_256279_) -> {
-				return new CompletableFuture[p_256279_];
-			}));
+			}).toArray(CompletableFuture[]::new));
 		});
 	}
 
