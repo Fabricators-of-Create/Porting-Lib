@@ -6,5 +6,10 @@ transitive-accessible field net/minecraft/data/loot/EntityLootSubProvider map Lj
 
 transitive-accessible field net/minecraft/data/loot/LootTableProvider pathProvider Lnet/minecraft/data/PackOutput$PathProvider;
 
+transitive-accessible class net/minecraft/core/RegistrySetBuilder$RegistryStub
+transitive-accessible field net/minecraft/core/RegistrySetBuilder entries Ljava/util/List;
+
+transitive-accessible method net/minecraft/data/registries/RegistriesDatapackGenerator dumpValue (Ljava/nio/file/Path;Lnet/minecraft/data/CachedOutput;Lcom/mojang/serialization/DynamicOps;Lcom/mojang/serialization/Encoder;Ljava/lang/Object;)Ljava/util/concurrent/CompletableFuture;
+
 transitive-accessible method net/minecraft/server/packs/repository/ServerPacksSource createVanillaPackSource ()Lnet/minecraft/server/packs/VanillaPackResources;
 transitive-accessible method net/minecraft/client/resources/ClientPackSource createVanillaPackSource (Ljava/nio/file/Path;)Lnet/minecraft/server/packs/VanillaPackResources;
