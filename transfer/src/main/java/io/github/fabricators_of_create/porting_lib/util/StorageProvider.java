@@ -85,7 +85,7 @@ public class StorageProvider<T> implements Function<Direction, Storage<T>> {
 		@Override
 		@Nullable
 		public Storage<T> get(Direction direction) {
-			Storage<T> storage = super.get(direction);
+			Storage<T> storage = wrapped.get(direction);
 			if (filter.test(this, storage)) {
 				return storage;
 			}
