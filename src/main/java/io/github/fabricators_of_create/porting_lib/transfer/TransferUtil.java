@@ -463,10 +463,13 @@ public class TransferUtil {
 	 * @return the extracted FluidStack, or EMPTY if none.
 	 */
 	public static FluidStack extractAnyFluid(Storage<FluidVariant> storage, long maxAmount, Transaction tx) {
+		if (!storage.supportsExtraction())
+			return FluidStack.EMPTY;
+		if (storage instanceof ExtendedStorage<FluidVariant> extended) {
+			ResourceAmount<FluidVariant> extracted = extended.extractAny(maxAmount, tx);
+			return extracted == null ? FluidStack.EMPTY : new FluidStack(extracted);
+		}
 		FluidStack fluid = FluidStack.EMPTY;
-		if (!storage.supportsExtraction()) return fluid;
-		if (storage instanceof ExtendedStorage<FluidVariant> extended)
-			return new FluidStack(extended.extractAny(maxAmount, tx));
 		for (StorageView<FluidVariant> view : getNonEmpty(storage, tx)) {
 			FluidVariant var = view.getResource();
 			long amount = Math.min(maxAmount, view.getAmount());
@@ -507,13 +510,14 @@ public class TransferUtil {
 
 	/** @see TransferUtil#extractAnyFluid(Storage, long) */
 	public static ItemStack extractAnyItem(Storage<ItemVariant> storage, long maxAmount, Transaction tx) {
-		ItemStack stack = ItemStack.EMPTY;
-		if (!storage.supportsExtraction()) return stack;
+		if (!storage.supportsExtraction())
+			return ItemStack.EMPTY;
 		if (storage instanceof ExtendedStorage<ItemVariant> extended) {
 			int max = truncateLong(maxAmount);
 			ResourceAmount<ItemVariant> extracted = extended.extractAny(max, tx);
-			return extracted.resource().toStack(truncateLong(extracted.amount()));
+			return extracted == null ? ItemStack.EMPTY : extracted.resource().toStack(truncateLong(extracted.amount()));
 		}
+		ItemStack stack = ItemStack.EMPTY;
 		for (StorageView<ItemVariant> view : storage.iterable(tx)) {
 			if (!view.isResourceBlank()) {
 				ItemVariant var = view.getResource();
