@@ -14,9 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("NonExtendableApiUsage")
-public enum EmptyItemLookupCache implements BlockApiCache<Storage<ItemVariant>, Direction> {
-	INSTANCE;
-
+public record EmptyItemLookupCache(BlockPos pos) implements BlockApiCache<Storage<ItemVariant>, Direction> {
 	@Override
 	@Nullable
 	public Storage<ItemVariant> find(@Nullable BlockState state, Direction context) {
@@ -41,6 +39,6 @@ public enum EmptyItemLookupCache implements BlockApiCache<Storage<ItemVariant>, 
 
 	@Override
 	public BlockPos getPos() {
-		return BlockPos.ZERO;
+		return pos;
 	}
 }

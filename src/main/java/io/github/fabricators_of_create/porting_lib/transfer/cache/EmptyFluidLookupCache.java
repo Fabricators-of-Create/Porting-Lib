@@ -17,9 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 @SuppressWarnings("NonExtendableApiUsage")
-public enum EmptyFluidLookupCache implements BlockApiCache<Storage<FluidVariant>, Direction> {
-	INSTANCE;
-
+public record EmptyFluidLookupCache(BlockPos pos) implements BlockApiCache<Storage<FluidVariant>, Direction> {
 	@Override
 	@Nullable
 	public Storage<FluidVariant> find(@Nullable BlockState state, Direction context) {
@@ -44,6 +42,6 @@ public enum EmptyFluidLookupCache implements BlockApiCache<Storage<FluidVariant>
 
 	@Override
 	public BlockPos getPos() {
-		return BlockPos.ZERO;
+		return pos;
 	}
 }

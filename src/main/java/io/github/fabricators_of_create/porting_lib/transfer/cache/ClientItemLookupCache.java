@@ -29,7 +29,7 @@ public class ClientItemLookupCache implements BlockApiCache<Storage<ItemVariant>
 	public static BlockApiCache<Storage<ItemVariant>, Direction> get(Level level, BlockPos pos) {
 		if (level instanceof ClientLevel c)
 			return new ClientItemLookupCache(c, pos);
-		return EmptyItemLookupCache.INSTANCE;
+		return new EmptyItemLookupCache(pos);
 	}
 
 	public ClientItemLookupCache(ClientLevel world, BlockPos pos) {

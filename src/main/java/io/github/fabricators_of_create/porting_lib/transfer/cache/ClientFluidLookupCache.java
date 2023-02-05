@@ -29,7 +29,7 @@ public class ClientFluidLookupCache implements BlockApiCache<Storage<FluidVarian
 	public static BlockApiCache<Storage<FluidVariant>, Direction> get(Level level, BlockPos pos) {
 		if (level instanceof ClientLevel c)
 			return new ClientFluidLookupCache(c, pos);
-		return EmptyFluidLookupCache.INSTANCE;
+		return new EmptyFluidLookupCache(pos);
 	}
 
 	public ClientFluidLookupCache(ClientLevel world, BlockPos pos) {

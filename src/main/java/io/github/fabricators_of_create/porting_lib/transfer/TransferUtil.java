@@ -699,7 +699,7 @@ public class TransferUtil {
 		} else if (level.isClientSide()) {
 			return ClientItemLookupCache.get(level, pos);
 		}
-		return EmptyItemLookupCache.INSTANCE;
+		return new EmptyItemLookupCache(pos);
 	}
 
 	/**
@@ -712,7 +712,7 @@ public class TransferUtil {
 		} else if (level.isClientSide()) {
 			return ClientFluidLookupCache.get(level, pos);
 		}
-		return EmptyFluidLookupCache.INSTANCE;
+		return new EmptyFluidLookupCache(pos);
 	}
 
 	/**
