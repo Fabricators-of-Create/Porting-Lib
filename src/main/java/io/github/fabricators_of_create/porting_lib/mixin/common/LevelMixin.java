@@ -10,6 +10,9 @@ import java.util.function.Predicate;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
 import io.github.fabricators_of_create.porting_lib.PortingLib;
 import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
@@ -22,6 +25,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 
@@ -39,6 +43,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
@@ -159,13 +164,19 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		}
 	}
 
-	@ModifyExpressionValue(method = "getSignal", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;isRedstoneConductor(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z"))
-	public boolean port_lib$getRedstoneSignal(boolean conductor, BlockPos pos, Direction facing) {
-		if (conductor)
-			return true;
-		BlockState state = getBlockState(pos);
-		return state.getBlock() instanceof WeakPowerCheckingBlock checking
-				&& checking.shouldCheckWeakPower(state, this, pos, facing);
+	@WrapOperation(
+			method = "getSignal",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/block/state/BlockState;isRedstoneConductor(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z"
+			)
+	)
+	private boolean port_lib$modifyRedstoneSignal(BlockState state, BlockGetter level, BlockPos pos, Operation<Boolean> original,
+												  BlockPos pos2, Direction facing) {
+		if (state.getBlock() instanceof WeakPowerCheckingBlock checking) {
+			return checking.shouldCheckWeakPower(state, this, pos, facing);
+		}
+		return original.call(state, level, pos);
 	}
 
 	@Inject(
