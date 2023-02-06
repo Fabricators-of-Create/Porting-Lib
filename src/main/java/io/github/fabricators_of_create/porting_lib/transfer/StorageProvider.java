@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.transfer;
 
+import io.github.fabricators_of_create.porting_lib.transfer.cache.EmptyFluidLookupCache;
+import io.github.fabricators_of_create.porting_lib.transfer.cache.EmptyItemLookupCache;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
@@ -64,19 +66,26 @@ public class StorageProvider<T> implements Function<Direction, Storage<T>> {
 	 * Create a storage provider for {@link FluidStorage#SIDED fluids}.
 	 */
 	public static StorageProvider<FluidVariant> createForFluids(Level level, BlockPos pos) {
-		return create(TransferUtil.getFluidCache(level, pos), level);
+		BlockApiCache<Storage<FluidVariant>, Direction> cache = TransferUtil.getFluidCache(level, pos);
+		if (cache instanceof EmptyFluidLookupCache)
+			return new LibOnlyFluidStorageProvider(level, pos);
+		return create(cache, level);
 	}
 
 	/**
 	 * Create a storage provider for {@link ItemStorage#SIDED items}.
 	 */
 	public static StorageProvider<ItemVariant> createForItems(Level level, BlockPos pos) {
-		return create(TransferUtil.getItemCache(level, pos), level);
+		BlockApiCache<Storage<ItemVariant>, Direction> cache = TransferUtil.getItemCache(level, pos);
+		if (cache instanceof EmptyItemLookupCache)
+			return new LibOnlyItemStorageProvider(level, pos);
+		return create(cache, level);
 	}
 
 	/**
 	 * Create a storage provider for the given cache in the given level.
 	 * The level cannot be retrieved from the cache as they only support server levels.
+	 * Prefer {@link #createForItems(Level, BlockPos)} or {@link #createForFluids(Level, BlockPos)}.
 	 */
 	public static <T> StorageProvider<T> create(BlockApiCache<Storage<T>, Direction> cache, Level level) {
 		return new CachedStorageProvider<>(cache, level);
@@ -84,6 +93,7 @@ public class StorageProvider<T> implements Function<Direction, Storage<T>> {
 
 	/**
 	 * Create a storage provider for the given lookup. This provider will not have caching.
+	 * Prefer {@link #createForItems(Level, BlockPos)} or {@link #createForFluids(Level, BlockPos)}.
 	 */
 	public static <T> StorageProvider<T> create(BlockApiLookup<Storage<T>, Direction> lookup, Level level, BlockPos pos) {
 		return new StorageProvider<>(lookup, level, pos);
@@ -133,6 +143,30 @@ public class StorageProvider<T> implements Function<Direction, Storage<T>> {
 				return storage;
 			}
 			return null;
+		}
+	}
+
+	protected static class LibOnlyItemStorageProvider extends StorageProvider<ItemVariant> {
+		protected LibOnlyItemStorageProvider(Level level, BlockPos pos) {
+			super(ItemStorage.SIDED, level, pos);
+		}
+
+		@Override
+		@Nullable
+		public Storage<ItemVariant> get(Direction direction) {
+			return TransferUtil.getItemStorage(level, pos, direction);
+		}
+	}
+
+	protected static class LibOnlyFluidStorageProvider extends StorageProvider<FluidVariant> {
+		protected LibOnlyFluidStorageProvider(Level level, BlockPos pos) {
+			super(FluidStorage.SIDED, level, pos);
+		}
+
+		@Override
+		@Nullable
+		public Storage<FluidVariant> get(Direction direction) {
+			return TransferUtil.getFluidStorage(level, pos, direction);
 		}
 	}
 }
