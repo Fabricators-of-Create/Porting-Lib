@@ -146,6 +146,9 @@ public class StorageProvider<T> implements Function<Direction, Storage<T>> {
 		}
 	}
 
+	/**
+	 * Provides storages exclusively using TransferUtil. This is not cached and should only be used as a fallback where caches are unavailable.
+	 */
 	protected static class LibOnlyItemStorageProvider extends StorageProvider<ItemVariant> {
 		protected LibOnlyItemStorageProvider(Level level, BlockPos pos) {
 			super(ItemStorage.SIDED, level, pos);
@@ -158,6 +161,9 @@ public class StorageProvider<T> implements Function<Direction, Storage<T>> {
 		}
 	}
 
+	/**
+	 * Fluid version of {@link LibOnlyItemStorageProvider}
+	 */
 	protected static class LibOnlyFluidStorageProvider extends StorageProvider<FluidVariant> {
 		protected LibOnlyFluidStorageProvider(Level level, BlockPos pos) {
 			super(FluidStorage.SIDED, level, pos);

@@ -125,6 +125,7 @@ public class TransferUtil {
 		if (be == null) {
 			Objects.requireNonNull(level, "If a null Block Entity is provided, the Level may NOT be null!");
 			Objects.requireNonNull(pos, "If a null Block Entity is provided, the pos may NOT be null!");
+			be = level.getBlockEntity(pos);
 		}
 		if (level == null || pos == null) {
 			Objects.requireNonNull(be, "If a null level or pos is provided, the Block Entity may NOT be null!");
@@ -224,6 +225,7 @@ public class TransferUtil {
 		if (be == null) {
 			Objects.requireNonNull(level, "If a null Block Entity is provided, the Level may NOT be null!");
 			Objects.requireNonNull(pos, "If a null Block Entity is provided, the pos may NOT be null!");
+			be = level.getBlockEntity(pos);
 		}
 		if (level == null || pos == null) {
 			Objects.requireNonNull(be, "If a null level or pos is provided, the Block Entity may NOT be null!");
