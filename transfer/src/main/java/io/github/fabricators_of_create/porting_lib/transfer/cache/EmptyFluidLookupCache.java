@@ -1,8 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.transfer.cache;
 
+import io.github.fabricators_of_create.porting_lib.util.StorageProvider;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.Nullable;
 
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
@@ -15,10 +17,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * @deprecated see ClientBlockApiCache
+ * This should not be used directly. You should use {@link StorageProvider} instead.
  */
 @SuppressWarnings("NonExtendableApiUsage")
-@Deprecated(forRemoval = true)
+@Internal
 public record EmptyFluidLookupCache(BlockPos pos) implements BlockApiCache<Storage<FluidVariant>, Direction> {
 	@Override
 	@Nullable

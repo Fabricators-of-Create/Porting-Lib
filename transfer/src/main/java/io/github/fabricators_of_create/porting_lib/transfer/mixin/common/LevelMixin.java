@@ -18,12 +18,12 @@ public abstract class LevelMixin implements LevelExtensions {
 	@Override
 	public BlockApiCache<Storage<ItemVariant>, Direction> port_lib$getItemCache(BlockPos pos) {
 		// uh oh. Not a ClientLevel or ServerLevel!
-		return EmptyItemLookupCache.INSTANCE;
+		return new EmptyItemLookupCache(pos);
 	}
 
 	@Override
 	public BlockApiCache<Storage<FluidVariant>, Direction> port_lib$getFluidApiCache(BlockPos pos) {
 		// uh oh. Not a ClientLevel or ServerLevel!
-		return EmptyFluidLookupCache.INSTANCE;
+		return new EmptyFluidLookupCache(pos);
 	}
 }

@@ -686,8 +686,6 @@ public class TransferUtil implements ModInitializer {
 	}
 
 	/**
-	 * Get a BlockApiCache for ItemStorage.SIDED. If on client, will return a client-side cache,
-	 * which can only interact with BlockEntities using the ItemTransferable interface.
 	 * @deprecated use StorageProvider
 	 */
 	@Deprecated(forRemoval = true)
@@ -696,8 +694,6 @@ public class TransferUtil implements ModInitializer {
 	}
 
 	/**
-	 * Get a BlockApiCache for FluidStorage.SIDED. If on client, will return a client-side cache,
-	 * which can only interact with BlockEntities using the FluidTransferable interface.
 	 * @deprecated use StorageProvider
 	 */
 	@Deprecated(forRemoval = true)

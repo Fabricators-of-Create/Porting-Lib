@@ -1,5 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.transfer.cache;
 
+import io.github.fabricators_of_create.porting_lib.util.StorageProvider;
+
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.Nullable;
 
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
@@ -17,11 +20,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * A {@link BlockApiLookup} for item storage on the client. can only access API provided through TransferUtil. Null directions allowed.
- * @deprecated see ClientBlockApiCache
+ * This should not be used directly. You should use {@link StorageProvider} instead.
  */
 @SuppressWarnings("NonExtendableApiUsage")
-@Deprecated(forRemoval = true)
+@Internal
 public class ClientItemLookupCache implements BlockApiCache<Storage<ItemVariant>, Direction>, ClientBlockApiCache {
 	private final ClientLevel world;
 	private final BlockPos pos;
@@ -47,7 +49,7 @@ public class ClientItemLookupCache implements BlockApiCache<Storage<ItemVariant>
 
 	@Nullable
 	@Override
-	public Storage<ItemVariant> find(@Nullable BlockState state, @Nullable Direction context) {
+	public Storage<ItemVariant> find(@Nullable BlockState state, Direction context) {
 		// Update block entity cache
 		getBlockEntity();
 		// Query the provider

@@ -1,13 +1,14 @@
 package io.github.fabricators_of_create.porting_lib.transfer.cache;
 
+import io.github.fabricators_of_create.porting_lib.util.StorageProvider;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientBlockEntityEvents;
 
+import org.jetbrains.annotations.ApiStatus.Internal;
+
 /**
- * This system is busted and dangerous.
- * - getWorld returns null
- * - misses Levels that aren't ClientLevel or ServerLevel
+ * This should not be used directly. You should use {@link StorageProvider} instead.
  */
-@Deprecated(forRemoval = true)
+@Internal
 public interface ClientBlockApiCache {
 	void invalidate();
 
