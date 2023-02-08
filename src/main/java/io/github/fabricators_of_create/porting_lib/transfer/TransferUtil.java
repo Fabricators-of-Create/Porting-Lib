@@ -692,9 +692,9 @@ public class TransferUtil {
 	}
 
 	/**
-	 * Get a BlockApiCache for ItemStorage.SIDED. If on client, will return a client-side cache,
-	 * which can only interact with BlockEntities using the ItemTransferable interface.
+	 * @deprecated use StorageProvider
 	 */
+	@Deprecated(forRemoval = true)
 	public static BlockApiCache<Storage<ItemVariant>, Direction> getItemCache(Level level, BlockPos pos) {
 		if (level instanceof ServerLevel server) {
 			return BlockApiCache.create(ItemStorage.SIDED, server, pos);
@@ -705,9 +705,9 @@ public class TransferUtil {
 	}
 
 	/**
-	 * Get a BlockApiCache for FluidStorage.SIDED. If on client, will return a client-side cache,
-	 * which can only interact with BlockEntities using the FluidTransferable interface.
+	 * @deprecated use StorageProvider
 	 */
+	@Deprecated(forRemoval = true)
 	public static BlockApiCache<Storage<FluidVariant>, Direction> getFluidCache(Level level, BlockPos pos) {
 		if (level instanceof ServerLevel server) {
 			return BlockApiCache.create(FluidStorage.SIDED, server, pos);

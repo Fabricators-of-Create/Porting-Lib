@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.transfer.cache;
 
+import io.github.fabricators_of_create.porting_lib.transfer.StorageProvider;
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
@@ -14,11 +15,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A {@link BlockApiLookup} for fluid storage on the client. can only access API provided through TransferUtil. Null directions allowed.
+ * This should not be used directly. Use {@link StorageProvider} instead.
  */
+@Internal
 @SuppressWarnings("NonExtendableApiUsage")
 public class ClientFluidLookupCache implements BlockApiCache<Storage<FluidVariant>, Direction>, ClientBlockApiCache {
 	private final ClientLevel world;

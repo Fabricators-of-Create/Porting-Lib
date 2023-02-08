@@ -120,6 +120,14 @@ public class StorageProvider<T> implements Function<Direction, Storage<T>> {
 		public BlockEntity findBlockEntity() {
 			return cache.getBlockEntity();
 		}
+
+		@Override
+		public BlockState findBlockState() {
+			BlockEntity be = findBlockEntity();
+			if (be != null)
+				return be.getBlockState();
+			return super.findBlockState();
+		}
 	}
 
 	/**
