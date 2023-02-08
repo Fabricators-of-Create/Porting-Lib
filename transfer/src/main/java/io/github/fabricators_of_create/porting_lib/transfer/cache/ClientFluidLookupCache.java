@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.transfer.cache;
 
+import io.github.fabricators_of_create.porting_lib.transfer.StorageProvider;
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import io.github.fabricators_of_create.porting_lib.util.StorageProvider;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
@@ -19,10 +20,10 @@ import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * This should not be used directly. You should use {@link StorageProvider} instead.
+ * This should not be used directly. Use {@link StorageProvider} instead.
  */
-@SuppressWarnings("NonExtendableApiUsage")
 @Internal
+@SuppressWarnings("NonExtendableApiUsage")
 public class ClientFluidLookupCache implements BlockApiCache<Storage<FluidVariant>, Direction>, ClientBlockApiCache {
 	private final ClientLevel world;
 	private final BlockPos pos;

@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.transfer.cache;
 
-import io.github.fabricators_of_create.porting_lib.util.StorageProvider;
+import io.github.fabricators_of_create.porting_lib.transfer.StorageProvider;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -16,10 +16,10 @@ import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * This should not be used directly. You should use {@link StorageProvider} instead.
+ * This should not be used directly. Use {@link StorageProvider} instead.
  */
-@SuppressWarnings("NonExtendableApiUsage")
 @Internal
+@SuppressWarnings("NonExtendableApiUsage")
 public record EmptyItemLookupCache(BlockPos pos) implements BlockApiCache<Storage<ItemVariant>, Direction> {
 	@Override
 	@Nullable
