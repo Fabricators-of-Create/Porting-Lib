@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.transfer.cache;
 
-import io.github.fabricators_of_create.porting_lib.transfer.StorageProvider;
+import io.github.fabricators_of_create.porting_lib.util.StorageProvider;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientBlockEntityEvents;
 
 import org.jetbrains.annotations.ApiStatus.Internal;
