@@ -152,6 +152,17 @@ public class StorageProvider<T> implements Function<Direction, Storage<T>> {
 			}
 			return null;
 		}
+
+		@Override
+		@Nullable
+		public BlockEntity findBlockEntity() {
+			return wrapped.findBlockEntity();
+		}
+
+		@Override
+		public BlockState findBlockState() {
+			return wrapped.findBlockState();
+		}
 	}
 
 	/**
