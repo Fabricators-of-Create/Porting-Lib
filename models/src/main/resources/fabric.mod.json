@@ -3,5 +3,8 @@
   "id": "porting_lib_models",
   "version": "${version}",
   "name": "Porting Lib Models",
-  "description": "Adds different types of model loaders"
+  "description": "Adds different types of model loaders",
+  "mixins": [
+    "porting_lib_models.mixins.json"
+  ]
 }
