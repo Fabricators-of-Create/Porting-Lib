@@ -6,5 +6,10 @@
   "description": "Adds different types of model loaders",
   "mixins": [
     "porting_lib_models.mixins.json"
-  ]
+  ],
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.models.PortingLibModels"
+    ]
+  }
 }
