@@ -43,7 +43,7 @@ public enum PortingLibModelLoadingRegistry implements ModelResourceProvider {
 	@Override
 	public @Nullable UnbakedModel loadModelResource(ResourceLocation resourceId, ModelProviderContext context) {
 		try {
-			JsonObject object = BlockModel.GSON.fromJson(getModelJson(resourceId), JsonObject.class);
+			JsonObject object = GSON.fromJson(getModelJson(resourceId), JsonObject.class);
 			if (object.has("loader")) {
 				ResourceLocation id = new ResourceLocation(GsonHelper.getAsString(object, "loader"));
 				if (!LOADERS.containsKey(id))
