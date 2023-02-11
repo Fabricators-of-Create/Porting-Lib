@@ -18,7 +18,7 @@
       "net/minecraft/class_293": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/VertexFormatExtensions"],
       "net/minecraft/class_276": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/RenderTargetExtensions"],
       "net/minecraft/class_703": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/ParticleExtensions"],
-      "net.minecraft.class_804": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/ItemTransformExtensions"],
+      "net/minecraft/class_804": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/ItemTransformExtensions"],
       "net/minecraft/class_1044": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/AbstractTextureExtensions"],
       "net/minecraft/class_1291": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/MobEffectExtensions"],
       "net/minecraft/class_1293": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/MobEffectInstanceExtensions"],
