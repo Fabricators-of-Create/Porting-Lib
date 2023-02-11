@@ -1,0 +1,3 @@
+accessWidener v2 named
+transitive-accessible field net/minecraft/client/renderer/block/model/BlockModel GSON Lcom/google/gson/Gson;
+transitive-accessible method net/minecraft/client/renderer/block/model/BlockModel getItemOverrides (Lnet/minecraft/client/resources/model/ModelBaker;Lnet/minecraft/client/renderer/block/model/BlockModel;)Lnet/minecraft/client/renderer/block/model/ItemOverrides;
