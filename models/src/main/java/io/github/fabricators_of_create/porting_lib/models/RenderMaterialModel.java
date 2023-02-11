@@ -2,12 +2,9 @@ package io.github.fabricators_of_create.porting_lib.models;
 
 import java.util.function.Supplier;
 
-import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
-import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
 import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -15,11 +12,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class RenderTypeModel extends ForwardingBakedModel {
+public class RenderMaterialModel extends ForwardingBakedModel {
 	protected final RenderMaterial material;
-	public RenderTypeModel(BakedModel owner, RenderType renderType) {
+	public RenderMaterialModel(BakedModel owner, RenderMaterial material) {
 		this.wrapped = owner;
-		this.material = RendererAccess.INSTANCE.getRenderer().materialFinder().blendMode(0, BlendMode.fromRenderLayer(renderType)).find();
+		this.material = material;
 	}
 
 	@Override

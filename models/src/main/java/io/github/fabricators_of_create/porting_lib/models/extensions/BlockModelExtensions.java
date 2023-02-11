@@ -1,10 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.models.extensions;
 
-import net.minecraft.client.renderer.RenderType;
-
 import org.jetbrains.annotations.ApiStatus;
+
+import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
 
 @ApiStatus.Internal
 public interface BlockModelExtensions {
-	void port_lib$setRenderType(RenderType type);
+	void port_lib$setRenderMaterial(RenderMaterial material);
 }
