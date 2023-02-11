@@ -27,8 +27,10 @@ public class BlockModelMixin implements BlockModelExtensions {
 		this.port_lib$renderType = type;
 	}
 
-	@ModifyReturnValue(method = "bake(Lnet/minecraft/client/resources/model/ModelBaker;Ljava/util/function/Function;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/resources/model/BakedModel;", at = @At("RETURN"))
-	private BakedModel port_lib$wrapModel(BakedModel model, ModelBaker modelBaker, Function<Material, TextureAtlasSprite> function, ModelState modelState, ResourceLocation resourceLocation) {
-		return new RenderTypeModel(model, port_lib$renderType);
+	@ModifyReturnValue(method = "bake(Lnet/minecraft/client/resources/model/ModelBaker;Lnet/minecraft/client/renderer/block/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/resources/model/BakedModel;", at = @At("RETURN"))
+	private BakedModel port_lib$wrapModel(BakedModel model, ModelBaker modelBaker, BlockModel blockModel, Function<Material, TextureAtlasSprite> function, ModelState modelState, ResourceLocation resourceLocation, boolean bl) {
+		if (port_lib$renderType != null)
+			return new RenderTypeModel(model, port_lib$renderType);
+		return model;
 	}
 }

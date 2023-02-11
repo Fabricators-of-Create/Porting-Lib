@@ -10,6 +10,9 @@
   "entrypoints": {
     "main": [
       "io.github.fabricators_of_create.porting_lib.models.PortingLibModels"
+    ],
+    "preLaunch": [
+      "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
     ]
   }
 }
