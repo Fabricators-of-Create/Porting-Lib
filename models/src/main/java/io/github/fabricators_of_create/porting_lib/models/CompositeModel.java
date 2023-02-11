@@ -119,14 +119,14 @@ public class CompositeModel implements UnbakedModel {
 		@Override
 		public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
 			for (Map.Entry<String, BakedModel> entry : children.entrySet()) {
-				((FabricBakedModel) entry).emitBlockQuads(blockView, state, pos, randomSupplier, context);
+				((FabricBakedModel) entry.getValue()).emitBlockQuads(blockView, state, pos, randomSupplier, context);
 			}
 		}
 
 		@Override
 		public void emitItemQuads(ItemStack stack, Supplier<RandomSource> randomSupplier, RenderContext context) {
 			for (Map.Entry<String, BakedModel> entry : children.entrySet()) {
-				((FabricBakedModel) entry).emitItemQuads(stack, randomSupplier, context);
+				((FabricBakedModel) entry.getValue()).emitItemQuads(stack, randomSupplier, context);
 			}
 		}
 
