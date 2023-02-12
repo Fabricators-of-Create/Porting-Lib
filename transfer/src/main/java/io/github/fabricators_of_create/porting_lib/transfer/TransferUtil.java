@@ -660,7 +660,7 @@ public class TransferUtil implements ModInitializer {
 		if (storage instanceof ExtendedStorage<T> extended)
 			return extended.extractMatching(predicate, maxAmount, t);
 		T variant = null;
-		for (StorageView<T> view : storage) {
+		for (StorageView<T> view : getNonEmpty(storage)) {
 			T resource = view.getResource();
 			if (predicate.test(resource)) {
 				variant = resource;
