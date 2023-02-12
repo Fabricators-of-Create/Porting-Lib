@@ -666,7 +666,7 @@ public class TransferUtil {
 		if (storage instanceof ExtendedStorage<T> extended)
 			return extended.extractMatching(predicate, maxAmount, t);
 		T variant = null;
-		for (StorageView<T> view : storage.iterable(t)) {
+		for (StorageView<T> view : getNonEmpty(storage, t)) {
 			T resource = view.getResource();
 			if (predicate.test(resource)) {
 				variant = resource;
