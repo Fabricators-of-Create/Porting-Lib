@@ -1,8 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.transfer.cache;
 
+import io.github.fabricators_of_create.porting_lib.util.StorageProvider;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.Nullable;
 
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
@@ -15,20 +17,20 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * @deprecated see ClientBlockApiCache
+ * This should not be used directly. Use {@link StorageProvider} instead.
  */
+@Internal
 @SuppressWarnings("NonExtendableApiUsage")
-@Deprecated(forRemoval = true)
-public enum EmptyFluidLookupCache implements BlockApiCache<Storage<FluidVariant>, Direction> {
-	INSTANCE;
-
+public record EmptyFluidLookupCache(BlockPos pos) implements BlockApiCache<Storage<FluidVariant>, Direction> {
 	@Override
-	public @Nullable Storage<FluidVariant> find(@Nullable BlockState state, Direction context) {
+	@Nullable
+	public Storage<FluidVariant> find(@Nullable BlockState state, Direction context) {
 		return null;
 	}
 
 	@Override
-	public @Nullable BlockEntity getBlockEntity() {
+	@Nullable
+	public BlockEntity getBlockEntity() {
 		return null;
 	}
 
@@ -39,11 +41,11 @@ public enum EmptyFluidLookupCache implements BlockApiCache<Storage<FluidVariant>
 
 	@Override
 	public ServerLevel getWorld() {
-		return null;
+		throw new UnsupportedOperationException("Cannot call getWorld on an empty cache as no world is associated with it");
 	}
 
 	@Override
 	public BlockPos getPos() {
-		return null;
+		return pos;
 	}
 }
