@@ -14,8 +14,11 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import io.github.fabricators_of_create.porting_lib.data.extensions.MinecraftExtension;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.main.GameConfig;
 import net.minecraft.client.resources.ClientPackSource;
 import net.minecraft.client.resources.IndexedAssetSource;
 import net.minecraft.data.DataProvider;
@@ -98,8 +101,9 @@ public class ExistingFileHelper {
 	 * Create a helper with the provided paths being used for resources.
 	 */
 	public static ExistingFileHelper withResources(Path... paths) {
+		GameConfig gameConfig = ((MinecraftExtension) Minecraft.getInstance()).port_lib$getGameConfig();
 		List<Path> resources = List.of(paths);
-		return new ExistingFileHelper(resources, Set.of(), true, null, null);
+		return new ExistingFileHelper(resources, Set.of(), true, gameConfig.location.assetIndex, gameConfig.location.assetDirectory);
 	}
 
 	/**
