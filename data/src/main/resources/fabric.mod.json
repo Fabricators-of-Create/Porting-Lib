@@ -4,5 +4,8 @@
   "version": "${version}",
   "name": "Porting Lib Data",
   "description": "Adds additional data generation providers.",
-  "accessWidener": "porting-lib-data.accesswidener"
+  "accessWidener": "porting-lib-data.accesswidener",
+  "mixins": [
+    "porting_lib_data.mixins.json"
+  ]
 }
