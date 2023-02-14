@@ -11,5 +11,6 @@ public class PortingLibModels implements ModInitializer {
 	public void onInitialize() {
 		ModelLoadingRegistry.INSTANCE.registerResourceProvider(manager -> PortingLibModelLoadingRegistry.INSTANCE);
 		PortingLibModelLoadingRegistry.LOADERS.put(PortingConstants.id("composite"), CompositeModelLoader.INSTANCE);
+		PortingLibModelLoadingRegistry.LOADERS.put(PortingConstants.id("item_layers"), ItemLayerModel.Loader.INSTANCE);
 	}
 }

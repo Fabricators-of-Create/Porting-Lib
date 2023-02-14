@@ -3,5 +3,6 @@
   "id": "porting_lib_model_builders",
   "version": "${version}",
   "name": "Porting Lib Model Builders",
-  "description": "Custom model builders used for integrating Porting Libs model loading api and Data Generation API"
+  "description": "Custom model builders used for integrating Porting Libs model loading api and Data Generation API",
+  "accessWidener": "model-builders.accesswidener"
 }

@@ -45,7 +45,7 @@ public enum CompositeModelLoader implements ModelLoader {
 			return false;
 		var childrenJsonObject = jsonObject.getAsJsonObject(name);
 		for (Map.Entry<String, JsonElement> entry : childrenJsonObject.entrySet()) {
-			children.put(entry.getKey(), BlockModel.GSON.fromJson(entry.getValue(), BlockModel.class));
+			children.put(entry.getKey(), PortingLibModelLoadingRegistry.GSON.fromJson(entry.getValue(), BlockModel.class));
 			itemPasses.add(entry.getKey()); // We can do this because GSON preserves ordering during deserialization
 		}
 		return logWarning;

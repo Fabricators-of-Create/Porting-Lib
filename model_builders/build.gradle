@@ -3,6 +3,8 @@ moduleDependencies(project, [
 		"models"
 ])
 
+loom.accessWidenerPath = file("src/main/resources/model-builders.accesswidener")
+
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }

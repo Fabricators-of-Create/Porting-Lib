@@ -1,3 +1,6 @@
 accessWidener v2 named
+transitive-accessible field net/minecraft/client/renderer/block/model/BlockModel FACE_BAKERY Lnet/minecraft/client/renderer/block/model/FaceBakery;
 transitive-accessible field net/minecraft/client/renderer/block/model/BlockModel GSON Lcom/google/gson/Gson;
 transitive-accessible method net/minecraft/client/renderer/block/model/BlockModel getItemOverrides (Lnet/minecraft/client/resources/model/ModelBaker;Lnet/minecraft/client/renderer/block/model/BlockModel;)Lnet/minecraft/client/renderer/block/model/ItemOverrides;
+transitive-accessible field net/minecraft/client/resources/model/ModelBakery ITEM_MODEL_GENERATOR Lnet/minecraft/client/renderer/block/model/ItemModelGenerator;
+transitive-accessible method net/minecraft/client/renderer/block/model/ItemModelGenerator processFrames (ILjava/lang/String;Lnet/minecraft/client/renderer/texture/SpriteContents;)Ljava/util/List;
