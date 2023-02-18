@@ -5,8 +5,6 @@ import com.google.gson.JsonElement;
 
 import com.google.gson.JsonObject;
 
-import io.github.fabricators_of_create.porting_lib.models.PortingLibModelLoadingRegistry;
-import io.github.fabricators_of_create.porting_lib.models.extensions.BlockElementFaceExtensions;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
 import net.minecraft.client.renderer.block.model.BlockElementFace;
 
@@ -23,7 +21,7 @@ public class BlockElementFaceDeserializerMixin {
 	private void port_lib$addRenderMaterial(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext, CallbackInfoReturnable<BlockElementFace> cir) {
 		JsonObject json = jsonElement.getAsJsonObject();
 		if (json.has("render_material")) {
-			((BlockElementFaceExtensions)cir.getReturnValue()).port_lib$setRenderMaterial(PortingLibModelLoadingRegistry.GSON.fromJson(json.get("render_material"), RenderMaterial.class));
+//			((BlockElementFaceExtensions)cir.getReturnValue()).port_lib$setRenderMaterial(PortingLibModelLoadingRegistry.GSON.fromJson(json.get("render_material"), RenderMaterial.class));
 		}
 	}
 }
