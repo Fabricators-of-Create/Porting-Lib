@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -14,7 +15,10 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
+
+import org.jetbrains.annotations.NotNull;
 
 public class LazyRegistrar<T> {
 	@Deprecated
@@ -72,6 +76,36 @@ public class LazyRegistrar<T> {
 
 	public <B extends Block> RegistryObject<T> register(String name, T b) {
 		return register(name, () -> b);
+	}
+
+	/**
+	 * Creates a tag key based on the current modId and provided path as the location and the registry name linked to this DeferredRegister.
+	 * To control the namespace, use {@link #createTagKey(ResourceLocation)}.
+	 *
+	 * @throws IllegalStateException If the registry name was not set.
+	 * Use the factories that take {@link #create(ResourceLocation, String) a registry name}}.
+	 * @see #createTagKey(ResourceLocation)
+	 */
+	@NotNull
+	public TagKey<T> createTagKey(@NotNull String path) {
+		Objects.requireNonNull(path);
+		return createTagKey(new ResourceLocation(this.modId, path));
+	}
+
+	/**
+	 * Creates a tag key based on the provided resource location and the registry name linked to this DeferredRegister.
+	 * To use the current modid as the namespace, use {@link #createTagKey(String)}.
+	 *
+	 * @throws IllegalStateException If the registry name was not set.
+	 * Use the factories that take {@link #create(ResourceLocation, String) a registry name}}.
+	 * @see #createTagKey(String)
+	 */
+	@NotNull
+	public TagKey<T> createTagKey(@NotNull ResourceLocation location) {
+		if (this.registryKey == null)
+			throw new IllegalStateException("The registry name was not set, cannot create a tag key");
+		Objects.requireNonNull(location);
+		return TagKey.create(this.registryKey, location);
 	}
 
 	public Collection<RegistryObject<T>> getEntries() {
