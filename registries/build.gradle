@@ -1,0 +1,5 @@
+loom.accessWidenerPath = file("src/main/resources/porting_lib_registries.accesswidener")
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}
