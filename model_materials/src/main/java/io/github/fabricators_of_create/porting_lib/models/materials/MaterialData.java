@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.models.builders;
+package io.github.fabricators_of_create.porting_lib.models.materials;
 
 import java.util.function.Function;
 

@@ -9,6 +9,7 @@ import com.mojang.serialization.JsonOps;
 import io.github.fabricators_of_create.porting_lib.PortingConstants;
 import io.github.fabricators_of_create.porting_lib.data.ExistingFileHelper;
 import io.github.fabricators_of_create.porting_lib.models.generators.CustomLoaderBuilder;
+import io.github.fabricators_of_create.porting_lib.models.materials.MaterialData;
 import io.github.fabricators_of_create.porting_lib.models.generators.ModelBuilder;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;

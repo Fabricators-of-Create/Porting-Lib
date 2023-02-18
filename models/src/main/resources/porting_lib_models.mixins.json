@@ -4,6 +4,8 @@
   "package": "io.github.fabricators_of_create.porting_lib.models.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "io.github.fabricators_of_create.porting_lib.models.generators.mixin.BlockElementFaceDeserializerMixin",
+    "io.github.fabricators_of_create.porting_lib.models.generators.mixin.BlockElementFaceMixin",
     "BlockModelDeserializerMixin",
     "BlockModelMixin",
     "ShaderInstanceMixin"
