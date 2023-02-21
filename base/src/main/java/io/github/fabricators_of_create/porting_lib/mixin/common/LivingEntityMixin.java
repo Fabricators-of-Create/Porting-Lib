@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
+import io.github.fabricators_of_create.porting_lib.PortingLib;
 import io.github.fabricators_of_create.porting_lib.item.ContinueUsingItem;
 import io.github.fabricators_of_create.porting_lib.item.UsingTickItem;
 
@@ -17,6 +18,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Slice;
@@ -27,7 +29,6 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
-import io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes;
 import io.github.fabricators_of_create.porting_lib.block.CustomFrictionBlock;
 import io.github.fabricators_of_create.porting_lib.block.CustomLandingEffectsBlock;
 import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEvents;
@@ -42,24 +43,18 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 
+@SuppressWarnings("ConstantConditions")
 @Mixin(value = LivingEntity.class, priority = 500)
 public abstract class LivingEntityMixin extends Entity implements EntityExtensions {
 	@Shadow
@@ -105,26 +100,36 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 		args.set(1, modifiedLevel);
 	}
 
-	@Inject(method = "dropAllDeathLoot", at = @At(value = "JUMP", opcode = Opcodes.IFLE, ordinal = 0))
-	public void port_lib$fixNullDrops(DamageSource damageSource, CallbackInfo ci) {
+	@Inject(method = "dropAllDeathLoot", at = @At("HEAD"))
+	private void port_lib$startCapturingDrops(DamageSource damageSource, CallbackInfo ci) {
 		captureDrops(new ArrayList<>());
 	}
 
-	private final ThreadLocal<Integer> port_lib$looting_level = new ThreadLocal<>();
+	private int port_lib$lootingLevel;
 
-	@Inject(method = "dropAllDeathLoot", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;shouldDropLoot()Z"), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void port_lib$spawnDropsCapture(DamageSource source, CallbackInfo ci, Entity entity, int lootingLevel) {
-		port_lib$looting_level.set(lootingLevel);
+	@ModifyVariable(
+			method = "dropAllDeathLoot",
+			at = @At(
+					value = "FIELD",
+					target = "Lnet/minecraft/world/entity/LivingEntity;lastHurtByPlayerTime:I"
+			)
+	)
+	private int port_lib$grabLootingLevel(int lootingLevel) {
+		port_lib$lootingLevel = lootingLevel;
+		return lootingLevel;
 	}
 
-
-	@Inject(method = "dropAllDeathLoot", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void port_lib$spawnDropsTAIL(DamageSource source, CallbackInfo ci) {
+	@Inject(method = "dropAllDeathLoot", at = @At("RETURN"))
+	private void port_lib$dropCapturedDrops(DamageSource source, CallbackInfo ci) {
 		Collection<ItemEntity> drops = this.captureDrops(null);
-		if (!LivingEntityEvents.DROPS_WITH_LEVEL.invoker().onLivingEntityDrops((LivingEntity) (Object) this, source, drops, port_lib$looting_level.get(), lastHurtByPlayerTime > 0)
-		|| !LivingEntityEvents.DROPS.invoker().onLivingEntityDrops((LivingEntity) (Object) this, source, drops))
+		boolean cancelled = LivingEntityEvents.DROPS_WITH_LEVEL.invoker().onLivingEntityDrops(
+				(LivingEntity) (Object) this, source, drops, port_lib$lootingLevel, lastHurtByPlayerTime > 0
+		);
+		cancelled |= LivingEntityEvents.DROPS.invoker().onLivingEntityDrops(
+				(LivingEntity) (Object) this, source, drops
+		);
+		if (!cancelled)
 			drops.forEach(e -> level.addFreshEntity(e));
-		port_lib$looting_level.remove();
 	}
 
 	@Unique
