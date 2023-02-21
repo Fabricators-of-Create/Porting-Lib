@@ -3,6 +3,7 @@
   "minVersion": "0.8",
   "priority": 951,
   "package": "io.github.fabricators_of_create.porting_lib.mixin",
+  "plugin": "io.github.fabricators_of_create.porting_lib.mixin.PortingLibMixinPlugin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "common.AbstractMinecartMixin",
