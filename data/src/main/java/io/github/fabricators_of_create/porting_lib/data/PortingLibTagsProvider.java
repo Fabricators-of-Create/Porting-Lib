@@ -56,7 +56,7 @@ public abstract class PortingLibTagsProvider<T> extends FabricTagProvider<T> {
 	}
 
 	public CompletableFuture<?> run(CachedOutput p_253684_) {
-		return this.lookupProvider.thenCompose((p_255494_) -> {
+		return this.contentsProvider().thenCompose((p_255494_) -> {
 			this.builders.clear();
 			this.addTags(p_255494_);
 			HolderLookup.RegistryLookup<T> registrylookup = p_255494_.lookup(this.registryKey).orElseThrow(() -> {

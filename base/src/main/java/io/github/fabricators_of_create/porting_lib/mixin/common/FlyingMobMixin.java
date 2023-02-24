@@ -36,7 +36,7 @@ public abstract class FlyingMobMixin extends Mob {
 	}
 
 	private float port_lib$handleFriction(float original) {
-		BlockPos pos = new BlockPos(getX(), getY() - 1, getZ());
+		BlockPos pos = BlockPos.containing(getX(), getY() - 1, getZ());
 		BlockState state = level.getBlockState(pos);
 		if (state.getBlock() instanceof CustomFrictionBlock custom) {
 			return custom.getFriction(state, level, pos, this);

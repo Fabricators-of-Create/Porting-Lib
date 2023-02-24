@@ -38,7 +38,6 @@
     "common.accessor.ServerGamePacketListenerImplAccessor",
     "common.accessor.ServerPlayerAccessor",
     "common.accessor.SlotAccessor",
-    "common.accessor.StairBlockAccessor",
     "common.accessor.StructureTemplateAccessor",
     "common.accessor.TagValueAccessor",
     "common.accessor.UseOnContextAccessor"

@@ -7,6 +7,7 @@ import io.github.fabricators_of_create.porting_lib.common.mixin.client.accessor.
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.language.LanguageManager;
 
 @Environment(EnvType.CLIENT)
 public final class MinecraftClientUtil {
@@ -15,7 +16,8 @@ public final class MinecraftClientUtil {
 	}
 
 	public static Locale getLocale() {
-		return Minecraft.getInstance().getLanguageManager().getSelected().getJavaLocale();
+		LanguageManager manager = Minecraft.getInstance().getLanguageManager();
+		return manager.getJavaLocale(manager.getSelected());
 	}
 
 	private static MinecraftAccessor get(Minecraft minecraft) {

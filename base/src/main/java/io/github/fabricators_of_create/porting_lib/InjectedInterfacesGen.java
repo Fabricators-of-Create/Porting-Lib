@@ -17,7 +17,7 @@ import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Transformation;
 
-import io.github.fabricators_of_create.porting_lib.common.extensions.LanguageInfoExtensions;
+import io.github.fabricators_of_create.porting_lib.common.extensions.LanguageManagerExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.AbstractMinecartExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.AbstractTextureExtensions;
@@ -151,7 +151,7 @@ public class InjectedInterfacesGen {
 		// note: ITeleporter has no impl
 		builder.inject(Item.class, ItemExtensions.class);
 		builder.inject(ItemStack.class, ItemStackExtensions.class);
-		builder.inject(LanguageInfo.class, LanguageInfoExtensions.class);
+		builder.inject(LanguageInfo.class, LanguageManagerExtensions.class);
 		builder.inject(Level.class, LevelExtensions.class);
 		builder.inject(LevelReader.class, LevelReaderExtensions.class);
 		builder.inject(MapDecoration.class, MapDecorationExtensions.class);

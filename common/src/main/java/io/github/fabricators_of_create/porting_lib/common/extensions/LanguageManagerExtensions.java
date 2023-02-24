@@ -6,8 +6,8 @@ import net.fabricmc.api.Environment;
 import java.util.Locale;
 
 @Environment(EnvType.CLIENT)
-public interface LanguageInfoExtensions {
-	default Locale getJavaLocale() {
+public interface LanguageManagerExtensions {
+	default Locale getJavaLocale(String code) {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 }

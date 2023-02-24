@@ -1,24 +1,26 @@
 package io.github.fabricators_of_create.porting_lib.attributes.mixin;
 
-import io.github.fabricators_of_create.porting_lib.attributes.extensions.EntityAttributes;
-import net.minecraft.world.entity.Entity;
-
-import net.minecraft.world.phys.Vec3;
-
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
+import io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 
 @Mixin(Entity.class)
-public class EntityMixin implements EntityAttributes {
-	@Shadow
-	public float maxUpStep;
+public class EntityMixin {
 
-	@Inject(method = "collide", at = @At(value = "JUMP", opcode = Opcodes.IFGE))
-	public void port_lib$modifyStepHeight(Vec3 movement, CallbackInfoReturnable<Vec3> cir) {
-		this.maxUpStep = this.getStepHeight();
+	@ModifyReturnValue(method = "maxUpStep", at = @At("RETURN"))
+	private float modifyStepHeight(float vanillaStep) {
+		if ((Object) this instanceof LivingEntity living) {
+			AttributeInstance stepHeightAttribute = living.getAttribute(PortingLibAttributes.STEP_HEIGHT_ADDITION);
+			if (stepHeightAttribute != null) {
+				return (float) Math.max(0, vanillaStep + stepHeightAttribute.getValue());
+			}
+		}
+		return vanillaStep;
 	}
 }

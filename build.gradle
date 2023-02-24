@@ -133,6 +133,13 @@ allprojects {
 	}
 
 	loom {
+		mixin {
+			useLegacyMixinAp = false
+			showMessageTypes = false
+			messages {
+				TARGET_VALIDATOR = 'disabled'
+			}
+		}
 		runs {
 			client {
 				client()
@@ -182,7 +189,7 @@ allprojects {
 		properties.put("version", project.version)
 		properties.put("loader_version", project.loader_version)
 		properties.put("fabric_version", project.fabric_version)
-		properties.put("minecraft_version", project.minecraft_version)
+		properties.put("minecraft_version", project.minecraft_semvar_version)
 		properties.put("java_version", sourceCompatibility)
 		properties.put("class_5124", project.wtf_gradle)
 		properties.put("class_56", project.wtf_gradle2)

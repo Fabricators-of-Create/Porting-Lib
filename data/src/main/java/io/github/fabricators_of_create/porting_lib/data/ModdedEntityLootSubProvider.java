@@ -7,6 +7,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -20,8 +21,19 @@ import net.minecraft.world.level.storage.loot.LootTable;
 
 public abstract class ModdedEntityLootSubProvider extends EntityLootSubProvider {
 
-	protected ModdedEntityLootSubProvider(FeatureFlagSet featureFlagSet) {
-		super(featureFlagSet);
+	private final FeatureFlagSet allowed;
+	private final FeatureFlagSet required;
+	public final Map<EntityType<?>, Map<ResourceLocation, LootTable.Builder>> map;
+
+	public ModdedEntityLootSubProvider(FeatureFlagSet enabledFeatures) {
+		this(enabledFeatures, enabledFeatures);
+	}
+
+	public ModdedEntityLootSubProvider(FeatureFlagSet allowed, FeatureFlagSet required) {
+		super(allowed, required);
+		this.map = Maps.newHashMap();
+		this.allowed = allowed;
+		this.required = required;
 	}
 
 	public void generate(BiConsumer<ResourceLocation, LootTable.Builder> output) {
@@ -29,11 +41,11 @@ public abstract class ModdedEntityLootSubProvider extends EntityLootSubProvider 
 		Set<ResourceLocation> set = Sets.newHashSet();
 		this.getKnownEntityTypes().map(EntityType::builtInRegistryHolder).forEach((entityTypeReference) -> {
 			EntityType<?> entitytype = entityTypeReference.value();
-			if (entitytype.isEnabled(this.enabledFeatures)) {
+			if (entitytype.isEnabled(this.allowed)) {
 				if (canHaveLootTable(entitytype)) {
 					Map<ResourceLocation, LootTable.Builder> map = this.map.remove(entitytype);
 					ResourceLocation resourcelocation = entitytype.getDefaultLootTable();
-					if (!resourcelocation.equals(BuiltInLootTables.EMPTY) && (map == null || !map.containsKey(resourcelocation))) {
+					if (!resourcelocation.equals(BuiltInLootTables.EMPTY) && entitytype.isEnabled(this.required) && (map == null || !map.containsKey(resourcelocation))) {
 						throw new IllegalStateException(String.format(Locale.ROOT, "Missing loottable '%s' for '%s'", resourcelocation, entityTypeReference.key().location()));
 					}
 

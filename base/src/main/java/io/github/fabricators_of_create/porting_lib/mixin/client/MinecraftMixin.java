@@ -141,7 +141,7 @@ public abstract class MinecraftMixin {
 		AttackAirCallback.EVENT.invoker().attackAir(player);
 	}
 
-	@Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/toasts/ToastComponent;render(Lcom/mojang/blaze3d/vertex/PoseStack;)V", shift = Shift.BEFORE))
+	@Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;render(FJZ)V", shift = Shift.BEFORE))
 	private void port_lib$renderTickStart(CallbackInfo ci) {
 		RenderTickStartCallback.EVENT.invoker().tick();
 	}

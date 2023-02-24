@@ -8,7 +8,7 @@
     "common.tool.ItemMixin"
   ],
   "client": [
-    "client.LanguageInfoMixin",
+    "client.LanguageManagerMixin",
     "client.accessor.MinecraftAccessor"
   ],
   "injectors": {

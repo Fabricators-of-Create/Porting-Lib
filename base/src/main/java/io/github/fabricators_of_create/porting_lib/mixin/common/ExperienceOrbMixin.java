@@ -45,7 +45,7 @@ public abstract class ExperienceOrbMixin extends Entity {
 			at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/block/Block;getFriction()F")
 	)
 	private float port_lib$setFriction(float original) {
-		BlockPos pos = new BlockPos(getX(), getY() - 1, getZ());
+		BlockPos pos = BlockPos.containing(getX(), getY() - 1, getZ());
 		BlockState state = level.getBlockState(pos);
 		if (state.getBlock() instanceof CustomFrictionBlock custom) {
 			return custom.getFriction(state, level, pos, this);

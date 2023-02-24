@@ -38,7 +38,6 @@ public class GuiUtils { // name is this to maintain max compat with upstream
 		float endBlue    = (float)(endColor         & 255) / 255.0F;
 
 		RenderSystem.enableDepthTest();
-		RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
@@ -53,7 +52,6 @@ public class GuiUtils { // name is this to maintain max compat with upstream
 		tessellator.end();
 
 		RenderSystem.disableBlend();
-		RenderSystem.enableTexture();
 	}
 
 	public static void drawHoveringText(PoseStack mStack, List<? extends FormattedText> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, int backgroundColor, int borderColorStart, int borderColorEnd, Font font) {
@@ -162,7 +160,7 @@ public class GuiUtils { // name is this to maintain max compat with upstream
 			{
 				FormattedText line = textLines.get(lineNumber);
 				if (line != null)
-					font.drawInBatch(Language.getInstance().getVisualOrder(line), (float)tooltipX, (float)tooltipY, -1, true, mat, renderType, false, 0, 15728880);
+					font.drawInBatch(Language.getInstance().getVisualOrder(line), (float)tooltipX, (float)tooltipY, -1, true, mat, renderType, Font.DisplayMode.NORMAL, 0, 15728880);
 
 				if (lineNumber + 1 == titleLinesCount)
 					tooltipY += 2;

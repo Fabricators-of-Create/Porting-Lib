@@ -35,7 +35,7 @@ public interface IGlobalLootModifier {
 					return DataResult.success(conditions);
 				} catch (JsonSyntaxException e) {
 					LootModifierManager.LOGGER.warn("Unable to decode loot conditions", e);
-					return DataResult.error(e.getMessage());
+					return DataResult.error(e::getMessage);
 				}
 			}, conditions -> {
 				try {
@@ -43,7 +43,7 @@ public interface IGlobalLootModifier {
 					return DataResult.success(new Dynamic<>(JsonOps.INSTANCE, element));
 				} catch (JsonSyntaxException e) {
 					LootModifierManager.LOGGER.warn("Unable to encode loot conditions", e);
-					return DataResult.error(e.getMessage());
+					return DataResult.error(e::getMessage);
 				}
 			}
 	);

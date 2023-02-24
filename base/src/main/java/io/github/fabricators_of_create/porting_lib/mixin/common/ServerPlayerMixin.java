@@ -153,7 +153,7 @@ public abstract class ServerPlayerMixin extends Player implements EntityExtensio
 					if (resourcekey == Level.OVERWORLD && p_9180_.dimension() == Level.NETHER) {
 						this.enteredNetherPosition = this.position();
 					} else if (spawnPortal && p_9180_.dimension() == Level.END) {
-						this.createEndPlatform(p_9180_, new BlockPos(portalinfo.pos));
+						this.createEndPlatform(p_9180_, BlockPos.containing(portalinfo.pos));
 					}
 
 					serverlevel.getProfiler().pop();
