@@ -44,6 +44,23 @@ def moduleDependencies(Project project, List<String> depNames) {
 			api(include(it))
 		}
 	}
+
+	project.publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				pom.withXml {
+					def depsNode = asNode().appendNode("dependencies")
+					deps.each {
+						def depNode = depsNode.appendNode("dependency")
+						depNode.appendNode("groupId", it.group)
+						depNode.appendNode("artifactId", it.name)
+						depNode.appendNode("version", it.version)
+						depNode.appendNode("scope", "compile")
+					}
+				}
+			}
+		}
+	}
 }
 
 def setupDatagen(Project module) {
@@ -111,6 +128,10 @@ allprojects {
 		mavenCentral()
 	}
 
+	java {
+		withSourcesJar()
+	}
+
 	loom {
 		runs {
 			client {
@@ -144,12 +165,17 @@ allprojects {
 		implementation("com.google.code.findbugs:jsr305:3.0.2")
 	}
 
-	// todo why?
-//	allprojects.each { p ->
-//		loom.mods.register(p.name) {
-//			sourceSet p.sourceSets.main
-//		}
-//	}
+	allprojects.each { p ->
+		loom.mods.register(p.name) {
+			sourceSet p.sourceSets.main
+		}
+	}
+
+	[jar, sourcesJar].each {
+		it.from(rootProject.file("LICENSE")) {
+			rename { "${it}-${project.archivesBaseName}"}
+		}
+	}
 
 	tasks.withType(ProcessResources).configureEach {
 		Map<String, String> properties = new HashMap<>()
@@ -206,10 +232,6 @@ allprojects {
 //	tasks.withType(JavaCompile).configureEach {
 //		it.options.setRelease(Integer.parseInt(sourceCompatibility))
 //	}
-
-	java {
-		withSourcesJar()
-	}
 
 	jar {
 		from("LICENSE") {
@@ -319,9 +341,17 @@ loom {
 
 //build.dependsOn javadocJar
 
-//subprojects.each {
-//	remapJar.dependsOn("${it.path}:remapJar")
-//}
+subprojects.each {
+	remapJar.dependsOn("${it.path}:remapJar")
+}
+
+remapJar {
+	afterEvaluate {
+		subprojects.each {
+			nestedJars.from project("${it.path}").tasks.getByName("remapJar")
+		}
+	}
+}
 
 subprojects {
 	publishing {
