@@ -136,8 +136,6 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializableC
 	public void port_lib$beforeReadCustomData(CompoundTag tag, CallbackInfo ci) {
 		if (tag.contains(EntityHelper.EXTRA_DATA_KEY)) {
 			port_lib$extraCustomData = tag.getCompound(EntityHelper.EXTRA_DATA_KEY);
-		} else if (tag.contains("create_ExtraEntityData")) { // legacy check, should be removed on release
-			port_lib$extraCustomData = tag.getCompound("create_ExtraEntityData");
 		}
 		EntityReadExtraDataCallback.EVENT.invoker().onLoad((Entity) (Object) this, port_lib$extraCustomData);
 	}
