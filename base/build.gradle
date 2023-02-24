@@ -15,7 +15,7 @@ dependencies {
 	api(include("com.github.LlamaLad7:MixinExtras:0.1.1"))
 	annotationProcessor("com.github.LlamaLad7:MixinExtras:0.1.1")
 
-	modCompileOnly("com.yungnickyoung.minecraft.yungsapi:YungsApi:1.19.2-Fabric-3.8.0")
+//	modCompileOnly("com.yungnickyoung.minecraft.yungsapi:YungsApi:1.19.2-Fabric-3.8.0") not updated to 1.19.3
 }
 
 processResources {

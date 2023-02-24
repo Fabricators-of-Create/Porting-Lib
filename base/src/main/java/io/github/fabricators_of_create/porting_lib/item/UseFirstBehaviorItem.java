@@ -5,5 +5,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 
 public interface UseFirstBehaviorItem {
-	InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context);
+	/**
+	 * This is called when the item is used, before the block is activated.
+	 *
+	 * @return Return PASS to allow vanilla handling, any other to skip normal code.
+	 */
+	default InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+		return InteractionResult.PASS;
+	}
 }

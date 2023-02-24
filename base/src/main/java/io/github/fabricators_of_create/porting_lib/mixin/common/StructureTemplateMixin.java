@@ -2,8 +2,6 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.List;
 
-import io.github.fabricators_of_create.porting_lib.compat.YungsAPICompat;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.RandomSource;
 
 import org.jetbrains.annotations.Nullable;
@@ -77,9 +75,9 @@ public abstract class StructureTemplateMixin implements StructureTemplateExtensi
 			BlockPos blockpos = StructureTemplate.calculateRelativePosition(settings, entityInfo.blockPos).offset(blockPos);
 			StructureTemplate.StructureEntityInfo info = new StructureTemplate.StructureEntityInfo(pos, blockpos, entityInfo.nbt);
 			for (StructureProcessor proc : settings.getProcessors()) {
-				if (FabricLoader.getInstance().isModLoaded("yungsapi"))
-					info = YungsAPICompat.processEntity(proc, (ServerLevelAccessor) world, blockPos, pivot, entityInfo, info, settings, template);
-				else
+//				if (FabricLoader.getInstance().isModLoaded("yungsapi"))
+//					info = YungsAPICompat.processEntity(proc, (ServerLevelAccessor) world, blockPos, pivot, entityInfo, info, settings, template);
+//				else
 					info = proc.processEntity(world, blockPos, entityInfo, info, settings, template);
 				if (info == null)
 					break;

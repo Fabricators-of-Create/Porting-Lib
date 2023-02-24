@@ -21,17 +21,8 @@ public abstract class BlockEvents extends BaseEvent {
 			e.onBlockBreak(event);
 	});
 
-	public static final Event<LeftClickBlock> LEFT_CLICK_BLOCK = EventFactory.createArrayBacked(LeftClickBlock.class, callbacks -> ((player, pos, face) -> {
-		for(LeftClickBlock e : callbacks)
-			e.onLeftClickBlock(player, pos, face);
-	}));
-
 	public interface BlockBreak {
 		void onBlockBreak(BreakEvent event);
-	}
-
-	public interface LeftClickBlock {
-		void onLeftClickBlock(Player player, BlockPos pos, Direction face);
 	}
 
 	private final LevelAccessor world;
