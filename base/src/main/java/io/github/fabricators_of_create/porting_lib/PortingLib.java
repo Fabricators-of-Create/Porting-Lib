@@ -27,6 +27,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.Arrays;
 
 public class PortingLib implements ModInitializer {
+	public static final Logger LOGGER = LoggerFactory.getLogger("Porting Lib Base");
 	@Override
 	public void onInitialize() {
 		ServerLifecycleHooks.init();
