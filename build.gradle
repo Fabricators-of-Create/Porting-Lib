@@ -133,13 +133,6 @@ allprojects {
 	}
 
 	loom {
-		mixin {
-			useLegacyMixinAp = false
-			showMessageTypes = false
-			messages {
-				TARGET_VALIDATOR = 'disabled'
-			}
-		}
 		runs {
 			client {
 				client()
