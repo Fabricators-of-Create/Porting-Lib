@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
+import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
@@ -64,7 +65,7 @@ import org.joml.Vector4f;
  * Supports positions, texture coordinates, normals and colors. The {@link ObjMaterialLibrary material library}
  * has support for numerous features, including support for {@link ResourceLocation} textures (non-standard).
  */
-public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements UnbakedModel {
+public class ObjModel implements UnbakedModel {
 	private static final Logger LOGGER = LogManager.getLogger();
 
 	private static final Vector4f COLOR_WHITE = new Vector4f(1, 1, 1, 1);
@@ -319,6 +320,12 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 	public BakedModel bake(ModelBaker modelBaker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState transform, ResourceLocation location) {
 		List<ObjBakedModel.MeshInfo> meshes = new ArrayList<>();
 
+		Renderer renderer = RendererAccess.INSTANCE.getRenderer();
+		MeshBuilder builder = renderer.meshBuilder();
+		QuadEmitter emitter = builder.getEmitter();
+
+		addQuads(emitter, modelBaker, spriteGetter, transform, location);
+
 		for (var entry : parts.entrySet()) {
 			var part = entry.getValue();
 			part.bake(meshes, spriteGetter);
@@ -328,7 +335,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 	}
 
 	@Override
-	protected void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
+	protected void addQuads(QuadEmitter emitter, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
 		for (var entry : deprecationWarnings.entrySet())
 			LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated \"" + entry.getKey() + "\" field in its OBJ model instead of \"" + entry.getValue() + "\". This field will be removed in 1.20.");
 
@@ -350,7 +357,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 		return allComponentNames = Collections.unmodifiableSet(names);
 	}
 
-	private Pair<BakedQuad, Direction> makeQuad(int[][] indices, int tintIndex, Vector4f colorTint, Vector4f ambientColor, TextureAtlasSprite texture, Transformation transform) {
+	private void makeQuad(QuadEmitter emitter, int[][] indices, int tintIndex, Vector4f colorTint, Vector4f ambientColor, TextureAtlasSprite texture, Transformation transform) {
 		boolean needsNormalRecalculation = false;
 		for (int[] ints : indices) {
 			needsNormalRecalculation |= ints.length < 3;
@@ -372,8 +379,8 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 		var quad = new BakedQuad[1];
 		var quadBaker = new QuadBakingVertexConsumer(q -> quad[0] = q);
 
-		quadBaker.setSprite(texture);
-		quadBaker.setTintIndex(tintIndex);
+		emitter.spriteBake(0, texture, MutableQuadView.BAKE_ROTATE_NONE);
+		emitter.colorIndex(tintIndex);
 
 		int uv2 = 0;
 		if (emissiveAmbient) {
@@ -408,18 +415,18 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 					color.y() * colorTint.y(),
 					color.z() * colorTint.z(),
 					color.w() * colorTint.w());
-			quadBaker.vertex(position.x(), position.y(), position.z());
-			quadBaker.color(tintedColor.x(), tintedColor.y(), tintedColor.z(), tintedColor.w());
-			quadBaker.uv(
+			emitter.pos(i, positions.get(index[0]));
+			emitter.spriteColor(i, 0, encodeQuadColor(tintedColor));
+			emitter.sprite(i, 0,
 					texture.getU(texCoord.x * 16),
 					texture.getV((flipV ? 1 - texCoord.y : texCoord.y) * 16)
 			);
-			quadBaker.uv2(uv2);
-			quadBaker.normal(normal.x(), normal.y(), normal.z());
-			if (i == 0) {
-				quadBaker.setDirection(Direction.getNearest(normal.x(), normal.y(), normal.z()));
-			}
-			quadBaker.endVertex();
+			emitter.lightmap(i, uv2);
+			emitter.normal(i, normal);
+			emitter.nominalFace(Direction.getNearest(normal.x(), normal.y(), normal.z()));
+			quadBaker.vertex(position.x(), position.y(), position.z());
+			quadBaker.color(tintedColor.x(), tintedColor.y(), tintedColor.z(), tintedColor.w());
+
 			pos[i] = position;
 			norm[i] = normal;
 		}
@@ -469,8 +476,21 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 				cull = Direction.UP;
 			}
 		}
+		emitter.cullFace(cull);
+		emitter.emit();
+	}
 
-		return Pair.of(quad[0], cull);
+	// Honestly I don't know what the fuck this is doing... or if it will work across different renderer implementations
+	private int encodeQuadColor(Vector4f colorTint) {
+		int r = (int) (colorTint.x() * 255.0F);
+		int g = (int) (colorTint.y() * 255.0F);
+		int b = (int) (colorTint.z() * 255.0F);
+		int a = (int) (colorTint.w() * 255.0F);
+
+		return ((a & 0xFF) << 24) |
+				((b & 0xFF) << 16) |
+				((g & 0xFF) << 8) |
+				(r & 0xFF);
 	}
 
 	public CompositeRenderable bakeRenderable(IGeometryBakingContext configuration) {
@@ -627,11 +647,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 			Vector4f colorTint = mat.diffuseColor;
 
 			for (int[][] face : faces) {
-				Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, texture, modelTransform.getRotation());
-				if (quad.getRight() == null)
-					modelBuilder.addUnculledFace(quad.getLeft());
-				else
-					modelBuilder.addCulledFace(quad.getRight(), quad.getLeft());
+				makeQuad(face, tintIndex, colorTint, mat.ambientColor, texture, modelTransform.getRotation());
 			}
 		}
 
@@ -659,25 +675,15 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> implements Unbaked
 			ObjMaterialLibrary.Material mat = this.mat;
 			if (mat == null)
 				return;
+
 			int tintIndex = mat.diffuseTintIndex;
 			Vector4f colorTint = mat.diffuseColor;
 
-			final List<BakedQuad> quads = new ArrayList<>();
-
 			for (var face : this.faces) {
-				var pair = makeQuad(face, tintIndex, colorTint, mat.ambientColor, UnitTextureAtlasSprite.INSTANCE, Transformation.identity());
-				quads.add(pair.getLeft());
+				makeQuad(emitter, face, tintIndex, colorTint, mat.ambientColor, UnitTextureAtlasSprite.INSTANCE, Transformation.identity());
 			}
 
 			Material textureLocation = new Material(TextureAtlas.LOCATION_BLOCKS, mat.texture);
-
-			Renderer renderer = RendererAccess.INSTANCE.getRenderer();
-			MeshBuilder builder = renderer.meshBuilder();
-			QuadEmitter emitter = builder.getEmitter();
-			quads.forEach(bakedQuad -> {
-				emitter.fromVanilla(bakedQuad, mat.getMaterial(renderer), bakedQuad.getDirection());
-				emitter.emit();
-			});
 
 			meshes.add(new ObjBakedModel.MeshInfo(spriteGetter.apply(textureLocation), builder.build(), mat));
 		}
