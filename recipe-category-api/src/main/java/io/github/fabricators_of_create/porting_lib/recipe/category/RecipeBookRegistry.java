@@ -43,21 +43,21 @@ public class RecipeBookRegistry {
 	/**
 	 * Registers the list of categories that compose an aggregate category.
 	 */
-	public void registerAggregateCategory(RecipeBookCategories category, List<RecipeBookCategories> others) {
+	public static void registerAggregateCategory(RecipeBookCategories category, List<RecipeBookCategories> others) {
 		AGGREGATE_CATEGORIES.put(category, ImmutableList.copyOf(others));
 	}
 
 	/**
 	 * Registers the list of categories that compose a recipe book.
 	 */
-	public void registerBookCategories(RecipeBookType type, List<RecipeBookCategories> categories) {
+	public static void registerBookCategories(RecipeBookType type, List<RecipeBookCategories> categories) {
 		TYPE_CATEGORIES.put(type, ImmutableList.copyOf(categories));
 	}
 
 	/**
 	 * Registers a category lookup for a certain recipe type.
 	 */
-	public void registerRecipeCategoryFinder(RecipeType<?> type, Function<Recipe<?>, RecipeBookCategories> lookup) {
+	public static void registerRecipeCategoryFinder(RecipeType<?> type, Function<Recipe<?>, RecipeBookCategories> lookup) {
 		RECIPE_CATEGORY_LOOKUPS.put(type, lookup);
 	}
 }
