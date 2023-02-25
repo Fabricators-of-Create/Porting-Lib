@@ -38,6 +38,11 @@ public abstract class PlayerEvents extends EntityEvent {
 		return entityPlayer;
 	}
 
+	@Override
+	public Player getEntity() {
+		return entityPlayer;
+	}
+
 	public static class PickupXp extends PlayerEvents {
 
 		private final ExperienceOrb orb;
@@ -79,6 +84,22 @@ public abstract class PlayerEvents extends EntityEvent {
 		}
 	}
 
+	/**
+	 * BreakSpeed is fired when a player attempts to harvest a block.<br>
+	 * This event is fired whenever a player attempts to harvest a block in
+	 * {@link Player#getDestroySpeed(BlockState)}.<br>
+	 * <br>
+	 * {@link #state} contains the block being broken. <br>
+	 * {@link #originalSpeed} contains the original speed at which the player broke the block. <br>
+	 * {@link #newSpeed} contains the newSpeed at which the player will break the block. <br>
+	 * {@link #pos} contains the coordinates at which this event is occurring. Optional value.<br>
+	 * <br>
+	 * This event is cancelable.<br>
+	 * If it is canceled, the player is unable to break the block.<br>
+	 * <br>
+	 * This event does not have a result.<br>
+	 * <br>
+	 **/
 	public static class BreakSpeed extends PlayerEvents {
 		private final BlockState state;
 		private final float originalSpeed;

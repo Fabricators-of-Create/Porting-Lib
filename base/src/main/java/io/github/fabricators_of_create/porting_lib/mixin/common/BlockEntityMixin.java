@@ -37,8 +37,6 @@ public abstract class BlockEntityMixin implements BlockEntityExtensions, INBTSer
 	private void port_lib$load(CompoundTag tag, CallbackInfo ci) {
 		if (tag.contains(BlockEntityHelper.EXTRA_DATA_KEY)) {
 			port_lib$extraData = tag.getCompound(BlockEntityHelper.EXTRA_DATA_KEY);
-		} else if (tag.contains("create_ExtraEntityData")) {
-			port_lib$extraData = tag.getCompound("create_ExtraEntityData");
 		}
 	}
 

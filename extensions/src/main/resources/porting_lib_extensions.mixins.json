@@ -10,7 +10,6 @@
     "common.MobEffectMixin",
     "common.SheepMixin",
     "common.SlotMixin",
-    "common.TransformationMixin",
     "common.VineBlockMixin",
     "common.WebBlockMixin"
   ],

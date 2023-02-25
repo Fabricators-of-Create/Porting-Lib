@@ -3,13 +3,19 @@ package io.github.fabricators_of_create.porting_lib.event;
 import net.minecraft.world.InteractionResult;
 
 public abstract class BaseEvent {
-	private InteractionResult result = InteractionResult.PASS;
+	public enum Result {
+		DENY,
+		DEFAULT,
+		ALLOW
+	}
+
+	private Result result = Result.DEFAULT;
 	private boolean canceled;
 
 	/**
 	 * Returns the value set as the result of this event
 	 */
-	public InteractionResult getResult() {
+	public Result getResult() {
 		return result;
 	}
 
@@ -21,7 +27,7 @@ public abstract class BaseEvent {
 	 *
 	 * @param value The new result
 	 */
-	public void setResult(InteractionResult value) {
+	public void setResult(Result value) {
 		result = value;
 	}
 

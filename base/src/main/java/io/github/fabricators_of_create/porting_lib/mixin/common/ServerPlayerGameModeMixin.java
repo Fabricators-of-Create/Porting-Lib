@@ -7,6 +7,9 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import io.github.fabricators_of_create.porting_lib.block.HarvestableBlock;
 
+import io.github.fabricators_of_create.porting_lib.event.BaseEvent;
+import io.github.fabricators_of_create.porting_lib.event.common.PlayerInteractionEvents;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -52,6 +55,9 @@ public abstract class ServerPlayerGameModeMixin {
 
 	@Shadow
 	private GameType gameModeForPlayer;
+
+	@Shadow
+	public abstract boolean isCreative();
 
 	@Inject(
 			method = "useItemOn",
@@ -103,8 +109,12 @@ public abstract class ServerPlayerGameModeMixin {
 			cir.setReturnValue(false);
 	}
 
-	@Inject(method = "handleBlockBreakAction", at = @At("HEAD"))
+	@Inject(method = "handleBlockBreakAction", at = @At("HEAD"), cancellable = true)
 	public void port_lib$blockBreak(BlockPos pos, ServerboundPlayerActionPacket.Action action, Direction direction, int worldHeight, int i, CallbackInfo ci) {
-		BlockEvents.LEFT_CLICK_BLOCK.invoker().onLeftClickBlock(player, pos, direction);
+		PlayerInteractionEvents.LeftClickBlock event = new PlayerInteractionEvents.LeftClickBlock(player, pos, direction);
+		event.sendEvent();
+		if (event.isCanceled() || (!this.isCreative() && event.getResult() == BaseEvent.Result.DENY)) {
+			ci.cancel();
+		}
 	}
 }
