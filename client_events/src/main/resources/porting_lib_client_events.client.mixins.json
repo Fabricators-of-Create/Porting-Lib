@@ -7,7 +7,8 @@
   "client": [
     "ClientEventsGameRendererMixin",
     "ClientLevelMixin",
-    "ModelManagerMixin"
+    "ModelManagerMixin",
+    "PlayerRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1,
