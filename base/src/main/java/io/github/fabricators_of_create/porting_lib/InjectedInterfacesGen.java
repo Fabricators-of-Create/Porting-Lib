@@ -47,7 +47,6 @@ import io.github.fabricators_of_create.porting_lib.extensions.extensions.Structu
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.StructureTemplateExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.TagAppenderExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.TierExtensions;
-//import io.github.fabricators_of_create.porting_lib.extensions.extensions.TransformationExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.VertexFormatExtensions;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -167,7 +166,6 @@ public class InjectedInterfacesGen {
 		builder.inject(TagAppender.class, TagAppenderExtensions.class);
 		builder.inject(TextureAtlasSprite.class, SpriteContentsExtensions.class);
 		builder.inject(Tier.class, TierExtensions.class);
-//		builder.inject(Transformation.class, TransformationExtensions.class);
 		builder.inject(VertexFormat.class, VertexFormatExtensions.class);
 
 		// aaaaaaaaaaaaaaaaaaaaaaaaaaaa
