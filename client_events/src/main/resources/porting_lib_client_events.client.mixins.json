@@ -8,7 +8,8 @@
     "ClientEventsGameRendererMixin",
     "ClientLevelMixin",
     "ModelManagerMixin",
-    "PlayerRendererMixin"
+    "PlayerRendererMixin",
+    "SoundEngineMixin"
   ],
   "injectors": {
     "defaultRequire": 1,
