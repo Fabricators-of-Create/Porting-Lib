@@ -7,6 +7,7 @@
   "client": [
     "ClientEventsGameRendererMixin",
     "ClientLevelMixin",
+    "ClientPacketListenerMixin",
     "ModelManagerMixin",
     "PlayerRendererMixin",
     "SoundEngineMixin"
