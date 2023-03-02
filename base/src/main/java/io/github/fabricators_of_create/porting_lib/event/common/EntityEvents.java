@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -50,6 +51,13 @@ public class EntityEvents {
 			e.onEntityEnterSection(entity, packedOldPos, packedNewPos);
 	});
 
+	public static final Event<LightingStrike> STRUCK_BY_LIGHTING = EventFactory.createArrayBacked(LightingStrike.class, callbacks -> (entity, lightningBolt) -> {
+		for (LightingStrike callback : callbacks)
+			if (callback.onEntityStruckByLightning(entity, lightningBolt))
+				return true;
+		return false;
+	});
+
 	@FunctionalInterface
 	public interface EnteringSection {
 		void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos);
@@ -68,6 +76,11 @@ public class EntityEvents {
 	@FunctionalInterface
 	public interface EyeHeight {
 		float onEntitySize(Entity entity, float eyeHeight);
+	}
+
+	@FunctionalInterface
+	public interface LightingStrike {
+		boolean onEntityStruckByLightning(Entity entity, LightningBolt bolt);
 	}
 
 	@FunctionalInterface

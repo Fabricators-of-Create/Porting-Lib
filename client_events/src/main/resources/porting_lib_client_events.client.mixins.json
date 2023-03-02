@@ -8,6 +8,8 @@
     "ClientEventsGameRendererMixin",
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
+    "ClientPacketListenerMixin",
+    "GameRendererMixin",
     "ModelManagerMixin",
     "PlayerRendererMixin",
     "SoundEngineMixin"

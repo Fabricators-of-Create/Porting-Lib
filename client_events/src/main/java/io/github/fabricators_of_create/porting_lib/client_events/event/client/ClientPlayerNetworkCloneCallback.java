@@ -16,7 +16,7 @@ public interface ClientPlayerNetworkCloneCallback {
 	});
 
 	/**
-	 * @param pc The multiplayer game mode controller for the player.
+	 * @param multiPlayerGameMode The multiplayer game mode controller for the player.
 	 * @param oldPlayer The previous player instance.
 	 * @param newPlayer The newly created player instance.
 	 * @param networkManager The network connection for the player.
