@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.event.common.OnDatapackSyncCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.PlayerEvents;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
@@ -10,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerList.class)
 public abstract class PlayerListMixin {
@@ -27,5 +29,15 @@ public abstract class PlayerListMixin {
 	)
 	private void port_lib$placeNewPlayer(CallbackInfo ci) {
 		OnDatapackSyncCallback.EVENT.invoker().onDatapackSync((PlayerList) (Object) this, null);
+	}
+
+	@Inject(method = "placeNewPlayer", at = @At("TAIL"))
+	private void onPlayerLoggedIn(Connection connection, ServerPlayer serverPlayer, CallbackInfo ci) {
+		PlayerEvents.LOGGED_IN.invoker().handleConnection(serverPlayer);
+	}
+
+	@Inject(method = "respawn", at = @At("HEAD"))
+	private void onPlayerLoggedOut(ServerPlayer serverPlayer, boolean bl, CallbackInfoReturnable<ServerPlayer> cir) {
+		PlayerEvents.LOGGED_OUT.invoker().handleConnection(serverPlayer);
 	}
 }
