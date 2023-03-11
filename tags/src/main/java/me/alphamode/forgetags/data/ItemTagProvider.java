@@ -26,7 +26,7 @@ public class ItemTagProvider extends FabricTagProvider.ItemTagProvider {
 		copy(Tags.Blocks.BARRELS, Tags.Items.BARRELS);
 		copy(Tags.Blocks.BARRELS_WOODEN, Tags.Items.BARRELS_WOODEN);
 		tag(Tags.Items.BONES).add(Items.BONE);
-		tag(Tags.Items.BOOKSHELVES).add(Items.BOOKSHELF);
+		copy(Tags.Blocks.BOOKSHELVES, Tags.Items.BOOKSHELVES);
 		copy(Tags.Blocks.CHESTS, Tags.Items.CHESTS);
 		copy(Tags.Blocks.CHESTS_ENDER, Tags.Items.CHESTS_ENDER);
 		copy(Tags.Blocks.CHESTS_TRAPPED, Tags.Items.CHESTS_TRAPPED);

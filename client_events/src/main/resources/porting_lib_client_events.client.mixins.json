@@ -6,7 +6,13 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "ClientEventsGameRendererMixin",
-    "ModelManagerMixin"
+    "ClientLevelMixin",
+    "ClientPacketListenerMixin",
+    "ClientPacketListenerMixin",
+    "GameRendererMixin",
+    "ModelManagerMixin",
+    "PlayerRendererMixin",
+    "SoundEngineMixin"
   ],
   "injectors": {
     "defaultRequire": 1,

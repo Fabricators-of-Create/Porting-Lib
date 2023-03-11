@@ -1,0 +1,8 @@
+moduleDependencies(project, [
+		"model_generators",
+		"models"
+])
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}

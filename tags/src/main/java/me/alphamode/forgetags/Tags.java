@@ -37,6 +37,7 @@ public class Tags implements ModInitializer {
 
 		public static final TagKey<Block> BARRELS = tag("barrels");
 		public static final TagKey<Block> BARRELS_WOODEN = tag("wooden_barrels");
+		public static final TagKey<Block> BOOKSHELVES = ConventionalBlockTags.BOOKSHELVES;
 		public static final TagKey<Block> CHESTS = ConventionalBlockTags.CHESTS;
 		public static final TagKey<Block> CHESTS_ENDER = tag("ender_chests");
 		public static final TagKey<Block> CHESTS_TRAPPED = tag("trapped_chests");

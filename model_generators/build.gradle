@@ -1,4 +1,5 @@
 moduleDependencies(project, [
+		"model_materials",
 		"data"
 ])
 

@@ -10,7 +10,7 @@
     "common.MobEffectMixin",
     "common.SheepMixin",
     "common.SlotMixin",
-    "common.TransformationMixin",
+    "common.TrunkPlacerMixin",
     "common.VineBlockMixin",
     "common.WebBlockMixin"
   ],

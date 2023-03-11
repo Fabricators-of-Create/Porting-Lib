@@ -1,4 +1,9 @@
-package io.github.fabricators_of_create.porting_lib.extensions.mixin.common;
+package io.github.fabricators_of_create.porting_lib.model.mixin.common;
+
+import com.mojang.math.Transformation;
+
+import io.github.fabricators_of_create.porting_lib.model.extensions.TransformationExtensions;
+import net.minecraft.core.Direction;
 
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
@@ -8,11 +13,6 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-
-import com.mojang.math.Transformation;
-
-import io.github.fabricators_of_create.porting_lib.extensions.extensions.TransformationExtensions;
-import net.minecraft.core.Direction;
 
 @Mixin(Transformation.class)
 public abstract class TransformationMixin implements TransformationExtensions {

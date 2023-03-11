@@ -24,6 +24,16 @@ public abstract class PlayerEvents extends EntityEvent {
 			e.onPlayerXpChange(event);
 	});
 
+	public static final Event<PlayerLoggedInOrOut> LOGGED_IN = EventFactory.createArrayBacked(PlayerLoggedInOrOut.class, callbacks -> player -> {
+		for (PlayerLoggedInOrOut e : callbacks)
+			e.handleConnection(player);
+	});
+
+	public static final Event<PlayerLoggedInOrOut> LOGGED_OUT = EventFactory.createArrayBacked(PlayerLoggedInOrOut.class, callbacks -> player -> {
+		for (PlayerLoggedInOrOut e : callbacks)
+			e.handleConnection(player);
+	});
+
 	private final Player entityPlayer;
 
 	public PlayerEvents(Player player) {
@@ -139,5 +149,13 @@ public abstract class PlayerEvents extends EntityEvent {
 	@FunctionalInterface
 	public interface PlayerXpPickUp {
 		void onPlayerPicksUpXp(PickupXp event);
+	}
+
+	/**
+	 * Use this interface to handle players logging in and out.
+	 */
+	@FunctionalInterface
+	public interface PlayerLoggedInOrOut {
+		void handleConnection(Player player);
 	}
 }

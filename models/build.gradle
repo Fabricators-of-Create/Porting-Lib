@@ -1,3 +1,14 @@
+moduleDependencies(project, [
+		"constants"
+])
+
+loom.accessWidenerPath = file("src/main/resources/models.accesswidener")
+
+dependencies {
+	api(include("com.github.LlamaLad7:MixinExtras:$mixin_extras_version"))
+	annotationProcessor("com.github.LlamaLad7:MixinExtras:$mixin_extras_version")
+}
+
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }

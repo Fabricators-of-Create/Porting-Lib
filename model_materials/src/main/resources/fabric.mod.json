@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_model_materials",
+  "version": "${version}",
+  "name": "Porting Lib Model Maters",
+  "description": "",
+  "accessWidener": "model_materials.accesswidener"
+}

@@ -16,8 +16,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import com.mojang.serialization.JsonOps;
+
 import io.github.fabricators_of_create.porting_lib.data.ExistingFileHelper;
 import io.github.fabricators_of_create.porting_lib.models.generators.block.BlockModelBuilder;
+import io.github.fabricators_of_create.porting_lib.models.generators.extensions.BlockElementFaceExtensions;
+import io.github.fabricators_of_create.porting_lib.models.generators.item.ItemModelBuilder;
+import io.github.fabricators_of_create.porting_lib.models.materials.MaterialData;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.block.model.BlockModel.GuiLight;
 import net.minecraft.client.renderer.block.model.BlockElement;
@@ -140,8 +145,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 	/**
 	 * Set the render type for this model.
 	 *
-	 * @param renderType the render type. Must be registered via
-	 *                   {@link net.minecraftforge.client.event.RegisterNamedRenderTypesEvent}
+	 * @param renderType the render type. Must be registered via.
 	 * @return this builder
 	 * @throws NullPointerException  if {@code renderType} is {@code null}
 	 */
@@ -153,8 +157,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 	/**
 	 * Set the render type for this model.
 	 *
-	 * @param renderType the render type. Must be registered via
-	 *                   {@link net.minecraftforge.client.event.RegisterNamedRenderTypesEvent}
+	 * @param renderType the render type.
 	 * @return this builder
 	 * @throws NullPointerException  if {@code renderType} is {@code null}
 	 */
@@ -314,9 +317,9 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 					if (face.tintIndex != -1) {
 						faceObj.addProperty("tintindex", face.tintIndex);
 					}
-//					if (!face.getFaceData().equals(ForgeFaceData.DEFAULT)) { TODO: forge model system
-//						faceObj.add("forge_data", ForgeFaceData.CODEC.encodeStart(JsonOps.INSTANCE, face.getFaceData()).result().get());
-//					}
+					if (!((BlockElementFaceExtensions)face).port_lib$getRenderMaterial().equals(MaterialData.DEFAULT)) {
+						faceObj.add("render_material", MaterialData.CODEC.encodeStart(JsonOps.INSTANCE, ((BlockElementFaceExtensions)face).port_lib$getRenderMaterial()).result().get());
+					}
 					faces.add(dir.getSerializedName(), faceObj);
 				}
 				if (!part.faces.isEmpty()) {

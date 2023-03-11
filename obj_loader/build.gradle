@@ -1,5 +1,4 @@
 moduleDependencies(project, [
-		"model_loader",
 		"extensions",
 ])
 

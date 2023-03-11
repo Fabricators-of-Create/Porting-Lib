@@ -14,6 +14,9 @@ import net.minecraft.world.item.ItemStack;
 
 @Environment(EnvType.CLIENT)
 public interface RenderHandCallback {
+	/**
+	 * Fired before a hand is rendered in the first person view.
+	 */
 	Event<RenderHandCallback> EVENT = EventFactory.createArrayBacked(RenderHandCallback.class, callbacks -> (handEvent) -> {
 		for (RenderHandCallback callback : callbacks) {
 			callback.onRenderHand(handEvent);
