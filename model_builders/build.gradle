@@ -1,6 +1,6 @@
 moduleDependencies(project, [
-		"model_materials",
-		"data"
+		"model_generators",
+		"models"
 ])
 
 processResources {
