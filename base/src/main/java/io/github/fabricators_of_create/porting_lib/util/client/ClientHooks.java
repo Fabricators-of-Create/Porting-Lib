@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.util.client;
 
 import com.google.common.collect.Maps;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 
 import io.github.fabricators_of_create.porting_lib.item.ArmorTextureItem;
@@ -9,6 +10,8 @@ import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -18,6 +21,9 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nullable;
 
@@ -141,5 +147,17 @@ public class ClientHooks {
 						ClientTooltipComponent::create
 				))
 				.toList();
+	}
+
+	@ApiStatus.Internal
+	public static RenderType RENDER_TYPE = null;
+
+	/**
+	 * Sets the current {@link RenderType} to use for rendering a single block in {@link net.minecraft.client.renderer.block.BlockRenderDispatcher#renderSingleBlock(BlockState, PoseStack, MultiBufferSource, int, int)}.
+	 * It is very important you set this to null after you have rendered your block(s).
+	 * @param renderType The render type you want to render the block in. Ex: {@link RenderType#translucent()}
+	 */
+	public static void setRenderType(RenderType renderType) {
+		RENDER_TYPE = renderType;
 	}
 }

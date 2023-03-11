@@ -136,6 +136,7 @@
     "client.GuiMixin",
     "client.HumanoidArmorLayerMixin",
     "client.I18nMixin",
+    "client.BlockRenderDispatcherMixin",
     "client.ItemColorsMixin",
     "client.ItemFrameRendererMixin",
     "client.ItemInHandRendererMixin",
