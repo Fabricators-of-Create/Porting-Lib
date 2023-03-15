@@ -1,0 +1,13 @@
+moduleDependencies(project, [
+		"lazy_registration",
+		"constants",
+])
+
+dependencies {
+	api(include("com.github.LlamaLad7:MixinExtras:$mixin_extras_version"))
+	annotationProcessor("com.github.LlamaLad7:MixinExtras:$mixin_extras_version")
+}
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}

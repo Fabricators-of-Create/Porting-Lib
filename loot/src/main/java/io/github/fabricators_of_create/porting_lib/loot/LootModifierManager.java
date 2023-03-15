@@ -17,6 +17,7 @@ import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 
+import net.minecraft.core.Registry;
 import net.minecraft.server.packs.PackType;
 
 import org.apache.logging.log4j.LogManager;
@@ -100,6 +101,7 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener implem
 	public static void init() {
 		INSTANCE = new LootModifierManager();
 		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(INSTANCE);
+		Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
 	}
 
 	public static LootModifierManager getLootModifierManager() {
