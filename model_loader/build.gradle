@@ -1,6 +1,5 @@
 moduleDependencies(project, [
-		"extensions",
-		"model_loader"
+		"constants",
 ])
 
 processResources {

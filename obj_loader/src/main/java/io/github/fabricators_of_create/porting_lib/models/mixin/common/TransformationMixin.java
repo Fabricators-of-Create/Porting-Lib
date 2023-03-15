@@ -1,8 +1,8 @@
-package io.github.fabricators_of_create.porting_lib.model.mixin.common;
+package io.github.fabricators_of_create.porting_lib.models.mixin.common;
 
 import com.mojang.math.Transformation;
 
-import io.github.fabricators_of_create.porting_lib.model.extensions.TransformationExtensions;
+import io.github.fabricators_of_create.porting_lib.models.extensions.TransformationExtensions;
 import net.minecraft.core.Direction;
 
 import org.joml.Matrix3f;

@@ -1,6 +1,6 @@
 moduleDependencies(project, [
 		"model_generators",
-		"models"
+		"model_loader"
 ])
 
 processResources {

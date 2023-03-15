@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.model.obj;
+package io.github.fabricators_of_create.porting_lib.models.obj;
 
 import java.io.FileNotFoundException;
 import java.util.Map;
@@ -10,7 +10,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 import io.github.fabricators_of_create.porting_lib.PortingConstants;
-import io.github.fabricators_of_create.porting_lib.model_loader.model.geometry.IGeometryLoader;
+import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryLoader;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;

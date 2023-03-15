@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.model.obj;
+package io.github.fabricators_of_create.porting_lib.models.obj;
 
 import java.io.IOException;
 import java.util.Arrays;

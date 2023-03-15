@@ -7,6 +7,7 @@ import net.minecraft.client.ClientRecipeBook;
 
 import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.crafting.Recipe;
 
 import net.minecraft.world.item.crafting.RecipeType;
@@ -24,7 +25,7 @@ import java.util.Map;
 @Mixin(ClientRecipeBook.class)
 public class ClientRecipeBookMixin {
 	@Inject(method = "setupCollections", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap;copyOf(Ljava/util/Map;)Lcom/google/common/collect/ImmutableMap;"), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void setupModdedAggregateCategories(Iterable<Recipe<?>> iterable, CallbackInfo ci, Map<RecipeBookCategories, List<List<Recipe<?>>>> map, Map<RecipeBookCategories, List<RecipeCollection>> aggregateCategories) {
+	private void setupModdedAggregateCategories(Iterable<Recipe<?>> iterable, RegistryAccess registryAccess, CallbackInfo ci, Map<RecipeBookCategories, List<List<Recipe<?>>>> categorizeAndGroupRecipes, Map<RecipeBookCategories, List<RecipeCollection>> aggregateCategories) {
 		RecipeBookRegistry.AGGREGATE_CATEGORIES.forEach((recipeBookCategories, list) -> {
 			aggregateCategories.put(recipeBookCategories, list.stream().flatMap((recipeBookCategoriesx) -> {
 				return aggregateCategories.getOrDefault(recipeBookCategoriesx, ImmutableList.of()).stream();
