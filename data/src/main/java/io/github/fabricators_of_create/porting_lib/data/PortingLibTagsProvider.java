@@ -88,9 +88,7 @@ public abstract class PortingLibTagsProvider<T> extends FabricTagProvider<T> {
 					if (path == null) return CompletableFuture.completedFuture(null); // Forge: Allow running this data provider without writing it. Recipe provider needs valid tags.
 					return DataProvider.saveStable(pOutput, jsonelement, path);
 				}
-			}).toArray((p_253442_) -> {
-				return new CompletableFuture[p_253442_];
-			}));
+			}).toArray(CompletableFuture[]::new));
 		});
 	}
 
