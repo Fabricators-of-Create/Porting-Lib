@@ -8,6 +8,8 @@ transitive-accessible field net/minecraft/data/loot/LootTableProvider pathProvid
 
 transitive-accessible field net/minecraft/data/tags/TagsProvider LOGGER Lorg/slf4j/Logger;
 transitive-accessible field net/minecraft/data/tags/TagsProvider builders Ljava/util/Map;
+transitive-accessible field net/minecraft/data/tags/TagsProvider contentsDone Ljava/util/concurrent/CompletableFuture;
+transitive-accessible field net/minecraft/data/tags/TagsProvider parentProvider Ljava/util/concurrent/CompletableFuture;
 
 transitive-accessible field net/minecraft/tags/TagEntry id Lnet/minecraft/resources/ResourceLocation;
 transitive-accessible field net/minecraft/tags/TagEntry tag Z

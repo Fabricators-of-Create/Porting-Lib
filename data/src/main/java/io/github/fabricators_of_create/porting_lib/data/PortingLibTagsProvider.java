@@ -9,6 +9,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
@@ -16,6 +17,7 @@ import net.minecraft.tags.TagBuilder;
 import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagFile;
 
+import net.minecraft.tags.TagKey;
 import net.minecraft.tags.TagManager;
 
 import org.jetbrains.annotations.Nullable;
@@ -55,30 +57,36 @@ public abstract class PortingLibTagsProvider<T> extends FabricTagProvider<T> {
 		return this.pathProvider.json(id);
 	}
 
-	public CompletableFuture<?> run(CachedOutput p_253684_) {
-		return this.contentsProvider().thenCompose((p_255494_) -> {
-			this.builders.clear();
-			this.addTags(p_255494_);
-			HolderLookup.RegistryLookup<T> registrylookup = p_255494_.lookup(this.registryKey).orElseThrow(() -> {
+	public CompletableFuture<?> run(CachedOutput pOutput) {
+		record CombinedData<T>(HolderLookup.Provider contents, TagsProvider.TagLookup<T> parent) {
+		}
+		return this.createContentsProvider().thenApply((p_275895_) -> {
+			this.contentsDone.complete(null);
+			return p_275895_;
+		}).thenCombineAsync(this.parentProvider, CombinedData::new).thenCompose((combinedData) -> {
+			HolderLookup.RegistryLookup<T> registrylookup = combinedData.contents.lookup(this.registryKey).orElseThrow(() -> {
 				return new IllegalStateException("Registry " + this.registryKey.location() + " not found");
 			});
 			Predicate<ResourceLocation> predicate = (p_255496_) -> {
 				return registrylookup.get(ResourceKey.create(this.registryKey, p_255496_)).isPresent();
 			};
+			Predicate<ResourceLocation> predicate1 = (p_274776_) -> {
+				return this.builders.containsKey(p_274776_) || combinedData.parent.contains(TagKey.create(this.registryKey, p_274776_));
+			};
 			return CompletableFuture.allOf(this.builders.entrySet().stream().map((p_255499_) -> {
 				ResourceLocation resourcelocation = p_255499_.getKey();
 				TagBuilder tagbuilder = p_255499_.getValue();
 				List<TagEntry> list = tagbuilder.build();
-				List<TagEntry> list1 = list.stream().filter((p_255492_) -> {
-					return !p_255492_.verifyIfPresent(predicate, this.builders::containsKey);
+				List<TagEntry> list1 = list.stream().filter((tag) -> {
+					return !tag.verifyIfPresent(predicate, predicate1);
 				}).filter(this::missing).toList(); // Forge: Add validation via existing resources
 				if (!list1.isEmpty()) {
 					throw new IllegalArgumentException(String.format(Locale.ROOT, "Couldn't define tag %s as it is missing following references: %s", resourcelocation, list1.stream().map(Objects::toString).collect(Collectors.joining(","))));
 				} else {
 					JsonElement jsonelement = TagFile.CODEC.encodeStart(JsonOps.INSTANCE, new TagFile(list, false)).getOrThrow(false, LOGGER::error);
 					Path path = this.getPath(resourcelocation);
-					if (path == null) return CompletableFuture.completedFuture(null); // Allow running this data provider without writing it. Recipe provider needs valid tags.
-					return DataProvider.saveStable(p_253684_, jsonelement, path);
+					if (path == null) return CompletableFuture.completedFuture(null); // Forge: Allow running this data provider without writing it. Recipe provider needs valid tags.
+					return DataProvider.saveStable(pOutput, jsonelement, path);
 				}
 			}).toArray((p_253442_) -> {
 				return new CompletableFuture[p_253442_];
