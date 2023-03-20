@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.block.model.BlockElementFace;
 
 @Mixin(BlockElementFace.class)
 public class BlockElementFaceMixin implements BlockElementFaceExtensions {
-	private MaterialData port_lib$material;
+	private MaterialData port_lib$material = MaterialData.DEFAULT;
 
 	@Override
 	public void port_lib$setRenderMaterial(MaterialData material) {
