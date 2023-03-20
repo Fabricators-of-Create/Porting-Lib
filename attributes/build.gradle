@@ -2,9 +2,19 @@ moduleDependencies(project, [
 		"constants"
 ])
 
+repositories {
+	maven {
+		url "https://maven.jamieswhiteshirt.com/libs-release"
+		content {
+			includeGroup "com.jamieswhiteshirt"
+		}
+	}
+}
+
 dependencies {
 	api(include("com.github.LlamaLad7:MixinExtras:$mixin_extras_version"))
 	annotationProcessor("com.github.LlamaLad7:MixinExtras:$mixin_extras_version")
+	modCompileOnly("com.jamieswhiteshirt:reach-entity-attributes:2.3.1")
 }
 
 processResources {
