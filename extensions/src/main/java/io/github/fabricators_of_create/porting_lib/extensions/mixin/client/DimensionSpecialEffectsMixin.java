@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.extensions.mixin.common;
+package io.github.fabricators_of_create.porting_lib.extensions.mixin.client;
 
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.DimensionSpecialEffectsExtensions;
 

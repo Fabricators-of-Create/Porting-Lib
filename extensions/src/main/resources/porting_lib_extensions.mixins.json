@@ -5,7 +5,6 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "common.BlockMixin",
-    "common.DimensionSpecialEffectsMixin",
     "common.ItemMixin",
     "common.MobEffectMixin",
     "common.SheepMixin",
@@ -15,9 +14,11 @@
     "common.WebBlockMixin"
   ],
   "client": [
+    "client.DimensionSpecialEffectsMixin",
     "client.ItemTransformDeserializerMixin",
     "client.ItemTransformMixin",
     "client.LevelRendererMixin",
+    "client.LightTextureMixin",
     "client.VertexFormatMixin"
   ],
   "injectors": {
