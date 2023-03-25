@@ -1,5 +1,6 @@
 moduleDependencies(project, [
-		"constants"
+		"constants",
+		"model_loader"
 ])
 
 loom.accessWidenerPath = file("src/main/resources/models.accesswidener")

@@ -16,6 +16,9 @@ import net.minecraft.resources.ResourceLocation;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,5 +74,25 @@ public class UnbakedGeometryHelper {
 	 */
 	public static BakedQuad bakeElementFace(BlockElement element, BlockElementFace face, TextureAtlasSprite sprite, Direction direction, ModelState state, ResourceLocation modelLocation) {
 		return FACE_BAKERY.bakeQuad(element.from, element.to, face, sprite, direction, state, element.rotation, element.shade, modelLocation);
+	}
+
+	public static void bakeElements(List<BakedQuad> quads, List<BlockElement> elements, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation) {
+		for (BlockElement element : elements) {
+			element.faces.forEach((side, face) -> {
+				var sprite = spriteGetter.apply(new Material(TextureAtlas.LOCATION_BLOCKS, new ResourceLocation(face.texture)));
+				quads.add(BlockModel.FACE_BAKERY.bakeQuad(element.from, element.to, face, sprite, side, modelState, element.rotation, element.shade, modelLocation));
+			});
+		}
+	}
+
+	/**
+	 * Bakes a list of {@linkplain BlockElement block elements} and returns the list of baked quads.
+	 */
+	public static List<BakedQuad> bakeElements(List<BlockElement> elements, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation) {
+		if (elements.isEmpty())
+			return List.of();
+		var list = new ArrayList<BakedQuad>();
+		bakeElements(list, elements, spriteGetter, modelState, modelLocation);
+		return list;
 	}
 }
