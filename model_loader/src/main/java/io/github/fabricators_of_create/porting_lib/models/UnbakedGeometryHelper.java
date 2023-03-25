@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
@@ -94,5 +95,15 @@ public class UnbakedGeometryHelper {
 		var list = new ArrayList<BakedQuad>();
 		bakeElements(list, elements, spriteGetter, modelState, modelLocation);
 		return list;
+	}
+
+	/**
+	 * Creates a list of {@linkplain BlockElement block elements} in the shape of the specified sprite contents.
+	 * These can later be baked using the same, or another texture.
+	 * <p>
+	 * The {@link Direction#NORTH} and {@link Direction#SOUTH} faces take up the whole surface.
+	 */
+	public static List<BlockElement> createUnbakedItemElements(int layerIndex, SpriteContents spriteContents) {
+		return ITEM_MODEL_GENERATOR.processFrames(layerIndex, "layer" + layerIndex, spriteContents);
 	}
 }
