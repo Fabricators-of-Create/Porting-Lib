@@ -11,7 +11,7 @@ import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 
 public class PortingLibAttributes implements ModInitializer {
 	public static final Attribute STEP_HEIGHT_ADDITION = new RangedAttribute("porting_lib.stepHeight", 0.0D, -512.0D, 512.0D).setSyncable(true);
-	public static final Attribute REACH_DISTANCE = FabricLoader.getInstance().isModLoaded("reach-entity-attributes") ? ReachEntityAttributesCompat.getReachAttribute() : new RangedAttribute("generic.reachDistance", 4.5D, 0.0D, 1024.0D).setSyncable(true);
+	public static final Attribute REACH_DISTANCE = new RangedAttribute("generic.reachDistance", 4.5D, 0.0D, 1024.0D).setSyncable(true);
 	public static final Attribute ENTITY_GRAVITY = new RangedAttribute("porting_lib.entity_gravity", 0.08D, -8.0D, 8.0D).setSyncable(true);
 	public static final Attribute SWIM_SPEED = new RangedAttribute("porting_lib.swimSpeed", 1.0D, 0.0D, 1024.0D).setSyncable(true);
 
@@ -20,7 +20,7 @@ public class PortingLibAttributes implements ModInitializer {
 	 * @see IForgePlayer#getAttackRange()
 	 * @see IForgePlayer#canHit(Entity, double)
 	 */
-	public static final Attribute ATTACK_RANGE = FabricLoader.getInstance().isModLoaded("reach-entity-attributes") ? ReachEntityAttributesCompat.getAttackRange() : new RangedAttribute("generic.attack_range", 3.0D, 0.0D, 1024.0D).setSyncable(true);
+	public static final Attribute ATTACK_RANGE = new RangedAttribute("generic.attack_range", 3.0D, 0.0D, 1024.0D).setSyncable(true);
 
 	@Override
 	public void onInitialize() {
