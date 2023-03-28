@@ -52,10 +52,10 @@ public class UnbakedGeometryHelper {
 	 * <p>
 	 * The target atlas will always be {@link TextureAtlas#LOCATION_BLOCKS}.
 	 */
-	public static Material resolveDirtyMaterial(@Nullable String tex, BlockModel owner) {
+	public static Material resolveDirtyMaterial(@Nullable String tex, @Nullable BlockModel owner) {
 		if (tex == null)
 			return new Material(TextureAtlas.LOCATION_BLOCKS, MissingTextureAtlasSprite.getLocation());
-		if (tex.startsWith("#"))
+		if (tex.startsWith("#") && owner != null)
 			return owner.getMaterial(tex);
 
 		// Attempt to convert a common (windows/linux/mac) filesystem path to a ResourceLocation.

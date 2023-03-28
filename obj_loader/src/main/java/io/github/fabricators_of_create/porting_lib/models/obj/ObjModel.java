@@ -18,6 +18,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +62,7 @@ import net.minecraft.world.phys.Vec2;
  * Supports positions, texture coordinates, normals and colors. The {@link ObjMaterialLibrary material library}
  * has support for numerous features, including support for {@link ResourceLocation} textures (non-standard).
  */
-public class ObjModel implements IUnbakedGeometry<ObjModel> {
+public class ObjModel implements IUnbakedGeometry<ObjModel>, UnbakedModel {
 	private static final Logger LOGGER = LogManager.getLogger();
 
 	private static final Vector4f COLOR_WHITE = new Vector4f(1, 1, 1, 1);
@@ -360,6 +363,23 @@ public class ObjModel implements IUnbakedGeometry<ObjModel> {
 		return new ObjBakedModel(bakedMeshes.build(), particle);
 	}
 
+	@Nullable
+	@Override
+	public BakedModel bake(ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
+		for (var entry : deprecationWarnings.entrySet())
+			LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated \"" + entry.getKey() + "\" field in its OBJ model instead of \"" + entry.getValue() + "\". This field will be removed in 1.20.");
+
+		ImmutableList.Builder<Mesh> bakedMeshes = new ImmutableList.Builder<>();
+		parts.values().stream()
+				.forEach(part -> {
+					var meshBuilder = RendererAccess.INSTANCE.getRenderer().meshBuilder();
+					part.buildMeshes(null, meshBuilder, baker, spriteGetter, modelTransform, modelLocation);
+					bakedMeshes.add(meshBuilder.build());
+				});
+		TextureAtlasSprite particle = spriteGetter.apply(new Material(TextureAtlas.LOCATION_BLOCKS, MissingTextureAtlasSprite.getLocation()));
+		return new ObjBakedModel(bakedMeshes.build(), particle);
+	}
+
 	@Override
 	public Set<String> getConfigurableComponentNames() {
 		if (allComponentNames != null)
@@ -515,6 +535,14 @@ public class ObjModel implements IUnbakedGeometry<ObjModel> {
 				(r & 0xFF);
 	}
 
+	@Override
+	public Collection<ResourceLocation> getDependencies() {
+		return List.of();
+	}
+
+	@Override
+	public void resolveParents(Function<ResourceLocation, UnbakedModel> function) {}
+
 	public class ModelObject {
 		public final String name;
 
@@ -528,7 +556,7 @@ public class ObjModel implements IUnbakedGeometry<ObjModel> {
 			return name;
 		}
 
-		public void buildMeshes(BlockModel owner, MeshBuilder meshBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
+		public void buildMeshes(@Nullable BlockModel owner, MeshBuilder meshBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
 			for (ModelMesh mesh : meshes) {
 				mesh.buildMesh(owner, meshBuilder, spriteGetter, modelTransform);
 			}
@@ -591,14 +619,14 @@ public class ObjModel implements IUnbakedGeometry<ObjModel> {
 			this.smoothingGroup = currentSmoothingGroup;
 		}
 
-		public void buildMesh(BlockModel owner, MeshBuilder meshBuilder, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform) {
+		public void buildMesh(@Nullable BlockModel owner, MeshBuilder meshBuilder, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform) {
 			if (mat == null)
 				return;
 			TextureAtlasSprite texture = spriteGetter.apply(UnbakedGeometryHelper.resolveDirtyMaterial(mat.diffuseColorMap, owner));
 			int tintIndex = mat.diffuseTintIndex;
 			Vector4f colorTint = mat.diffuseColor;
 
-			var rootTransform = owner.getRootTransform();
+			var rootTransform = owner != null ? owner.getRootTransform() : Transformation.identity();
 			var transform = rootTransform.isIdentity() ? modelTransform.getRotation() : modelTransform.getRotation().compose(rootTransform);
 			for (int[][] face : faces) {
 				makeQuad(meshBuilder, face, tintIndex, colorTint, mat.ambientColor, texture, transform);
