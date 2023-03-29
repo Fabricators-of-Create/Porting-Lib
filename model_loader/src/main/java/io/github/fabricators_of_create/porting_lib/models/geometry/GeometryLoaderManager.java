@@ -103,4 +103,8 @@ public final class GeometryLoaderManager {
 	}
 
 	private GeometryLoaderManager() {}
+
+	static {
+		init();
+	}
 }
