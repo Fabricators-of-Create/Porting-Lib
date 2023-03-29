@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.models.obj;
 
 import java.io.FileNotFoundException;
+import java.util.Collection;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
@@ -50,6 +51,9 @@ public class ObjLoader implements IGeometryLoader<ObjModel>, ResourceManagerRelo
 	public ObjModel read(JsonObject jsonObject, JsonDeserializationContext deserializationContext) {
 		if (!jsonObject.has("model"))
 			throw new JsonParseException("OBJ Loader requires a 'model' key that points to a valid .OBJ model.");
+
+		if (manager == null)
+			manager = Minecraft.getInstance().getResourceManager();
 
 		String modelLocation = jsonObject.get("model").getAsString();
 
@@ -138,5 +142,10 @@ public class ObjLoader implements IGeometryLoader<ObjModel>, ResourceManagerRelo
 	@Override
 	public ResourceLocation getFabricId() {
 		return PortingConstants.id("obj-loader");
+	}
+
+	@Override
+	public Collection<ResourceLocation> getFabricDependencies() {
+		return IdentifiableResourceReloadListener.super.getFabricDependencies();
 	}
 }
