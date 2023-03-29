@@ -451,7 +451,8 @@ public class ObjModel implements IUnbakedGeometry<ObjModel>, UnbakedModel {
 					color.z() * colorTint.z(),
 					color.w() * colorTint.w());
 			quadBaker.pos(i, position.x(), position.y(), position.z());
-			quadBaker.spriteColor(0, encodeQuadColor(tintedColor));
+			int spriteColor = encodeQuadColor(tintedColor);
+			quadBaker.spriteColor(0, spriteColor, spriteColor, spriteColor, spriteColor);
 			quadBaker.sprite(i, 0,
 					texture.getU(texCoord.x * 16),
 					texture.getV((flipV ? 1 - texCoord.y : texCoord.y) * 16)
