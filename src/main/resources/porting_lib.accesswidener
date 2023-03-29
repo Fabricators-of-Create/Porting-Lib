@@ -70,7 +70,6 @@ transitive-accessible method net/minecraft/world/entity/SpawnPlacements register
 
 transitive-accessible method net/minecraft/resources/ResourceKey create (Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/resources/ResourceKey;
 
-transitive-accessible field net/minecraft/data/loot/EntityLootSubProvider enabledFeatures Lnet/minecraft/world/flag/FeatureFlagSet;
 transitive-accessible field net/minecraft/data/loot/EntityLootSubProvider SPECIAL_LOOT_TABLE_TYPES Ljava/util/Set;
 transitive-accessible field net/minecraft/data/loot/EntityLootSubProvider map Ljava/util/Map;
 

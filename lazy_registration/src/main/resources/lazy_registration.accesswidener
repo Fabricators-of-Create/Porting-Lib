@@ -1,3 +1,2 @@
 accessWidener v2 named
-transitive-accessible field net/minecraft/core/Registry WRITABLE_REGISTRY Lnet/minecraft/core/WritableRegistry;
 transitive-accessible method net/minecraft/resources/ResourceKey create (Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/resources/ResourceKey;
