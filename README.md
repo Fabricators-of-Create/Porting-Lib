@@ -1,10 +1,6 @@
 # Porting Lib
 ### A collection of utilities for porting mods from Forge to Fabric.
 
-## Warning for 1.19.4
-1.19.4 is not done! Use at your own risk. Refactors are still being done and modules are being moved around.
-Binary compatibility is not guaranteed.
-
 ## Use
 Porting Lib is split into modules. All modules are available on this maven:
 ```groovy
