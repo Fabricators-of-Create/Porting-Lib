@@ -17,13 +17,14 @@ public class RegistryDataLoaderMixin {
 	@ModifyArg(method = "<clinit>", at = @At(value = "INVOKE", target = "Ljava/util/List;of([Ljava/lang/Object;)Ljava/util/List;"))
 	private static <E> E[] port_lib$unhardcodeRegistries(E[] elements) {
 		DynamicRegistryHandler.loadDynamicRegistries();
-		List<E> resultList = new ArrayList<>(elements.length + DynamicRegistryHandler.REGISTRIES.size());
+		var registryData = DynamicRegistryHandler.getRegistryData();
+		List<E> resultList = new ArrayList<>();
 		Collections.addAll(resultList, elements);
-		Collections.addAll((List<RegistryDataLoader.RegistryData<?>>)resultList, DynamicRegistryHandler.getRegistryData().toArray(RegistryDataLoader.RegistryData<?>[]::new));
+		Collections.addAll((List<RegistryDataLoader.RegistryData<?>>)resultList, registryData.toArray(RegistryDataLoader.RegistryData<?>[]::new));
 
 		@SuppressWarnings("unchecked")
 		//the type cast is safe as the array1 has the type T[]
-		E[] resultArray = (E[]) Array.newInstance(elements.getClass().getComponentType(), 0);
+		E[] resultArray = (E[]) Array.newInstance(elements.getClass().getComponentType());
 		return resultList.toArray(resultArray);
 	}
 }
