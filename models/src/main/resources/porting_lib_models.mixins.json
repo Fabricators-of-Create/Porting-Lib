@@ -5,8 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "BlockModelDeserializerMixin",
-    "BlockModelMixin",
-    "ShaderInstanceMixin"
+    "BlockModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1
