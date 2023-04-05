@@ -1,8 +1,8 @@
-package io.github.fabricators_of_create.porting_lib.mixin.common;
+package io.github.fabricators_of_create.porting_lib.loot.mixin;
 
-import io.github.fabricators_of_create.porting_lib.extensions.LootContextExtensions;
+import io.github.fabricators_of_create.porting_lib.loot.LootHooks;
 import io.github.fabricators_of_create.porting_lib.loot.LootTableIdCondition;
-import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
+import io.github.fabricators_of_create.porting_lib.loot.extensions.LootContextExtensions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootContext;
 
@@ -33,6 +33,6 @@ public abstract class LootContextMixin implements LootContextExtensions {
 
 	@Override
 	public int getLootingModifier() {
-		return PortingHooks.getLootingLevel(getParamOrNull(LootContextParams.THIS_ENTITY), getParamOrNull(LootContextParams.KILLER_ENTITY), getParamOrNull(LootContextParams.DAMAGE_SOURCE));
+		return LootHooks.getLootingLevel(getParamOrNull(LootContextParams.THIS_ENTITY), getParamOrNull(LootContextParams.KILLER_ENTITY), getParamOrNull(LootContextParams.DAMAGE_SOURCE));
 	}
 }

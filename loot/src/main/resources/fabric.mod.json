@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_model_generators",
+  "version": "${version}",
+  "name": "Porting Lib Model Generators",
+  "description": "Utility classes for generating model files with data generation.",
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.loot.LootModifierManager::init"
+    ]
+  },
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_47": ["io/github/fabricators_of_create/porting_lib/loot/extensions/LootContextExtensions"],
+      "net/minecraft/class_52": ["io/github/fabricators_of_create/porting_lib/loot/extensions/LootTableExtensions"]
+    }
+  }
+}

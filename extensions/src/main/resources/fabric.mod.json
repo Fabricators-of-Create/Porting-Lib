@@ -11,8 +11,6 @@
   "custom": {
     "loom:injected_interfaces": {
       "net/minecraft/class_20": ["io/github/fabricators_of_create/porting_lib/extensions/MapDecorationExtensions"],
-      "net/minecraft/class_47": ["io/github/fabricators_of_create/porting_lib/extensions/LootContextExtensions"],
-      "net/minecraft/class_52": ["io/github/fabricators_of_create/porting_lib/extensions/LootTableExtensions"],
       "net/minecraft/class_55": ["io/github/fabricators_of_create/porting_lib/extensions/LootPoolExtensions"],
       "net/minecraft/class_55$class_56": ["io/github/fabricators_of_create/porting_lib/extensions/LootPoolBuilderExtension"],
       "net/minecraft/class_293": ["io/github/fabricators_of_create/porting_lib/extensions/VertexFormatExtensions"],

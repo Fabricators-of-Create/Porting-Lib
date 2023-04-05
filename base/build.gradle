@@ -9,6 +9,7 @@ moduleDependencies(project, [
 		"entity",
 		"common",
 		"models",
+		"loot",
 		"tags"
 ])
 
