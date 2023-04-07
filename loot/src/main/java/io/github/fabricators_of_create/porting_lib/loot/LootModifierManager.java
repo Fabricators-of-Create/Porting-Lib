@@ -15,11 +15,6 @@ import io.github.fabricators_of_create.porting_lib.PortingConstants;
 
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-
-import net.minecraft.core.Registry;
-import net.minecraft.server.packs.PackType;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,6 +34,8 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.storage.loot.Deserializers;
 
+import org.jetbrains.annotations.NotNull;
+
 public class LootModifierManager extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener {
 	public static final Logger LOGGER = LogManager.getLogger();
 	public static final Gson GSON_INSTANCE = Deserializers.createFunctionSerializer().create();
@@ -51,7 +48,9 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener implem
 	}
 
 	@Override
-	protected void apply(Map<ResourceLocation, JsonElement> resourceList, ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
+	protected void apply(@NotNull Map<ResourceLocation, JsonElement> resourceList,
+						 ResourceManager resourceManagerIn,
+						 @NotNull ProfilerFiller profilerIn) {
 		Builder<ResourceLocation, IGlobalLootModifier> builder = ImmutableMap.builder();
 		List<ResourceLocation> finalLocations = new ArrayList<>();
 		ResourceLocation resourcelocation = new ResourceLocation("forge","loot_modifiers/global_loot_modifiers.json");
@@ -96,17 +95,9 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener implem
 		return registeredLootModifiers.values();
 	}
 
-	private static LootModifierManager INSTANCE;
-
-	public static void init() {
-		INSTANCE = new LootModifierManager();
-		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(INSTANCE);
-		Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
-	}
+	public static final LootModifierManager INSTANCE = new LootModifierManager();
 
 	public static LootModifierManager getLootModifierManager() {
-		if(INSTANCE == null)
-			throw new IllegalStateException("Can not retrieve LootModifierManager until resources have loaded once.");
 		return INSTANCE;
 	}
 

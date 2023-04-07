@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib_model_generators",
+  "id": "porting_lib_loot",
   "version": "${version}",
-  "name": "Porting Lib Model Generators",
-  "description": "Utility classes for generating model files with data generation.",
+  "name": "Porting Lib Loot",
+  "description": "Allows mods to modify loot more easily.",
   "entrypoints": {
     "main": [
-      "io.github.fabricators_of_create.porting_lib.loot.LootModifierManager::init"
+      "io.github.fabricators_of_create.porting_lib.loot.PortingLibLoot"
     ]
   },
   "custom": {

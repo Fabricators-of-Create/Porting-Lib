@@ -24,6 +24,9 @@ The latest patch can be found from GitHub Actions as the build number.
 | `constants`         | Internal constants used by Porting Lib                                                |
 | `entity`            | Multipart entities, extra spawn data, removal listening                               |
 | `extensions`        | Extensions to vanilla classes for additional functionality                            |
+| `fake_players`      | A basic fake server player implementation that can be used to simulate player actions |
+| `lazy_registration` | A implementation of forge's DeferredRegister system rewritten for fabric              |
+| `loot`              | Modifications to loot                                                                 |
 | `model_generators`  | Forge model generators                                                                |
 | `model_loader`      | Base loader for custom model types                                                    |
 | `models`            | Model implementations, ModelData, RenderTypes                                         |
@@ -31,8 +34,6 @@ The latest patch can be found from GitHub Actions as the build number.
 | `obj_loader`        | Loading .obj models                                                                   |
 | `tags`              | Forge tags                                                                            |
 | `transfer`          | Storage implementations, client-side lookup, FluidStack, assorted transfer utilities  |
-| `lazy_registration` | A implementation of forge's DeferredRegister system rewritten for fabric              |
-| `fake_players`      | A basic fake server player implementation that can be used to simulate player actions |
 
 ### Contributing
 See [the contribution information](CONTRIBUTING.md).
