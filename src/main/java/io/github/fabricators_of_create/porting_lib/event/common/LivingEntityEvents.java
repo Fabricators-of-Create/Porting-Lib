@@ -2,9 +2,6 @@ package io.github.fabricators_of_create.porting_lib.event.common;
 
 import java.util.Collection;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.damagesource.DamageSource;
@@ -18,6 +15,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.LevelAccessor;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class LivingEntityEvents {
 	/**
@@ -146,7 +146,7 @@ public class LivingEntityEvents {
 
 	@FunctionalInterface
 	public interface EquipmentChange {
-		void onEquipmentChange(LivingEntity entity, EquipmentSlot slot, @Nonnull ItemStack from, @Nonnull ItemStack to);
+		void onEquipmentChange(LivingEntity entity, EquipmentSlot slot, @NotNull ItemStack from, @NotNull ItemStack to);
 	}
 
 	@FunctionalInterface

@@ -3,14 +3,7 @@ package io.github.fabricators_of_create.porting_lib.util;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
-import javax.annotation.Nullable;
-
-import io.github.fabricators_of_create.porting_lib.util.client.ClientHooks;
-import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributeHandler;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.core.BlockPos;
@@ -33,6 +26,8 @@ import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
+
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Minecraft Forge Fluid Implementation

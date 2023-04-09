@@ -13,9 +13,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableList;
@@ -47,6 +44,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class OBJModel implements IMultipartModelGeometry<OBJModel> {
 	private static Vector4f COLOR_WHITE = new Vector4f(1, 1, 1, 1);
@@ -594,7 +594,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel> {
 		}
 	}
 
-	public record ModelSettings(@Nonnull ResourceLocation modelLocation,
+	public record ModelSettings(@NotNull ResourceLocation modelLocation,
 								boolean detectCullableFaces, boolean diffuseLighting, boolean flipV,
 								boolean ambientToFullbright, @Nullable String materialLibraryOverrideLocation)
 	{}

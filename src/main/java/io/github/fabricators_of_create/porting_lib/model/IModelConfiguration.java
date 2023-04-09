@@ -1,11 +1,11 @@
 package io.github.fabricators_of_create.porting_lib.model;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+
+import org.jetbrains.annotations.Nullable;
 
 /*
  * Interface that provides generic access to the data within BlockModel,

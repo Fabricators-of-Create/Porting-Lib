@@ -12,9 +12,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import io.github.fabricators_of_create.porting_lib.PortingLib;
 
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
@@ -69,6 +66,9 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class TierSortingRegistry {
 	private static final Logger LOGGER = LogManager.getLogger();
@@ -239,9 +239,9 @@ public class TierSortingRegistry {
 		return new IdentifiableSimplePreparableReloadListener<JsonObject>(PortingLib.id("tier_sorting_registry")) {
 			final Gson gson = (new GsonBuilder()).create();
 
-			@Nonnull
+			@NotNull
 			@Override
-			protected JsonObject prepare(@Nonnull ResourceManager resourceManager, ProfilerFiller p) {
+			protected JsonObject prepare(@NotNull ResourceManager resourceManager, ProfilerFiller p) {
 				if (!resourceManager.hasResource(ITEM_TIER_ORDERING_JSON))
 					return new JsonObject();
 
@@ -254,7 +254,7 @@ public class TierSortingRegistry {
 			}
 
 			@Override
-			protected void apply(@Nonnull JsonObject data, @Nonnull ResourceManager resourceManager, ProfilerFiller p) {
+			protected void apply(@NotNull JsonObject data, @NotNull ResourceManager resourceManager, ProfilerFiller p) {
 				try {
 					if (data.size() > 0) {
 						JsonArray order = GsonHelper.getAsJsonArray(data, "order");

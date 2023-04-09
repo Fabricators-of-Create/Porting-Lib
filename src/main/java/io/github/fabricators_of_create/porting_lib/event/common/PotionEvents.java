@@ -1,13 +1,13 @@
 package io.github.fabricators_of_create.porting_lib.event.common;
 
-import javax.annotation.Nullable;
-
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+
+import org.jetbrains.annotations.Nullable;
 
 public class PotionEvents {
 	public static Event<PotionAdded> POTION_ADDED = EventFactory.createArrayBacked(PotionAdded.class, callbacks -> (entity, newEffect, oldEffect, source) -> {

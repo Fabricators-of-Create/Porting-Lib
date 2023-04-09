@@ -5,9 +5,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.client.gui.components.Button.OnPress;
+
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This class is blatantly stolen from iChunUtils with permission.

@@ -11,8 +11,6 @@ package io.github.fabricators_of_create.porting_lib.transfer.item;
 //import net.minecraft.world.item.ItemStack;
 //import net.minecraft.world.item.Items;
 //
-//import javax.annotation.Nullable;
-//
 //import java.util.Optional;
 // todo. I'm tired of working on this.
 //public class BundleStorage extends ItemStackHandler {

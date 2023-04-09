@@ -21,7 +21,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class ConditionalRecipe {
 	public static final RecipeSerializer<Recipe<?>> SERIALZIER = Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation("forge:conditional"), new Serializer<>());

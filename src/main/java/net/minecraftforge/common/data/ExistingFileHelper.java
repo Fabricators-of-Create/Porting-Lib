@@ -19,6 +19,26 @@
 
 package net.minecraftforge.common.data;
 
+import net.minecraft.client.resources.AssetIndex;
+import net.minecraft.client.resources.ClientPackSource;
+import net.minecraft.client.resources.DefaultClientPackResources;
+import net.minecraft.data.HashCache;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.FilePackResources;
+import net.minecraft.server.packs.FolderPackResources;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.VanillaPackResources;
+import net.minecraft.server.packs.repository.ServerPacksSource;
+import net.minecraft.server.packs.resources.MultiPackResourceManager;
+
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraftforge.client.model.generators.ModelBuilder;
+import net.minecraftforge.resource.ResourcePackLoader;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,31 +49,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.client.resources.AssetIndex;
-import net.minecraft.client.resources.ClientPackSource;
-import net.minecraft.client.resources.DefaultClientPackResources;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.FilePackResources;
-import net.minecraft.server.packs.FolderPackResources;
-import net.minecraft.server.packs.PackResources;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.VanillaPackResources;
-import net.minecraft.server.packs.repository.ServerPacksSource;
-import net.minecraft.server.packs.resources.MultiPackResourceManager;
 import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraftforge.client.model.generators.ModelBuilder;
-import net.minecraftforge.resource.ResourcePackLoader;
 
 /**
  * Enables data providers to check if other data files currently exist.

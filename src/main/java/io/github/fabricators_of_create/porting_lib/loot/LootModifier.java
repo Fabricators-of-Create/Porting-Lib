@@ -3,12 +3,12 @@ package io.github.fabricators_of_create.porting_lib.loot;
 import java.util.List;
 import java.util.function.Predicate;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
+
+import org.jetbrains.annotations.NotNull;
 
 
 //From forge
@@ -26,7 +26,7 @@ public abstract class LootModifier implements IGlobalLootModifier {
 		this.combinedConditions = LootItemConditions.andConditions(conditionsIn);
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public final List<ItemStack> apply(List<ItemStack> generatedLoot, LootContext context) {
 		return this.combinedConditions.test(context) ? this.doApply(generatedLoot, context) : generatedLoot;
@@ -40,6 +40,6 @@ public abstract class LootModifier implements IGlobalLootModifier {
 	 * @param context       the LootContext, identical to what is passed to loot tables
 	 * @return modified loot drops
 	 */
-	@Nonnull
+	@NotNull
 	protected abstract List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context);
 }

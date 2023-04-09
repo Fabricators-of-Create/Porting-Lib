@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.entity;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public interface MultiPartEntity {
 	/**

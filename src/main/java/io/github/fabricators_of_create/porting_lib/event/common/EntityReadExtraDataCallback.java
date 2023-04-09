@@ -5,7 +5,7 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public interface EntityReadExtraDataCallback {
 	Event<EntityReadExtraDataCallback> EVENT = EventFactory.createArrayBacked(EntityReadExtraDataCallback.class, callbacks -> (entity, data) -> {

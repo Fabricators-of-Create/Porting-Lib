@@ -1,7 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import javax.annotation.Nonnull;
-
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -46,7 +45,7 @@ public abstract class Matrix3fMixin implements Matrix3fExtensions {
 	}
 
 	@Override
-	public void set(@Nonnull Matrix3f other) {
+	public void set(@NotNull Matrix3f other) {
 		Matrix3fMixin o = MixinHelper.cast(other); // This will look weird in the merged class
 
 		m00 = o.m00;

@@ -6,10 +6,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.apache.logging.log4j.Level;
@@ -18,14 +14,16 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * This is pretty much the Forge class copied over, theres really not much change you can do while keeping things functioning.
  * Made some things public and added {@link #getValueUnsafer()} to allow for Bad Ideas™
  */
 @MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
 public class LazyOptional<T> {
-	public static final @Nonnull LazyOptional<Void> EMPTY = new LazyOptional<>(null);
+	public static final @NotNull LazyOptional<Void> EMPTY = new LazyOptional<>(null);
 	private static final Logger LOGGER = LogManager.getLogger();
 	public NonNullSupplier<T> supplier;
 	private final Object lock = new Object();

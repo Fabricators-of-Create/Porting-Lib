@@ -4,7 +4,8 @@ import com.google.common.base.Charsets;
 import joptsimple.internal.Strings;
 import net.minecraft.server.packs.resources.Resource;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

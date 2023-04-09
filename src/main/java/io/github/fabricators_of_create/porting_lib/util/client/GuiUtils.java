@@ -3,8 +3,6 @@ package io.github.fabricators_of_create.porting_lib.util.client;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -21,6 +19,8 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+
+import org.jetbrains.annotations.NotNull;
 
 public class GuiUtils { // name is this to maintain max compat with upstream
 	public static final int DEFAULT_BACKGROUND_COLOR = 0xF0100010;
@@ -59,7 +59,7 @@ public class GuiUtils { // name is this to maintain max compat with upstream
 		drawHoveringText(ItemStack.EMPTY, mStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, backgroundColor, borderColorStart, borderColorEnd, font);
 	}
 
-	public static void drawHoveringText(@Nonnull final ItemStack stack, PoseStack mStack, List<? extends FormattedText> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, int backgroundColor, int borderColorStart, int borderColorEnd, Font font) {
+	public static void drawHoveringText(@NotNull final ItemStack stack, PoseStack mStack, List<? extends FormattedText> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, int backgroundColor, int borderColorStart, int borderColorEnd, Font font) {
 		if (!textLines.isEmpty()) {
 			//RenderSystem.disableRescaleNormal();
 			RenderSystem.disableDepthTest();

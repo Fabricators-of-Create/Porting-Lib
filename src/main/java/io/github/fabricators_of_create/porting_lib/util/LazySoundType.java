@@ -2,11 +2,11 @@ package io.github.fabricators_of_create.porting_lib.util;
 
 import java.util.function.Supplier;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A subclass of {@link SoundType} that uses {@link Supplier<SoundEvent>}s.
@@ -43,31 +43,31 @@ public class LazySoundType extends SoundType {
 		this.fallSound = fallSoundIn;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public SoundEvent getBreakSound() {
 		return breakSound.get();
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public SoundEvent getStepSound() {
 		return stepSound.get();
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public SoundEvent getPlaceSound() {
 		return placeSound.get();
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public SoundEvent getHitSound() {
 		return hitSound.get();
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public SoundEvent getFallSound() {
 		return fallSound.get();

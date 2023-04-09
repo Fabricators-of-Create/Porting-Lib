@@ -1,7 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
-import javax.annotation.Nullable;
-
 import io.github.fabricators_of_create.porting_lib.extensions.AbstractMinecartExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.BaseRailBlockExtensions;
 import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.AbstractMinecartAccessor;
@@ -15,6 +13,8 @@ import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
+
+import org.jetbrains.annotations.Nullable;
 
 public class MinecartAndRailUtil {
 

@@ -18,8 +18,8 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.Level;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface ItemExtensions {
 	default boolean canPerformAction(ItemStack stack, ToolAction toolAction) {
@@ -139,7 +139,7 @@ public interface ItemExtensions {
 	 * @param stack the stack
 	 * @return the default hide flags
 	 */
-	default int getDefaultTooltipHideFlags(@Nonnull ItemStack stack) {
+	default int getDefaultTooltipHideFlags(@NotNull ItemStack stack) {
 		return 0;
 	}
 }

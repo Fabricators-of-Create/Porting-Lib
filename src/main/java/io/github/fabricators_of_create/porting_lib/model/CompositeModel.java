@@ -20,8 +20,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockAndTintGetter;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -35,6 +34,8 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+
+import org.jetbrains.annotations.Nullable;
 
 public class CompositeModel implements BakedModel, FabricBakedModel, TransformTypeDependentItemBakedModel {
 	private final ImmutableMap<String, BakedModel> bakedParts;
@@ -55,9 +56,9 @@ public class CompositeModel implements BakedModel, FabricBakedModel, TransformTy
 		this.transforms = combinedTransform;
 	}
 
-//	@Nonnull TODO: PORT?
+//	@NotNull TODO: PORT?
 //	@Override
-//	public IModelData getModelData(@Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData modelData)
+//	public IModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull IModelData modelData)
 //	{
 //		CompositeModelData composite = new CompositeModelData();
 //		for(Map.Entry<String, BakedModel> entry : bakedParts.entrySet())

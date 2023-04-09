@@ -16,8 +16,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 import com.mojang.math.Transformation;
-
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
@@ -29,6 +27,8 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Forge reimplementation of vanilla {@link ItemModelGenerator}, i.e. builtin/generated models,

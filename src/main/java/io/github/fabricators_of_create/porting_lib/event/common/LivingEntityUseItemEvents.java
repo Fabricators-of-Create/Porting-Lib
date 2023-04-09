@@ -1,11 +1,11 @@
 package io.github.fabricators_of_create.porting_lib.event.common;
 
-import javax.annotation.Nonnull;
-
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+
+import org.jetbrains.annotations.NotNull;
 
 public interface LivingEntityUseItemEvents {
 
@@ -20,6 +20,6 @@ public interface LivingEntityUseItemEvents {
 
 	@FunctionalInterface
 	interface LivingUseItemFinish {
-		ItemStack onUseItem(LivingEntity entity, @Nonnull ItemStack item, int duration, @Nonnull ItemStack result);
+		ItemStack onUseItem(LivingEntity entity, @NotNull ItemStack item, int duration, @NotNull ItemStack result);
 	}
 }

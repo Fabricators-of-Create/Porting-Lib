@@ -1,9 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
-import java.util.function.Supplier;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 /**
  * Proxy object for a value that is calculated on first access
@@ -16,7 +16,7 @@ public interface Lazy<T> extends Supplier<T> {
 	 *
 	 * @param supplier The supplier for the value, to be called the first time the value is needed.
 	 */
-	static <T> Lazy<T> of(@Nonnull Supplier<T> supplier) {
+	static <T> Lazy<T> of(@NotNull Supplier<T> supplier) {
 		return new Fast<>(supplier);
 	}
 
@@ -25,7 +25,7 @@ public interface Lazy<T> extends Supplier<T> {
 	 *
 	 * @param supplier The supplier for the value, to be called the first time the value is needed.
 	 */
-	static <T> Lazy<T> concurrentOf(@Nonnull Supplier<T> supplier) {
+	static <T> Lazy<T> concurrentOf(@NotNull Supplier<T> supplier) {
 		return new Concurrent<>(supplier);
 	}
 

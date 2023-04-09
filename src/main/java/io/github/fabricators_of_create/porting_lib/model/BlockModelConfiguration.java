@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import javax.annotation.Nullable;
-
 import com.mojang.datafixers.util.Pair;
 
 import io.github.fabricators_of_create.porting_lib.extensions.BlockModelExtensions;
@@ -22,6 +20,8 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
+
+import org.jetbrains.annotations.Nullable;
 
 public class BlockModelConfiguration implements IModelConfiguration {
 	public final BlockModel owner;

@@ -1,15 +1,13 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
-import javax.annotation.Nonnull;
-
-import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+
+import org.jetbrains.annotations.NotNull;
 
 public class SlotItemHandler extends Slot {
 	private static final Container emptyInventory = new SimpleContainer(0);
@@ -23,27 +21,27 @@ public class SlotItemHandler extends Slot {
 	}
 
 	@Override
-	public boolean mayPlace(@Nonnull ItemStack stack) {
+	public boolean mayPlace(@NotNull ItemStack stack) {
 		if (stack.isEmpty())
 			return false;
 		return itemHandler.isItemValid(index, ItemVariant.of(stack));
 	}
 
 	@Override
-	@Nonnull
+	@NotNull
 	public ItemStack getItem() {
 		return this.getItemHandler().getStackInSlot(index);
 	}
 
 	// Override if your IItemHandler does not implement IItemHandlerModifiable
 	@Override
-	public void set(@Nonnull ItemStack stack) {
+	public void set(@NotNull ItemStack stack) {
 		this.getItemHandler().setStackInSlot(index, stack);
 		this.setChanged();
 	}
 
 	@Override
-	public void onQuickCraft(@Nonnull ItemStack oldStackIn, @Nonnull ItemStack newStackIn) {
+	public void onQuickCraft(@NotNull ItemStack oldStackIn, @NotNull ItemStack newStackIn) {
 
 	}
 
@@ -53,7 +51,7 @@ public class SlotItemHandler extends Slot {
 	}
 
 	@Override
-	public int getMaxStackSize(@Nonnull ItemStack stack) {
+	public int getMaxStackSize(@NotNull ItemStack stack) {
 		return getItemHandler().getStackLimit(index, ItemVariant.of(stack));
 	}
 
@@ -63,7 +61,7 @@ public class SlotItemHandler extends Slot {
 	}
 
 	@Override
-	@Nonnull
+	@NotNull
 	public ItemStack remove(int amount) {
 		ItemStack held = itemHandler.getStackInSlot(index).copy();
 		ItemStack removed = held.split(amount);

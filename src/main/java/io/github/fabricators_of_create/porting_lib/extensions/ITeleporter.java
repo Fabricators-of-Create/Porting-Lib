@@ -2,8 +2,6 @@ package io.github.fabricators_of_create.porting_lib.extensions;
 
 import java.util.function.Function;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.portal.PortalInfo;
 import net.minecraft.world.entity.Entity;
@@ -11,6 +9,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.portal.PortalForcer;
 import net.minecraft.server.level.ServerLevel;
+
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Interface for handling the placement of entities during dimension change.

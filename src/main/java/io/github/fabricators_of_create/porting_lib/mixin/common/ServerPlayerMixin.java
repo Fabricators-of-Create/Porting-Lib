@@ -23,6 +23,7 @@ import net.minecraft.world.level.storage.LevelData;
 
 import net.minecraft.world.phys.Vec3;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -40,7 +41,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-import javax.annotation.Nullable;
+
 
 @Mixin(ServerPlayer.class)
 public abstract class ServerPlayerMixin extends Player implements EntityExtensions {

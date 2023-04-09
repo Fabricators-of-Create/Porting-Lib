@@ -3,6 +3,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 import io.github.fabricators_of_create.porting_lib.extensions.IShearable;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -13,9 +14,6 @@ import net.minecraft.world.entity.animal.MushroomCow;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,13 +32,13 @@ public abstract class MushroomCowMixin implements IShearable {
 
 	@Unique
 	@Override
-	public boolean isShearable(@Nonnull ItemStack item, Level world, BlockPos pos) {
+	public boolean isShearable(@NotNull ItemStack item, Level world, BlockPos pos) {
 		return readyForShearing();
 	}
 
 	@Override
 	@NotNull
-	public List<ItemStack> onSheared(@Nullable Player player, @Nonnull ItemStack item, Level world, BlockPos pos, int fortune) {
+	public List<ItemStack> onSheared(@Nullable Player player, @NotNull ItemStack item, Level world, BlockPos pos, int fortune) {
 		shear(player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS);
 		List<ItemStack> items = new ArrayList<>();
 		for (int i = 0; i < 5; ++i) {

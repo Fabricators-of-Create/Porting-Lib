@@ -26,8 +26,6 @@ import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackRepository;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-
 public class ResourcePackLoader {
 	private static Map<ModContainer, PathResourcePack> modResourcePacks;
 
@@ -53,9 +51,9 @@ public class ResourcePackLoader {
 	public static PathResourcePack createPackForMod(ModContainer mf)
 	{
 		return new PathResourcePack(mf.getMetadata().getName(), mf.getRootPath()){
-			@Nonnull
+			@NotNull
 			@Override
-			protected Path resolve(@Nonnull String... paths)
+			protected Path resolve(@NotNull String... paths)
 			{
 				if (paths.length < 1) {
 					throw new IllegalArgumentException("Missing path");

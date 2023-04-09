@@ -1,10 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import io.github.fabricators_of_create.porting_lib.extensions.IShearable;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -32,13 +31,13 @@ public abstract class SnowGolemMixin implements IShearable {
 
 	@Unique
 	@Override
-	public boolean isShearable(@Nonnull ItemStack item, Level world, BlockPos pos) {
+	public boolean isShearable(@NotNull ItemStack item, Level world, BlockPos pos) {
 		return readyForShearing();
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
-	public List<ItemStack> onSheared(@Nullable Player player, @Nonnull ItemStack item, Level world, BlockPos pos, int fortune) {
+	public List<ItemStack> onSheared(@Nullable Player player, @NotNull ItemStack item, Level world, BlockPos pos, int fortune) {
 		world.playSound(null, (SnowGolem) (Object) this, SoundEvents.SNOW_GOLEM_SHEAR, player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS, 1.0F, 1.0F);
 		if (!world.isClientSide()) {
 			setPumpkin(false);

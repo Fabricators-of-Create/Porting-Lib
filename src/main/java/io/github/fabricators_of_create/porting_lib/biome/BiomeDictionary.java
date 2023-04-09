@@ -4,9 +4,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.minecraft.data.BuiltinRegistries;
 
 import net.minecraft.resources.ResourceLocation;
@@ -23,6 +20,9 @@ import static io.github.fabricators_of_create.porting_lib.biome.BiomeDictionary.
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.world.level.biome.Biome;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class BiomeDictionary {
 	private static final boolean DEBUG = false;
@@ -201,7 +201,7 @@ public class BiomeDictionary {
 	/**
 	 * Gets the set of biomes that have the given type.
 	 */
-	@Nonnull
+	@NotNull
 	public static Set<ResourceKey<Biome>> getBiomes(Type type) {
 		return type.biomesUn;
 	}
@@ -209,7 +209,7 @@ public class BiomeDictionary {
 	/**
 	 * Gets the set of types that have been added to the given biome.
 	 */
-	@Nonnull
+	@NotNull
 	public static Set<Type> getTypes(ResourceKey<Biome> biome) {
 		return getBiomeInfo(biome).typesUn;
 	}

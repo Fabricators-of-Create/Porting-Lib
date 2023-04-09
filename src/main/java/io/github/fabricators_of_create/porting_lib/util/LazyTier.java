@@ -5,7 +5,7 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
@@ -19,13 +19,13 @@ public final class LazyTier implements Tier {
 	private final float speed;
 	private final float attackDamageBonus;
 	private final int enchantmentValue;
-	@Nonnull
+	@NotNull
 	private final TagKey<Block> tag;
-	@Nonnull
+	@NotNull
 	private final Supplier<Ingredient> repairIngredient;
 
 	public LazyTier(int level, int uses, float speed, float attackDamageBonus, int enchantmentValue,
-					@Nonnull TagKey<Block> tag, @Nonnull Supplier<Ingredient> repairIngredient) {
+					@NotNull TagKey<Block> tag, @NotNull Supplier<Ingredient> repairIngredient) {
 		this.level = level;
 		this.uses = uses;
 		this.speed = speed;
@@ -60,12 +60,12 @@ public final class LazyTier implements Tier {
 		return this.enchantmentValue;
 	}
 
-	@Nonnull
+	@NotNull
 	public TagKey<Block> getTag() {
 		return this.tag;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public Ingredient getRepairIngredient() {
 		return this.repairIngredient.get();

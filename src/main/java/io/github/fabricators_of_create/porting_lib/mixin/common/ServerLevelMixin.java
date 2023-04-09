@@ -1,6 +1,4 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
-
-
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;

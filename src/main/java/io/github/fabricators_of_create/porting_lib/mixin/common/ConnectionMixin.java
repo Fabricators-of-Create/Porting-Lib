@@ -1,6 +1,4 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
-
-
 import io.netty.channel.ChannelHandlerContext;
 import java.util.concurrent.TimeoutException;
 import net.minecraft.network.Connection;
