@@ -47,6 +47,8 @@
     "common.ExplosionMixin",
     "common.FireBlockMixin",
     "common.FlyingMobMixin",
+    "common.GrindstoneMenuMixin",
+    "common.GrindstoneMenuMixin$GrindstoneMenu$4Mixin",
     "common.InventoryMixin",
     "common.ItemEntityMixin",
     "common.ItemPredicateMixin",

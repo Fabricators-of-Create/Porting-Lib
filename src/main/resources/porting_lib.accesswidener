@@ -94,3 +94,6 @@ transitive-accessible field net/minecraft/client/renderer/block/model/ItemTransf
 transitive-accessible method net/minecraft/resources/ResourceLocation isValidPath (Ljava/lang/String;)Z
 transitive-accessible method net/minecraft/client/gui/components/AbstractButton getTextureY ()I
 transitive-accessible field net/minecraft/server/network/ServerGamePacketListenerImpl connection Lnet/minecraft/network/Connection;
+
+
+accessible field net/minecraft/world/inventory/GrindstoneMenu repairSlots Lnet/minecraft/world/Container;

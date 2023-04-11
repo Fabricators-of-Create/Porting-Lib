@@ -8,6 +8,7 @@ import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.EntityEvents;
+import io.github.fabricators_of_create.porting_lib.event.common.GrindstoneEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockItemExtensions;
 import io.github.fabricators_of_create.porting_lib.loot.IGlobalLootModifier;
 import io.github.fabricators_of_create.porting_lib.loot.LootModifierManager;
@@ -24,6 +25,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -187,5 +189,17 @@ public class PortingHooks {
 		if (killer instanceof LivingEntity)
 			return EnchantmentHelper.getMobLooting((LivingEntity)killer);
 		return 0;
+	}
+
+	public static int onGrindstoneChange(@NotNull ItemStack top, @NotNull ItemStack bottom, Container outputSlot, int xp) {
+		GrindstoneEvents.OnplaceItem e = new GrindstoneEvents.OnplaceItem(top, bottom, xp);
+		if (e.isCanceled()) {
+			outputSlot.setItem(0, ItemStack.EMPTY);
+			return -1;
+		}
+		if (e.getOutput().isEmpty()) return Integer.MIN_VALUE;
+
+		outputSlot.setItem(0, e.getOutput());
+		return e.getXp();
 	}
 }
