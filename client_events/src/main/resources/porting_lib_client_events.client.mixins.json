@@ -7,8 +7,8 @@
   "client": [
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
-    "ClientPacketListenerMixin",
     "GameRendererMixin",
+    "LocalPlayerMixin",
     "ModelManagerMixin",
     "PlayerRendererMixin",
     "SoundEngineMixin"
