@@ -28,11 +28,6 @@ public interface ExtendedStorage<T> extends Storage<T> {
 		return extractMatching($ -> true, maxAmount, transaction);
 	}
 
-	/**
-	 * @return an iterator of only StorageViews that are not empty.
-	 */
-	Iterator<? extends StorageView<T>> nonEmptyViews();
-
 	@SuppressWarnings("unchecked, rawtypes")
 	default Iterable<? extends StorageView<T>> nonEmptyIterable() {
 		return () -> (Iterator) nonEmptyViews();

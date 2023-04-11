@@ -137,7 +137,7 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
-	public Iterator<? extends StorageView<ItemVariant>> nonEmptyViews() {
+	public Iterable<StorageView<ItemVariant>> nonEmptyViews() {
 		return handler.nonEmptyViews();
 	}
 

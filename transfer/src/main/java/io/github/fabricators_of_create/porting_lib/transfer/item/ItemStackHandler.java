@@ -235,8 +235,8 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapsh
 	}
 
 	@Override
-	public Iterator<? extends StorageView<ItemVariant>> nonEmptyViews() {
-		return nonEmptyViews.iterator();
+	public Iterable<? extends StorageView<ItemVariant>> nonEmptyIterable() {
+		return nonEmptyViews;
 	}
 
 	@Override

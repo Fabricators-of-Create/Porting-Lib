@@ -207,15 +207,6 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		return original.call(state);
 	}
 
-	@ModifyExpressionValue(method = "getSignal", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;isRedstoneConductor(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z"))
-	public boolean port_lib$getRedstoneSignal(boolean conductor, BlockPos pos, Direction facing) {
-		if (conductor)
-			return true;
-		BlockState state = getBlockState(pos);
-		return state.getBlock() instanceof WeakPowerCheckingBlock checking
-				&& checking.shouldCheckWeakPower(state, this, pos, facing);
-	}
-
 	@Inject(
 			method = "updateNeighbourForOutputSignal",
 			at = @At(

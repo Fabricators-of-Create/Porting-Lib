@@ -63,8 +63,6 @@ public interface BlockExtensions {
 			return state.isFaceSturdy(world, pos, Direction.UP);
 		} else if (PlantType.PLAINS.equals(type)) {
 			return this == Blocks.GRASS_BLOCK || ((Block)this).defaultBlockState().is(BlockTags.DIRT) || this == Blocks.FARMLAND;
-		} else if (PlantType.WATER.equals(type)) {
-			return state.getMaterial() == net.minecraft.world.level.material.Material.WATER; //&& state.getValue(BlockLiquidWrapper)
 		} else if (PlantType.BEACH.equals(type)) {
 			boolean isBeach = state.is(Blocks.GRASS_BLOCK) || ((Block)this).defaultBlockState().is(BlockTags.DIRT) || state.is(Blocks.SAND) || state.is(Blocks.RED_SAND);
 			boolean hasWater = false;
