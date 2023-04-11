@@ -73,8 +73,8 @@ public abstract class GrindstoneMenuMixin extends AbstractContainerMenu implemen
 
 		@Inject(method = "method_17417", at = @At("HEAD"), cancellable = true)
 		private void onGrindStoneTake(Level level, BlockPos blockPos, CallbackInfo ci) {
-			var inputSlots = this.field_16780.repairSlots;
-			GrindstoneEvents.OnTakeItem takeItem = new GrindstoneEvents.OnTakeItem(inputSlots.getItem(0), inputSlots.getItem(1), this.getExperienceAmount(level));
+			GrindstoneEvents.OnTakeItem takeItem = EVENT.get();
+			takeItem.setXp(this.getExperienceAmount(level));
 			takeItem.sendEvent();
 			if (takeItem.isCanceled()) {
 				ci.cancel();
@@ -90,6 +90,12 @@ public abstract class GrindstoneMenuMixin extends AbstractContainerMenu implemen
 			if (oldLevel == newXp)
 				return oldLevel;
 			return newXp;
+		}
+
+		@Inject(method = "onTake", at = @At("HEAD"))
+		private void createEvent(Player player, ItemStack itemStack, CallbackInfo ci) {
+			var inputSlots = this.field_16780.repairSlots;
+			EVENT.set(new GrindstoneEvents.OnTakeItem(inputSlots.getItem(0), inputSlots.getItem(1), -1));
 		}
 
 		@ModifyArg(method = "onTake", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Container;setItem(ILnet/minecraft/world/item/ItemStack;)V", ordinal = 0), index = 1)
