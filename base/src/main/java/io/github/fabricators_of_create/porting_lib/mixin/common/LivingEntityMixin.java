@@ -122,11 +122,8 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 	@Inject(method = "dropAllDeathLoot", at = @At("RETURN"))
 	private void port_lib$dropCapturedDrops(DamageSource source, CallbackInfo ci) {
 		Collection<ItemEntity> drops = this.captureDrops(null);
-		boolean cancelled = LivingEntityEvents.DROPS_WITH_LEVEL.invoker().onLivingEntityDrops(
+		boolean cancelled = LivingEntityEvents.DROPS.invoker().onLivingEntityDrops(
 				(LivingEntity) (Object) this, source, drops, port_lib$lootingLevel, lastHurtByPlayerTime > 0
-		);
-		cancelled |= LivingEntityEvents.DROPS.invoker().onLivingEntityDrops(
-				(LivingEntity) (Object) this, source, drops
 		);
 		if (!cancelled)
 			drops.forEach(e -> level.addFreshEntity(e));
