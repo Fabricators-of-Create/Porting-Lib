@@ -95,5 +95,7 @@ transitive-accessible method net/minecraft/resources/ResourceLocation isValidPat
 transitive-accessible method net/minecraft/client/gui/components/AbstractButton getTextureY ()I
 transitive-accessible field net/minecraft/server/network/ServerGamePacketListenerImpl connection Lnet/minecraft/network/Connection;
 
+transitive-accessible method net/minecraft/commands/synchronization/ArgumentTypeInfos register (Lnet/minecraft/core/Registry;Ljava/lang/String;Ljava/lang/Class;Lnet/minecraft/commands/synchronization/ArgumentTypeInfo;)Lnet/minecraft/commands/synchronization/ArgumentTypeInfo;
 
+# Internal
 accessible field net/minecraft/world/inventory/GrindstoneMenu repairSlots Lnet/minecraft/world/Container;
