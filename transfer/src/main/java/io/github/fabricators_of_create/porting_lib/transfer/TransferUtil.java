@@ -124,6 +124,7 @@ public class TransferUtil implements ModInitializer {
 		if (be == null) {
 			Objects.requireNonNull(level, "If a null Block Entity is provided, the Level may NOT be null!");
 			Objects.requireNonNull(pos, "If a null Block Entity is provided, the pos may NOT be null!");
+			be = level.getBlockEntity(pos);
 		}
 		if (level == null || pos == null) {
 			Objects.requireNonNull(be, "If a null level or pos is provided, the Block Entity may NOT be null!");
@@ -211,6 +212,7 @@ public class TransferUtil implements ModInitializer {
 		if (be == null) {
 			Objects.requireNonNull(level, "If a null Block Entity is provided, the Level may NOT be null!");
 			Objects.requireNonNull(pos, "If a null Block Entity is provided, the pos may NOT be null!");
+			be = level.getBlockEntity(pos);
 		}
 		if (level == null || pos == null) {
 			Objects.requireNonNull(be, "If a null level or pos is provided, the Block Entity may NOT be null!");
@@ -439,10 +441,13 @@ public class TransferUtil implements ModInitializer {
 	 * @return the extracted FluidStack, or EMPTY if none.
 	 */
 	public static FluidStack extractAnyFluid(Storage<FluidVariant> storage, long maxAmount, Transaction tx) {
+		if (!storage.supportsExtraction())
+			return FluidStack.EMPTY;
+		if (storage instanceof ExtendedStorage<FluidVariant> extended) {
+			ResourceAmount<FluidVariant> extracted = extended.extractAny(maxAmount, tx);
+			return extracted == null ? FluidStack.EMPTY : new FluidStack(extracted);
+		}
 		FluidStack fluid = FluidStack.EMPTY;
-		if (!storage.supportsExtraction()) return fluid;
-		if (storage instanceof ExtendedStorage<FluidVariant> extended)
-			return new FluidStack(extended.extractAny(maxAmount, tx));
 		for (StorageView<FluidVariant> view : getNonEmpty(storage)) {
 			FluidVariant var = view.getResource();
 			long amount = Math.min(maxAmount, view.getAmount());
@@ -483,13 +488,14 @@ public class TransferUtil implements ModInitializer {
 
 	/** @see TransferUtil#extractAnyFluid(Storage, long) */
 	public static ItemStack extractAnyItem(Storage<ItemVariant> storage, long maxAmount, Transaction tx) {
-		ItemStack stack = ItemStack.EMPTY;
-		if (!storage.supportsExtraction()) return stack;
+		if (!storage.supportsExtraction())
+			return ItemStack.EMPTY;
 		if (storage instanceof ExtendedStorage<ItemVariant> extended) {
 			int max = truncateLong(maxAmount);
 			ResourceAmount<ItemVariant> extracted = extended.extractAny(max, tx);
-			return extracted.resource().toStack(truncateLong(extracted.amount()));
+			return extracted == null ? ItemStack.EMPTY : extracted.resource().toStack(truncateLong(extracted.amount()));
 		}
+		ItemStack stack = ItemStack.EMPTY;
 		for (Iterator<StorageView<ItemVariant>> it = storage.iterator(); it.hasNext(); ) {
 			StorageView<ItemVariant> view = it.next();
 			if (!view.isResourceBlank()) {
@@ -652,7 +658,7 @@ public class TransferUtil implements ModInitializer {
 		if (storage instanceof ExtendedStorage<T> extended)
 			return extended.extractMatching(predicate, maxAmount, t);
 		T variant = null;
-		for (StorageView<T> view : storage) {
+		for (StorageView<T> view : getNonEmpty(storage)) {
 			T resource = view.getResource();
 			if (predicate.test(resource)) {
 				variant = resource;
@@ -678,8 +684,6 @@ public class TransferUtil implements ModInitializer {
 	}
 
 	/**
-	 * Get a BlockApiCache for ItemStorage.SIDED. If on client, will return a client-side cache,
-	 * which can only interact with BlockEntities using the ItemTransferable interface.
 	 * @deprecated use StorageProvider
 	 */
 	@Deprecated(forRemoval = true)
@@ -688,8 +692,6 @@ public class TransferUtil implements ModInitializer {
 	}
 
 	/**
-	 * Get a BlockApiCache for FluidStorage.SIDED. If on client, will return a client-side cache,
-	 * which can only interact with BlockEntities using the FluidTransferable interface.
 	 * @deprecated use StorageProvider
 	 */
 	@Deprecated(forRemoval = true)

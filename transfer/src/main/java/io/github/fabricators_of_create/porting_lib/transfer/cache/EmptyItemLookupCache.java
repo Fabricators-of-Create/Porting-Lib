@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.transfer.cache;
 
+import io.github.fabricators_of_create.porting_lib.util.StorageProvider;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -11,23 +12,24 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @deprecated see ClientBlockApiCache
+ * This should not be used directly. Use {@link StorageProvider} instead.
  */
+@Internal
 @SuppressWarnings("NonExtendableApiUsage")
-@Deprecated(forRemoval = true)
-public enum EmptyItemLookupCache implements BlockApiCache<Storage<ItemVariant>, Direction> {
-	INSTANCE;
-
+public record EmptyItemLookupCache(BlockPos pos) implements BlockApiCache<Storage<ItemVariant>, Direction> {
 	@Override
-	public @Nullable Storage<ItemVariant> find(@Nullable BlockState state, Direction context) {
+	@Nullable
+	public Storage<ItemVariant> find(@Nullable BlockState state, Direction context) {
 		return null;
 	}
 
 	@Override
-	public @Nullable BlockEntity getBlockEntity() {
+	@Nullable
+	public BlockEntity getBlockEntity() {
 		return null;
 	}
 
@@ -38,11 +40,11 @@ public enum EmptyItemLookupCache implements BlockApiCache<Storage<ItemVariant>, 
 
 	@Override
 	public ServerLevel getWorld() {
-		return null;
+		throw new UnsupportedOperationException("Cannot call getWorld on an empty cache as no world is associated with it");
 	}
 
 	@Override
 	public BlockPos getPos() {
-		return null;
+		return pos;
 	}
 }

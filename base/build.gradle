@@ -12,8 +12,8 @@ moduleDependencies(project, [
 
 dependencies {
 	modImplementation(include("com.github.Chocohead:Fabric-ASM:v2.3"))
-	api(include("com.github.LlamaLad7:MixinExtras:0.2.0-beta.4"))
-	annotationProcessor("com.github.LlamaLad7:MixinExtras:0.2.0-beta.4")
+	api(include("com.github.LlamaLad7:MixinExtras:$mixin_extras_version"))
+	annotationProcessor("com.github.LlamaLad7:MixinExtras:$mixin_extras_version")
 
 //	modCompileOnly("com.yungnickyoung.minecraft.yungsapi:YungsApi:1.19.2-Fabric-3.8.0") not updated to 1.19.3
 }

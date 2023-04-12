@@ -43,8 +43,6 @@ import net.minecraft.world.level.storage.loot.LootContext;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 @SuppressWarnings({"removal", "UnstableApiUsage"})
 public class PortingHooks {
 	public static boolean isCorrectToolForDrops(@NotNull BlockState state, @NotNull Player player) {
