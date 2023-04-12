@@ -7,5 +7,5 @@
   "mixins": [
     "porting_lib_accessors.mixins.json"
   ],
-  "accessWidener": "porting_lib.accesswidener"
+  "accessWidener": "porting_lib_accessors.accesswidener"
 }
