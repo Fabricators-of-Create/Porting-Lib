@@ -23,7 +23,6 @@ public abstract class ModdedEntityLootSubProvider extends EntityLootSubProvider 
 
 	private final FeatureFlagSet allowed;
 	private final FeatureFlagSet required;
-	public final Map<EntityType<?>, Map<ResourceLocation, LootTable.Builder>> map;
 
 	public ModdedEntityLootSubProvider(FeatureFlagSet enabledFeatures) {
 		this(enabledFeatures, enabledFeatures);
@@ -31,7 +30,6 @@ public abstract class ModdedEntityLootSubProvider extends EntityLootSubProvider 
 
 	public ModdedEntityLootSubProvider(FeatureFlagSet allowed, FeatureFlagSet required) {
 		super(allowed, required);
-		this.map = Maps.newHashMap();
 		this.allowed = allowed;
 		this.required = required;
 	}
