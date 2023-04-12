@@ -1,8 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.transfer.cache;
 
-import org.jetbrains.annotations.Nullable;
-
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
+import io.github.fabricators_of_create.porting_lib.util.StorageProvider;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -16,23 +15,24 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import org.jetbrains.annotations.ApiStatus.Internal;
+import org.jetbrains.annotations.Nullable;
+
 /**
- * A {@link BlockApiLookup} for item storage on the client. can only access API provided through TransferUtil. Null directions allowed.
- * @deprecated see ClientBlockApiCache
+ * This should not be used directly. Use {@link StorageProvider} instead.
  */
+@Internal
 @SuppressWarnings("NonExtendableApiUsage")
-@Deprecated(forRemoval = true)
 public class ClientItemLookupCache implements BlockApiCache<Storage<ItemVariant>, Direction>, ClientBlockApiCache {
 	private final ClientLevel world;
 	private final BlockPos pos;
 	private boolean blockEntityCacheValid = false;
 	private BlockEntity cachedBlockEntity = null;
-	private BlockState lastState = null;
 
 	public static BlockApiCache<Storage<ItemVariant>, Direction> get(Level level, BlockPos pos) {
 		if (level instanceof ClientLevel c)
 			return new ClientItemLookupCache(c, pos);
-		return EmptyItemLookupCache.INSTANCE;
+		return new EmptyItemLookupCache(pos);
 	}
 
 	public ClientItemLookupCache(ClientLevel world, BlockPos pos) {
@@ -44,32 +44,17 @@ public class ClientItemLookupCache implements BlockApiCache<Storage<ItemVariant>
 	public void invalidate() {
 		blockEntityCacheValid = false;
 		cachedBlockEntity = null;
-		lastState = null;
 	}
 
 	@Nullable
 	@Override
-	public Storage<ItemVariant> find(@Nullable BlockState state, @Nullable Direction context) {
+	public Storage<ItemVariant> find(@Nullable BlockState state, Direction context) {
 		// Update block entity cache
 		getBlockEntity();
-
-		// Get block state
-		if (state == null) {
-			if (cachedBlockEntity != null) {
-				state = cachedBlockEntity.getBlockState();
-			} else {
-				state = world.getBlockState(pos);
-			}
-		}
-
-		if (lastState != state) {
-			lastState = state;
-		}
-
 		// Query the provider
 		if (cachedBlockEntity == null)
 			return null;
-		return TransferUtil.getItemStorage(cachedBlockEntity, context);
+		return TransferUtil.getItemStorage(world, pos, cachedBlockEntity, context);
 	}
 
 	@Override
@@ -90,7 +75,7 @@ public class ClientItemLookupCache implements BlockApiCache<Storage<ItemVariant>
 
 	@Override
 	public ServerLevel getWorld() {
-		return null; // why
+		throw new UnsupportedOperationException("Cannot call getWorld on a client-side cache as only ServerLevels are supported");
 	}
 
 	@Override

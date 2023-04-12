@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(ModelBlockRenderer.class)
+@Mixin(value = ModelBlockRenderer.class, priority = 900)
 public class ModelBlockRendererMixin {
 	@ModifyExpressionValue(
 			method = "tesselateBlock",

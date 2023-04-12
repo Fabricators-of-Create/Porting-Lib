@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.Collection;
 
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
+
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.INBTSerializableCompound;
 
 import io.github.fabricators_of_create.porting_lib.util.EntityHelper;
@@ -30,7 +32,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.PortalInfo;
@@ -41,49 +42,34 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializableC
 	public Level level;
 	@Shadow
 	private float eyeHeight;
+	@Shadow
+	public abstract EntityType<?> getType();
+	@Shadow
+	@Nullable
+	private Entity vehicle;
+	@Shadow
+	protected abstract void removeAfterChangingDimensions();
+	@Shadow
+	@Nullable
+	protected abstract PortalInfo findDimensionEntryPoint(ServerLevel destination);
+	@Shadow
+	private float yRot;
+	@Shadow
+	public abstract boolean isRemoved();
+	@Shadow
+	public abstract void unRide();
+	@Shadow
+	@Nullable
+	protected abstract String getEncodeId();
+	@Shadow
+	public abstract CompoundTag saveWithoutId(CompoundTag compoundTag);
+	@Shadow
+	public abstract void load(CompoundTag compoundTag);
+
 	@Unique
 	private CompoundTag port_lib$extraCustomData;
 	@Unique
 	private Collection<ItemEntity> port_lib$captureDrops = null;
-
-	@Shadow
-	protected abstract void readAdditionalSaveData(CompoundTag compoundTag);
-
-	@Shadow
-	public abstract EntityType<?> getType();
-
-	@Shadow
-	@Nullable
-	private Entity vehicle;
-
-	@Shadow
-	protected abstract void removeAfterChangingDimensions();
-
-	@Shadow
-	@Nullable
-	protected abstract PortalInfo findDimensionEntryPoint(ServerLevel destination);
-
-	@Shadow
-	private float yRot;
-
-	@Shadow
-	public abstract boolean isRemoved();
-
-	@Shadow
-	public abstract void unRide();
-
-	@Shadow
-	@Nullable
-	protected abstract String getEncodeId();
-
-	@Shadow
-	public abstract CompoundTag saveWithoutId(CompoundTag compoundTag);
-
-	@Shadow
-	public abstract void load(CompoundTag compoundTag);
-
-	@Shadow
-	public float maxUpStep;
 
 	@Inject(at = @At("TAIL"), method = "<init>")
 	public void port_lib$entityInit(EntityType<?> entityType, Level world, CallbackInfo ci) {
@@ -92,21 +78,19 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializableC
 
 	// CAPTURE DROPS
 
-	@Inject(
+	@WrapWithCondition(
 			method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;",
-			locals = LocalCapture.CAPTURE_FAILHARD,
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/world/entity/item/ItemEntity;setDefaultPickUpDelay()V",
-					shift = At.Shift.AFTER
-			),
-			cancellable = true
+					target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
+			)
 	)
-	public void port_lib$spawnAtLocation(ItemStack stack, float f, CallbackInfoReturnable<ItemEntity> cir, ItemEntity itemEntity) {
-		if (port_lib$captureDrops != null) {
-			port_lib$captureDrops.add(itemEntity);
-			cir.setReturnValue(itemEntity);
+	public boolean port_lib$captureDrops(Level level, Entity entity) {
+		if (port_lib$captureDrops != null && entity instanceof ItemEntity item) {
+			port_lib$captureDrops.add(item);
+			return false;
 		}
+		return true;
 	}
 
 	@Unique

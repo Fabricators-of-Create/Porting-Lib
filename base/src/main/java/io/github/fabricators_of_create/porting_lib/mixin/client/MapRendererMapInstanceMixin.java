@@ -21,7 +21,7 @@ import net.minecraft.client.gui.MapRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
 
-@Mixin(MapRenderer.MapInstance.class)
+@Mixin(value = MapRenderer.MapInstance.class, priority = 860) // apply earlier due to fragile local capture
 public abstract class MapRendererMapInstanceMixin {
 
 	@Unique
