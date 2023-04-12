@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib;
 
+import io.github.fabricators_of_create.porting_lib.command.ModIdArgument;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 
 import net.minecraft.server.packs.PackType;
@@ -21,6 +22,9 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 public class PortingLib implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("Porting Lib Base");
 	@Override
@@ -31,7 +35,6 @@ public class PortingLib implements ModInitializer {
 		PortingHooks.init();
 		// can be used to force all mixins to apply
 		// MixinEnvironment.getCurrentEnvironment().audit();
-
 		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(LootModifierManager.INSTANCE);
 		Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, new ResourceLocation("forge:loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
 		Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, new ResourceLocation("forge:can_tool_perform_action"), CanToolPerformAction.LOOT_CONDITION_TYPE);

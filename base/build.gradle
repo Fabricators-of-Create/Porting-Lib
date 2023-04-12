@@ -1,7 +1,6 @@
 moduleDependencies(project, [
 		"lazy_registration",
 		"fake_players",
-		"ingredients",
 		"extensions",
 		"transfer",
 		"utility",

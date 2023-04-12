@@ -2,7 +2,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import com.google.gson.JsonObject;
 
-import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
+import io.github.fabricators_of_create.porting_lib.util.CraftingHelper;
 import io.github.fabricators_of_create.porting_lib.util.ShapedRecipeUtil;
 import net.minecraft.world.item.ItemStack;
 

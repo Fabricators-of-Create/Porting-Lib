@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.crafting;
+package io.github.fabricators_of_create.porting_lib.util;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,14 +15,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import io.github.tropheusj.serialization_hooks.ingredient.CombinedIngredient;
-import io.github.tropheusj.serialization_hooks.ingredient.IngredientDeserializer;
+import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
+import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
+import net.fabricmc.fabric.api.recipe.v1.ingredient.DefaultCustomIngredients;
+import net.fabricmc.fabric.api.recipe.v1.ingredient.FabricIngredient;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
@@ -32,27 +32,17 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 import javax.annotation.Nullable;
 
+/**
+ * @deprecated use of this class should be re-evaluated.
+ * @see DefaultCustomIngredients
+ * @see FabricIngredient
+ * @see CustomIngredient
+ * @see CustomIngredientSerializer
+ */
+@Deprecated
 public class CraftingHelper {
 
-	private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-
-	public static void init() {
-		// forge's Compound defers to Serialization Hooks' Combined		// can't register more than once so construct a new one
-		register(new ResourceLocation("forge", "compound"), new CombinedIngredient.Deserializer());
-		register(new ResourceLocation("forge", "partial_nbt"), PartialNBTIngredient.Serializer.INSTANCE);
-		register(NBTIngredient.Serializer.ID, NBTIngredient.Serializer.INSTANCE);
-		register(DifferenceIngredient.Serializer.ID, DifferenceIngredient.Serializer.INSTANCE);
-		register(IntersectionIngredient.Serializer.ID, IntersectionIngredient.Serializer.INSTANCE);
-	}
-
-	public static IngredientDeserializer register(ResourceLocation key, IngredientDeserializer serializer) {
-		return Registry.register(IngredientDeserializer.REGISTRY, key, serializer);
-	}
-
-	@Nullable
-	public static ResourceLocation getID(IngredientDeserializer serializer) {
-		return IngredientDeserializer.REGISTRY.getKey(serializer);
-	}
+	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
 	public static Ingredient getIngredient(JsonElement json) {
 		if (json == null || json.isJsonNull())
@@ -79,7 +69,7 @@ public class CraftingHelper {
 			if (ingredients.size() == 1)
 				return ingredients.get(0);
 
-			return new CombinedIngredient(ingredients);
+			return DefaultCustomIngredients.any(ingredients.toArray(Ingredient[]::new));
 		}
 
 		if (!json.isJsonObject())
