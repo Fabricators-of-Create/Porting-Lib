@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib;
 
+import io.github.fabricators_of_create.porting_lib.command.ModIdArgument;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 
 import net.minecraft.server.packs.PackType;
@@ -15,6 +16,8 @@ import io.github.fabricators_of_create.porting_lib.transfer.item.ItemItemStorage
 import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import io.github.fabricators_of_create.porting_lib.util.TierSortingRegistry;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.commands.synchronization.ArgumentTypeInfos;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -33,5 +36,8 @@ public class PortingLib implements ModInitializer {
 		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(LootModifierManager.INSTANCE);
 		Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, new ResourceLocation("forge:loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
 		Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, new ResourceLocation("forge:can_tool_perform_action"), CanToolPerformAction.LOOT_CONDITION_TYPE);
+
+		ArgumentTypeInfos.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, PortingConstants.id("modid").toString(), ModIdArgument.class,
+				SingletonArgumentInfo.contextFree(ModIdArgument::modIdArgument));
 	}
 }
