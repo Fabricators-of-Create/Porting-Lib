@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import io.github.fabricators_of_create.porting_lib.block.WeakPowerCheckingBlock;
 import net.minecraft.core.BlockPos;
@@ -15,12 +16,18 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(SignalGetter.class)
 public interface SignalGetterMixin extends BlockGetter {
-	@ModifyExpressionValue(method = "getSignal", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;isRedstoneConductor(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z"))
-	default boolean getRedstoneSignal(boolean conductor, BlockPos pos, Direction facing) {
-		if (conductor)
-			return true;
-		BlockState state = getBlockState(pos);
-		return state.getBlock() instanceof WeakPowerCheckingBlock checking
-				&& checking.shouldCheckWeakPower(state, (SignalGetter) this, pos, facing);
+	@WrapOperation(
+			method = "getSignal",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/block/state/BlockState;isRedstoneConductor(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z"
+			)
+	)
+	private boolean port_lib$modifyRedstoneSignal(BlockState state, BlockGetter level, BlockPos pos, Operation<Boolean> original,
+												  BlockPos pos2, Direction facing) {
+		if (state.getBlock() instanceof WeakPowerCheckingBlock checking) {
+			return checking.shouldCheckWeakPower(state, (SignalGetter) this, pos, facing);
+		}
+		return original.call(state, level, pos);
 	}
 }
