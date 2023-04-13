@@ -2,6 +2,6 @@
   "schemaVersion": 1,
   "id": "porting_lib_model_materials",
   "version": "${version}",
-  "name": "Porting Lib Model Maters",
-  "description": ""
+  "name": "Porting Lib Model Materials",
+  "description": "Material data for use in rendering."
 }

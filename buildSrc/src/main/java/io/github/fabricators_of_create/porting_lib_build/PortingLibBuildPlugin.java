@@ -14,10 +14,21 @@ public class PortingLibBuildPlugin implements Plugin<Project> {
 
 	@Override
 	public void apply(Project project) {
+		Task validateModule = project.getTasks().create("validateModule", ValidateModuleTask.class);
 		project.afterEvaluate(p -> {
 			setupDeduplication(p);
 			setupResourceProcessing(p);
+			setupValidation(p, validateModule);
 		});
+	}
+
+	public void setupValidation(Project project, Task validateModule) {
+		TaskContainer tasks = project.getTasks();
+		Task build = tasks.findByName("build");
+		if (build == null)
+			throw new IllegalStateException("No build task?");
+		Task validateAw = tasks.findByName("validateAccessWidener");
+		build.dependsOn(validateAw, validateModule);
 	}
 
 	public void setupDeduplication(Project project) {
