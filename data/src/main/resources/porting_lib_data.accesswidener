@@ -1,23 +1,20 @@
 accessWidener v2 named
+
+transitive-accessible class net/minecraft/core/RegistrySetBuilder$RegistryStub
+
+transitive-accessible method net/minecraft/client/resources/ClientPackSource createVanillaPackSource (Ljava/nio/file/Path;)Lnet/minecraft/server/packs/VanillaPackResources;
+transitive-accessible method net/minecraft/data/registries/RegistriesDatapackGenerator dumpValue (Ljava/nio/file/Path;Lnet/minecraft/data/CachedOutput;Lcom/mojang/serialization/DynamicOps;Lcom/mojang/serialization/Encoder;Ljava/lang/Object;)Ljava/util/concurrent/CompletableFuture;
+transitive-accessible method net/minecraft/server/packs/repository/ServerPacksSource createVanillaPackSource ()Lnet/minecraft/server/packs/VanillaPackResources;
+
+transitive-accessible field net/minecraft/core/RegistrySetBuilder entries Ljava/util/List;
 transitive-accessible field net/minecraft/data/loot/BlockLootSubProvider map Ljava/util/Map;
 transitive-accessible field net/minecraft/data/loot/EntityLootSubProvider SPECIAL_LOOT_TABLE_TYPES Ljava/util/Set;
 transitive-accessible field net/minecraft/data/loot/EntityLootSubProvider map Ljava/util/Map;
-
 transitive-accessible field net/minecraft/data/loot/LootTableProvider pathProvider Lnet/minecraft/data/PackOutput$PathProvider;
-
 transitive-accessible field net/minecraft/data/tags/TagsProvider LOGGER Lorg/slf4j/Logger;
 transitive-accessible field net/minecraft/data/tags/TagsProvider builders Ljava/util/Map;
 transitive-accessible field net/minecraft/data/tags/TagsProvider contentsDone Ljava/util/concurrent/CompletableFuture;
 transitive-accessible field net/minecraft/data/tags/TagsProvider parentProvider Ljava/util/concurrent/CompletableFuture;
-
 transitive-accessible field net/minecraft/tags/TagEntry id Lnet/minecraft/resources/ResourceLocation;
-transitive-accessible field net/minecraft/tags/TagEntry tag Z
 transitive-accessible field net/minecraft/tags/TagEntry required Z
-
-transitive-accessible class net/minecraft/core/RegistrySetBuilder$RegistryStub
-transitive-accessible field net/minecraft/core/RegistrySetBuilder entries Ljava/util/List;
-
-transitive-accessible method net/minecraft/data/registries/RegistriesDatapackGenerator dumpValue (Ljava/nio/file/Path;Lnet/minecraft/data/CachedOutput;Lcom/mojang/serialization/DynamicOps;Lcom/mojang/serialization/Encoder;Ljava/lang/Object;)Ljava/util/concurrent/CompletableFuture;
-
-transitive-accessible method net/minecraft/server/packs/repository/ServerPacksSource createVanillaPackSource ()Lnet/minecraft/server/packs/VanillaPackResources;
-transitive-accessible method net/minecraft/client/resources/ClientPackSource createVanillaPackSource (Ljava/nio/file/Path;)Lnet/minecraft/server/packs/VanillaPackResources;
+transitive-accessible field net/minecraft/tags/TagEntry tag Z

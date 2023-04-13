@@ -18,9 +18,6 @@
       "me.alphamode.forgetags.data.DataGenerators"
     ]
   },
-  "mixins": [
-    "porting_lib_tags.mixins.json"
-  ],
   "custom": {
     "loom:injected_interfaces": {
       "net/minecraft/class_1767": ["me/alphamode/forgetags/extensions/DyeExtension"]

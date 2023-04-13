@@ -4,10 +4,7 @@
   "version": "${version}",
   "name": "Porting Lib Models",
   "description": "Adds different types of model loaders",
-  "mixins": [
-    "porting_lib_models.mixins.json"
-  ],
-  "accessWidener": "models.accesswidener",
+
   "entrypoints": {
     "main": [
       "io.github.fabricators_of_create.porting_lib.models.PortingLibModels"

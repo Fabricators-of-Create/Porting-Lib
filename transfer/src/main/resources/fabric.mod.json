@@ -12,9 +12,6 @@
       "io.github.fabricators_of_create.porting_lib.PortingLibTransfer"
     ]
   },
-  "mixins": [
-    "porting_lib_transfer.mixins.json"
-  ],
   "custom": {
     "loom:injected_interfaces": {
       "net/minecraft/class_638": ["io/github/fabricators_of_create/porting_lib/extensions/ClientLevelExtensions"],

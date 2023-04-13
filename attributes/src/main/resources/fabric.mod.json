@@ -8,8 +8,5 @@
     "main": [
       "io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes"
     ]
-  },
-  "mixins": [
-    "porting_lib_attributes.common.mixins.json"
-  ]
+  }
 }

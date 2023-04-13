@@ -4,9 +4,6 @@
   "version": "${version}",
   "name": "Porting Lib Extensions",
   "description": "Extends vanilla things for mods to take advantage of.",
-  "mixins": [
-    "porting_lib_extensions.mixins.json"
-  ],
 
   "custom": {
     "loom:injected_interfaces": {
