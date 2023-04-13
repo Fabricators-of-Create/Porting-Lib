@@ -10,6 +10,7 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,7 +27,8 @@ public abstract class ValidateModuleTask extends DefaultTask {
 	@TaskAction
 	public void validateModule() throws IOException {
 		Project project = getProject();
-		if (project == project.getRootProject())
+		Project rootProject = project.getRootProject();
+		if (project == rootProject)
 			return;
 		boolean ignoreName = getIgnoreName().getOrElse(Boolean.FALSE);
 		String name = project.getName();
@@ -42,6 +44,7 @@ public abstract class ValidateModuleTask extends DefaultTask {
 		}
 		checkDescription(json);
 		checkMixins(name, resources);
+		checkReadMe(rootProject, name);
 	}
 
 	private void checkName(String name) {
@@ -79,6 +82,24 @@ public abstract class ValidateModuleTask extends DefaultTask {
 				assertTrue(present, mixin + " of $module was not found in the mixins.json");
 			});
 		}
+	}
+
+	private void checkReadMe(Project rootProject, String name) throws IOException {
+		String formatted = '`' + name + '`'; // `module_name`
+		Path readMe = rootProject.file("README.md").toPath();
+		String content = Files.readString(readMe);
+		String table = content.split("### Modules")[1].split("### Contributing")[0];
+		String[] lines = table.split("\n");
+		for (String line : lines) {
+			line = line.trim(); // remove \n
+			if (line.isBlank() || line.contains("--------")) // skip separator and empty
+				continue;
+			line = line.substring(1, line.length() - 1); // cut off | from edges
+			String module = line.split("\\|")[0].trim();
+			if (module.equals(formatted))
+				return; // found it
+		}
+		assertTrue(false, "Module $module does not have an entry in the README table");
 	}
 
 	private static List<String> getMixinFilenames(JsonObject mixins, String side) {
