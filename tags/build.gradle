@@ -1,5 +1,9 @@
 setupDatagen(project, "forge_tags")
 
+tasks.named("validateModule") {
+	ignoreName = true
+}
+
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }

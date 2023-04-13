@@ -67,6 +67,7 @@
     "client.accessor.ModelPartAccessor",
     "client.accessor.ParticleAccessor",
     "client.accessor.ParticleEngineAccessor",
+    "client.accessor.RenderStateShardAccessor",
     "client.accessor.RenderTypeAccessor",
     "client.accessor.ScreenAccessor",
     "client.accessor.SheetsAccessor",
