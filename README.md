@@ -16,7 +16,7 @@ The latest patch can be found from GitHub Actions as the build number.
 ### Modules
 | Module                | Description                                                                           |
 |-----------------------|---------------------------------------------------------------------------------------|
-| `porting-lib`         | Fat jar including all modules                                                         |
+| `Porting-Lib`         | Fat jar including all modules                                                         |
 | `accessors`           | Accessor mixins aplenty                                                               |
 | `attributes`          | Additional Entity Attributes; step height, gravity, swim speed                        |
 | `base`                | Code that has not yet been split into modules                                         |
@@ -41,6 +41,7 @@ The latest patch can be found from GitHub Actions as the build number.
 | `tags`                | Forge tags                                                                            |
 | `transfer`            | Storage implementations, client-side lookup, FluidStack, assorted transfer utilities  |
 | `utility`             | Miscellaneous utilities that are too niche for other modules                          |
+
 ### Contributing
 See [the contribution information](CONTRIBUTING.md).
 
