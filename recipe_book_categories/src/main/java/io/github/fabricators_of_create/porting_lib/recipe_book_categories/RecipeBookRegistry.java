@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.recipe.category;
+package io.github.fabricators_of_create.porting_lib.recipe_book_categories;
 
 import java.util.HashMap;
 import java.util.List;

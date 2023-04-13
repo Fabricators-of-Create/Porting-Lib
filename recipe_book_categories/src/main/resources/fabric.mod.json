@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_recipe_book_categories",
+  "version": "${version}",
+  "name": "Porting Lib Recipe Book Categories",
+  "description": "Adds a api for adding custom recipe book categories."
+}

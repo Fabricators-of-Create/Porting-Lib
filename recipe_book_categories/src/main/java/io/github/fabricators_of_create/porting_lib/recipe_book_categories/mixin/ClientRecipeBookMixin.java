@@ -1,8 +1,8 @@
-package io.github.fabricators_of_create.porting_lib.recipe.category.mixin;
+package io.github.fabricators_of_create.porting_lib.recipe_book_categories.mixin;
 
 import com.google.common.collect.ImmutableList;
 
-import io.github.fabricators_of_create.porting_lib.recipe.category.RecipeBookRegistry;
+import io.github.fabricators_of_create.porting_lib.recipe_book_categories.RecipeBookRegistry;
 import net.minecraft.client.ClientRecipeBook;
 
 import net.minecraft.client.RecipeBookCategories;

@@ -1,7 +1,0 @@
-processResources {
-	duplicatesStrategy = DuplicatesStrategy.WARN
-}
-
-tasks.named("validateModule") {
-	ignoreName = true // renamed on 1.20
-}
