@@ -10,7 +10,6 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,7 +42,8 @@ public abstract class ValidateModuleTask extends DefaultTask {
 			checkModId(name, json);
 		}
 		checkDescription(json);
-		checkMixins(name, resources);
+		checkAw(name, resources, json);
+		checkMixins(name, resources, json);
 		checkReadMe(rootProject, name);
 	}
 
@@ -64,8 +64,30 @@ public abstract class ValidateModuleTask extends DefaultTask {
 		assertTrue(!desc.isEmpty(), "Module $module has an empty description");
 	}
 
-	private void checkMixins(String moduleName, Path resources) throws IOException {
+	private void checkAw(String moduleName, Path resources, JsonObject fmj) throws IOException {
+		assertTrue(!fmj.has("accessWidener"), "Module $module specifies an access widener, despite it being automatic");
+		String expectedName = "porting_lib_" + moduleName + ".accesswidener";
+		try (Stream<Path> files = Files.list(resources)) {
+			files.filter(file -> file.toString().endsWith(".accesswidener"))
+					.findFirst()
+					.ifPresent(path -> {
+						String name = path.getFileName().toString();
+						assertTrue(name.equals(expectedName), name + " does not match expected name: " + expectedName);
+					});
+		}
+	}
+
+	private void checkMixins(String moduleName, Path resources, JsonObject fmj) throws IOException {
+		assertTrue(!fmj.has("mixins"), "Module $module specifies mixins, despite it being automatic");
 		String expectedName = "porting_lib_" + moduleName + ".mixins.json";
+		try (Stream<Path> files = Files.list(resources)) {
+			files.filter(file -> file.toString().endsWith(".mixins.json"))
+					.findFirst()
+					.ifPresent(path -> {
+						String name = path.getFileName().toString();
+						assertTrue(name.equals(expectedName), name + " does not match expected name: " + expectedName);
+					});
+		}
 		Path mixins = resources.resolve(expectedName);
 		if (!Files.exists(mixins))
 			return;
