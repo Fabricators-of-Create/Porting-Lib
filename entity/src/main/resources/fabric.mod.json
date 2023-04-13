@@ -4,9 +4,6 @@
   "version": "${version}",
   "name": "Porting Lib Entity",
   "description": "Adds additional functionality for Entities for mod developers.",
-  "mixins": [
-    "porting_lib_entity.mixins.json"
-  ],
   "entrypoints": {
     "client": [
       "io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity"

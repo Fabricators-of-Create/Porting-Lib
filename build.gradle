@@ -96,8 +96,6 @@ def setupDatagen(Project module, String modId) {
 	}
 }
 
-File globalAccessWidener = file("src/main/resources/porting_lib.accesswidener")
-
 allprojects {
 	if (name == "buildSrc") return
 
@@ -141,7 +139,11 @@ allprojects {
 				ideConfigGenerated true // loom will only make run configs for the root project by default
 			}
 		}
+		File aw = file("src/main/resources/porting_lib_${name}.accesswidener")
+		if (aw.exists())
+			accessWidenerPath.set(aw)
 	}
+
 
 	dependencies {
 		// dev environment
@@ -207,10 +209,6 @@ allprojects {
 			dependsOn(tasks.getByName("build"))
 			println "prepared for build"
 		}
-	}
-
-	loom {
-		accessWidenerPath = globalAccessWidener
 	}
 
 	machete {

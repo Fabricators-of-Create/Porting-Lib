@@ -3,8 +3,5 @@
   "id": "porting_lib_recipe_categories",
   "version": "${version}",
   "name": "Porting Lib Recipe Category Api",
-  "description": "Adds a api for adding custom recipe categories.",
-  "mixins": [
-    "porting_lib_recipe_category.mixins.json"
-  ]
+  "description": "Adds a api for adding custom recipe categories."
 }

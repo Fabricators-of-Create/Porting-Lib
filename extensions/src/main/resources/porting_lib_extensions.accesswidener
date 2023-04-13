@@ -1,0 +1,8 @@
+accessWidener v2 named
+transitive-accessible class net/minecraft/client/renderer/block/model/ItemTransform$Deserializer
+transitive-accessible class net/minecraft/client/renderer/texture/SpriteContents$AnimatedTexture
+
+transitive-accessible method net/minecraft/world/level/block/BushBlock mayPlaceOn (Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z
+
+transitive-accessible field net/minecraft/world/item/AxeItem STRIPPABLES Ljava/util/Map;
+transitive-accessible field net/minecraft/world/item/ShovelItem FLATTENABLES Ljava/util/Map;

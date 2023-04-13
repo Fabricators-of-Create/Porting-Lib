@@ -25,11 +25,12 @@ public abstract class ItemTransformDeserializerMixin {
 
 	@Shadow
 	@Final
-	public static Vector3f DEFAULT_ROTATION;
+	private static Vector3f DEFAULT_ROTATION;
 
 	@Inject(method = "deserialize(Lcom/google/gson/JsonElement;Ljava/lang/reflect/Type;Lcom/google/gson/JsonDeserializationContext;)Lnet/minecraft/client/renderer/block/model/ItemTransform;", at = @At("RETURN"))
 	private void port_lib$rightRotation(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext, CallbackInfoReturnable<ItemTransform> cir) {
 		Vector3f rightRotation = this.getVector3f(jsonElement.getAsJsonObject(), "right_rotation", DEFAULT_ROTATION);
+		// why is this cast required???
 		((ItemTransformExtensions)cir.getReturnValue()).setRightRotation(rightRotation);
 	}
 }

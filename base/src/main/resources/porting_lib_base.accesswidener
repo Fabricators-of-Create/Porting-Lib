@@ -1,0 +1,17 @@
+accessWidener v2 named
+transitive-accessible class net/minecraft/client/gui/MapRenderer$MapInstance
+transitive-accessible class net/minecraft/world/level/entity/PersistentEntitySectionManager$Callback
+transitive-accessible class net/minecraft/world/level/entity/TransientEntitySectionManager$Callback
+transitive-accessible class net/minecraft/client/renderer/FogRenderer$FogData
+transitive-accessible class net/minecraft/world/item/crafting/Ingredient$Value
+
+transitive-accessible method net/minecraft/commands/synchronization/ArgumentTypeInfos register (Lnet/minecraft/core/Registry;Ljava/lang/String;Ljava/lang/Class;Lnet/minecraft/commands/synchronization/ArgumentTypeInfo;)Lnet/minecraft/commands/synchronization/ArgumentTypeInfo;
+transitive-accessible method net/minecraft/client/gui/screens/MenuScreens getConstructor (Lnet/minecraft/world/inventory/MenuType;)Lnet/minecraft/client/gui/screens/MenuScreens$ScreenConstructor;
+transitive-accessible method net/minecraft/client/gui/components/AbstractButton getTextureY ()I
+
+transitive-accessible field net/minecraft/world/entity/LivingEntity effectsDirty Z
+transitive-accessible field net/minecraft/server/network/ServerGamePacketListenerImpl connection Lnet/minecraft/network/Connection;
+
+# ----- Internal -----
+
+accessible field net/minecraft/world/inventory/GrindstoneMenu repairSlots Lnet/minecraft/world/Container;

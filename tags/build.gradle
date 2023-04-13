@@ -1,5 +1,5 @@
 sourceSets.main.resources {
-	srcDir 'src/generated/resources'
+	srcDir("src/generated/resources")
 }
 
 setupDatagen(project, "forge_tags")

@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map.Entry;
 
 public class ExpandFmjTask extends DefaultTask {
@@ -40,6 +42,7 @@ public class ExpandFmjTask extends DefaultTask {
 	}
 
 	public void expandFmj(File fmjFile) {
+		// load from template, add additional from project
 		JsonObject template = makeDefaults();
 		JsonObject moduleFmj = readModuleFmj(fmjFile);
 		for (Entry<String, JsonElement> entry : moduleFmj.entrySet()) {
@@ -47,6 +50,26 @@ public class ExpandFmjTask extends DefaultTask {
 			JsonElement value = entry.getValue();
 			tryMerge(template, key, value);
 		}
+
+		String name = "porting_lib_" + getProject().getName();
+		Path parent = fmjFile.toPath().getParent();
+
+		// fill in mixins
+		String mixinsFileName = name + ".mixins.json";
+		Path mixins = parent.resolve(mixinsFileName);
+		if (Files.exists(mixins)) {
+			JsonArray array = new JsonArray();
+			array.add(mixinsFileName);
+			template.add("mixins", array);
+		}
+		// and AW
+		String awFileName = name + ".accesswidener";
+		Path aw = parent.resolve(awFileName);
+		if (Files.exists(aw)) {
+			template.addProperty("accessWidener", awFileName);
+		}
+
+		// output
 		try (FileOutputStream out = new FileOutputStream(fmjFile)) {
 			out.write(PortingLibBuildPlugin.GSON.toJson(template).getBytes());
 		} catch (IOException e) {
