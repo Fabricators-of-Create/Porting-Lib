@@ -111,6 +111,7 @@ allprojects {
 
 	repositories {
 		mavenLocal()
+		maven { url = "https://maven.quiltmc.org/repository/release" }
 		maven { url = "https://hephaestus.dev/release" }
 		maven { url = "https://api.modrinth.com/maven" }
 		maven { url = "https://maven.bai.lol" }
@@ -151,7 +152,8 @@ allprojects {
 		minecraft("com.mojang:minecraft:$minecraft_version")
 		mappings(loom.layered {
 			it.mappings("org.quiltmc:quilt-mappings:$minecraft_version+build.$qm_version:intermediary-v2")
-			it.parchment("org.parchmentmc.data:parchment-$minecraft_version:$parchment_version@zip")
+			if (parchment_version != "none")
+				it.parchment("org.parchmentmc.data:parchment-$minecraft_version:$parchment_version@zip")
 			it.officialMojangMappings { nameSyntheticMembers = false }
 		})
 		modImplementation("net.fabricmc:fabric-loader:$loader_version")
@@ -184,7 +186,7 @@ allprojects {
 		        version: version,
 				loader_version: loader_version,
 				fabric_version: fabric_version,
-				minecraft_version: minecraft_semantic_version,
+				minecraft_version: minecraft_version,
 				java_version: sourceCompatibility,
 
 				// property replacement is a bit too eager
