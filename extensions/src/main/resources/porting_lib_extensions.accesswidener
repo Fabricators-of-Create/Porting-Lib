@@ -1,4 +1,5 @@
 accessWidener v2 named
+
 transitive-accessible class net/minecraft/client/renderer/block/model/ItemTransform$Deserializer
 transitive-accessible class net/minecraft/client/renderer/texture/SpriteContents$AnimatedTexture
 

@@ -35,6 +35,8 @@ public class PortingLibBuildPlugin implements Plugin<Project> {
 			return; // do not modify the root resources
 		}
 		TaskContainer tasks = project.getTasks();
+		tasks.create("sortAccessWidener", SortAccessWidenerTask.class);
+
 		Task processResources = tasks.findByName("processResources");
 		if (processResources == null) {
 			throw new IllegalStateException("No processResources task?");
