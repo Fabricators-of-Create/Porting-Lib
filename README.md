@@ -53,7 +53,6 @@ Some APIs (some in-house) we've found to also be useful with porting mods.
 | [Registrate Refabricated](https://github.com/Fabricators-of-Create/Registrate-Refabricated) | A port of Registrate to Fabric                                       |
 | [Reach Entity Attributes](https://github.com/JamiesWhiteShirt/reach-entity-attributes)      | Provides Entity Attributes for reach distance                        |
 | [Milk Lib](https://github.com/TropheusJ/milk-lib)                                           | Provides a Milk fluid as well as other milk items used often by mods |
-| [Serialization Hooks](https://github.com/TropheusJ/serialization-hooks)                     | Allows creating custom Ingredients and Values                        |
 | [Cardinal Components API](https://github.com/OnyxStudios/Cardinal-Components-API)           | Provides Components, which can replace Capabilities                  |
 | [Trinkets](https://github.com/emilyploszaj/trinkets)                                        | Accessories, replacing Curios                                        |
 | [Here be no Dragons](https://github.com/Parzivail-Modding-Team/HereBeNoDragons)             | Hides the Experimental World Settings screen                         |
