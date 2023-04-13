@@ -13,11 +13,11 @@ moduleDependencies(project, [
 		"tags"
 ])
 
+mixinExtras(dependencies)
+
 dependencies {
 	modImplementation(include("com.github.Chocohead:Fabric-ASM:v2.3"))
 	modImplementation(include("io.github.tropheusj:serialization-hooks:${project.serialization_hooks_version}"))
-	api(include("com.github.LlamaLad7:MixinExtras:$mixin_extras_version"))
-	annotationProcessor("com.github.LlamaLad7:MixinExtras:$mixin_extras_version")
 
 	modCompileOnly("com.yungnickyoung.minecraft.yungsapi:YungsApi:1.19.2-Fabric-3.8.0")
 }
