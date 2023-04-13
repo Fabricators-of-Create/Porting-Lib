@@ -27,7 +27,6 @@ The latest patch can be found from GitHub Actions as the build number.
 | `entity`              | Multipart entities, extra spawn data, removal listening                               |
 | `extensions`          | Extensions to vanilla classes for additional functionality                            |
 | `fake_players`        | A basic fake server player implementation that can be used to simulate player actions |
-| `ingredients`         | Additional ingredient types                                                           |
 | `lazy_registration`   | A implementation of forge's DeferredRegister system rewritten for fabric              |
 | `model_builders`      | Additional model builders for data generation                                         |
 | `model_generators`    | Forge model generators                                                                |
