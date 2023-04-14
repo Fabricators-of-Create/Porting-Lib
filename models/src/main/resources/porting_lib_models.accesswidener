@@ -7,4 +7,8 @@ transitive-accessible field net/minecraft/client/renderer/block/model/BlockModel
 transitive-mutable field net/minecraft/client/renderer/block/model/BlockModel GSON Lcom/google/gson/Gson;
 transitive-accessible field net/minecraft/client/resources/model/ModelBakery ITEM_MODEL_GENERATOR Lnet/minecraft/client/renderer/block/model/ItemModelGenerator;
 
+transitive-accessible method net/minecraft/client/renderer/block/model/ItemOverrides <init> ()V
+
+transitive-accessible method net/minecraft/client/resources/model/SimpleBakedModel$Builder <init> (ZZZLnet/minecraft/client/renderer/block/model/ItemTransforms;Lnet/minecraft/client/renderer/block/model/ItemOverrides;)V
+
 accessible class net/minecraft/client/renderer/block/model/BlockElementFace$Deserializer
