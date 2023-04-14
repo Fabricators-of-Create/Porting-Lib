@@ -1,6 +1,7 @@
 moduleDependencies(project, [
 		"constants",
-		"model_loader"
+		"model_loader",
+		"transfer"
 ])
 
 mixinExtras(dependencies)

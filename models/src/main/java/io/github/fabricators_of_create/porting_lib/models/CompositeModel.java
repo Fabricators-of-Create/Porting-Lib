@@ -5,8 +5,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import net.minecraft.client.resources.model.SimpleBakedModel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -170,6 +173,83 @@ public class CompositeModel implements UnbakedModel {
 		@Nullable
 		public BakedModel getPart(String name) {
 			return children.get(name);
+		}
+
+		public static Builder builder(BlockModel owner, boolean isGui3d, TextureAtlasSprite particle, ItemOverrides overrides, ItemTransforms cameraTransforms) {
+			return builder(owner.hasAmbientOcclusion(), isGui3d, owner.getGuiLight().lightLikeBlock(), particle, overrides, cameraTransforms);
+		}
+
+		public static Builder builder(boolean isAmbientOcclusion, boolean isGui3d, boolean isSideLit, TextureAtlasSprite particle, ItemOverrides overrides, ItemTransforms cameraTransforms) {
+			return new Builder(isAmbientOcclusion, isGui3d, isSideLit, particle, overrides, cameraTransforms);
+		}
+
+		public static class Builder {
+			private final boolean isAmbientOcclusion;
+			private final boolean isGui3d;
+			private final boolean isSideLit;
+			private final List<BakedModel> children = new ArrayList<>();
+			private final List<BakedQuad> quads = new ArrayList<>();
+			private final ItemOverrides overrides;
+			private final ItemTransforms transforms;
+			private TextureAtlasSprite particle;
+
+			private Builder(boolean isAmbientOcclusion, boolean isGui3d, boolean isSideLit, TextureAtlasSprite particle, ItemOverrides overrides, ItemTransforms transforms) {
+				this.isAmbientOcclusion = isAmbientOcclusion;
+				this.isGui3d = isGui3d;
+				this.isSideLit = isSideLit;
+				this.particle = particle;
+				this.overrides = overrides;
+				this.transforms = transforms;
+			}
+
+			public void addLayer(BakedModel model) {
+				flushQuads();
+				children.add(model);
+			}
+
+			private void addLayer(List<BakedQuad> quads) {
+				var modelBuilder = new SimpleBakedModel.Builder(isAmbientOcclusion, isSideLit, isGui3d, transforms, overrides).particle(particle);
+				quads.forEach(modelBuilder::addUnculledFace);
+				children.add(modelBuilder.build());
+			}
+
+			private void flushQuads() {
+				if (quads.size() > 0) {
+					addLayer(quads);
+					quads.clear();
+				}
+			}
+
+			public Builder setParticle(TextureAtlasSprite particleSprite) {
+				this.particle = particleSprite;
+				return this;
+			}
+
+			public Builder addQuads(BakedQuad... quadsToAdd) {
+				flushQuads();
+				Collections.addAll(quads, quadsToAdd);
+				return this;
+			}
+
+			public Builder addQuads(Collection<BakedQuad> quadsToAdd) {
+				flushQuads();
+				quads.addAll(quadsToAdd);
+				return this;
+			}
+
+			public BakedModel build() {
+				if (quads.size() > 0) {
+					addLayer(quads);
+				}
+				var childrenBuilder = ImmutableMap.<String, BakedModel>builder();
+				var itemPassesBuilder = ImmutableList.<BakedModel>builder();
+				int i = 0;
+				for (var model : this.children) {
+					childrenBuilder.put("model_" + (i++), model);
+					itemPassesBuilder.add(model);
+				}
+				return new Baked(isGui3d, isSideLit, isAmbientOcclusion, particle, transforms, overrides, childrenBuilder.build(), itemPassesBuilder.build());
+			}
 		}
 	}
 }
