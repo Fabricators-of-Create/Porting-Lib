@@ -14,10 +14,21 @@ public class PortingLibBuildPlugin implements Plugin<Project> {
 
 	@Override
 	public void apply(Project project) {
+		Task validateModule = project.getTasks().create("validateModule", ValidateModuleTask.class);
 		project.afterEvaluate(p -> {
 			setupDeduplication(p);
 			setupResourceProcessing(p);
+			setupValidation(p, validateModule);
 		});
+	}
+
+	public void setupValidation(Project project, Task validateModule) {
+		TaskContainer tasks = project.getTasks();
+		Task build = tasks.findByName("build");
+		if (build == null)
+			throw new IllegalStateException("No build task?");
+		Task validateAw = tasks.findByName("validateAccessWidener");
+		build.dependsOn(validateAw, validateModule);
 	}
 
 	public void setupDeduplication(Project project) {
@@ -35,6 +46,8 @@ public class PortingLibBuildPlugin implements Plugin<Project> {
 			return; // do not modify the root resources
 		}
 		TaskContainer tasks = project.getTasks();
+		tasks.create("sortAccessWidener", SortAccessWidenerTask.class);
+
 		Task processResources = tasks.findByName("processResources");
 		if (processResources == null) {
 			throw new IllegalStateException("No processResources task?");

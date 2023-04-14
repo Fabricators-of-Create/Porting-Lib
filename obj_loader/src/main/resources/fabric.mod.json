@@ -9,9 +9,6 @@
       "io.github.fabricators_of_create.porting_lib.PortingLibObjLoader"
     ]
   },
-  "mixins": [
-    "porting_lib_obj_loader.mixins.json"
-  ],
   "custom": {
     "loom:injected_interfaces": {
       "net/minecraft/class_4590": ["io/github/fabricators_of_create/porting_lib/models/extensions/TransformationExtensions"]

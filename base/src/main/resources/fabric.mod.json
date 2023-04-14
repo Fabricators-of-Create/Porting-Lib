@@ -17,8 +17,5 @@
     "preLaunch": [
       "io.github.fabricators_of_create.porting_lib.PortingLibPreLaunch"
     ]
-  },
-  "mixins": [
-    "porting_lib_base.mixins.json"
-  ]
+  }
 }

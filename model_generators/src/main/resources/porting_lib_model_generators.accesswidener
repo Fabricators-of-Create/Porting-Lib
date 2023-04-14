@@ -1,0 +1,12 @@
+accessWidener v2 named
+
+transitive-accessible class net/minecraft/client/renderer/block/model/ItemTransform$Deserializer
+
+transitive-accessible method net/minecraft/client/renderer/block/model/BlockElement uvsByFace (Lnet/minecraft/core/Direction;)[F
+
+transitive-accessible field net/minecraft/client/renderer/block/model/BlockModel$GuiLight name Ljava/lang/String;
+transitive-accessible field net/minecraft/client/renderer/block/model/ItemTransform$Deserializer DEFAULT_ROTATION Lorg/joml/Vector3f;
+transitive-accessible field net/minecraft/client/renderer/block/model/ItemTransform$Deserializer DEFAULT_SCALE Lorg/joml/Vector3f;
+transitive-accessible field net/minecraft/client/renderer/block/model/ItemTransform$Deserializer DEFAULT_TRANSLATION Lorg/joml/Vector3f;
+
+accessible class net/minecraft/client/renderer/block/model/BlockElementFace$Deserializer

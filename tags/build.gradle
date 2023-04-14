@@ -1,8 +1,8 @@
-sourceSets.main.resources {
-	srcDir 'src/generated/resources'
-}
-
 setupDatagen(project, "forge_tags")
+
+tasks.named("validateModule") {
+	ignoreName = true
+}
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN

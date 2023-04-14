@@ -3,8 +3,5 @@
   "id": "porting_lib_client_events",
   "version": "${version}",
   "name": "Porting Lib Client Events",
-  "description": "Some useful client events",
-  "mixins": [
-    "porting_lib_client_events.client.mixins.json"
-  ]
+  "description": "Some useful client events"
 }

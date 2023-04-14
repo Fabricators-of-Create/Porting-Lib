@@ -3,6 +3,5 @@
   "id": "porting_lib_model_generators",
   "version": "${version}",
   "name": "Porting Lib Model Generators",
-  "description": "Adds a Forge's model generation system",
-  "mixins": ["porting_lib_model_generators.mixins.json"]
+  "description": "Adds a Forge's model generation system"
 }

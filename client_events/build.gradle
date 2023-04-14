@@ -1,9 +1,9 @@
 dependencies {
 	modImplementation(include("com.github.Chocohead:Fabric-ASM:v2.3"))
 	modImplementation(include("io.github.tropheusj:serialization-hooks:${project.serialization_hooks_version}"))
-	api(include("com.github.LlamaLad7:MixinExtras:0.2.0-beta.4"))
-	annotationProcessor("com.github.LlamaLad7:MixinExtras:0.2.0-beta.4")
 }
+
+mixinExtras(dependencies)
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN

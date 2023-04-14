@@ -2,10 +2,7 @@ moduleDependencies(project, [
 		"constants"
 ])
 
-dependencies {
-	api(include("com.github.LlamaLad7:MixinExtras:0.2.0-beta.4"))
-	annotationProcessor("com.github.LlamaLad7:MixinExtras:0.2.0-beta.4")
-}
+mixinExtras(dependencies)
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
