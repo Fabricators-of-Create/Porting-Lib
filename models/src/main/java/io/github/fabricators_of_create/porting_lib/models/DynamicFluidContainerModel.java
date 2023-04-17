@@ -88,7 +88,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 	@Override
 	public BakedModel bake(BlockModel context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
 		if (deprecatedLoader)
-			LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated loader \"forge:bucket\" instead of \"forge:fluid_container\". This loader will be removed in 1.20.");
+			LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated loader \"forge:bucket\" instead of \"porting_lib:fluid_container\". This loader will be removed in 1.20.");
 		for (var entry : deprecationWarnings.entrySet())
 			LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated \"" + entry.getKey() + "\" field in its fluid container model instead of \"" + entry.getValue() + "\". This field will be removed in 1.20.");
 
