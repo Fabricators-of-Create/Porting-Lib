@@ -51,15 +51,15 @@ public class BlockModelMixin implements BlockModelExtensions {
 	public void handleCustomModels(ModelBaker modelBaker, BlockModel ownerModel, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation, boolean guiLight3d, CallbackInfoReturnable<BakedModel> cir) {
 		BlockModel blockModel = self();
 
-		if (customModel != null) {
-			cir.setReturnValue(customModel.bake(blockModel, modelBaker, spriteGetter, modelTransform, blockModel.getOverrides(modelBaker, ownerModel, spriteGetter), modelLocation));
+		if (getCustomGeometry() != null) {
+			cir.setReturnValue(getCustomGeometry().bake(blockModel, modelBaker, spriteGetter, modelTransform, blockModel.getOverrides(modelBaker, ownerModel, spriteGetter), modelLocation));
 		}
 	}
 
 	@Inject(method = "resolveParents", at = @At("HEAD"))
 	private void handleCustomResolveParents(Function<ResourceLocation, UnbakedModel> function, CallbackInfo ci) {
-		if (customModel != null)
-			customModel.resolveParents(function, self());
+		if (getCustomGeometry() != null)
+			getCustomGeometry().resolveParents(function, self());
 	}
 
 	@Override
