@@ -36,6 +36,9 @@ public class BlockModelMixin implements BlockModelExtensions {
 	@Shadow
 	@Final
 	private List<ItemOverride> overrides;
+	@Shadow
+	@Nullable
+	protected BlockModel parent;
 	@Unique
 	private IUnbakedGeometry<?> customModel;
 	@Unique
@@ -71,7 +74,7 @@ public class BlockModelMixin implements BlockModelExtensions {
 
 	@Override
 	public IUnbakedGeometry<?> getCustomGeometry() {
-		return this.customModel;
+		return this.parent != null && customModel == null ? this.parent.getCustomGeometry() : customModel;
 	}
 
 	@Override
