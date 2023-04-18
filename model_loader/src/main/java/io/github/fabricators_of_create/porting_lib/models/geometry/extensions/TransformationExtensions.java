@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.models.extensions;
+package io.github.fabricators_of_create.porting_lib.models.geometry.extensions;
 
 import org.joml.Matrix3f;
 import org.joml.Vector3f;
@@ -40,11 +40,6 @@ public interface TransformationExtensions {
 	default void transformNormal(Vector3f normal) {
 		normal.mul(getNormalMatrix());
 		normal.normalize();
-	}
-
-	@Environment(EnvType.CLIENT)
-	default void push(PoseStack stack) {
-		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 
 	/**
