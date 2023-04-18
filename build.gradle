@@ -30,7 +30,7 @@ if (grgit != null) {
 
 @SuppressWarnings("unused") // for subprojects
 def mixinExtras(DependencyHandler deps) {
-	deps.api(deps.include("com.github.LlamaLad7:MixinExtras:$mixin_extras_version"))
+	deps.implementation(deps.include("com.github.LlamaLad7:MixinExtras:$mixin_extras_version"))
 	deps.annotationProcessor("com.github.LlamaLad7:MixinExtras:$mixin_extras_version")
 }
 
