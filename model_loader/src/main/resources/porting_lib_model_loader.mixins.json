@@ -4,10 +4,13 @@
   "package": "io.github.fabricators_of_create.porting_lib.models.geometry.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "BlockModelDeserializerMixin",
-    "BlockModelMixin"
+    "client.BlockModelDeserializerMixin",
+    "client.BlockModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+    "common.TransformationMixin"
+  ]
 }

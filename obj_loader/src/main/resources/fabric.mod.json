@@ -10,8 +10,6 @@
     ]
   },
   "custom": {
-    "loom:injected_interfaces": {
-      "net/minecraft/class_4590": ["io/github/fabricators_of_create/porting_lib/models/extensions/TransformationExtensions"]
-    }
+    "loom:injected_interfaces": {}
   }
 }

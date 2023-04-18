@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.models.mixin;
+package io.github.fabricators_of_create.porting_lib.models.mixin.client;
 
 import java.util.function.Function;
 

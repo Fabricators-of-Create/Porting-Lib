@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.models.geometry.mixin;
+package io.github.fabricators_of_create.porting_lib.models.geometry.mixin.client;
 
 import java.lang.reflect.Type;
 import java.util.List;

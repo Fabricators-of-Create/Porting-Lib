@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
+// TODO: move to util package in 1.20
 public final class RenderTypeUtil {
 	private static final ImmutableMap<ResourceLocation, RenderType> RENDER_TYPES;
 
