@@ -54,7 +54,7 @@ public abstract class FogRendererMixin {
 
 	@Inject(method = "setupFog", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	private static void port_lib$fogRenderEvent(Camera camera, FogRenderer.FogMode fogMode, float viewDistance, boolean thickFog, float partialTick, CallbackInfo ci, FogType fogType, Entity entity, FogRenderer.FogData fogData) {
-		FogEvents.FogData data = new FogEvents.FogData(fogData.end, fogData.start, fogData.shape);
+		FogEvents.FogData data = new FogEvents.FogData(fogData.start, fogData.end, fogData.shape);
 		if (FogEvents.RENDER_FOG.invoker().onFogRender(fogMode, fogType, camera, partialTick, viewDistance, fogData.start, fogData.end, fogData.shape, data)) {
 			RenderSystem.setShaderFogStart(data.getNearPlaneDistance());
 			RenderSystem.setShaderFogEnd(data.getFarPlaneDistance());
