@@ -7,8 +7,8 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "BuiltInRegistriesMixin",
+    "NetworkedRegistryDataAccessor",
     "RegistryDataLoaderMixin",
-    "RegistrySynchronizationAccessor"
+    "RegistrySynchronizationMixin"
   ]
 }

@@ -1,43 +1,34 @@
 package io.github.fabricators_of_create.porting_lib.registries;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.jetbrains.annotations.Nullable;
-
-import com.google.common.collect.ImmutableMap;
-import com.mojang.serialization.Codec;
-
-import io.github.fabricators_of_create.porting_lib.registries.mixin.RegistrySynchronizationAccessor;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistrySynchronization;
 import net.minecraft.resources.RegistryDataLoader;
+
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.Internal
 public class DynamicRegistryHandler {
-	public static List<ResourceLocation> REGISTRIES = new ArrayList<>();
+	public static List<RegistryEvents.RegistryDataWithNetworkCodec<?>> REGISTRIES = new ArrayList<>();
+	public static final Map<ResourceKey<? extends Registry<?>>, RegistrySynchronization.NetworkedRegistryData<?>> NETWORKABLE_REGISTRIES = new LinkedHashMap<>();
 
-	private static boolean frozen = false;
-
-	public static void freeze() {
-		frozen = true;
+	public static List<RegistryDataLoader.RegistryData<?>> getRegistryData() {
+		return DynamicRegistryHandler.REGISTRIES.stream().map(RegistryEvents.RegistryDataWithNetworkCodec::registryData).collect(Collectors.toList());
 	}
 
-	public static boolean isModdedRegistryId(ResourceLocation id) {
-		return REGISTRIES.contains(id);
-	}
+	private static boolean init = false;
 
-	public static  <T> void register(RegistryDataLoader.RegistryData<T> registryData) {
-		if (frozen) throw new IllegalStateException("Registry is already frozen");
-		REGISTRIES.add(registryData.key().location());
-		RegistryDataLoader.WORLDGEN_REGISTRIES.add(registryData);
-	}
-
-	public <T> void register(RegistryDataLoader.RegistryData<T> registryData, @Nullable Codec<T> networkCodec) {
-		register(registryData);
-		var builder = ImmutableMap.<ResourceKey<? extends Registry<?>>, RegistrySynchronization.NetworkedRegistryData<?>>builder().putAll(RegistrySynchronizationAccessor.getNETWORKABLE_REGISTRIES());
-		RegistrySynchronizationAccessor.callPut(builder, registryData.key(), networkCodec);
-		RegistrySynchronizationAccessor.setNETWORKABLE_REGISTRIES(builder.build());
+	public static void loadDynamicRegistries() {
+		if (!init) {
+			RegistryEvents.NEW_DATAPACK_REGISTRY.invoker().onRegisterNewDataPackRegistry(new RegistryEvents.NewDatapackRegistry());
+			init = true;
+		}
 	}
 }
