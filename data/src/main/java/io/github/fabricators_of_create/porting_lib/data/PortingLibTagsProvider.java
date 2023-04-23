@@ -5,6 +5,7 @@ import com.mojang.serialization.JsonOps;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.fabricmc.fabric.impl.datagen.FabricTagBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.data.CachedOutput;
@@ -85,7 +86,7 @@ public abstract class PortingLibTagsProvider<T> extends FabricTagProvider<T> {
 				if (!list1.isEmpty()) {
 					throw new IllegalArgumentException(String.format(Locale.ROOT, "Couldn't define tag %s as it is missing following references: %s", resourcelocation, list1.stream().map(Objects::toString).collect(Collectors.joining(","))));
 				} else {
-					JsonElement jsonelement = TagFile.CODEC.encodeStart(JsonOps.INSTANCE, new TagFile(list, false)).getOrThrow(false, LOGGER::error);
+					JsonElement jsonelement = TagFile.CODEC.encodeStart(JsonOps.INSTANCE, new TagFile(list, ((net.fabricmc.fabric.impl.datagen.FabricTagBuilder)tagbuilder).fabric_isReplaced())).getOrThrow(false, LOGGER::error);
 					Path path = this.getPath(resourcelocation);
 					if (path == null) return CompletableFuture.completedFuture(null); // Forge: Allow running this data provider without writing it. Recipe provider needs valid tags.
 					return DataProvider.saveStable(pOutput, jsonelement, path);
