@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_asm",
+  "version": "${version}",
+  "name": "Porting Lib ASM",
+  "description": "Utilities to make asm easier."
+}

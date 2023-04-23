@@ -7,6 +7,16 @@
   "entrypoints": {
     "main": [
       "io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes"
+    ],
+    "mm:early_risers": [
+      "io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributesER"
     ]
+  },
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_1657": [
+        "io/github/fabricators_of_create/porting_lib/attributes/extensions/PlayerAttributesExtensions"
+      ]
+    }
   }
 }
