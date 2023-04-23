@@ -20,6 +20,8 @@ import net.minecraft.tags.TagFile;
 import net.minecraft.tags.TagKey;
 import net.minecraft.tags.TagManager;
 
+import net.minecraft.world.level.biome.Biome;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
@@ -99,5 +101,13 @@ public abstract class PortingLibTagsProvider<T> extends FabricTagProvider<T> {
 			return existingFileHelper == null || !existingFileHelper.exists(reference.id, reference.tag ? resourceType : elementResourceType);
 		}
 		return false;
+	}
+
+	@Override
+	protected TagBuilder getOrCreateRawBuilder(TagKey<T> pTag) {
+		return this.builders.computeIfAbsent(pTag.location(), (p_236442_) -> {
+			existingFileHelper.trackGenerated(p_236442_, resourceType);
+			return TagBuilder.create();
+		});
 	}
 }
