@@ -1,5 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
+import net.minecraft.world.phys.EntityHitResult;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -94,6 +97,12 @@ public abstract class MultiPlayerGameModeMixin {
 			InteractionResult cancelResult = EntityInteractCallback.EVENT.invoker().onEntityInteract(player, hand, target);
 			if (cancelResult != null) cir.setReturnValue(cancelResult);
 		}
+	}
+
+	@Inject(method = "interactAt", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientPacketListener;send(Lnet/minecraft/network/protocol/Packet;)V", shift = At.Shift.AFTER), cancellable = true)
+	private void onEntitySpecificInteract(Player player, Entity target, EntityHitResult ray, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+		InteractionResult cancelResult = PortingHooks.onInteractEntityAt(player, target, ray, hand);
+		if(cancelResult != null) cir.setReturnValue(cancelResult);
 	}
 
 	@Inject(method = "destroyBlock", at = @At("HEAD"), cancellable = true)

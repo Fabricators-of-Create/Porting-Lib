@@ -99,6 +99,7 @@
     "common.SculkShriekerBlockMixin",
     "common.SeagrassBlockMixin",
     "common.ServerEntityMixin",
+    "common.ServerGamePacketListenerImplMixin",
     "common.ServerLevelMixin",
     "common.ServerPlayerGameModeMixin",
     "common.ServerPlayerMixin",

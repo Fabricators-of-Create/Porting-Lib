@@ -9,12 +9,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.Vec3;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +42,20 @@ public abstract class PlayerInteractionEvents extends PlayerEvents {
 	public static final Event<PlayerLeftClickBlock> LEFT_CLICK_BLOCK = EventFactory.createArrayBacked(PlayerLeftClickBlock.class, callbacks -> (event -> {
 		for(PlayerLeftClickBlock e : callbacks)
 			e.onLeftClickBlock(event);
+	}));
+
+	/**
+	 * This event is fired on both sides whenever a player right clicks an entity.
+	 *
+	 * "Interact at" is an interact where the local vector (which part of the entity you clicked) is known.
+	 * The state of this event affects whether {@link Entity#interactAt(Player, Vec3, InteractionHand)} is called.
+	 *
+	 * Let result be the return value of {@link Entity#interactAt(Player, Vec3, InteractionHand)}, or {@link #cancellationResult} if the event is cancelled.
+	 * If we are on the client and result is not {@link InteractionResult#SUCCESS}, the client will then try {@link EntityInteract}.
+	 */
+	public static final Event<EntityInteractSpecificCallback> ENTITY_INTERACT_SPECIFIC = EventFactory.createArrayBacked(EntityInteractSpecificCallback.class, callbacks -> (event -> {
+		for(EntityInteractSpecificCallback e : callbacks)
+			e.onEntityInteract(event);
 	}));
 
 	private final InteractionHand hand;
@@ -95,6 +112,39 @@ public abstract class PlayerInteractionEvents extends PlayerEvents {
 		@Override
 		public void sendEvent() {
 			LEFT_CLICK_BLOCK.invoker().onLeftClickBlock(this);
+		}
+	}
+
+	public static class EntityInteractSpecific extends PlayerInteractionEvents {
+		private final Vec3 localPos;
+		private final Entity target;
+
+		public EntityInteractSpecific(Player player, InteractionHand hand, Entity target, Vec3 localPos)
+		{
+			super(player, hand, target.blockPosition(), null);
+			this.localPos = localPos;
+			this.target = target;
+		}
+
+		/**
+		 * Returns the local interaction position. This is a 3D vector, where (0, 0, 0) is centered exactly at the
+		 * center of the entity's bounding box at their feet. This means the X and Z values will be in the range
+		 * [-width / 2, width / 2] while Y values will be in the range [0, height]
+		 * @return The local position
+		 */
+		public Vec3 getLocalPos()
+		{
+			return localPos;
+		}
+
+		public Entity getTarget()
+		{
+			return target;
+		}
+
+		@Override
+		public void sendEvent() {
+			ENTITY_INTERACT_SPECIFIC.invoker().onEntityInteract(this);
 		}
 	}
 
@@ -162,5 +212,10 @@ public abstract class PlayerInteractionEvents extends PlayerEvents {
 	@FunctionalInterface
 	public interface PlayerLeftClickBlock {
 		void onLeftClickBlock(LeftClickBlock event);
+	}
+
+	@FunctionalInterface
+	public interface EntityInteractSpecificCallback {
+		void onEntityInteract(EntityInteractSpecific event);
 	}
 }
