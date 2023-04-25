@@ -48,6 +48,7 @@
       "net/minecraft/class_3665": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/ModelStateExtensions"],
       "net/minecraft/class_4184": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/CameraExtensions"],
       "net/minecraft/class_4538": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/LevelReaderExtensions"],
+      "net/minecraft/class_4587": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/PoseStackExtensions"],
       "net/minecraft/class_5294": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/DimensionSpecialEffectsExtensions"],
       "net/minecraft/class_7764": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/SpriteContentsExtensions"]
     }
