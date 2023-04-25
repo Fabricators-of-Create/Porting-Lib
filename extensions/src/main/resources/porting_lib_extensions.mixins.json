@@ -19,6 +19,7 @@
     "client.ItemTransformMixin",
     "client.LevelRendererMixin",
     "client.LightTextureMixin",
+    "client.PoseStackMixin",
     "client.SpriteContentsMixin",
     "client.VertexFormatMixin"
   ],
