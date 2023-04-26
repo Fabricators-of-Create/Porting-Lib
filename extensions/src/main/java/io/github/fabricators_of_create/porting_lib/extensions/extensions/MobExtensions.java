@@ -7,13 +7,15 @@ import org.jetbrains.annotations.ApiStatus;
 
 public interface MobExtensions {
 	/**
-	 * This method exists so that spawns can be cancelled from the {@link net.minecraftforge.event.entity.living.MobSpawnEvent.FinalizeSpawn FinalizeSpawnEvent}
-	 * without needing to hook up an additional handler for the {@link net.minecraftforge.event.entity.EntityJoinLevelEvent EntityJoinLevelEvent}.
+	 * This method exists so that spawns can be cancelled from the {@link io.github.fabricators_of_create.porting_lib.event.common.MobSpawnEvents.FinalizeSpawn FinalizeSpawnEvent}
+	 * without needing to hook up an additional handler for the {@link io.github.fabricators_of_create.porting_lib.event.common.EntityEvents#ON_JOIN_WORLD}.
 	 * @return if this mob will be blocked from spawning during {@link Level#addFreshEntity(Entity)}
 	 * @apiNote Not public-facing API.
 	 */
 	@ApiStatus.Internal
-	boolean isSpawnCancelled();
+	default boolean isSpawnCancelled() {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 
 	/**
 	 * Marks this mob as being disallowed to spawn during {@link Level#addFreshEntity(Entity)}.<p>
@@ -21,5 +23,7 @@ public interface MobExtensions {
 	 * @apiNote Not public-facing API.
 	 */
 	@ApiStatus.Internal
-	void setSpawnCancelled(boolean cancel);
+	default void setSpawnCancelled(boolean cancel) {
+		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
 }
