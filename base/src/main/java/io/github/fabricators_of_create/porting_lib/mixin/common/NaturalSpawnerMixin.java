@@ -1,28 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-
-import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEvents;
-import io.github.fabricators_of_create.porting_lib.block.ValidSpawnBlock;
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
-import net.minecraft.world.entity.SpawnPlacements;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.NaturalSpawner;
-
-import net.minecraft.world.level.StructureManager;
-import net.minecraft.world.level.biome.MobSpawnSettings;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.material.FluidState;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -31,6 +8,24 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import io.github.fabricators_of_create.porting_lib.block.ValidSpawnBlock;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.NaturalSpawner;
+import net.minecraft.world.level.StructureManager;
+import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.material.FluidState;
 
 @Mixin(NaturalSpawner.class)
 public abstract class NaturalSpawnerMixin {
@@ -73,17 +68,5 @@ public abstract class NaturalSpawnerMixin {
 		x = d;
 		y = e;
 		z = f;
-	}
-
-	@ModifyExpressionValue(
-			method = "spawnCategoryForPosition(Lnet/minecraft/world/entity/MobCategory;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/level/chunk/ChunkAccess;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/NaturalSpawner$SpawnPredicate;Lnet/minecraft/world/level/NaturalSpawner$AfterSpawnCallback;)V",
-			at = @At(
-					value = "INVOKE", target = "Lnet/minecraft/world/level/NaturalSpawner;isValidPositionForMob(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Mob;D)Z"
-			)
-	)
-	private static boolean port_lib$canSpawnEvent(boolean original) {
-		if (LivingEntityEvents.CHECK_SPAWN.invoker().onCheckSpawn(mob, level, x, y, z, null, MobSpawnType.NATURAL))
-			return false;
-		return original;
 	}
 }

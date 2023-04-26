@@ -23,6 +23,7 @@
         "io/github/fabricators_of_create/porting_lib/extensions/extensions/EntityExtensions",
         "io/github/fabricators_of_create/porting_lib/extensions/extensions/INBTSerializableCompound"
       ],
+      "net/minecraft/class_1308": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/MobExtensions"],
       "net/minecraft/class_1438": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/IShearable"],
       "net/minecraft/class_1472": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/IShearable"],
       "net/minecraft/class_1473": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/IShearable"],

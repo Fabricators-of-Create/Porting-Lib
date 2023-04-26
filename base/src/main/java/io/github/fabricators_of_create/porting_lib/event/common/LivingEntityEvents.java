@@ -80,14 +80,6 @@ public class LivingEntityEvents {
 		return amount;
 	});
 
-	// TOOD: Fully implement with asm
-	public static final Event<CheckSpawn> CHECK_SPAWN = EventFactory.createArrayBacked(CheckSpawn.class, callbacks -> ((entity, world, x, y, z, spawner, spawnReason) -> {
-		for (CheckSpawn callback : callbacks)
-			if (!callback.onCheckSpawn(entity, world, x, y, z, spawner, spawnReason))
-				return true;
-		return false;
-	}));
-
 	public static final Event<Jump> JUMP = EventFactory.createArrayBacked(Jump.class, callbacks -> (entity) -> {
 		for (Jump callback : callbacks) {
 			callback.onLivingEntityJump(entity);
@@ -135,11 +127,6 @@ public class LivingEntityEvents {
 	@FunctionalInterface
 	public interface ActuallyHurt {
 		float onHurt(DamageSource source, LivingEntity damaged, float amount);
-	}
-
-	@FunctionalInterface
-	public interface CheckSpawn {
-		boolean onCheckSpawn(Mob entity, LevelAccessor world, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason);
 	}
 
 	@FunctionalInterface

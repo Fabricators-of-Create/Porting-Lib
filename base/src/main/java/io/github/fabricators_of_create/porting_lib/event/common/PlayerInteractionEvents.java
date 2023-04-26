@@ -5,12 +5,15 @@ import com.google.common.base.Preconditions;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -33,7 +36,7 @@ public abstract class PlayerInteractionEvents extends PlayerEvents {
 	 * This is due to how vanilla calls the left click handler methods.
 	 * <p>
 	 * Also note that creative mode directly breaks the block without running any other logic.
-	 * Therefore, in creative mode, {@link #setUseBlock} and {@link #setUseItem} have no effect.
+	 * Therefore, in creative mode, {@link LeftClickBlock#setUseBlock} and {@link LeftClickBlock#setUseItem} have no effect.
 	 * <p>
 	 * This event is fired after {@link AttackBlockCallback}.
 	 * This event will not fire if {@link AttackBlockCallback} is canceled.
@@ -56,6 +59,36 @@ public abstract class PlayerInteractionEvents extends PlayerEvents {
 	public static final Event<EntityInteractSpecificCallback> ENTITY_INTERACT_SPECIFIC = EventFactory.createArrayBacked(EntityInteractSpecificCallback.class, callbacks -> (event -> {
 		for(EntityInteractSpecificCallback e : callbacks)
 			e.onEntityInteract(event);
+	}));
+
+	/**
+	 * This event is fired on both sides when the player right clicks an entity.
+	 * It is responsible for all general entity interactions.
+	 *
+	 * This event is fired only if the result of the above {@link EntityInteractSpecific} is not {@link InteractionResult#SUCCESS}.
+	 * This event's state affects whether {@link Entity#interact(Player, InteractionHand)} and
+	 * {@link Item#interactLivingEntity(ItemStack, Player, LivingEntity, InteractionHand)} are called.
+	 *
+	 * Let result be {@link InteractionResult#SUCCESS} if {@link Entity#interact(Player, InteractionHand)} or
+	 * {@link Item#interactLivingEntity(ItemStack, Player, LivingEntity, InteractionHand)} return true,
+	 * or {@link #cancellationResult} if the event is cancelled.
+	 * If we are on the client and result is not {@link InteractionResult#SUCCESS}, the client will then try {@link RightClickItem}.
+	 */
+	public static final Event<EntityInteractCallback> ENTITY_INTERACT = EventFactory.createArrayBacked(EntityInteractCallback.class, callbacks -> (event -> {
+		for(EntityInteractCallback e : callbacks)
+			e.onEntityInteract(event);
+	}));
+
+	/**
+	 * This event is fired on both sides before the player triggers {@link Item#use(Level, Player, InteractionHand)}.
+	 * Note that this is NOT fired if the player is targeting a block {@link UseBlockCallback} or entity {@link EntityInteract} {@link EntityInteractSpecific}.
+	 *
+	 * Let result be the return value of {@link Item#use(Level, Player, InteractionHand)}, or {@link #cancellationResult} if the event is cancelled.
+	 * If we are on the client and result is not {@link InteractionResult#SUCCESS}, the client will then continue to other hands.
+	 */
+	public static final Event<RightClickItemCallback> RIGHT_CLICK_ITEM = EventFactory.createArrayBacked(RightClickItemCallback.class, callbacks -> (event -> {
+		for(RightClickItemCallback e : callbacks)
+			e.onRightClickItem(event);
 	}));
 
 	private final InteractionHand hand;
@@ -148,6 +181,38 @@ public abstract class PlayerInteractionEvents extends PlayerEvents {
 		}
 	}
 
+	public static class EntityInteract extends PlayerInteractionEvents {
+		private final Entity target;
+
+		public EntityInteract(Player player, InteractionHand hand, Entity target)
+		{
+			super(player, hand, target.blockPosition(), null);
+			this.target = target;
+		}
+
+		public Entity getTarget()
+		{
+			return target;
+		}
+
+		@Override
+		public void sendEvent() {
+			ENTITY_INTERACT.invoker().onEntityInteract(this);
+			setCancellationResult(io.github.fabricators_of_create.porting_lib.event.common.EntityInteractCallback.EVENT.invoker().onEntityInteract(getPlayer(), getHand(), getTarget()));
+		}
+	}
+
+	public static class RightClickItem extends PlayerInteractionEvents {
+		public RightClickItem(Player player, InteractionHand hand) {
+			super(player, hand, player.blockPosition(), null);
+		}
+
+		@Override
+		public void sendEvent() {
+			RIGHT_CLICK_ITEM.invoker().onRightClickItem(this);
+		}
+	}
+
 	/**
 	 * @return The hand involved in this interaction. Will never be null.
 	 */
@@ -217,5 +282,15 @@ public abstract class PlayerInteractionEvents extends PlayerEvents {
 	@FunctionalInterface
 	public interface EntityInteractSpecificCallback {
 		void onEntityInteract(EntityInteractSpecific event);
+	}
+
+	@FunctionalInterface
+	public interface EntityInteractCallback {
+		void onEntityInteract(EntityInteract event);
+	}
+
+	@FunctionalInterface
+	public interface RightClickItemCallback {
+		void onRightClickItem(RightClickItem event);
 	}
 }

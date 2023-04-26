@@ -6,9 +6,11 @@ import javax.annotation.Nullable;
 
 import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
+import io.github.fabricators_of_create.porting_lib.event.BaseEvent;
 import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.EntityEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.GrindstoneEvents;
+import io.github.fabricators_of_create.porting_lib.event.common.MobSpawnEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.PlayerInteractionEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockItemExtensions;
 import io.github.fabricators_of_create.porting_lib.loot.IGlobalLootModifier;
@@ -21,24 +23,31 @@ import net.fabricmc.fabric.api.event.registry.RegistryEntryRemovedCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
@@ -216,5 +225,58 @@ public class PortingHooks {
 		PlayerInteractionEvents.EntityInteractSpecific evt = new PlayerInteractionEvents.EntityInteractSpecific(player, hand, entity, vec3d);
 		evt.sendEvent();
 		return evt.isCanceled() ? evt.getCancellationResult() : null;
+	}
+
+	public static InteractionResult onInteractEntity(Player player, Entity entity, InteractionHand hand) {
+		PlayerInteractionEvents.EntityInteract evt = new PlayerInteractionEvents.EntityInteract(player, hand, entity);
+		evt.sendEvent();
+		return evt.isCanceled() ? evt.getCancellationResult() : null;
+	}
+
+	public static InteractionResult onItemRightClick(Player player, InteractionHand hand) {
+		PlayerInteractionEvents.RightClickItem evt = new PlayerInteractionEvents.RightClickItem(player, hand);
+		evt.sendEvent();
+		return evt.isCanceled() ? evt.getCancellationResult() : null;
+	}
+
+	/**
+	 * Vanilla calls to {@link Mob#finalizeSpawn} are replaced with calls to this method via asm.<br>
+	 * Mods should call this method in place of calling {@link Mob#finalizeSpawn}. Super calls (from within overrides) should not be wrapped.
+	 * <p>
+	 * Returns the SpawnGroupData from this event, or null if it was canceled.
+	 * @see MobSpawnEvents.FinalizeSpawn
+	 * @see Mob#finalizeSpawn(ServerLevelAccessor, DifficultyInstance, MobSpawnType, SpawnGroupData, CompoundTag)
+	 * @implNote Changes to the signature of this method must be reflected in the method redirector coremod.
+	 */
+	@Nullable
+	public static SpawnGroupData onFinalizeSpawn(Mob mob, ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnData, @org.jetbrains.annotations.Nullable CompoundTag spawnTag) {
+		var event = new MobSpawnEvents.FinalizeSpawn(mob, level, mob.getX(), mob.getY(), mob.getZ(), difficulty, spawnType, spawnData, spawnTag, null);
+		event.sendEvent();
+		boolean cancel = event.isCanceled();
+
+		if (!cancel) {
+			mob.finalizeSpawn(level, event.getDifficulty(), event.getSpawnType(), event.getSpawnData(), event.getSpawnTag());
+		}
+
+		return cancel ? null : event.getSpawnData();
+	}
+
+	/**
+	 * Returns the FinalizeSpawn event instance, or null if it was canceled.<br>
+	 * This is separate since mob spawners perform special finalizeSpawn handling when NBT data is present, but we still want to fire the event.<br>
+	 * This overload is also the only way to pass through a {@link BaseSpawner} instance.
+	 * @see MobSpawnEvents.FinalizeSpawn
+	 */
+	@Nullable
+	public static MobSpawnEvents.FinalizeSpawn onFinalizeSpawnSpawner(Mob mob, ServerLevelAccessor level, DifficultyInstance difficulty, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag spawnTag, BaseSpawner spawner) {
+		var event = new MobSpawnEvents.FinalizeSpawn(mob, level, mob.getX(), mob.getY(), mob.getZ(), difficulty, MobSpawnType.SPAWNER, spawnData, spawnTag, spawner);
+		event.sendEvent();
+		return event.isCanceled() ? null : event;
+	}
+
+	public static BaseEvent.Result canEntityDespawn(Mob entity, ServerLevelAccessor level) {
+		MobSpawnEvents.AllowDespawn event = new MobSpawnEvents.AllowDespawn(entity, level);
+		event.sendEvent();
+		return event.getResult();
 	}
 }

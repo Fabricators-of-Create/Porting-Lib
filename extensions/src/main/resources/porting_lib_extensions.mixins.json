@@ -7,6 +7,7 @@
     "common.BlockMixin",
     "common.ItemMixin",
     "common.MobEffectMixin",
+    "common.MobMixin",
     "common.SheepMixin",
     "common.SlotMixin",
     "common.TrunkPlacerMixin",

@@ -1,15 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import com.llamalad7.mixinextras.injector.WrapWithCondition;
-
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-
-import io.github.fabricators_of_create.porting_lib.block.HarvestableBlock;
-
-import io.github.fabricators_of_create.porting_lib.event.BaseEvent;
-import io.github.fabricators_of_create.porting_lib.event.common.PlayerInteractionEvents;
-
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,8 +11,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
-import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
+import io.github.fabricators_of_create.porting_lib.block.HarvestableBlock;
+import io.github.fabricators_of_create.porting_lib.event.BaseEvent;
+import io.github.fabricators_of_create.porting_lib.event.common.PlayerInteractionEvents;
 import io.github.fabricators_of_create.porting_lib.item.UseFirstBehaviorItem;
 import io.github.fabricators_of_create.porting_lib.mixin.accessors.common.accessor.BlockAccessor;
 import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
@@ -116,5 +110,11 @@ public abstract class ServerPlayerGameModeMixin {
 		if (event.isCanceled() || (!this.isCreative() && event.getResult() == BaseEvent.Result.DENY)) {
 			ci.cancel();
 		}
+	}
+
+	@Inject(method = "useItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getCount()I", ordinal = 0), cancellable = true)
+	private void rightClickItem(ServerPlayer player, Level world, ItemStack stack, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+		InteractionResult cancelResult = PortingHooks.onItemRightClick(player, hand);
+		if (cancelResult != null) cir.setReturnValue(cancelResult);
 	}
 }

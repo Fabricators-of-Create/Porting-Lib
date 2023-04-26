@@ -11,6 +11,7 @@
     "common.AnvilMenuMixin",
     "common.BambooStalkBlockMixin",
     "common.BaseRailBlockMixin",
+    "common.BaseSpawnerMixin",
     "common.BeaconBlockEntityMixin",
     "common.BlockBehavior$PropertiesMixin",
     "common.BlockBehaviour$BlockStateBaseMixin",
@@ -26,7 +27,6 @@
     "common.BrewingStandMenu$PotionSlotMixin",
     "common.BushBlockMixin",
     "common.CactusBlockMixin",
-    "common.CatSpawnerMixin",
     "common.ChorusFruitItemMixin",
     "common.ChunkMapMixin",
     "common.ChunkSerializerMixin",
@@ -75,10 +75,8 @@
     "common.MushroomCowMixin",
     "common.NaturalSpawnerMixin",
     "common.PackRepositoryMixin",
-    "common.PatrolSpawnerMixin",
     "common.PersistentEntitySectionManager$CallbackMixin",
     "common.PersistentEntitySectionManagerMixin",
-    "common.PhantomSpawnerMixin",
     "common.PiglinAiMixin",
     "common.PlayerAdvancementsMixin",
     "common.PlayerListMixin",
@@ -121,7 +119,8 @@
     "common.TiersMixin",
     "common.TransientEntitySectionManager$CallbackMixin",
     "common.WitherBossMixin",
-    "common.WitherSkullMixin"
+    "common.WitherSkullMixin",
+    "common.WorldGenRegionMixin"
   ],
   "client": [
     "client.AbstractClientPlayerMixin",

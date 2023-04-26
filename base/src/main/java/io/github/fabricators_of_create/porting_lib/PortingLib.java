@@ -1,9 +1,12 @@
 package io.github.fabricators_of_create.porting_lib;
 
 import io.github.fabricators_of_create.porting_lib.command.ModIdArgument;
+import io.github.fabricators_of_create.porting_lib.event.common.EntityEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 
 import net.minecraft.server.packs.PackType;
+
+import net.minecraft.world.entity.Mob;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,5 +42,11 @@ public class PortingLib implements ModInitializer {
 
 		ArgumentTypeInfos.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, PortingConstants.id("modid").toString(), ModIdArgument.class,
 				SingletonArgumentInfo.contextFree(ModIdArgument::modIdArgument));
+
+		EntityEvents.ON_JOIN_WORLD.register((entity, world, loadedFromDisk) -> {
+			if (entity instanceof Mob mob && mob.isSpawnCancelled())
+				return false;
+			return true;
+		});
 	}
 }

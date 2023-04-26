@@ -6,6 +6,7 @@ import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEven
 import io.github.fabricators_of_create.porting_lib.event.common.PlayerEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.PlayerTickEvents;
 import io.github.fabricators_of_create.porting_lib.item.ShieldBlockItem;
+import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -91,5 +92,11 @@ public abstract class PlayerMixin extends LivingEntity {
 		PlayerEvents.XpChange xpChange = new PlayerEvents.XpChange(MixinHelper.cast(this), experience);
 		xpChange.sendEvent();
 		return xpChange.getAmount();
+	}
+
+	@Inject(method = "interactOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;", ordinal = 0), cancellable = true)
+	private void entityInteract(Entity entity, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+		InteractionResult cancelResult = PortingHooks.onInteractEntity(MixinHelper.cast(this), entity, hand);
+		if (cancelResult != null) cir.setReturnValue(cancelResult);
 	}
 }

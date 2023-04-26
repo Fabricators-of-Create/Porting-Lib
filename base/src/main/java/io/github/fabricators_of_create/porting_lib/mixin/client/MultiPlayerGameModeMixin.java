@@ -1,8 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
+import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
 import net.minecraft.world.phys.EntityHitResult;
 
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -91,14 +95,6 @@ public abstract class MultiPlayerGameModeMixin {
 		}
 	}
 
-	@Inject(method = "interact", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ServerboundInteractPacket;createInteractionPacket(Lnet/minecraft/world/entity/Entity;ZLnet/minecraft/world/InteractionHand;)Lnet/minecraft/network/protocol/game/ServerboundInteractPacket;"), cancellable = true)
-	public void port_lib$onEntityInteract(Player player, Entity target, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
-		if (this.localPlayerMode != GameType.SPECTATOR) { // don't fire for spectators to match non-specific EntityInteract
-			InteractionResult cancelResult = EntityInteractCallback.EVENT.invoker().onEntityInteract(player, hand, target);
-			if (cancelResult != null) cir.setReturnValue(cancelResult);
-		}
-	}
-
 	@Inject(method = "interactAt", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientPacketListener;send(Lnet/minecraft/network/protocol/Packet;)V", shift = At.Shift.AFTER), cancellable = true)
 	private void onEntitySpecificInteract(Player player, Entity target, EntityHitResult ray, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
 		InteractionResult cancelResult = PortingHooks.onInteractEntityAt(player, target, ray, hand);
@@ -158,6 +154,15 @@ public abstract class MultiPlayerGameModeMixin {
 			}
 
 			cir.setReturnValue(flag);
+		}
+	}
+
+	@Inject(method = "method_41929", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;use(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResultHolder;"), cancellable = true)
+	private void rightClickItem(InteractionHand hand, Player player, MutableObject<InteractionResult> mutableObject, int i, CallbackInfoReturnable<Packet> cir, @Local(index = 5)ServerboundUseItemPacket serverbounduseitempacket) {
+		InteractionResult cancelResult = PortingHooks.onItemRightClick(player, hand);
+		if (cancelResult != null) {
+			mutableObject.setValue(cancelResult);
+			cir.setReturnValue(serverbounduseitempacket);
 		}
 	}
 }

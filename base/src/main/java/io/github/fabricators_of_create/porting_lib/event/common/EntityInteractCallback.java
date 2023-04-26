@@ -8,6 +8,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 public interface EntityInteractCallback {
+	/**
+	 * Use {@link PlayerInteractionEvents#ENTITY_INTERACT} instead.
+	 */
+	@Deprecated(forRemoval = true)
 	Event<EntityInteractCallback> EVENT = EventFactory.createArrayBacked(EntityInteractCallback.class, callbacks -> ((player, hand, target) -> {
 		for(EntityInteractCallback e : callbacks) {
 			InteractionResult result = e.onEntityInteract(player, hand, target);
