@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.event.common;
 
 import com.google.common.base.Preconditions;
 
+import io.github.fabricators_of_create.porting_lib.item.UseFirstBehaviorItem;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
@@ -15,15 +16,21 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static io.github.fabricators_of_create.porting_lib.event.BaseEvent.Result.DEFAULT;
+import static io.github.fabricators_of_create.porting_lib.event.BaseEvent.Result.DENY;
 
 public abstract class PlayerInteractionEvents extends PlayerEvents {
 	/**
@@ -80,6 +87,24 @@ public abstract class PlayerInteractionEvents extends PlayerEvents {
 	}));
 
 	/**
+	 * This event is fired on both sides whenever the player right clicks while targeting a block. <br>
+	 * This event controls which of {@link UseFirstBehaviorItem#onItemUseFirst}, {@link Block#use(BlockState, Level, BlockPos, Player, InteractionHand, BlockHitResult)},
+	 * and {@link Item#useOn(UseOnContext)} will be called. <br>
+	 * Canceling the event will cause none of the above three to be called. <br>
+	 * <br>
+	 * Let result be the first non-pass return value of the above three methods, or pass, if they all pass. <br>
+	 * Or {@link #cancellationResult} if the event is cancelled. <br>
+	 * If result equals {@link InteractionResult#PASS}, we proceed to {@link RightClickItem}.  <br>
+	 * <br>
+	 * There are various results to this event, see the getters below.  <br>
+	 * Note that handling things differently on the client vs server may cause desynchronizations!
+	 */
+	public static final Event<RightClickBlockCallback> RIGHT_CLICK_BLOCK = EventFactory.createArrayBacked(RightClickBlockCallback.class, callbacks -> (event -> {
+		for(RightClickBlockCallback e : callbacks)
+			e.onRightClickBlock(event);
+	}));
+
+	/**
 	 * This event is fired on both sides before the player triggers {@link Item#use(Level, Player, InteractionHand)}.
 	 * Note that this is NOT fired if the player is targeting a block {@link UseBlockCallback} or entity {@link EntityInteract} {@link EntityInteractSpecific}.
 	 *
@@ -105,8 +130,8 @@ public abstract class PlayerInteractionEvents extends PlayerEvents {
 	}
 
 	public static class LeftClickBlock extends PlayerInteractionEvents {
-		private Result useBlock = Result.DEFAULT;
-		private Result useItem = Result.DEFAULT;
+		private Result useBlock = DEFAULT;
+		private Result useItem = DEFAULT;
 
 		public LeftClickBlock(Player player, BlockPos pos, Direction face) {
 			super(player, InteractionHand.MAIN_HAND, pos, face);
@@ -202,6 +227,71 @@ public abstract class PlayerInteractionEvents extends PlayerEvents {
 		}
 	}
 
+	public static class RightClickBlock extends PlayerInteractionEvents {
+		private Result useBlock = DEFAULT;
+		private Result useItem = DEFAULT;
+		private BlockHitResult hitVec;
+
+		public RightClickBlock(Player player, InteractionHand hand, BlockPos pos, BlockHitResult hitVec) {
+			super(player, hand, pos, hitVec.getDirection());
+			this.hitVec = hitVec;
+		}
+
+		/**
+		 * @return If {@link Block#use(BlockState, Level, BlockPos, Player, InteractionHand, BlockHitResult)} should be called
+		 */
+		public Result getUseBlock() {
+			return useBlock;
+		}
+
+		/**
+		 * @return If {@link UseFirstBehaviorItem#onItemUseFirst} and {@link Item#useOn(UseOnContext)} should be called
+		 */
+		public Result getUseItem() {
+			return useItem;
+		}
+
+		/**
+		 * @return The ray trace result targeting the block.
+		 */
+		public BlockHitResult getHitVec() {
+			return hitVec;
+		}
+
+		/**
+		 * DENY: {@link Block#use(BlockState, Level, BlockPos, Player, InteractionHand, BlockHitResult)} will never be called. <br>
+		 * DEFAULT: {@link Block#use(BlockState, Level, BlockPos, Player, InteractionHand, BlockHitResult)} will be called if {@link UseFirstBehaviorItem#onItemUseFirst} passes. <br>
+		 * Note that default activation can be blocked if the user is sneaking and holding an item that does not return true to {@link Item#doesSneakBypassUse}. <br>
+		 * ALLOW: {@link Block#updateOrDestroy(BlockState, BlockState, LevelAccessor, BlockPos, int, int)} will always be called, unless {@link UseFirstBehaviorItem#onItemUseFirst} does not pass. <br>
+		 */
+		public void setUseBlock(Result triggerBlock) {
+			this.useBlock = triggerBlock;
+		}
+
+		/**
+		 * DENY: Neither {@link Item#useOn(UseOnContext)} or {@link UseFirstBehaviorItem#onItemUseFirst} will be called. <br>
+		 * DEFAULT: {@link UseFirstBehaviorItem#onItemUseFirst} will always be called, and {@link Item#useOn(UseOnContext)} will be called if the block passes. <br>
+		 * ALLOW: {@link UseFirstBehaviorItem#onItemUseFirst} will always be called, and {@link Item#useOn(UseOnContext)} will be called if the block passes, regardless of cooldowns or emptiness. <br>
+		 */
+		public void setUseItem(Result triggerItem) {
+			this.useItem = triggerItem;
+		}
+
+		@Override
+		public void setCanceled(boolean canceled) {
+			super.setCanceled(canceled);
+			if (canceled) {
+				useBlock = DENY;
+				useItem = DENY;
+			}
+		}
+
+		@Override
+		public void sendEvent() {
+			RIGHT_CLICK_BLOCK.invoker().onRightClickBlock(this);
+		}
+	}
+
 	public static class RightClickItem extends PlayerInteractionEvents {
 		public RightClickItem(Player player, InteractionHand hand) {
 			super(player, hand, player.blockPosition(), null);
@@ -287,6 +377,11 @@ public abstract class PlayerInteractionEvents extends PlayerEvents {
 	@FunctionalInterface
 	public interface EntityInteractCallback {
 		void onEntityInteract(EntityInteract event);
+	}
+
+	@FunctionalInterface
+	public interface RightClickBlockCallback {
+		void onRightClickBlock(RightClickBlock event);
 	}
 
 	@FunctionalInterface

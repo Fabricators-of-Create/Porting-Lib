@@ -53,6 +53,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.storage.loot.LootContext;
 
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -278,5 +279,11 @@ public class PortingHooks {
 		MobSpawnEvents.AllowDespawn event = new MobSpawnEvents.AllowDespawn(entity, level);
 		event.sendEvent();
 		return event.getResult();
+	}
+
+	public static PlayerInteractionEvents.RightClickBlock onRightClickBlock(Player player, InteractionHand hand, BlockPos pos, BlockHitResult hitVec) {
+		PlayerInteractionEvents.RightClickBlock evt = new PlayerInteractionEvents.RightClickBlock(player, hand, pos, hitVec);
+		evt.sendEvent();
+		return evt;
 	}
 }

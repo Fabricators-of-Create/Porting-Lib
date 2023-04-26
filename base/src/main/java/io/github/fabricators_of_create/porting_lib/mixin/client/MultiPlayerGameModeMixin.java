@@ -1,6 +1,13 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+
+import com.llamalad7.mixinextras.sugar.Share;
+
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
 import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
@@ -75,7 +82,7 @@ public abstract class MultiPlayerGameModeMixin {
 	}
 
 	@Inject(method = "performUseItemOn",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getMainHandItem()Lnet/minecraft/world/item/ItemStack;"), cancellable = true)
-	public void port_lib$useItemOn(LocalPlayer player, InteractionHand hand, BlockHitResult blockRayTraceResult, CallbackInfoReturnable<InteractionResult> cir) {
+	public void port_lib$useItemOn(LocalPlayer player, InteractionHand hand, BlockHitResult blockRayTraceResult, CallbackInfoReturnable<InteractionResult> cir, @Share("right_click_block") LocalRef<PlayerInteractionEvents.RightClickBlock> eventRef) {
 		ItemStack heldItem = player.getItemInHand(hand);
 		if (heldItem.getItem() instanceof UseFirstBehaviorItem first) {
 			UseOnContext ctx = new UseOnContext(player, hand, blockRayTraceResult);
@@ -84,15 +91,56 @@ public abstract class MultiPlayerGameModeMixin {
 			if (!player.getAbilities().mayBuild && !heldItem.hasAdventureModePlaceTagForBlock(ctx.getLevel().registryAccess().registryOrThrow(Registries.BLOCK), blockinworld)) {
 				cir.setReturnValue(InteractionResult.PASS);
 			} else {
-				Item item = heldItem.getItem();
-				InteractionResult interactionresult = first.onItemUseFirst(heldItem, ctx);
-				if (interactionresult.shouldAwardStats()) {
-					player.awardStat(Stats.ITEM_USED.get(item));
-				}
+				if (eventRef.get().getUseItem() != BaseEvent.Result.DENY) {
+					Item item = heldItem.getItem();
+					InteractionResult interactionresult = first.onItemUseFirst(heldItem, ctx);
+					if (interactionresult.shouldAwardStats()) {
+						player.awardStat(Stats.ITEM_USED.get(item));
+					}
 
-				cir.setReturnValue(interactionresult);
+					cir.setReturnValue(interactionresult);
+				}
 			}
 		}
+	}
+
+	@WrapOperation(method = "performUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;use(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/InteractionResult;"))
+	private InteractionResult modifyUseResult(BlockState state, Level level, Player player, InteractionHand hand, BlockHitResult result, Operation<InteractionResult> operation, @Share("right_click_block") LocalRef<PlayerInteractionEvents.RightClickBlock> eventRef) {
+		var event = eventRef.get();
+		if (event.getUseBlock() == BaseEvent.Result.ALLOW || (event.getUseBlock() != BaseEvent.Result.DENY)) {
+			return operation.call(state, level, player, hand, result);
+		}
+		return InteractionResult.FAIL;
+	}
+
+	@Inject(method = "performUseItemOn", at = @At("HEAD"), cancellable = true)
+	private void onBlockRightClick(LocalPlayer player, InteractionHand hand, BlockHitResult blockHitResult, CallbackInfoReturnable<InteractionResult> cir, @Share("right_click_block") LocalRef<PlayerInteractionEvents.RightClickBlock> eventRef) {
+		PlayerInteractionEvents.RightClickBlock event = PortingHooks.onRightClickBlock(player, hand, blockHitResult.getBlockPos(), blockHitResult);
+		if (event.isCanceled()) {
+			cir.setReturnValue(event.getCancellationResult());
+		}
+		eventRef.set(event);
+	}
+
+	@Inject(method = "performUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z", ordinal = 2), cancellable = true)
+	private void shouldCancelRightClick(LocalPlayer localPlayer, InteractionHand interactionHand, BlockHitResult blockHitResult, CallbackInfoReturnable<InteractionResult> cir, @Share("right_click_block") LocalRef<PlayerInteractionEvents.RightClickBlock> eventRef) {
+		if (eventRef.get().getUseItem() == BaseEvent.Result.DENY) {
+			cir.setReturnValue(InteractionResult.PASS);
+		}
+	}
+
+	@ModifyExpressionValue(method = "performUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z", ordinal = 2))
+	private boolean allowRightClick(boolean original, @Share("right_click_block") LocalRef<PlayerInteractionEvents.RightClickBlock> eventRef) {
+		if (eventRef.get().getUseItem() == BaseEvent.Result.ALLOW)
+			return false;
+		return original;
+	}
+
+	@ModifyExpressionValue(method = "performUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemCooldowns;isOnCooldown(Lnet/minecraft/world/item/Item;)Z"))
+	private boolean allowRightClick2(boolean original, @Share("right_click_block") LocalRef<PlayerInteractionEvents.RightClickBlock> eventRef) {
+		if (eventRef.get().getUseItem() == BaseEvent.Result.ALLOW)
+			return false;
+		return original;
 	}
 
 	@Inject(method = "interactAt", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientPacketListener;send(Lnet/minecraft/network/protocol/Packet;)V", shift = At.Shift.AFTER), cancellable = true)
