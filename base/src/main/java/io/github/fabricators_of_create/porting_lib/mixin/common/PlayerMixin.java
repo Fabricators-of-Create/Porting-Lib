@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
 import io.github.fabricators_of_create.porting_lib.common.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.event.common.EntityInteractCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEvents;
@@ -16,8 +18,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 
 import net.minecraft.world.entity.ai.attributes.Attributes;
-
-import net.minecraft.world.item.ItemStack;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -77,9 +77,10 @@ public abstract class PlayerMixin extends LivingEntity {
 		if(LivingEntityEvents.ATTACK.invoker().onAttack(this, source, amount)) cir.setReturnValue(false);
 	}
 
-	@Inject(method = "createAttributes", at = @At("RETURN"))
-	private static void port_lib$addKnockback(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
-		cir.getReturnValue().add(Attributes.ATTACK_KNOCKBACK);
+	@ModifyReturnValue(method = "createAttributes", at = @At("RETURN"))
+	private static AttributeSupplier.Builder registerKnockbackAttribute(AttributeSupplier.Builder builder) {
+		// re-adding is fine, since it uses a map
+		return builder.add(Attributes.ATTACK_KNOCKBACK);
 	}
 
 	@ModifyVariable(method = "hurt", at = @At("HEAD"), argsOnly = true)
@@ -87,7 +88,7 @@ public abstract class PlayerMixin extends LivingEntity {
 		return LivingEntityEvents.HURT.invoker().onHurt(source, this, amount);
 	}
 
-	@ModifyVariable(method = "giveExperiencePoints", at = @At("HEAD"))
+	@ModifyVariable(method = "giveExperiencePoints", at = @At("HEAD"), argsOnly = true)
 	private int port_lib$xpChange(int experience) {
 		PlayerEvents.XpChange xpChange = new PlayerEvents.XpChange(MixinHelper.cast(this), experience);
 		xpChange.sendEvent();
