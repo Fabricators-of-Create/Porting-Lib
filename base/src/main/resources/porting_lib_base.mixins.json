@@ -34,6 +34,7 @@
     "common.ClipContextMixin",
     "common.ConnectionMixin",
     "common.DeadBushBlockMixin",
+    "common.DiggerItemMixin",
     "common.DropExperienceBlockMixin",
     "common.EnchantedBookItemMixin",
     "common.EnchantmentHelperMixin",

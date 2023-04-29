@@ -39,6 +39,7 @@ public class TagUtil {
 		};
 	}
 
+	@Deprecated(forRemoval = true)
 	public static TagKey<Block> getTagFromTier(Tier tier) {
 		return tier.getTag();
 	}
