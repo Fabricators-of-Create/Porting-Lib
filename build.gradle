@@ -143,6 +143,14 @@ allprojects {
 		ideConfigGenerated = true
 	}
 
+	configurations.configureEach {
+		resolutionStrategy.eachDependency {
+			if (requested.module.name == "fabric-loader") {
+				useVersion(loader_version)
+			}
+		}
+	}
+
 	dependencies {
 		// dev environment
 		minecraft("com.mojang:minecraft:$minecraft_version")
