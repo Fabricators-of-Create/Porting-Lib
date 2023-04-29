@@ -13,7 +13,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TieredItem;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -30,7 +29,7 @@ public abstract class DiggerItemMixin extends TieredItem {
 	@Inject(method = "isCorrectToolForDrops", at = @At("HEAD"), cancellable = true)
 	private void checkSortedTiers(BlockState state, CallbackInfoReturnable<Boolean> cir) {
 		Tier tier = getTier();
-		if (!(tier instanceof Tiers) && TierSortingRegistry.isTierSorted(tier)) {
+		if (TierSortingRegistry.isTierSorted(tier)) {
 			cir.setReturnValue(state.is(this.blocks) && TierSortingRegistry.isCorrectTierForDrops(tier, state));
 		}
 	}
