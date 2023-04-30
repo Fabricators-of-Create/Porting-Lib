@@ -4,7 +4,6 @@ moduleDependencies(project, [
 		"extensions",
 		"transfer",
 		"utility",
-		"entity",
 		"common",
 		"tags"
 ])

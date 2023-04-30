@@ -1,14 +1,11 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import com.llamalad7.mixinextras.injector.WrapWithCondition;
-
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import io.github.fabricators_of_create.porting_lib.block.HarvestableBlock;
 
 import io.github.fabricators_of_create.porting_lib.event.BaseEvent;
-import io.github.fabricators_of_create.porting_lib.event.common.PlayerInteractionEvents;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
-import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
 import io.github.fabricators_of_create.porting_lib.item.UseFirstBehaviorItem;
 import io.github.fabricators_of_create.porting_lib.mixin.accessors.common.accessor.BlockAccessor;
 import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
@@ -107,14 +103,5 @@ public abstract class ServerPlayerGameModeMixin {
 	public void port_lib$destroyBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
 		if(!(this.level.getBlockState(pos).getBlock() instanceof GameMasterBlock && !this.player.canUseGameMasterBlocks()) && player.getMainHandItem().onBlockStartBreak(pos, player))
 			cir.setReturnValue(false);
-	}
-
-	@Inject(method = "handleBlockBreakAction", at = @At("HEAD"), cancellable = true)
-	public void port_lib$blockBreak(BlockPos pos, ServerboundPlayerActionPacket.Action action, Direction direction, int worldHeight, int i, CallbackInfo ci) {
-		PlayerInteractionEvents.LeftClickBlock event = new PlayerInteractionEvents.LeftClickBlock(player, pos, direction);
-		event.sendEvent();
-		if (event.isCanceled() || (!this.isCreative() && event.getResult() == BaseEvent.Result.DENY)) {
-			ci.cancel();
-		}
 	}
 }
