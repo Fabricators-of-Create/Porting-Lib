@@ -1,0 +1,17 @@
+{
+  "item.porting_lib.area_selector": "Area Selector",
+
+  "area_selector.tooltip.no_selection": "No area is currently selected.",
+  "area_selector.tooltip.partial_selection": "First position: %s",
+  "area_selector.tooltip.complete_selection": "Selection: %s to %s",
+
+  "area_selector.use.feedback.requires_op": "This item requires operator permissions.",
+  "area_selector.use.feedback.success_first": "Successfully selected first position.",
+  "area_selector.use.feedback.success_second": "Successfully selected second position.",
+  "area_selector.use.feedback.to_reset": "Shift-click to deselect.",
+  "area_selector.use.feedback.reset": "Selection cleared.",
+
+  "quickexport.command.feedback.hold_selector": "You must be holding an Area Selector which has an area selected.",
+  "quickexport.command.feedback.exported": "Exported to %s",
+  "quickexport.command.feedback.failed": "Failed to export area, see log for details."
+}

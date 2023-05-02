@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_gametest",
+  "version": "${version}",
+  "name": "Porting Lib GameTest",
+  "description": "Tools to make GameTest creation as easy as possible.",
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.gametest.PortingLibGameTest"
+    ],
+    "client": [
+      "io.github.fabricators_of_create.porting_lib.gametest.PortingLibGameTestClient"
+    ]
+  }
+}
