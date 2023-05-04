@@ -24,7 +24,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
-public record ObjBakedModel(List<Mesh> meshes, TextureAtlasSprite texture) implements BakedModel, FabricBakedModel {
+public class ObjBakedModel implements BakedModel, FabricBakedModel {
+
+	private final List<MeshInfo> meshes;
+
+	public ObjBakedModel(List<MeshInfo> meshes) {
+		this.meshes = meshes;
+	}
 
 	@Override
 	public boolean isVanillaAdapter() {
@@ -33,19 +39,20 @@ public record ObjBakedModel(List<Mesh> meshes, TextureAtlasSprite texture) imple
 
 	@Override
 	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
-		meshes.forEach(mesh -> context.meshConsumer().accept(mesh));
+		meshes.forEach(meshInfo -> context.meshConsumer().accept(meshInfo.mesh()));
 	}
 
 	@Override
 	public void emitItemQuads(ItemStack stack, Supplier<RandomSource> randomSupplier, RenderContext context) {
-		meshes.forEach(mesh -> context.meshConsumer().accept(mesh));
+		meshes.forEach(meshInfo -> context.meshConsumer().accept(meshInfo.mesh()));
 	}
 
 	@Override
 	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction direction, RandomSource random) {
 		List<BakedQuad> bakedQuads = new ArrayList<>();
 		meshes.forEach(mesh -> {
-			mesh.forEach(quadView -> bakedQuads.add(quadView.toBakedQuad(texture)));
+			TextureAtlasSprite sprite = mesh.sprite();
+			mesh.mesh().forEach(quadView -> bakedQuads.add(quadView.toBakedQuad(0, sprite, state == null)));
 		});
 		return bakedQuads;
 	}
@@ -72,7 +79,7 @@ public record ObjBakedModel(List<Mesh> meshes, TextureAtlasSprite texture) imple
 
 	@Override
 	public TextureAtlasSprite getParticleIcon() {
-		return texture;
+		return Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(meshes.get(0) != null ? meshes.get(0).mat().texture : MissingTextureAtlasSprite.getLocation());
 	}
 
 	@Override
@@ -83,5 +90,8 @@ public record ObjBakedModel(List<Mesh> meshes, TextureAtlasSprite texture) imple
 	@Override
 	public ItemOverrides getOverrides() {
 		return ItemOverrides.EMPTY;
+	}
+
+	public record MeshInfo(TextureAtlasSprite sprite, Mesh mesh, ObjMaterialLibrary.Material mat) {
 	}
 }

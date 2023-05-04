@@ -6,6 +6,7 @@
 package io.github.fabricators_of_create.porting_lib.models.obj;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,11 +18,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-
-import com.google.gson.JsonParseException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,14 +35,15 @@ import com.mojang.math.Transformation;
 import io.github.fabricators_of_create.porting_lib.models.UnbakedGeometryHelper;
 import io.github.fabricators_of_create.porting_lib.models.geometry.IUnbakedGeometry;
 import joptsimple.internal.Strings;
+import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
-import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
@@ -113,8 +110,6 @@ public class ObjModel implements IUnbakedGeometry<ObjModel>, UnbakedModel {
 
 	static ObjModel parse(ObjTokenizer tokenizer, ModelSettings settings, Map<String, String> deprecationWarnings) throws IOException
 	{
-		if (!RendererAccess.INSTANCE.hasRenderer())
-			throw new JsonParseException("The Fabric Rendering API is not available. If you have Sodium, install Indium!");
 		var modelLocation = settings.modelLocation;
 		var materialLibraryOverrideLocation = settings.mtlOverride;
 		var model = new ObjModel(settings, deprecationWarnings);
@@ -322,29 +317,29 @@ public class ObjModel implements IUnbakedGeometry<ObjModel>, UnbakedModel {
 
 	private static Vec2 parseVector2(String[] line) {
 		return switch (line.length) {
-					case 1 -> new Vec2(0, 0);
-					case 2 -> new Vec2(Float.parseFloat(line[1]), 0);
-					default -> new Vec2(Float.parseFloat(line[1]), Float.parseFloat(line[2]));
-				};
+			case 1 -> new Vec2(0, 0);
+			case 2 -> new Vec2(Float.parseFloat(line[1]), 0);
+			default -> new Vec2(Float.parseFloat(line[1]), Float.parseFloat(line[2]));
+		};
 	}
 
 	private static Vector3f parseVector3(String[] line) {
 		return switch (line.length) {
-					case 1 -> new Vector3f();
-					case 2 -> new Vector3f(Float.parseFloat(line[1]), 0, 0);
-					case 3 -> new Vector3f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), 0);
-					default -> new Vector3f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]));
-				};
+			case 1 -> new Vector3f();
+			case 2 -> new Vector3f(Float.parseFloat(line[1]), 0, 0);
+			case 3 -> new Vector3f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), 0);
+			default -> new Vector3f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]));
+		};
 	}
 
 	static Vector4f parseVector4(String[] line) {
 		return switch (line.length) {
-					case 1 -> new Vector4f();
-					case 2 -> new Vector4f(Float.parseFloat(line[1]), 0, 0, 1);
-					case 3 -> new Vector4f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), 0, 1);
-					case 4 -> new Vector4f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]), 1);
-					default -> new Vector4f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]), Float.parseFloat(line[4]));
-				};
+			case 1 -> new Vector4f();
+			case 2 -> new Vector4f(Float.parseFloat(line[1]), 0, 0, 1);
+			case 3 -> new Vector4f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), 0, 1);
+			case 4 -> new Vector4f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]), 1);
+			default -> new Vector4f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]), Float.parseFloat(line[4]));
+		};
 	}
 
 	public Set<String> getRootComponentNames() {
@@ -356,15 +351,13 @@ public class ObjModel implements IUnbakedGeometry<ObjModel>, UnbakedModel {
 		for (var entry : deprecationWarnings.entrySet())
 			LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated \"" + entry.getKey() + "\" field in its OBJ model instead of \"" + entry.getValue() + "\". This field will be removed in 1.20.");
 
-		ImmutableList.Builder<Mesh> bakedMeshes = new ImmutableList.Builder<>();
+		ImmutableList.Builder<ObjBakedModel.MeshInfo> bakedMeshes = new ImmutableList.Builder<>();
 		parts.values().stream().filter(part -> owner.isComponentVisible(part.name(), true))
 				.forEach(part -> {
 					var meshBuilder = RendererAccess.INSTANCE.getRenderer().meshBuilder();
-					part.buildMeshes(owner, meshBuilder, baker, spriteGetter, modelTransform, modelLocation);
-					bakedMeshes.add(meshBuilder.build());
+					part.buildMeshes(owner, bakedMeshes, meshBuilder, baker, spriteGetter, modelTransform, modelLocation);
 				});
-		TextureAtlasSprite particle = spriteGetter.apply(owner.getMaterial("particle"));
-		return new ObjBakedModel(bakedMeshes.build(), particle);
+		return new ObjBakedModel(bakedMeshes.build());
 	}
 
 	@Nullable
@@ -373,15 +366,14 @@ public class ObjModel implements IUnbakedGeometry<ObjModel>, UnbakedModel {
 		for (var entry : deprecationWarnings.entrySet())
 			LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated \"" + entry.getKey() + "\" field in its OBJ model instead of \"" + entry.getValue() + "\". This field will be removed in 1.20.");
 
-		ImmutableList.Builder<Mesh> bakedMeshes = new ImmutableList.Builder<>();
-		parts.values().stream()
-				.forEach(part -> {
-					var meshBuilder = RendererAccess.INSTANCE.getRenderer().meshBuilder();
-					part.buildMeshes(null, meshBuilder, baker, spriteGetter, modelTransform, modelLocation);
-					bakedMeshes.add(meshBuilder.build());
-				});
-		TextureAtlasSprite particle = spriteGetter.apply(new Material(TextureAtlas.LOCATION_BLOCKS, MissingTextureAtlasSprite.getLocation()));
-		return new ObjBakedModel(bakedMeshes.build(), particle);
+		List<ObjBakedModel.MeshInfo> meshes = new ArrayList<>();
+
+		for (var entry : parts.entrySet()) {
+			var part = entry.getValue();
+			part.bake(meshes, spriteGetter);
+		}
+
+		return new ObjBakedModel(meshes);
 	}
 
 	@Override
@@ -418,7 +410,7 @@ public class ObjModel implements IUnbakedGeometry<ObjModel>, UnbakedModel {
 
 		var quadBaker = builder.getEmitter();
 
-		quadBaker.spriteBake(texture, MutableQuadView.BAKE_ROTATE_NONE);
+		quadBaker.spriteBake(0, texture, MutableQuadView.BAKE_ROTATE_NONE);
 		quadBaker.colorIndex(tintIndex);
 
 		int uv2 = 0;
@@ -456,8 +448,8 @@ public class ObjModel implements IUnbakedGeometry<ObjModel>, UnbakedModel {
 					color.w() * colorTint.w());
 			quadBaker.pos(i, position.x(), position.y(), position.z());
 			int spriteColor = encodeQuadColor(tintedColor);
-			quadBaker.color(spriteColor, spriteColor, spriteColor, spriteColor);
-			quadBaker.uv(i,
+			quadBaker.spriteColor(0, spriteColor, spriteColor, spriteColor, spriteColor);
+			quadBaker.sprite(i, 0,
 					texture.getU(texCoord.x * 16),
 					texture.getV((flipV ? 1 - texCoord.y : texCoord.y) * 16)
 			);
@@ -561,9 +553,15 @@ public class ObjModel implements IUnbakedGeometry<ObjModel>, UnbakedModel {
 			return name;
 		}
 
-		public void buildMeshes(@Nullable BlockModel owner, MeshBuilder meshBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
+		public void buildMeshes(@Nullable BlockModel owner, ImmutableList.Builder<ObjBakedModel.MeshInfo> bakedMeshes, MeshBuilder meshBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
 			for (ModelMesh mesh : meshes) {
-				mesh.buildMesh(owner, meshBuilder, spriteGetter, modelTransform);
+				mesh.buildMesh(owner, bakedMeshes, meshBuilder, spriteGetter, modelTransform);
+			}
+		}
+
+		public void bake(List<ObjBakedModel.MeshInfo> meshes, Function<Material, TextureAtlasSprite> spriteGetter) {
+			for (ModelMesh mesh : this.meshes) {
+				mesh.bake(meshes, spriteGetter);
 			}
 		}
 
@@ -588,11 +586,11 @@ public class ObjModel implements IUnbakedGeometry<ObjModel>, UnbakedModel {
 		}
 
 		@Override
-		public void buildMeshes(BlockModel owner, MeshBuilder meshBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
-			super.buildMeshes(owner, meshBuilder, baker, spriteGetter, modelTransform, modelLocation);
+		public void buildMeshes(BlockModel owner, ImmutableList.Builder<ObjBakedModel.MeshInfo> bakedMeshes, MeshBuilder meshBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
+			super.buildMeshes(owner, bakedMeshes, meshBuilder, baker, spriteGetter, modelTransform, modelLocation);
 
 			parts.values().stream().filter(part -> owner.isComponentVisible(part.name(), true))
-					.forEach(part -> part.buildMeshes(owner, meshBuilder, baker, spriteGetter, modelTransform, modelLocation));
+					.forEach(part -> part.buildMeshes(owner, bakedMeshes, meshBuilder, baker, spriteGetter, modelTransform, modelLocation));
 		}
 
 		@Override
@@ -624,7 +622,7 @@ public class ObjModel implements IUnbakedGeometry<ObjModel>, UnbakedModel {
 			this.smoothingGroup = currentSmoothingGroup;
 		}
 
-		public void buildMesh(@Nullable BlockModel owner, MeshBuilder meshBuilder, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform) {
+		public void buildMesh(@Nullable BlockModel owner, ImmutableList.Builder<ObjBakedModel.MeshInfo> bakedMeshes, MeshBuilder meshBuilder, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform) {
 			if (mat == null)
 				return;
 			TextureAtlasSprite texture = spriteGetter.apply(UnbakedGeometryHelper.resolveDirtyMaterial(mat.diffuseColorMap, owner));
@@ -636,6 +634,26 @@ public class ObjModel implements IUnbakedGeometry<ObjModel>, UnbakedModel {
 			for (int[][] face : faces) {
 				makeQuad(meshBuilder, face, tintIndex, colorTint, mat.ambientColor, texture, transform);
 			}
+
+			bakedMeshes.add(new ObjBakedModel.MeshInfo(spriteGetter.apply(new Material(TextureAtlas.LOCATION_BLOCKS, mat.texture)), meshBuilder.build(), mat));
+		}
+
+		public void bake(List<ObjBakedModel.MeshInfo> meshes, Function<Material, TextureAtlasSprite> spriteGetter) {
+			ObjMaterialLibrary.Material mat = this.mat;
+			if (mat == null)
+				return;
+			int tintIndex = mat.diffuseTintIndex;
+			Vector4f colorTint = mat.diffuseColor;
+
+			Material textureLocation = new Material(TextureAtlas.LOCATION_BLOCKS, mat.texture);
+
+			Renderer renderer = RendererAccess.INSTANCE.getRenderer();
+			MeshBuilder builder = renderer.meshBuilder();
+			for (var face : this.faces) {
+				makeQuad(builder, face, tintIndex, colorTint, mat.ambientColor, UnitTextureAtlasSprite.INSTANCE, Transformation.identity());
+			}
+
+			meshes.add(new ObjBakedModel.MeshInfo(spriteGetter.apply(textureLocation), builder.build(), mat));
 		}
 	}
 
