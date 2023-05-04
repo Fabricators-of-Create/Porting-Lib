@@ -41,6 +41,7 @@ public class QuickExportCommand {
 
 	public static final Component HOLD_SELECTOR = lang("hold_selector");
 	public static final Component FAILED = lang("failed");
+	public static final Component ESCAPE = lang("escape");
 
 	public static void register() {
 		CommandRegistrationCallback.EVENT.register((dispatcher, buildCtx, env) -> dispatcher.register(
@@ -88,6 +89,11 @@ public class QuickExportCommand {
 	}
 
 	private static int handleExport(CommandSourceStack source, String path) throws CommandSyntaxException {
+		if (path.contains("..")) {
+			source.sendFailure(ESCAPE);
+			return 0;
+		}
+
 		ServerPlayer player = source.getPlayerOrException();
 		AreaSelection area = AreaSelectorItem.getArea(player.getMainHandItem());
 		if (area == null || area.second == null) {

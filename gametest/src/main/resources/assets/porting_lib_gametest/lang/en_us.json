@@ -13,5 +13,6 @@
 
   "quickexport.command.feedback.hold_selector": "You must be holding an Area Selector which has an area selected.",
   "quickexport.command.feedback.exported": "Exported to %s",
-  "quickexport.command.feedback.failed": "Failed to export area, see log for details."
+  "quickexport.command.feedback.failed": "Failed to export area, see log for details.",
+  "quickexport.command.feedback.escape": "Paths may not contain '..' as it may be used to escape the export directory."
 }
