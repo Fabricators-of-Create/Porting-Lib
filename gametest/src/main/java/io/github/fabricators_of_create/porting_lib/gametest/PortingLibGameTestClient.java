@@ -9,7 +9,9 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 public class PortingLibGameTestClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
-		ItemTooltipCallback.EVENT.register(AreaSelectorTooltipProvider.INSTANCE);
-		WorldRenderEvents.AFTER_ENTITIES.register(AreaSelectionRenderer.INSTANCE);
+		if (PortingLibGameTest.AREA_SELECTOR_ENABLED) {
+			ItemTooltipCallback.EVENT.register(AreaSelectorTooltipProvider.INSTANCE);
+			WorldRenderEvents.AFTER_ENTITIES.register(AreaSelectionRenderer.INSTANCE);
+		}
 	}
 }

@@ -108,12 +108,13 @@ public class QuickExportCommand {
 
 		Path file = output.resolve(path).toAbsolutePath();
 		try {
-			Files.createDirectories(output);
+			Files.createDirectories(file.getParent());
 			Files.deleteIfExists(file);
 			try (OutputStream out = Files.newOutputStream(file, StandardOpenOption.CREATE)) {
 				NbtIo.writeCompressed(data, out);
 			}
-			source.sendSuccess(lang("exported", file.toString()), false);
+			String cleanPath = file.toString().replace('\\', '/');
+			source.sendSuccess(lang("exported", cleanPath), false);
 			return 1;
 		} catch (IOException e) {
 			e.printStackTrace();

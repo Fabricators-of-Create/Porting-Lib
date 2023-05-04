@@ -10,6 +10,9 @@
     ],
     "client": [
       "io.github.fabricators_of_create.porting_lib.gametest.PortingLibGameTestClient"
+    ],
+    "fabric-gametest": [
+      "io.github.fabricators_of_create.porting_lib.gametest.tests.PortingLibGameTestTests"
     ]
   }
 }
