@@ -2,13 +2,12 @@ package io.github.fabricators_of_create.porting_lib.gametest.quickexport;
 
 import java.util.Objects;
 
-import io.github.fabricators_of_create.porting_lib.gametest.PortingLibGameTest;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents.AfterEntities;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
+import io.github.fabricators_of_create.porting_lib.gametest.PortingLibGameTest;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents.AfterEntities;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;

@@ -4,8 +4,8 @@ import java.util.Collection;
 
 import io.github.fabricators_of_create.porting_lib.gametest.PortingLibGameTest;
 import io.github.fabricators_of_create.porting_lib.gametest.infrastructure.CustomGameTestHelper;
-import io.github.fabricators_of_create.porting_lib.gametest.infrastructure.PortingLibGameTestHelper;
 import io.github.fabricators_of_create.porting_lib.gametest.infrastructure.GameTestGroup;
+import io.github.fabricators_of_create.porting_lib.gametest.infrastructure.PortingLibGameTestHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestGenerator;
@@ -23,8 +23,14 @@ public class PortingLibGameTestTests {
 	public static class Tests {
 		@GameTest(template = "test")
 		public static void test(PortingLibGameTestHelper helper) {
-			helper.assertBlockPresent(Blocks.DIRT, new BlockPos(2, 1, 2));
-			helper.succeed();
+			BlockPos grass = new BlockPos(0, 1, 0);
+			helper.assertBlockPresent(Blocks.GRASS_BLOCK, grass);
+			BlockPos flower = grass.above();
+			helper.setBlock(flower, Blocks.POPPY);
+			helper.succeedWhen(() -> {
+				helper.assertSecondsPassed(2);
+				helper.assertBlockPresent(Blocks.POPPY, flower);
+			});
 		}
 	}
 }

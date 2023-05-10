@@ -8,9 +8,7 @@ import net.minecraft.world.entity.Entity;
 
 /**
  * An entity which is part of a parent entity, like the Ender Dragon.
- * <p>
- *     These entities are not saved and are not synced. Their parent is responsible for managing them.
- * </p>
+ * These entities are not saved, synced, or ticked. Their parent is responsible for managing them.
  * @param <T> the type of the parent entity
  */
 public abstract class PartEntity<T extends Entity> extends Entity {

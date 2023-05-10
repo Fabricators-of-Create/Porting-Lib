@@ -9,14 +9,12 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
-import io.github.fabricators_of_create.porting_lib.gametest.PortingLibGameTest;
-import io.github.fabricators_of_create.porting_lib.gametest.extensions.StructureBlockEntityExtensions;
-import io.github.fabricators_of_create.porting_lib.gametest.mixin.GameTestHelperAccessor;
-
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import io.github.fabricators_of_create.porting_lib.gametest.PortingLibGameTest;
+import io.github.fabricators_of_create.porting_lib.gametest.extensions.StructureBlockEntityExtensions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestGenerator;
@@ -35,15 +33,23 @@ public class ExtendedTestFunction extends TestFunction {
 	public static final Map<String, ExtendedTestFunction> NAMES_TO_FUNCTIONS = new HashMap<>();
 
 	public final String fullyQualifiedName;
+	public final String simpleName;
 	private final UnaryOperator<GameTestHelper> helperProcessor;
 
-	protected ExtendedTestFunction(String fullyQualifiedName, UnaryOperator<GameTestHelper> helperProcessor, String pBatchName,
+	protected ExtendedTestFunction(String fullyQualifiedName, String simpleName, UnaryOperator<GameTestHelper> helperProcessor, String pBatchName,
 								   String pTestName, String pStructureName, Rotation pRotation, int pMaxTicks, long pSetupTicks,
 								   boolean pRequired, int pRequiredSuccesses, int pMaxAttempts, Consumer<GameTestHelper> pFunction) {
 		super(pBatchName, pTestName, pStructureName, pRotation, pMaxTicks, pSetupTicks, pRequired, pRequiredSuccesses, pMaxAttempts, pFunction);
 		this.fullyQualifiedName = fullyQualifiedName;
+		this.simpleName = simpleName;
 		NAMES_TO_FUNCTIONS.put(fullyQualifiedName, this);
 		this.helperProcessor = helperProcessor;
+	}
+
+	@Override
+	@NotNull
+	public String getTestName() {
+		return simpleName;
 	}
 
 	@Nullable
@@ -60,10 +66,11 @@ public class ExtendedTestFunction extends TestFunction {
 		String structure = getStructure(gt, owner);
 		Rotation rotation = StructureUtils.getRotationForRotationSteps(gt.rotationSteps());
 
-		String fullyQualifiedName = owner.getName() + "." + method.getName();
+		String fullName = owner.getName() + '.' + method.getName();
+		String simpleName = owner.getSimpleName() + '.' + method.getName();
 		return new ExtendedTestFunction(
 				// use structure for test name since that's what MC fills structure blocks with for some reason
-				fullyQualifiedName, helperProcessor, gt.batch(), structure, structure, rotation, gt.timeoutTicks(),
+				fullName, simpleName, helperProcessor, gt.batch(), structure, structure, rotation, gt.timeoutTicks(),
 				gt.setupTicks(), gt.required(), gt.requiredSuccesses(), gt.attempts(), asConsumer(method)
 		);
 	}
@@ -111,12 +118,9 @@ public class ExtendedTestFunction extends TestFunction {
 			Constructor<? extends GameTestHelper> constructor = klass.getConstructor(GameTestInfo.class);
 			constructor.setAccessible(true);
 			return helper -> {
-				GameTestHelperAccessor access = (GameTestHelperAccessor) helper;
-				GameTestInfo info = access.getTestInfo();
 				try {
-					GameTestHelper newHelper = constructor.newInstance(info);
-					GameTestHelperAccessor newAccess = (GameTestHelperAccessor) newHelper;
-					newAccess.setFinalCheckAdded(access.getFinalCheckAdded());
+					GameTestHelper newHelper = constructor.newInstance(helper.testInfo);
+					newHelper.finalCheckAdded = helper.finalCheckAdded;
 					return newHelper;
 				} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
 					throw new RuntimeException(e);

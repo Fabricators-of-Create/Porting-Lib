@@ -1,13 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.gametest.mixin;
 
-import io.github.fabricators_of_create.porting_lib.gametest.extensions.StructureBlockEntityExtensions;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import io.github.fabricators_of_create.porting_lib.gametest.extensions.StructureBlockEntityExtensions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.entity.StructureBlockEntity;

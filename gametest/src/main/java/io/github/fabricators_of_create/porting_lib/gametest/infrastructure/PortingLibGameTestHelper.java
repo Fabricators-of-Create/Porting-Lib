@@ -3,22 +3,17 @@ package io.github.fabricators_of_create.porting_lib.gametest.infrastructure;
 import java.util.Arrays;
 import java.util.List;
 
-import it.unimi.dsi.fastutil.objects.Object2LongArrayMap;
-
-import it.unimi.dsi.fastutil.objects.Object2LongMap;
-
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
-
-import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
-
-import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import it.unimi.dsi.fastutil.objects.Object2LongArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -301,8 +296,6 @@ public class PortingLibGameTestHelper extends GameTestHelper {
 		if (value > max)
 			fail("Value %s greater than expected max of %s".formatted(value, max));
 	}
-
-	// misc
 
 	@Contract("_->fail") // make IDEA happier
 	@Override

@@ -4,6 +4,8 @@ moduleDependencies(project, [
 
 mixinExtras(dependencies)
 
+testMod(project)
+
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }

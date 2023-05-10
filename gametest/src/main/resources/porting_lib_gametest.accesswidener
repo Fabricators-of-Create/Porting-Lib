@@ -1,0 +1,5 @@
+accessWidener v2 named
+
+transitive-accessible field net/minecraft/gametest/framework/GameTestHelper testInfo Lnet/minecraft/gametest/framework/GameTestInfo;
+
+accessible field net/minecraft/gametest/framework/GameTestHelper finalCheckAdded Z

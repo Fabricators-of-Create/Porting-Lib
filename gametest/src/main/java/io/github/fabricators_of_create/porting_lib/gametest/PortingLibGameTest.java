@@ -8,11 +8,13 @@ import java.util.Comparator;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
-
 import com.google.gson.JsonPrimitive;
 
 import io.github.fabricators_of_create.porting_lib.gametest.infrastructure.CustomGameTestHelper;
@@ -23,10 +25,6 @@ import io.github.fabricators_of_create.porting_lib.gametest.quickexport.QuickExp
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.loader.api.FabricLoader;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.TestFunction;

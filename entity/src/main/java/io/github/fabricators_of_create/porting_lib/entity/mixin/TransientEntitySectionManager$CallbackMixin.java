@@ -12,6 +12,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalLongRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityChangeChunkSectionCallback;
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityChangeChunkSectionCallback.Context;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.entity.EntityAccess;
 import net.minecraft.world.level.entity.EntitySection;
@@ -50,7 +51,7 @@ public abstract class TransientEntitySectionManager$CallbackMixin<T extends Enti
 		// if old != null, both != null
 		if (old != null && entity instanceof Entity e) {
 			EntityChangeChunkSectionCallback.EVENT.invoker().onChunkSectionChange(
-					e, old, oldSectionKey.get(), currentSection, currentSectionKey
+					new Context(e, old, oldSectionKey.get(), currentSection, currentSectionKey)
 			);
 		}
 	}

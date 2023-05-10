@@ -13,11 +13,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
-
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
-
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -30,6 +28,7 @@ import net.minecraft.nbt.NbtIo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
@@ -106,7 +105,7 @@ public class QuickExportCommand {
 
 		ServerLevel level = source.getLevel();
 		StructureTemplate structure = new StructureTemplate();
-		structure.fillFromWorld(level, origin, bounds, true, null);
+		structure.fillFromWorld(level, origin, bounds, true, Blocks.AIR);
 		CompoundTag data = structure.save(new CompoundTag());
 
 		if (!path.endsWith(".nbt"))

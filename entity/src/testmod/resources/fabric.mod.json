@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_entity_testmod",
+  "version": "${version}",
+  "name": "Porting Lib Entity Testmod",
+  "description": "Tests the entity module",
+  "authors": [
+    "The Create Fabric Team"
+  ],
+  "license": "LGPL",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.entity.testmod.PortingLibEntityTestmod"
+    ],
+    "client": [
+      "io.github.fabricators_of_create.porting_lib.entity.testmod.PortingLibEntityTestmodClient"
+    ]
+  }
+}

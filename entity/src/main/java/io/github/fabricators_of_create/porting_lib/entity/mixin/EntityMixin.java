@@ -12,18 +12,39 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
 
+import io.github.fabricators_of_create.porting_lib.entity.ExtraSpawnDataEntity;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityDataEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityMountEvents;
 import io.github.fabricators_of_create.porting_lib.entity.extensions.EntityExtensions;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBundlePacket;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.Level;
 
 @Mixin(Entity.class)
-public class EntityMixin implements EntityExtensions {
+public abstract class EntityMixin implements EntityExtensions {
+	// custom spawn packets
+
+	@ModifyReturnValue(method = "getAddEntityPacket", at = @At("RETURN"))
+	private Packet<ClientGamePacketListener> useExtendedSpawnPacket(Packet<ClientGamePacketListener> base) {
+		if (!(this instanceof ExtraSpawnDataEntity extra))
+			return base;
+		FriendlyByteBuf buf = PacketByteBufs.create();
+		buf.writeVarInt(getId());
+		extra.writeSpawnData(buf);
+		Packet<ClientGamePacketListener> extraPacket = ServerPlayNetworking.createS2CPacket(ExtraSpawnDataEntity.EXTRA_DATA_PACKET, buf);
+		return new ClientboundBundlePacket(List.of(base, extraPacket));
+	}
+
 	// drop capturing
 
 	@Unique
@@ -36,7 +57,7 @@ public class EntityMixin implements EntityExtensions {
 					target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
 			)
 	)
-	public boolean startCapturingDrops(Level level, Entity entity) {
+	public boolean captureDroppedItem(Level level, Entity entity) {
 		if (capturedDrops != null && entity instanceof ItemEntity item) {
 			capturedDrops.add(item);
 			return false;
@@ -116,6 +137,9 @@ public class EntityMixin implements EntityExtensions {
 	@Shadow
 	@Nullable
 	private Entity vehicle;
+
+	@Shadow
+	public abstract int getId();
 
 	@Inject(
 			method = "startRiding(Lnet/minecraft/world/entity/Entity;Z)Z",

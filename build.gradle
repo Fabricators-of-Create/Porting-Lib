@@ -35,6 +35,32 @@ def mixinExtras(DependencyHandler deps) {
 }
 
 @SuppressWarnings("unused") // for subprojects
+def testMod(Project project) {
+	project.sourceSets {
+		testmod {
+			compileClasspath += main.compileClasspath
+			compileClasspath += main.output
+			runtimeClasspath += main.runtimeClasspath
+			runtimeClasspath += main.output
+		}
+	}
+
+	project.loom.runs {
+		testmodClient {
+			client()
+			name "Testmod Client"
+			source project.sourceSets.testmod
+			runDir "run/test"
+		}
+		testmodServer {
+			server()
+			name "Testmod Server"
+			source project.sourceSets.testmod
+			runDir "run/test_server"
+		}
+	}
+}
+
 def moduleDependencies(Project project, List<String> depNames) {
 	def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: "namedElements") }
 
@@ -270,6 +296,9 @@ subprojects.forEach { Project proj ->
 		File output = proj.file("src/main/resources/data/porting_lib_${proj.name}/structures/gametest")
 		property("porting_lib.gametest.quickexport.output", output.absolutePath)
 	}
+	// give every module gametests
+	if (proj.name != "gametest")
+		moduleDependencies(proj, List.of("gametest"))
 }
 
 sourceSets {
