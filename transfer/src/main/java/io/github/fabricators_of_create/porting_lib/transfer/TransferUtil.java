@@ -657,21 +657,31 @@ public class TransferUtil implements ModInitializer {
 	 */
 	@Nullable
 	public static <T> ResourceAmount<T> extractMatching(Storage<T> storage, Predicate<T> predicate, long maxAmount, TransactionContext t) {
+		if (!storage.supportsExtraction())
+			return null;
 		if (storage instanceof ExtendedStorage<T> extended)
 			return extended.extractMatching(predicate, maxAmount, t);
 		T variant = null;
+		long extracted = 0;
 		for (StorageView<T> view : getNonEmpty(storage)) {
 			T resource = view.getResource();
-			if (predicate.test(resource)) {
-				variant = resource;
-				break;
-			}
+			if (!predicate.test(resource))
+				continue;
+			// extract all we can from this first view, see if it can be extracted from at all
+			extracted = view.extract(resource, maxAmount, t);
+			if (extracted == 0)
+				continue; // can't extract, move on
+			if (extracted >= maxAmount) // got all we need
+				return new ResourceAmount<>(resource, extracted);
+			// got something, but need some more. break out and extract directly from storage
+			maxAmount -= extracted;
+			variant = resource;
+			break;
 		}
 		if (variant == null)
 			return null;
-		long extracted = storage.extract(variant, maxAmount, t);
-		if (extracted == 0)
-			return null;
+		// extracted > 0, variant would still be null otherwise
+		extracted += storage.extract(variant, maxAmount, t);
 		return new ResourceAmount<>(variant, extracted);
 	}
 
