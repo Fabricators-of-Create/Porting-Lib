@@ -42,6 +42,7 @@
     "MultiPlayerGameModeMixin",
     "ParticleEngineMixin",
     "ParticleMixin",
+    "PlayerRendererMixin",
     "PostChainMixin",
     "RemotePlayerMixin",
     "RenderTargetMixin",
