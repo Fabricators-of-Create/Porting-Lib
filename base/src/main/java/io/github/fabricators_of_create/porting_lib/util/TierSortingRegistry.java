@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import io.github.fabricators_of_create.porting_lib.PortingConstants;
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -227,7 +227,7 @@ public class TierSortingRegistry {
 
 	/*package private*/
 	static IdentifiableResourceReloadListener getReloadListener() {
-		return new IdentifiableSimplePreparableReloadListener<JsonObject>(PortingConstants.id("tier_sorting_registry")) {
+		return new IdentifiableSimplePreparableReloadListener<JsonObject>(PortingLib.id("tier_sorting_registry")) {
 			final Gson gson = (new GsonBuilder()).create();
 
 			@Nonnull

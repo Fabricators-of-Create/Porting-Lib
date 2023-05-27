@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import com.mojang.serialization.Codec;
 
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.loot.IGlobalLootModifier;
 import io.github.fabricators_of_create.porting_lib.util.LazyRegistrar;
 import net.minecraft.core.Registry;
@@ -17,7 +18,7 @@ public class PortingLibRegistries {
 		public static final ResourceKey<Registry<Codec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS = key("global_loot_modifier_serializers");
 
 		private static <T> ResourceKey<Registry<T>> key(String name) {
-			return ResourceKey.createRegistryKey(PortingConstants.id(name));
+			return ResourceKey.createRegistryKey(PortingLib.id(name));
 		}
 	}
 }

@@ -7,6 +7,7 @@ import com.google.gson.internal.Streams;
 
 import com.google.gson.stream.JsonReader;
 
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.models.geometry.RegisterGeometryLoadersCallback;
 import io.github.fabricators_of_create.porting_lib.models.obj.ObjLoader;
 import io.github.fabricators_of_create.porting_lib.models.obj.ObjModel;
@@ -31,7 +32,7 @@ import java.util.NoSuchElementException;
 public class PortingLibObjLoader implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
-		RegisterGeometryLoadersCallback.EVENT.register(loaders -> loaders.put(PortingConstants.id("obj"), ObjLoader.INSTANCE));
+		RegisterGeometryLoadersCallback.EVENT.register(loaders -> loaders.put(PortingLib.id("obj"), ObjLoader.INSTANCE));
 		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(ObjLoader.INSTANCE);
 		ModelLoadingRegistry.INSTANCE.registerResourceProvider(resourceManager -> (resourceId, context) -> loadModel(resourceManager, resourceId));
 		ModelLoadingRegistry.INSTANCE.registerModelProvider((manager, out) -> manager.listResources("models/misc", resourceLocation -> {
@@ -39,7 +40,7 @@ public class PortingLibObjLoader implements ClientModInitializer {
 				manager.getResource(resourceLocation).ifPresent(resource -> {
 					try {
 					JsonObject jsonObject = Streams.parse(new JsonReader(new InputStreamReader(resource.open(), Charsets.UTF_8))).getAsJsonObject();
-					if (jsonObject.has(PortingConstants.ID + ":" + "obj_marker")) {
+					if (jsonObject.has(PortingLib.ID + ":" + "obj_marker")) {
 						out.accept(resourceLocation);
 					}
 					} catch (IOException | NoSuchElementException e) {
@@ -60,7 +61,7 @@ public class PortingLibObjLoader implements ClientModInitializer {
 		if (resource != null) {
 			try {
 				JsonObject jsonObject = Streams.parse(new JsonReader(new InputStreamReader(resource.open(), Charsets.UTF_8))).getAsJsonObject();
-				if (jsonObject.has(PortingConstants.ID + ":" + "obj_marker")) {
+				if (jsonObject.has(PortingLib.ID + ":" + "obj_marker")) {
 					ResourceLocation objLocation = new ResourceLocation(GsonHelper.getAsString(jsonObject, "model"));
 					return ObjLoader.INSTANCE.loadModel(resourceManager.getResource(objLocation).orElseThrow(), new ObjModel.ModelSettings(objLocation, GsonHelper.getAsBoolean(jsonObject, "automaticCulling", true), GsonHelper.getAsBoolean(jsonObject, "shadeQuads", true), GsonHelper.getAsBoolean(jsonObject, "flipV", true), GsonHelper.getAsBoolean(jsonObject, "emissiveAmbient", true), GsonHelper.getAsString(jsonObject, "mtlOverride", null)));
 				}

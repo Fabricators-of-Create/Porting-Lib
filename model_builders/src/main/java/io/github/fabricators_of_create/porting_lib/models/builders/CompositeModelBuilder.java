@@ -10,7 +10,7 @@ import com.google.common.base.Preconditions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import io.github.fabricators_of_create.porting_lib.PortingConstants;
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.data.ExistingFileHelper;
 import io.github.fabricators_of_create.porting_lib.models.generators.CustomLoaderBuilder;
 import io.github.fabricators_of_create.porting_lib.models.generators.ModelBuilder;
@@ -24,7 +24,7 @@ public class CompositeModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
 	private final List<String> itemRenderOrder = new ArrayList<>();
 
 	protected CompositeModelBuilder(T parent, ExistingFileHelper existingFileHelper) {
-		super(PortingConstants.id("composite"), parent, existingFileHelper);
+		super(PortingLib.id("composite"), parent, existingFileHelper);
 	}
 
 	public CompositeModelBuilder<T> child(String name, T modelBuilder) {

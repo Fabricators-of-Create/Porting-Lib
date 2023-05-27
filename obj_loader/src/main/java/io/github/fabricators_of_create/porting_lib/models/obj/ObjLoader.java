@@ -10,7 +10,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-import io.github.fabricators_of_create.porting_lib.PortingConstants;
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryLoader;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.client.Minecraft;
@@ -141,7 +141,7 @@ public class ObjLoader implements IGeometryLoader<ObjModel>, ResourceManagerRelo
 
 	@Override
 	public ResourceLocation getFabricId() {
-		return PortingConstants.id("obj-loader");
+		return PortingLib.id("obj-loader");
 	}
 
 	@Override

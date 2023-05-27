@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 
-import io.github.fabricators_of_create.porting_lib.PortingConstants;
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.data.ExistingFileHelper;
 import io.github.fabricators_of_create.porting_lib.models.generators.CustomLoaderBuilder;
 import io.github.fabricators_of_create.porting_lib.models.materials.MaterialData;
@@ -23,7 +23,7 @@ public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
 	private final Int2ObjectMap<MaterialData> faceData = new Int2ObjectOpenHashMap<>();
 
 	protected ItemLayerModelBuilder(T parent, ExistingFileHelper existingFileHelper) {
-		super(PortingConstants.id("item_layers"), parent, existingFileHelper);
+		super(PortingLib.id("item_layers"), parent, existingFileHelper);
 	}
 
 	/**

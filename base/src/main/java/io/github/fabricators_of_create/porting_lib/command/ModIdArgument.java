@@ -7,7 +7,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import io.github.fabricators_of_create.porting_lib.PortingConstants;
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.SharedSuggestionProvider;
 
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class ModIdArgument implements ArgumentType<String> {
-	private static final List<String> EXAMPLES = Arrays.asList(PortingConstants.ID, "inventorysorter");
+	private static final List<String> EXAMPLES = Arrays.asList(PortingLib.ID, "inventorysorter");
 
 	public static ModIdArgument modIdArgument() {
 		return new ModIdArgument();

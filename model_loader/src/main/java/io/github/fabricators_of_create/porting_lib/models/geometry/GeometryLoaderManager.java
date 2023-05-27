@@ -6,12 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 
-import io.github.fabricators_of_create.porting_lib.PortingConstants;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.CustomValue;
@@ -72,20 +73,20 @@ public final class GeometryLoaderManager {
 				continue;
 			}
 			if (provided.getType() != CvType.ARRAY) {
-				PortingConstants.LOGGER.error("Mod {} specifies provided loaders, but it's not an array! got: {}",
+				PortingLib.LOGGER.error("Mod {} specifies provided loaders, but it's not an array! got: {}",
 						mod.getMetadata().getName(), provided.getType());
 				continue;
 			}
 			for (CustomValue value : provided.getAsArray()) {
 				if (value.getType() != CvType.STRING) {
-					PortingConstants.LOGGER.error("Mod {} specifies an array of provided loaders, but it contains a non-string! got: {}",
+					PortingLib.LOGGER.error("Mod {} specifies an array of provided loaders, but it contains a non-string! got: {}",
 							mod.getMetadata().getName(), value.getType());
 					continue;
 				}
 				String idString = value.getAsString();
 				ResourceLocation id = ResourceLocation.tryParse(idString);
 				if (id == null) {
-					PortingConstants.LOGGER.error("Mod {} provides loader {}, which is not a valid ID!",
+					PortingLib.LOGGER.error("Mod {} provides loader {}, which is not a valid ID!",
 							mod.getMetadata().getName(), idString);
 					continue;
 				}
@@ -98,7 +99,7 @@ public final class GeometryLoaderManager {
 				out.append(loader).append(", ");
 				loaders.put(loader, NullGeometryLoader.INSTANCE);
 			}
-			PortingConstants.LOGGER.info(out.substring(0, out.length() - 2)); // cut off final ", "
+			PortingLib.LOGGER.info(out.substring(0, out.length() - 2)); // cut off final ", "
 		}
 	}
 

@@ -8,7 +8,7 @@ import java.util.Map;
 import com.google.gson.JsonParseException;
 import com.mojang.math.Transformation;
 
-import io.github.fabricators_of_create.porting_lib.PortingConstants;
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.models.geometry.GeometryLoaderManager;
 import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryLoader;
 import io.github.fabricators_of_create.porting_lib.models.geometry.IUnbakedGeometry;
@@ -69,8 +69,8 @@ public abstract class BlockModelDeserializerMixin {
 		if (loader == null) {
 			if (!GeometryLoaderManager.KNOWN_MISSING_LOADERS.contains(name)) {
 				GeometryLoaderManager.KNOWN_MISSING_LOADERS.add(name);
-				PortingConstants.LOGGER.debug(String.format(Locale.ENGLISH, "Model loader '%s' not found. Registered loaders: %s", name, GeometryLoaderManager.getLoaderList()));
-				PortingConstants.LOGGER.debug("Falling back to vanilla logic.");
+				PortingLib.LOGGER.debug(String.format(Locale.ENGLISH, "Model loader '%s' not found. Registered loaders: %s", name, GeometryLoaderManager.getLoaderList()));
+				PortingLib.LOGGER.debug("Falling back to vanilla logic.");
 			}
 			return null;
 		}

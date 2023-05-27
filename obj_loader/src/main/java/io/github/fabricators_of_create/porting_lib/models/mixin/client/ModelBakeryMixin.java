@@ -13,7 +13,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
 
-import io.github.fabricators_of_create.porting_lib.PortingConstants;
 import io.github.fabricators_of_create.porting_lib.models.obj.ObjLoader;
 import io.github.fabricators_of_create.porting_lib.models.obj.ObjModel;
 import net.minecraft.client.Minecraft;
@@ -34,7 +33,7 @@ public abstract class ModelBakeryMixin {
 //		Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath())).ifPresent(resource -> {
 //			try {
 //				JsonObject jsonObject = Streams.parse(new JsonReader(new InputStreamReader(resource.open(), Charsets.UTF_8))).getAsJsonObject();
-//				if (jsonObject.has(PortingConstants.ID + ":" + "obj_marker")) {
+//				if (jsonObject.has(PortingLib.ID + ":" + "obj_marker")) {
 //					ResourceLocation objLocation = new ResourceLocation(GsonHelper.getAsString(jsonObject, "model"));
 //					ObjModel model = ObjLoader.INSTANCE.loadModel(Minecraft.getInstance().getResourceManager().getResource(objLocation).orElseThrow(), new ObjModel.ModelSettings(objLocation, true, true, true, true, null));
 //					if (model != null) {

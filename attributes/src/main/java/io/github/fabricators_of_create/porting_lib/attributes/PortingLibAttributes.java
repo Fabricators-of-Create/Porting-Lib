@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.attributes;
 
-import io.github.fabricators_of_create.porting_lib.PortingConstants;
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
@@ -24,13 +24,13 @@ public class PortingLibAttributes implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		Registry.register(BuiltInRegistries.ATTRIBUTE, PortingConstants.id("step_height_addition"), STEP_HEIGHT_ADDITION);
-		Registry.register(BuiltInRegistries.ATTRIBUTE, PortingConstants.id("entity_gravity"), ENTITY_GRAVITY);
-		Registry.register(BuiltInRegistries.ATTRIBUTE, PortingConstants.id("swim_speed"), SWIM_SPEED);
+		Registry.register(BuiltInRegistries.ATTRIBUTE, PortingLib.id("step_height_addition"), STEP_HEIGHT_ADDITION);
+		Registry.register(BuiltInRegistries.ATTRIBUTE, PortingLib.id("entity_gravity"), ENTITY_GRAVITY);
+		Registry.register(BuiltInRegistries.ATTRIBUTE, PortingLib.id("swim_speed"), SWIM_SPEED);
 
 		if (!FabricLoader.getInstance().isModLoaded("reach-entity-attributes")) {
-			Registry.register(BuiltInRegistries.ATTRIBUTE, PortingConstants.id("reach_distance"), REACH_DISTANCE);
-			Registry.register(BuiltInRegistries.ATTRIBUTE, PortingConstants.id("attack_range"), ATTACK_RANGE);
+			Registry.register(BuiltInRegistries.ATTRIBUTE, PortingLib.id("reach_distance"), REACH_DISTANCE);
+			Registry.register(BuiltInRegistries.ATTRIBUTE, PortingLib.id("attack_range"), ATTACK_RANGE);
 		}
 	}
 }

@@ -6,13 +6,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
-import io.github.fabricators_of_create.porting_lib.PortingConstants;
 import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockEntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.LevelExtensions;
@@ -130,7 +128,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 				if (data.pos().equals(pos)) {
 					BlockState state = data.state();
 					if (state == null) {
-						PortingConstants.LOGGER.error("null blockstate stored in snapshots at " + pos);
+						PortingLib.LOGGER.error("null blockstate stored in snapshots at " + pos);
 						new Throwable().printStackTrace();
 					} else {
 						cir.setReturnValue(state);
@@ -145,7 +143,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 			at = @At(value = "INVOKE", shift = Shift.BEFORE, target = "Lnet/minecraft/world/level/Level;getChunkAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/chunk/LevelChunk;"), cancellable = true)
 	private void port_lib$setBlock(BlockPos pos, BlockState state, int flags, int recursionLeft, CallbackInfoReturnable<Boolean> cir) {
 		if (state == null) {
-			PortingConstants.LOGGER.error("Setting null blockstate at " + pos);
+			PortingLib.LOGGER.error("Setting null blockstate at " + pos);
 			new Throwable().printStackTrace();
 		}
 		if (port_lib$modifiedStates != null) {

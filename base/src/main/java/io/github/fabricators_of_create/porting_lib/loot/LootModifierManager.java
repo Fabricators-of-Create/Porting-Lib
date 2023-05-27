@@ -11,8 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import io.github.fabricators_of_create.porting_lib.PortingConstants;
-
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 
 import org.apache.logging.log4j.LogManager;
@@ -103,6 +102,6 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener implem
 
 	@Override
 	public ResourceLocation getFabricId() {
-		return PortingConstants.id("loot_modifier_manager");
+		return PortingLib.id("loot_modifier_manager");
 	}
 }

@@ -2,7 +2,7 @@ package io.github.fabricators_of_create.porting_lib.util;
 
 import java.util.function.Consumer;
 
-import io.github.fabricators_of_create.porting_lib.PortingConstants;
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.mixin.accessors.common.accessor.ServerPlayerAccessor;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -15,7 +15,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class NetworkUtil {
-	public static final ResourceLocation OPEN_ID = PortingConstants.id("open_screen");
+	public static final ResourceLocation OPEN_ID = PortingLib.id("open_screen");
 
 	public static void openGui(ServerPlayer player, MenuProvider containerProvider, BlockPos pos) {
 		openGui(player, containerProvider, buf -> buf.writeBlockPos(pos));
