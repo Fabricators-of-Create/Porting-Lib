@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.entity.events.living;
 
-import io.github.fabricators_of_create.porting_lib.entity.CancellableEvent;
+import io.github.fabricators_of_create.porting_lib.core.event.CancellableEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.damagesource.DamageSource;

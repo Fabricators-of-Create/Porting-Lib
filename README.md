@@ -22,7 +22,7 @@ The latest patch can be found from GitHub Actions as the build number.
 | `base`                   | Code that has not yet been split into modules                                         |
 | `client_events`          | Useful client-side events                                                             |
 | `common`                 | Miscellaneous utilities for other modules                                             |
-| `constants`              | Internal constants used by Porting Lib                                                |
+| `core`                   | Core functionality used across other modules                                          |
 | `data`                   | Additional data generation providers                                                  |
 | `entity`                 | Multipart entities, extra spawn data, removal listening                               |
 | `extensions`             | Extensions to vanilla classes for additional functionality                            |

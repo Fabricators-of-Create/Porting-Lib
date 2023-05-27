@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib;
 
 import io.github.fabricators_of_create.porting_lib.command.ModIdArgument;
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 
 import net.minecraft.server.packs.PackType;
@@ -22,10 +23,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-public class PortingLib implements ModInitializer {
+public class PortingLibBase implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("Porting Lib Base");
 	@Override
 	public void onInitialize() {
@@ -39,7 +37,7 @@ public class PortingLib implements ModInitializer {
 		Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, new ResourceLocation("forge:loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
 		Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, new ResourceLocation("forge:can_tool_perform_action"), CanToolPerformAction.LOOT_CONDITION_TYPE);
 
-		ArgumentTypeInfos.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, PortingConstants.id("modid").toString(), ModIdArgument.class,
+		ArgumentTypeInfos.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, PortingLib.id("modid").toString(), ModIdArgument.class,
 				SingletonArgumentInfo.contextFree(ModIdArgument::modIdArgument));
 	}
 }

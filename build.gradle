@@ -296,9 +296,9 @@ subprojects.forEach { Project proj ->
 		File output = proj.file("src/main/resources/data/porting_lib_${proj.name}/structures/gametest")
 		property("porting_lib.gametest.quickexport.output", output.absolutePath)
 	}
-	// give every module gametests
-	if (proj.name != "gametest")
-		moduleDependencies(proj, List.of("gametest"))
+	// give every module core, which includes gametest
+	if (proj.name != "gametest" && proj.name != "core")
+		moduleDependencies(proj, List.of("core"))
 }
 
 sourceSets {

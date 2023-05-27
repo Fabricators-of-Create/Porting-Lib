@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.entity;
 
-import io.github.fabricators_of_create.porting_lib.PortingConstants;
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -22,7 +22,7 @@ public class PortingLibEntityClient implements ClientModInitializer {
 			if (entity instanceof ExtraSpawnDataEntity extra) {
 				extra.readSpawnData(buf);
 			} else {
-				PortingConstants.LOGGER.error("ExtraSpawnDataEntity spawn data received, but no corresponding entity was found! Entity: [{}]", entity);
+				PortingLib.LOGGER.error("ExtraSpawnDataEntity spawn data received, but no corresponding entity was found! Entity: [{}]", entity);
 			}
 			buf.release();
 		});

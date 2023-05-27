@@ -1,7 +1,0 @@
-{
-  "schemaVersion": 1,
-  "id": "porting_lib_constants",
-  "version": "${version}",
-  "name": "Porting Lib Constants",
-  "description": "Constant values used internally by Porting Lib."
-}

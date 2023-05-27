@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.entity;
+package io.github.fabricators_of_create.porting_lib.core.event;
 
 /**
  * The base of an event that may be cancelled.

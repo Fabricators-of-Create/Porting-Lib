@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_core",
+  "version": "${version}",
+  "name": "Porting Lib Core",
+  "description": "Core functionality used across other modules."
+}

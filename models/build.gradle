@@ -1,5 +1,4 @@
 moduleDependencies(project, [
-		"constants",
 		"model_loader"
 ])
 

@@ -6,7 +6,7 @@
   "description": "Assorted utilities for porting mods from Forge to Fabric, awaiting further sorting into modules.",
   "entrypoints": {
     "main": [
-      "io.github.fabricators_of_create.porting_lib.PortingLib"
+      "io.github.fabricators_of_create.porting_lib.PortingLibBase"
     ],
     "client": [
       "io.github.fabricators_of_create.porting_lib.PortingLibClient"
