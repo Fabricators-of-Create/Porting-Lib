@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import io.github.fabricators_of_create.porting_lib.block.CustomScaffoldingBlock;
 import io.github.fabricators_of_create.porting_lib.util.ContinueUsingItem;
 import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.util.UsingTickItem;
@@ -354,5 +355,19 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 	@Redirect(method = "dropFromLootTable", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/loot/LootTable;getRandomItems(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V"))
 	public void port_lib$modifyLootTable(LootTable instance, LootContext contextData, Consumer<ItemStack> stacksOut) {
 		instance.getRandomItems(contextData).forEach(stacksOut);
+	}
+
+	@ModifyExpressionValue(
+			method = "handleOnClimbable",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"
+			)
+	)
+	private boolean customScaffoldingMovement(boolean original) {
+		BlockState state = getFeetBlockState();
+		if (state.getBlock() instanceof CustomScaffoldingBlock custom)
+			return custom.isScaffolding(state, level, blockPosition(), (LivingEntity) (Object) this);
+		return original;
 	}
 }
