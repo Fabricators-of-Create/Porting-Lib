@@ -4,6 +4,7 @@ import io.github.fabricators_of_create.porting_lib.loot.LootModifierManager;
 import io.github.fabricators_of_create.porting_lib.loot.LootTableIdCondition;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler;
 import io.github.fabricators_of_create.porting_lib.util.CanToolPerformAction;
+import io.github.fabricators_of_create.porting_lib.util.UsernameCache;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.Registry;
@@ -46,6 +47,7 @@ public class PortingLib implements ModInitializer {
 		TransferUtil.initApi();
 		CraftingHelper.init();
 		TrueCondition.init();
+		UsernameCache.load();
 		PortingHooks.init();
 
 		Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
