@@ -3,6 +3,10 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 import static net.minecraft.world.InteractionResult.PASS;
 import static net.minecraft.world.InteractionResult.SUCCESS;
 
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
+
+import io.github.fabricators_of_create.porting_lib.block.CustomHitEffectsBlock;
+
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -10,6 +14,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
@@ -29,9 +34,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.main.GameConfig;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.HitResult;
 
 @Environment(EnvType.CLIENT)
 @Mixin(Minecraft.class)
@@ -40,7 +50,12 @@ public abstract class MinecraftMixin {
 	public LocalPlayer player;
 
 	@Shadow
-	public @Nullable ClientLevel level;
+	@Nullable
+	public ClientLevel level;
+
+	@Shadow
+	@Nullable
+	public HitResult hitResult;
 
 	@Inject(
 			method = "<init>",
@@ -124,5 +139,19 @@ public abstract class MinecraftMixin {
 		if (PickBlockCallback.EVENT.invoker().onPickBlock()) {
 			ci.cancel();
 		}
+	}
+
+	@WrapWithCondition(
+			method = "continueAttack",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/particle/ParticleEngine;crack(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)V"
+			)
+	)
+	private boolean customHitEffects(ParticleEngine engine, BlockPos pos, Direction side) {
+		BlockState state = level.getBlockState(pos);
+		if (state.getBlock() instanceof CustomHitEffectsBlock custom)
+			return !custom.applyCustomHitEffects(state, level, hitResult, engine);
+		return true;
 	}
 }
