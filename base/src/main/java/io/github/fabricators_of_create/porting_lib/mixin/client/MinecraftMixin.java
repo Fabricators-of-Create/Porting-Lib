@@ -171,4 +171,18 @@ public abstract class MinecraftMixin {
 			ci.cancel();
 		}
 	}
+
+	@WrapWithCondition(
+			method = "continueAttack",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/particle/ParticleEngine;crack(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)V"
+			)
+	)
+	private boolean customHitEffects(ParticleEngine engine, BlockPos pos, Direction side) {
+		BlockState state = level.getBlockState(pos);
+		if (state.getBlock() instanceof CustomHitEffectsBlock custom)
+			return !custom.addHitEffects(state, level, hitResult, engine);
+		return true;
+	}
 }
