@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib;
 
+import io.github.fabricators_of_create.porting_lib.util.UsernameCache;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +27,7 @@ public class PortingLib implements ModInitializer {
 		ItemItemStorages.init();
 		CraftingHelper.init();
 		TrueCondition.init();
+		UsernameCache.load();
 		PortingHooks.init();
 		// can be used to force all mixins to apply
 		// MixinEnvironment.getCurrentEnvironment().audit();

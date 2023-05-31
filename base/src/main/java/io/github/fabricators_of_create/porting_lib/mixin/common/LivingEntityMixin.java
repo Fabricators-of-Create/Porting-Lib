@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.github.fabricators_of_create.porting_lib.PortingLib;
+import io.github.fabricators_of_create.porting_lib.block.CustomScaffoldingBlock;
 import io.github.fabricators_of_create.porting_lib.item.ContinueUsingItem;
 import io.github.fabricators_of_create.porting_lib.item.UsingTickItem;
 
@@ -304,6 +305,20 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 			}
 			return false;
 		}
+		return original;
+	}
+
+	@ModifyExpressionValue(
+			method = "handleOnClimbable",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"
+			)
+	)
+	private boolean customScaffoldingMovement(boolean original) {
+		BlockState state = getFeetBlockState();
+		if (state.getBlock() instanceof CustomScaffoldingBlock custom)
+			return custom.isScaffolding(state, level, blockPosition(), (LivingEntity) (Object) this);
 		return original;
 	}
 }

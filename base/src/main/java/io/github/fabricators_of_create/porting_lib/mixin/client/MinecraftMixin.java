@@ -1,14 +1,18 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
+import io.github.fabricators_of_create.porting_lib.block.CustomHitEffectsBlock;
 import io.github.fabricators_of_create.porting_lib.event.client.InteractEvents;
 import io.github.fabricators_of_create.porting_lib.model.geometry.GeometryLoaderManager;
 
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 
 import org.jetbrains.annotations.Nullable;
@@ -178,5 +182,19 @@ public abstract class MinecraftMixin {
 		if (cancelled) {
 			ci.cancel();
 		}
+	}
+
+	@WrapWithCondition(
+			method = "continueAttack",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/particle/ParticleEngine;crack(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)V"
+			)
+	)
+	private boolean customHitEffects(ParticleEngine engine, BlockPos pos, Direction side) {
+		BlockState state = level.getBlockState(pos);
+		if (state.getBlock() instanceof CustomHitEffectsBlock custom)
+			return !custom.addHitEffects(state, level, hitResult, engine);
+		return true;
 	}
 }
