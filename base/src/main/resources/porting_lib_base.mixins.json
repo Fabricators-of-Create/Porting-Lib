@@ -17,7 +17,6 @@
     "common.BlockEntityMixin",
     "common.BlockGetterMixin",
     "common.BlockItemMixin",
-    "common.BlockMixin",
     "common.BlockStateMixin",
     "common.BoatMixin",
     "common.BowItemMixin",

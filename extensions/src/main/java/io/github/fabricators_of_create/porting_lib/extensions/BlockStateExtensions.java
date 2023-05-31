@@ -84,4 +84,29 @@ public interface BlockStateExtensions {
 	default BlockState getStateAtViewpoint(BlockGetter level, BlockPos pos, Vec3 viewpoint) {
 		return ((BlockState)this).getBlock().getStateAtViewpoint(((BlockState)this), level, pos, viewpoint);
 	}
+
+	/**
+	 * Whether this block hides the neighbors face pointed towards by the given direction.
+	 * <p>
+	 * This method should only be used for blocks you don't control, for your own blocks override
+	 * {@link net.minecraft.world.level.block.Block#skipRendering(BlockState, BlockState, Direction)}
+	 * on the respective block instead
+	 *
+	 * @param level The world
+	 * @param pos The blocks position in the world
+	 * @param neighborState The neighboring blocks {@link BlockState}
+	 * @param dir The direction towards the neighboring block
+	 */
+	default boolean hidesNeighborFace(BlockGetter level, BlockPos pos, BlockState neighborState, Direction dir) {
+		return ((BlockState)this).getBlock().hidesNeighborFace(level, pos, ((BlockState)this), neighborState, dir);
+	}
+
+	/**
+	 * Whether this block allows a neighboring block to hide the face of this block it touches.
+	 * If this returns true, {@link IForgeBlockState#hidesNeighborFace(BlockGetter, BlockPos, BlockState, Direction)}
+	 * will be called on the neighboring block.
+	 */
+	default boolean supportsExternalFaceHiding() {
+		return ((BlockState)this).getBlock().supportsExternalFaceHiding(((BlockState)this));
+	}
 }
