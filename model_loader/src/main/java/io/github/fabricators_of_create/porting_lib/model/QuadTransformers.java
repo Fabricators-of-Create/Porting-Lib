@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
+
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -18,6 +20,9 @@ import java.util.Arrays;
 public final class QuadTransformers {
 
 	private static final IQuadTransformer EMPTY = quad -> {};
+	private static final RenderContext.QuadTransform EMPTY_FABRIC = quad -> {
+		return true;
+	};
 	private static final IQuadTransformer[] EMISSIVE_TRANSFORMERS = Util.make(new IQuadTransformer[16], array -> {
 		Arrays.setAll(array, i -> applyingLightmap(LightTexture.pack(i, i)));
 	});
@@ -28,6 +33,13 @@ public final class QuadTransformers {
 	public static IQuadTransformer empty() {
 		return EMPTY;
 	}
+	/**
+	 * {@return a {@link BakedQuad} transformer that does nothing}
+	 */
+	public static RenderContext.QuadTransform emptyFabric() {
+		return EMPTY_FABRIC;
+	}
+
 
 	/**
 	 * {@return a new {@link BakedQuad} transformer that applies the specified {@link Transformation}}
@@ -74,6 +86,43 @@ public final class QuadTransformers {
 	}
 
 	/**
+	 * {@return a new {@link BakedQuad} transformer that applies the specified {@link Transformation}}
+	 */
+	public static RenderContext.QuadTransform applyingFabric(Transformation transform) {
+		if (transform.isIdentity())
+			return emptyFabric();
+		return quad -> {
+			for (int i = 0; i < 4; i++) {
+				float x = quad.x(i);
+				float y = quad.y(i);
+				float z = quad.z(i);
+
+				Vector4f pos = new Vector4f(x, y, z, 1);
+				transform.transformPosition(pos);
+				pos.perspectiveDivide();
+
+				quad.pos(i, pos.x(), pos.y(), pos.z());
+			}
+
+			for (int i = 0; i < 4; i++) {
+				int offset = i * IQuadTransformer.STRIDE + IQuadTransformer.NORMAL;
+				if (quad.hasNormal(i)) {
+					float x = quad.normalX(i);;
+					float y = quad.normalY(i);
+					float z = quad.z(i);
+
+					Vector3f pos = new Vector3f(x, y, z);
+					transform.transformNormal(pos);
+					pos.normalize();
+
+					quad.normal(i, pos);
+				}
+			}
+			return true;
+		};
+	}
+
+	/**
 	 * {@return a new {@link BakedQuad} transformer that applies the specified lightmap}
 	 */
 	public static IQuadTransformer applyingLightmap(int lightmap) {
@@ -90,6 +139,18 @@ public final class QuadTransformers {
 	public static IQuadTransformer settingEmissivity(int emissivity) {
 		Preconditions.checkArgument(emissivity >= 0 && emissivity < 16, "Emissivity must be between 0 and 15.");
 		return EMISSIVE_TRANSFORMERS[emissivity];
+	}
+
+	/**
+	 * {@return a {@link BakedQuad} transformer that sets the lightmap to the given emissivity (0-15)}
+	 */
+	public static RenderContext.QuadTransform settingEmissivityFabric(int emissivity) {
+		Preconditions.checkArgument(emissivity >= 0 && emissivity < 16, "Emissivity must be between 0 and 15.");
+		return quad -> {
+			for (int i = 0; i < 4; i++)
+				quad.lightmap(i, LightTexture.pack(emissivity, emissivity));
+			return true;
+		};
 	}
 
 	/**
