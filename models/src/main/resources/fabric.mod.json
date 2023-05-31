@@ -8,5 +8,8 @@
     "client": [
       "io.github.fabricators_of_create.porting_lib.PortingLibModels"
     ]
-  }
+  },
+  "mixins": [
+    "porting_lib_models.mixins.json"
+  ]
 }
