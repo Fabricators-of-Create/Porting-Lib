@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import io.github.fabricators_of_create.porting_lib.util.FluidTextUtil;
 import io.github.fabricators_of_create.porting_lib.util.LogicalSidedProvider;
-import io.github.fabricators_of_create.porting_lib.util.NetworkUtil;
+import io.github.fabricators_of_create.porting_lib.util.NetworkHooks;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -30,7 +30,7 @@ public class PortingLibClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(FluidTextUtil.NUMBER_FORMAT);
 
-		ClientPlayNetworking.registerGlobalReceiver(NetworkUtil.OPEN_ID, (client, handler, buf, responseSender) -> {
+		ClientPlayNetworking.registerGlobalReceiver(NetworkHooks.OPEN_ID, (client, handler, buf, responseSender) -> {
 			int typeId = buf.readVarInt();
 			int syncId = buf.readVarInt();
 			Component title = buf.readComponent();
