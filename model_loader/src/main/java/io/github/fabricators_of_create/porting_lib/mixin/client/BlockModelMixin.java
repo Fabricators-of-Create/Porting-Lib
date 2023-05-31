@@ -6,14 +6,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
-import io.github.fabricators_of_create.porting_lib.model.CompositeModelState;
-
-import io.github.fabricators_of_create.porting_lib.model.PerspectiveMapWrapper;
-
-import io.github.fabricators_of_create.porting_lib.model.geometry.BlockGeometryBakingContext;
-import io.github.fabricators_of_create.porting_lib.model.geometry.UnbakedGeometryHelper;
-import io.github.fabricators_of_create.porting_lib.render.TransformTypeDependentItemBakedModel;
-
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,10 +13,13 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import com.mojang.datafixers.util.Pair;
 
 import io.github.fabricators_of_create.porting_lib.extensions.BlockModelExtensions;
+import io.github.fabricators_of_create.porting_lib.model.geometry.BlockGeometryBakingContext;
+import io.github.fabricators_of_create.porting_lib.model.geometry.UnbakedGeometryHelper;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
@@ -37,8 +32,6 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
-
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(BlockModel.class)
 public abstract class BlockModelMixin implements BlockModelExtensions {
