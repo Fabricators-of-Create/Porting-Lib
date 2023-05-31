@@ -150,4 +150,18 @@ public abstract class LivingEntityMixin extends Entity {
 		}
 		return original;
 	}
+
+	@ModifyExpressionValue(
+			method = "handleOnClimbable",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"
+			)
+	)
+	private boolean customScaffoldingMovement(boolean original) {
+		BlockState state = getFeetBlockState();
+		if (state.getBlock() instanceof CustomScaffoldingBlock custom)
+			return custom.isScaffolding(state, level, blockPosition(), (LivingEntity) (Object) this);
+		return original;
+	}
 }
