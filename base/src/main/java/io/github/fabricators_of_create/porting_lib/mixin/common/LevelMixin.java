@@ -16,6 +16,7 @@ import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockEn
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.LevelExtensions;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.FullChunkStatus;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -277,7 +278,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 						this.setBlocksDirty(pos, oldState, blockstate1);
 					}
 
-					if ((flags & 2) != 0 && (!this.isClientSide || (flags & 4) == 0) && (this.isClientSide || levelchunk.getFullStatus() != null && levelchunk.getFullStatus().isOrAfter(ChunkHolder.FullChunkStatus.TICKING))) {
+					if ((flags & 2) != 0 && (!this.isClientSide || (flags & 4) == 0) && (this.isClientSide || levelchunk.getFullStatus() != null && levelchunk.getFullStatus().isOrAfter(FullChunkStatus.BLOCK_TICKING))) {
 						this.sendBlockUpdated(pos, oldState, newState, flags);
 					}
 

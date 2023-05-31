@@ -92,7 +92,7 @@ public abstract class LivingEntityMixin extends Entity {
 	protected void port_lib$updateFallState(double y, boolean onGround, BlockState state, BlockPos pos,
 										  CallbackInfo ci, float f, double d, int i) {
 		if (state.getBlock() instanceof CustomLandingEffectsBlock custom &&
-				custom.addLandingEffects(state, (ServerLevel) level, pos, state, (LivingEntity) (Object) this, i)) {
+				custom.addLandingEffects(state, (ServerLevel) level(), pos, state, (LivingEntity) (Object) this, i)) {
 			super.checkFallDamage(y, onGround, state, pos);
 			ci.cancel();
 		}
@@ -106,9 +106,9 @@ public abstract class LivingEntityMixin extends Entity {
 	)
 	public float port_lib$setSlipperiness(float p) {
 		BlockPos pos = getBlockPosBelowThatAffectsMyMovement();
-		BlockState state = level.getBlockState(pos);
+		BlockState state = level().getBlockState(pos);
 		if (state.getBlock() instanceof CustomFrictionBlock custom) {
-			return custom.getFriction(state, level, pos, (LivingEntity) (Object) this);
+			return custom.getFriction(state, level(), pos, (LivingEntity) (Object) this);
 		}
 		return p;
 	}
@@ -153,7 +153,7 @@ public abstract class LivingEntityMixin extends Entity {
 		}
 	}
 
-	@ModifyExpressionValue(method = "updatingUsingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isSame(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
+	@ModifyExpressionValue(method = "updatingUsingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isSameItem(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
 	public boolean port_lib$canContinueUsing(boolean original) {
 		if (useItem.getItem() instanceof ContinueUsingItem continueUsingItem) {
 			ItemStack to = this.getItemInHand(this.getUsedItemHand());

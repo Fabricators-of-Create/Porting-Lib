@@ -22,7 +22,7 @@ public class InventoryMixin {
 	private void port_lib$inventoryTick(CallbackInfo ci) {
 		player.getArmorSlots().forEach(stack -> {
 			if(stack.getItem() instanceof ArmorTickListeningItem item) {
-				item.onArmorTick(stack, player.level, player);
+				item.onArmorTick(stack, player.level(), player);
 			}
 		});
 	}

@@ -23,7 +23,7 @@ public abstract class AbstractMinecartMixin extends Entity {
 	@Inject(method = "moveAlongTrack", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;floor(D)I", ordinal = 4))
 	protected void onMoveAlongTrack(BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
 		if (blockState.getBlock() instanceof MinecartPassHandlerBlock handler) {
-			handler.onMinecartPass(blockState, level, blockPos, (AbstractMinecart) (Object) this);
+			handler.onMinecartPass(blockState, level(), blockPos, (AbstractMinecart) (Object) this);
 		}
 	}
 

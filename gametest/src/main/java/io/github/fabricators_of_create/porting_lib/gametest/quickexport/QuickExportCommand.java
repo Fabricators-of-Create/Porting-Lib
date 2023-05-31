@@ -119,7 +119,7 @@ public class QuickExportCommand {
 				NbtIo.writeCompressed(data, out);
 			}
 			String cleanPath = file.toString().replace('\\', '/');
-			source.sendSuccess(lang("exported", cleanPath), false);
+			source.sendSuccess(() -> lang("exported", cleanPath), false);
 			return 1;
 		} catch (IOException e) {
 			e.printStackTrace();

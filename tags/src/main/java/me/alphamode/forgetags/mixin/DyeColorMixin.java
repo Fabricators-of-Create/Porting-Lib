@@ -1,5 +1,7 @@
 package me.alphamode.forgetags.mixin;
 
+import net.minecraft.world.level.material.MapColor;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -14,7 +16,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.material.MaterialColor;
 
 @Mixin(DyeColor.class)
 public class DyeColorMixin implements DyeExtension {
@@ -25,7 +26,7 @@ public class DyeColorMixin implements DyeExtension {
 	private TagKey<Item> tag;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
-	public void addTag(String woolId, int id, int color, String mapColor, int fireworkColor, MaterialColor signColor, int j, int k, CallbackInfo ci) {
+	public void addTag(String enumName, int enumIndex, int id, String name, int color, MapColor mapColor, int fireworkColor, int signColor, CallbackInfo ci) {
 		tag = TagKey.create(Registries.ITEM, new ResourceLocation("c", name + "_dyes"));
 	}
 

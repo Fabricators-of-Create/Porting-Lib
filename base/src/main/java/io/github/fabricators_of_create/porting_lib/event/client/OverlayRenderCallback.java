@@ -8,13 +8,16 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 
 @Environment(EnvType.CLIENT)
 public interface OverlayRenderCallback {
-	Event<OverlayRenderCallback> EVENT = EventFactory.createArrayBacked(OverlayRenderCallback.class, callbacks -> (stack, partialTicks, window, type) -> {
+	ResourceLocation GUI_ICONS_LOCATION = new ResourceLocation("textures/gui/icons.png");
+
+	Event<OverlayRenderCallback> EVENT = EventFactory.createArrayBacked(OverlayRenderCallback.class, callbacks -> (guiGraphics, partialTicks, window, type) -> {
 		for (OverlayRenderCallback callback : callbacks) {
-			if (callback.onOverlayRender(stack, partialTicks, window, type)) {
+			if (callback.onOverlayRender(guiGraphics, partialTicks, window, type)) {
 				resetTexture();
 				return true;
 			}
@@ -24,10 +27,10 @@ public interface OverlayRenderCallback {
 	});
 
 	private static void resetTexture() { // in case overlays change it, which is very likely.
-		RenderSystem.setShaderTexture(0, GuiComponent.GUI_ICONS_LOCATION);
+		RenderSystem.setShaderTexture(0, GUI_ICONS_LOCATION);
 	}
 
-	boolean onOverlayRender(PoseStack stack, float partialTicks, Window window, Types type);
+	boolean onOverlayRender(GuiGraphics guiGraphics, float partialTicks, Window window, Types type);
 
 	enum Types {
 		AIR,

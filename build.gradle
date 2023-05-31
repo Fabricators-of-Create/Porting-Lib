@@ -212,7 +212,7 @@ allprojects {
 		        version: version,
 				loader_version: loader_version,
 				fabric_version: fabric_version,
-				minecraft_version: minecraft_semantic_version,
+				minecraft_version: minecraft_semvar_version,
 				java_version: sourceCompatibility,
 
 				// property replacement is a bit too eager
