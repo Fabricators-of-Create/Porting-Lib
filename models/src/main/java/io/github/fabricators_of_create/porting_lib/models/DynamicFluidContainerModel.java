@@ -108,8 +108,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 		if (particleSprite == null && !coverIsMask) particleSprite = coverSprite;
 
 		// If the fluid is lighter than air, rotate 180deg to turn it upside down
-		if (flipGas && fluid != Fluids.EMPTY && FluidVariantAttributes.isLighterThanAir(FluidVariant.of(fluid)))
-		{
+		if (flipGas && fluid != Fluids.EMPTY && FluidVariantAttributes.isLighterThanAir(FluidVariant.of(fluid))) {
 			modelState = new SimpleModelState(
 					modelState.getRotation().compose(
 							new Transformation(null, new Quaternionf(0, 0, 1, 0), null, null)));
@@ -118,19 +117,16 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 		// We need to disable GUI 3D and block lighting for this to render properly
 		var modelBuilder = CompositeModel.Baked.builder(context.hasAmbientOcclusion(), false, context.getGuiLight().lightLikeBlock(), particleSprite, new ContainedFluidOverrideHandler(overrides, baker, context, this), context.getTransforms());
 
-		if (baseLocation != null && baseSprite != null)
-		{
+		if (baseLocation != null && baseSprite != null) {
 			// Base texture
 			var unbaked = UnbakedGeometryHelper.createUnbakedItemElements(0, baseSprite.contents());
 			var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> baseSprite, modelState, modelLocation);
 			modelBuilder.addQuads(quads);
 		}
 
-		if (fluidMaskLocation != null && fluidSprite != null)
-		{
+		if (fluidMaskLocation != null && fluidSprite != null) {
 			TextureAtlasSprite templateSprite = spriteGetter.apply(fluidMaskLocation);
-			if (templateSprite != null)
-			{
+			if (templateSprite != null) {
 				// Fluid layer
 				var transformedState = new SimpleModelState(modelState.getRotation().compose(FLUID_TRANSFORM), modelState.isUvLocked());
 				var unbaked = UnbakedGeometryHelper.createUnbakedItemMaskElements(1, templateSprite.contents()); // Use template as mask
@@ -140,11 +136,9 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 			}
 		}
 
-		if (coverSprite != null)
-		{
+		if (coverSprite != null) {
 			var sprite = coverIsMask ? baseSprite : coverSprite;
-			if (sprite != null)
-			{
+			if (sprite != null) {
 				// Cover/overlay
 				var transformedState = new SimpleModelState(modelState.getRotation().compose(COVER_TRANSFORM), modelState.isUvLocked());
 				var unbaked = UnbakedGeometryHelper.createUnbakedItemMaskElements(2, coverSprite.contents()); // Use cover as mask
@@ -225,8 +219,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 						Fluid fluid = fluidStack.getFluid();
 						String name = BuiltInRegistries.FLUID.getKey(fluid).toString();
 
-						if (!cache.containsKey(name))
-						{
+						if (!cache.containsKey(name)) {
 							DynamicFluidContainerModel unbaked = this.parent.withFluid(fluid);
 							BakedModel bakedModel = unbaked.bake(owner, baker, Material::sprite, BlockModelRotation.X0_Y0, this, new ResourceLocation("forge:bucket_override"));
 							cache.put(name, bakedModel);
