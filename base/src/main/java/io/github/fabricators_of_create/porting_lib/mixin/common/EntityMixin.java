@@ -86,8 +86,8 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializableC
 			)
 	)
 	public boolean port_lib$captureDrops(Level level, Entity entity) {
-		if (port_lib$captureDrops != null && entity instanceof ItemEntity item) {
-			port_lib$captureDrops.add(item);
+		if (captureDrops() != null && entity instanceof ItemEntity item) {
+			captureDrops().add(item);
 			return false;
 		}
 		return true;

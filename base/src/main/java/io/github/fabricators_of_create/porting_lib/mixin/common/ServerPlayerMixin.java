@@ -1,5 +1,11 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
+
+import com.llamalad7.mixinextras.sugar.Local;
+
 import io.github.fabricators_of_create.porting_lib.event.common.PlayerTickEvents;
 
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.EntityExtensions;
@@ -18,6 +24,7 @@ import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.ProfilePublicKey;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.portal.PortalInfo;
@@ -185,5 +192,14 @@ public abstract class ServerPlayerMixin extends Player implements EntityExtensio
 
 			return this;
 		}
+	}
+
+	@WrapWithCondition(method = "drop(Lnet/minecraft/world/item/ItemStack;ZZ)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+	private boolean capturePlayerDrops(Level level, Entity entity, @Local(index = 4) ItemEntity itemEntity) {
+		if (captureDrops() != null) {
+			captureDrops().add(itemEntity);
+			return false;
+		}
+		return true;
 	}
 }
