@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_config",
+  "version": "${version}",
+  "name": "Porting Lib Config",
+  "description": "Super light weight implementation of forge's config library",
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.config.PortingLibConfig"
+    ],
+    "client": [
+      "io.github.fabricators_of_create.porting_lib.config.client.PortingLibConfigClient"
+    ]
+  }
+}
