@@ -1,5 +1,7 @@
 accessWidener v2 named
 
+transitive-accessible class net/minecraft/world/item/enchantment/EnchantmentHelper$EnchantmentVisitor
+
 transitive-extendable class net/minecraft/world/item/crafting/Ingredient
 transitive-accessible method net/minecraft/world/item/crafting/Ingredient <init> (Ljava/util/stream/Stream;)V
 transitive-accessible class net/minecraft/world/item/crafting/Ingredient$Value
