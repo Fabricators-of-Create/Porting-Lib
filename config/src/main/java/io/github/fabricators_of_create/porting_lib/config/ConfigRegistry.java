@@ -27,4 +27,7 @@ public class ConfigRegistry {
 		configs.computeIfAbsent(modId, s -> new EnumMap<>(ConfigType.class)).put(type, new ModConfig(type, spec, modId, fileName));
 	}
 
+	public static Map<String, EnumMap<ConfigType, ModConfig>> getConfigs() {
+		return configs;
+	}
 }
