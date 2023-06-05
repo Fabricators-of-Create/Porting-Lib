@@ -24,6 +24,10 @@ public class PortingLibMixinPlugin implements IMixinConfigPlugin {
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
 		if (mixinClassName.contains("ModelBlockRenderer") && FabricLoader.getInstance().isModLoaded("canvas"))
 			return false;
+		if (mixinClassName.contains("BlockRenderDispatcherMixin") && FabricLoader.getInstance().isModLoaded("frex"))
+			return false;
+		if (mixinClassName.contains("EntityBlockRenderContextMixin") && FabricLoader.getInstance().isModLoaded("frex"))
+			return true;
 		return true;
 	}
 
