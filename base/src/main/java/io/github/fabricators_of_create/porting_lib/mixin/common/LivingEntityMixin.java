@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import io.github.fabricators_of_create.porting_lib.item.ContinueUsingItem;
 import io.github.fabricators_of_create.porting_lib.item.UsingTickItem;
 
@@ -89,10 +91,10 @@ public abstract class LivingEntityMixin extends Entity {
 			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
-	protected void port_lib$updateFallState(double y, boolean onGround, BlockState state, BlockPos pos,
-										  CallbackInfo ci, float f, double d, int i) {
+	protected void updateFallState(double y, boolean onGround, BlockState state, BlockPos pos,
+								   CallbackInfo ci, @Local(index = 16) int count) {
 		if (state.getBlock() instanceof CustomLandingEffectsBlock custom &&
-				custom.addLandingEffects(state, (ServerLevel) level(), pos, state, (LivingEntity) (Object) this, i)) {
+				custom.addLandingEffects(state, (ServerLevel) level(), pos, state, (LivingEntity) (Object) this, count)) {
 			super.checkFallDamage(y, onGround, state, pos);
 			ci.cancel();
 		}

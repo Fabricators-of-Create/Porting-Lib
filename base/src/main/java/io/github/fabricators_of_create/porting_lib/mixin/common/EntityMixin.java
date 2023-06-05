@@ -2,6 +2,9 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.INBTSerializableCompound;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -12,12 +15,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomRunningEffectsBlock;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin implements INBTSerializableCompound {
@@ -46,7 +47,7 @@ public abstract class EntityMixin implements INBTSerializableCompound {
 			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
-	public void port_lib$spawnSprintParticle(CallbackInfo ci, int i, int j, int k, BlockPos pos, BlockState state) {
+	public void port_lib$spawnSprintParticle(CallbackInfo ci, BlockPos pos, BlockState state) {
 		if (state.getBlock() instanceof CustomRunningEffectsBlock custom &&
 				custom.addRunningEffects(state, level, pos, (Entity) (Object) this)) {
 			ci.cancel();

@@ -1,6 +1,5 @@
 dependencies {
 	modImplementation(include("com.github.Chocohead:Fabric-ASM:v2.3"))
-	modImplementation(include("io.github.tropheusj:serialization-hooks:${project.serialization_hooks_version}"))
 }
 
 mixinExtras(dependencies)
