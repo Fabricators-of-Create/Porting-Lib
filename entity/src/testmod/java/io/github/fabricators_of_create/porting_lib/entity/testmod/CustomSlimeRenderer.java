@@ -29,7 +29,7 @@ public class CustomSlimeRenderer extends SlimeRenderer {
 		if (!(slime instanceof CustomSlime custom))
 			return;
 		OrbitingItem item = custom.item;
-		BakedModel model = itemRenderer.getModel(item.stack, slime.level, slime, 0);
+		BakedModel model = itemRenderer.getModel(item.stack, slime.level(), slime, 0);
 		poseStack.pushPose();
 		Vec3 offset = item.getOffset(tickDelta);
 		poseStack.translate(offset.x, offset.y, offset.z);
