@@ -28,6 +28,7 @@
     "asm.WoodlandMansionPiecesWoodlandMansionPieceMixin",
     "asm.ZombieMixin",
     "asm.ZombieVillagerMixin",
+    "client.frex.EntityBlockRenderContextMixin",
     "common.AbstractMinecartMixin",
     "common.AdvancementBuilderMixin",
     "common.AnvilMenuMixin",
