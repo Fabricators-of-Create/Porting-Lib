@@ -1,0 +1,3 @@
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}

@@ -1,0 +1,9 @@
+moduleDependencies(project, [
+		"lazy_registration",
+		"tool_actions",
+		"core"
+])
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}

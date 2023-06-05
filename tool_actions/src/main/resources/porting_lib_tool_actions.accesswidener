@@ -1,0 +1,4 @@
+accessWidener v2 named
+
+transitive-accessible field net/minecraft/world/item/AxeItem STRIPPABLES Ljava/util/Map;
+transitive-accessible field net/minecraft/world/item/ShovelItem FLATTENABLES Ljava/util/Map;

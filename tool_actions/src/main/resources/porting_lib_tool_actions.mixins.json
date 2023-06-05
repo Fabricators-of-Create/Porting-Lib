@@ -2,11 +2,13 @@
   "required": true,
   "minVersion": "0.8",
   "priority": 951,
-  "package": "io.github.fabricators_of_create.porting_lib.common.mixin",
+  "package": "io.github.fabricators_of_create.porting_lib.tool.mixin",
   "compatibilityLevel": "JAVA_17",
-  "client": [
-    "client.LanguageManagerMixin",
-    "client.accessor.MinecraftAccessor"
+  "mixins": [
+    "BlockMixin",
+    "BlockStateMixin",
+    "ItemMixin",
+    "ItemStackMixin"
   ],
   "injectors": {
     "defaultRequire": 1,

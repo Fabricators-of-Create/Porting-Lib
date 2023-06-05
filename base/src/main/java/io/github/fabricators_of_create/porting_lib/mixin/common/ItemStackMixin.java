@@ -3,7 +3,6 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import io.github.fabricators_of_create.porting_lib.common.util.MixinHelper;
-import io.github.fabricators_of_create.porting_lib.common.util.ToolAction;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.INBTSerializableCompound;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.ItemStackExtensions;
 import io.github.fabricators_of_create.porting_lib.item.DamageableItem;
@@ -11,7 +10,6 @@ import io.github.fabricators_of_create.porting_lib.item.DamageableItem;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -60,12 +58,6 @@ public abstract class ItemStackMixin implements INBTSerializableCompound, ItemSt
 	@Override
 	public void deserializeNBT(CompoundTag nbt) {
 		this.setTag(ItemStack.of(nbt).getTag());
-	}
-
-	@Unique
-	@Override
-	public boolean canPerformAction(ToolAction toolAction) {
-		return getItem().canPerformAction((ItemStack) (Object) this, toolAction);
 	}
 
 	@Inject(method = "setDamageValue", at = @At("HEAD"), cancellable = true)
