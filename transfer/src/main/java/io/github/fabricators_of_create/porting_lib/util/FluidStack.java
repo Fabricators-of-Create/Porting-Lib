@@ -253,4 +253,27 @@ public class FluidStack {
 		if (tag != null) tag = tag.copy();
 		return new FluidStack(getType(), getAmount(), tag);
 	}
+
+	@Override
+	public final int hashCode() {
+		long code = 1;
+		code = 31 * code + getFluid().hashCode();
+		code = 31 * code + amount;
+		if (tag != null)
+			code = 31 * code + tag.hashCode();
+		return (int) code;
+	}
+
+	/**
+	 * Default equality comparison for a FluidStack. Same functionality as isFluidEqual().
+	 *
+	 * This is included for use in data structures.
+	 */
+	@Override
+	public final boolean equals(Object o) {
+		if (!(o instanceof FluidStack)) {
+			return false;
+		}
+		return isFluidEqual((FluidStack) o);
+	}
 }
