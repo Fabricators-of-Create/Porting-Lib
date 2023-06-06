@@ -19,6 +19,7 @@ The latest patch can be found from GitHub Actions as the build number.
 | `Porting-Lib`         | Fat jar including all modules                                                         |
 | `accessors`           | Accessor mixins aplenty                                                               |
 | `attributes`          | Additional Entity Attributes; step height, gravity, swim speed                        |
+| `asm`                 | Asm hacks                                                                             |
 | `base`                | Code that has not yet been split into modules                                         |
 | `client_events`       | Useful client-side events                                                             |
 | `common`              | Miscellaneous utilities for other modules                                             |
