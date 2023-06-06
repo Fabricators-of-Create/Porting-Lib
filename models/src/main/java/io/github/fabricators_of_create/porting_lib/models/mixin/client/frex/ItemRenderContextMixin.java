@@ -1,5 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.models.mixin.client.frex;
 
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -15,15 +18,10 @@ import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.item.ItemDisplayContext;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
-
 @Mixin(ItemRenderContext.class)
 public class ItemRenderContextMixin {
 	@WrapWithCondition(method = "renderItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/model/ItemTransform;apply(ZLcom/mojang/blaze3d/vertex/PoseStack;)V"))
-	private boolean hasCustomTransform(ItemTransform transform, boolean leftHanded, PoseStack poseStack, @Local(index = 2) ItemDisplayContext transformType, @Local(index = 8) BakedModel model, @Share("tranformed") LocalRef<BakedModel> tranformed) {
+	private boolean hasCustomTransform(ItemTransform transform, boolean leftHanded, PoseStack poseStack, @Local(index = 3) ItemDisplayContext transformType, @Local(index = 9) BakedModel model, @Share("tranformed") LocalRef<BakedModel> tranformed) {
 		if (model instanceof TransformTypeDependentItemBakedModel transformModel) {
 			tranformed.set(transformModel.applyTransform(transformType, poseStack, leftHanded));
 			return false;
