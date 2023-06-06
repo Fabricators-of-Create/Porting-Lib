@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MinecraftMixin {
 	// Inject right after the fabric entrypoint
 	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Ljava/lang/Thread;currentThread()Ljava/lang/Thread;"))
-	public void port_lib$modsLoaded(GameConfig gameConfig, CallbackInfo ci) {
+	public void modsLoaded(GameConfig gameConfig, CallbackInfo ci) {
 		ConfigTracker.INSTANCE.loadConfigs(ConfigType.CLIENT, FabricLoader.getInstance().getConfigDir());
 		ConfigTracker.INSTANCE.loadConfigs(ConfigType.COMMON, FabricLoader.getInstance().getConfigDir());
 	}

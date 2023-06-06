@@ -13,7 +13,7 @@ import net.minecraft.server.Main;
 @Mixin(Main.class)
 public class MainMixin {
 	@Inject(method = "main", at = @At(value = "INVOKE", target = "Lnet/minecraft/Util;startTimerHackThread()V"))
-	private static void port_lib$modsLoaded(CallbackInfo ci) {
+	private static void modsLoaded(CallbackInfo ci) {
 		ConfigTracker.INSTANCE.loadConfigs(ConfigType.COMMON, FabricLoader.getInstance().getConfigDir());
 	}
 }
