@@ -15,6 +15,6 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 public class LivingEntityMixin {
 	@ModifyArgs(method = "checkFallDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;sendParticles(Lnet/minecraft/core/particles/ParticleOptions;DDDIDDDD)I"))
 	private void addPosToParticle(Args args, double y, boolean onGround, BlockState state, BlockPos pos) {
-		((BlockParticleOptionExtensions)args.get(0)).setPos(pos);
+		((BlockParticleOptionExtensions)args.get(0)).setSourcePos(pos);
 	}
 }

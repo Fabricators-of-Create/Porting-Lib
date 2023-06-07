@@ -11,5 +11,11 @@
   },
   "mixins": [
     "porting_lib_models.mixins.json"
-  ]
+  ],
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_727": [ "io/github/fabricators_of_create/porting_lib/models/extensions/TerrainParticleExtensions" ],
+      "net/minecraft/class_2388": [ "io/github/fabricators_of_create/porting_lib/models/extensions/BlockParticleOptionExtensions" ]
+    }
+  }
 }

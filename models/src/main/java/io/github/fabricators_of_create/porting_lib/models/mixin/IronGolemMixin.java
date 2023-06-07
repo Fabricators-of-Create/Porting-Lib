@@ -25,6 +25,6 @@ public abstract class IronGolemMixin extends Entity {
 		int x = Mth.floor(this.getX());
 		int y = Mth.floor(this.getY() - 0.20000000298023224);
 		int z = Mth.floor(this.getZ());
-		((BlockParticleOptionExtensions)args.get(0)).setPos(new BlockPos(x, y, z));
+		((BlockParticleOptionExtensions)args.get(0)).setSourcePos(new BlockPos(x, y, z));
 	}
 }
