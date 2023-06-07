@@ -11,6 +11,9 @@ public interface CustomParticleIconModel {
 	/**
 	 * An extension of {@link BakedModel#getParticleIcon()} that accepts custom BlockEntity data for context.
 	 * The data is retrieved from {@link RenderAttachedBlockView#getBlockEntityRenderAttachment(BlockPos)}.
+	 * By default, defers to the context-less method.
 	 */
-	TextureAtlasSprite getParticleIcon(Object data);
+	default TextureAtlasSprite getParticleIcon(Object data) {
+		return ((BakedModel) this).getParticleIcon();
+	}
 }
