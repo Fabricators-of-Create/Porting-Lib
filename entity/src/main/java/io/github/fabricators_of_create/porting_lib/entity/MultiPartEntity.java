@@ -1,16 +1,32 @@
 package io.github.fabricators_of_create.porting_lib.entity;
 
-/**
- * An entity that has multiple sub-entities that make up parts of it, like the Ender Dragon.
- */
+import org.jetbrains.annotations.Nullable;
+
 public interface MultiPartEntity {
 	/**
-	 * @return a cached array of this entity's parts
-	 * @see PartEntity
+	 * This is used to specify that your entity has multiple individual parts, such as the Vanilla Ender Dragon.
+	 *
+	 * @return true if this is a multipart entity.
 	 */
-	PartEntity<?>[] getParts();
+	default boolean isMultipartEntity()
+	{
+		return false;
+	}
 
-	default boolean hasParts() {
-		return getParts().length != 0;
+	/**
+	 * Gets the individual sub parts that make up this entity.
+	 *
+	 * The entities returned by this method are NOT saved to the world in nay way, they exist as an extension
+	 * of their host entity. The child entity does not track its server-side(or client-side) counterpart, and
+	 * the host entity is responsible for moving and managing these children.
+	 *
+	 * Only used if {@link #isMultipartEntity()} returns true.
+	 *
+	 * @return The child parts of this entity. The value to be returned here should be cached.
+	 */
+	@Nullable
+	default PartEntity<?>[] getParts()
+	{
+		return null;
 	}
 }

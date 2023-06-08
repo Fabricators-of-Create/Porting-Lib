@@ -6,14 +6,13 @@
   "description": "Adds additional functionality for Entities for mod developers.",
   "entrypoints": {
     "client": [
-      "io.github.fabricators_of_create.porting_lib.entity.PortingLibEntityClient"
+      "io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity"
     ]
   },
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/entity/extensions/LevelExtensions"],
-      "net/minecraft/class_1688": ["io/github/fabricators_of_create/porting_lib/entity/extensions/AbstractMinecartExtensions"],
-      "net/minecraft/class_1297": ["io/github/fabricators_of_create/porting_lib/entity/extensions/EntityExtensions"]
+      "net/minecraft/class_1621": ["io/github/fabricators_of_create/porting_lib/extensions/entity/SlimeExtension"],
+      "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/extensions/entity/LevelExtensions"]
     }
   }
 }

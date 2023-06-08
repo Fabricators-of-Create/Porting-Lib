@@ -3,6 +3,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import io.github.fabricators_of_create.porting_lib.common.util.MixinHelper;
+import io.github.fabricators_of_create.porting_lib.event.common.PlayerEvents;
 import io.github.fabricators_of_create.porting_lib.item.XpRepairItem;
 
 import net.minecraft.world.entity.player.Player;
@@ -83,5 +84,13 @@ public abstract class ExperienceOrbMixin extends Entity {
 			return (int) ratio * this.value;
 		}
 		return durability;
+	}
+
+	@Inject(method = "playerTouch", at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, ordinal = 0), cancellable = true)
+	private void port_lib$onPlayerPickupXp(Player player, CallbackInfo ci) {
+		PlayerEvents.PickupXp pickupXp = new PlayerEvents.PickupXp(player, MixinHelper.cast(this));
+		pickupXp.sendEvent();
+		if (pickupXp.isCanceled())
+			ci.cancel();
 	}
 }

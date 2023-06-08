@@ -1,43 +1,13 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "io.github.fabricators_of_create.porting_lib.entity.mixin",
+  "package": "io.github.fabricators_of_create.porting_lib.mixin.common",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "AbstractMinecartMixin",
-    "BlockBehaviourMixin",
-    "EntityMixin",
-    "ExperienceOrbMixin",
-    "LevelMixin",
-    "LightningBoltMixin",
-    "LivingEntityMixin",
-    "MobMixin",
-    "PersistentEntitySectionManager$CallbackMixin",
-    "PlayerAdvancementsMixin",
-    "PlayerMixin",
-    "ProjectileMixin",
-    "ProjectileUtilMixin",
-    "ServerEntityMixin",
-    "ServerLevelMixin",
-    "ServerPlayerMixin",
-    "SlimeMixin",
-    "TransientEntitySectionManager$CallbackMixin",
-    "spawning.CatSpawnerMixin",
-    "spawning.NaturalSpawnerMixin",
-    "spawning.PatrolSpawnerMixin",
-    "spawning.PhantomSpawnerMixin",
-    "spawning.VillageSiegeMixin",
-    "spawning.WanderingTraderSpawnerMixin",
-    "teleport.ChorusFruitItemMixin",
-    "teleport.EnderManMixin",
-    "teleport.SpreadPlayersCommandMixin",
-    "teleport.TeleportCommandMixin",
-    "teleport.ThrownEnderpearlMixin"
+    "entity.LevelMixin",
+    "entity.SlimeMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "client": [
-    "EntityRenderDispatcherMixin"
-  ]
+  }
 }

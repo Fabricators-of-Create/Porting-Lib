@@ -30,8 +30,8 @@ if (grgit != null) {
 
 @SuppressWarnings("unused") // for subprojects
 def mixinExtras(DependencyHandler deps) {
-	deps.api(deps.include("com.github.llamalad7.mixinextras:mixinextras-fabric:$mixin_extras_version"))
-	deps.annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:$mixin_extras_version")
+	deps.api(deps.include("com.github.LlamaLad7:MixinExtras:$mixin_extras_version"))
+	deps.annotationProcessor("com.github.LlamaLad7:MixinExtras:$mixin_extras_version")
 }
 
 @SuppressWarnings("unused") // for subprojects
@@ -152,7 +152,7 @@ allprojects {
 			url = "https://jitpack.io"
 			content {
 				includeGroup("com.github.Chocohead")
-				includeGroup("com.github.llamalad7.mixinextras")
+				includeGroup("com.github.LlamaLad7")
 			}
 		}
 		mavenCentral()
