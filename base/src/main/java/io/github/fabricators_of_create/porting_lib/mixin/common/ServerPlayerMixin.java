@@ -52,9 +52,6 @@ public abstract class ServerPlayerMixin extends Player implements EntityExtensio
 	}
 
 	@Shadow
-	public abstract ServerLevel getLevel();
-
-	@Shadow
 	private boolean isChangingDimension;
 
 	@Shadow
@@ -82,9 +79,6 @@ public abstract class ServerPlayerMixin extends Player implements EntityExtensio
 	protected abstract void createEndPlatform(ServerLevel world, BlockPos centerPos);
 
 	@Shadow
-	public abstract void setLevel(ServerLevel world);
-
-	@Shadow
 	protected abstract void triggerDimensionChangeTriggers(ServerLevel origin);
 
 	@Shadow
@@ -95,6 +89,9 @@ public abstract class ServerPlayerMixin extends Player implements EntityExtensio
 
 	@Shadow
 	private int lastSentFood;
+
+	@Shadow
+	public abstract ServerLevel serverLevel();
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void port_lib$init(MinecraftServer minecraftServer, ServerLevel serverLevel, GameProfile gameProfile, CallbackInfo ci) {
@@ -126,11 +123,11 @@ public abstract class ServerPlayerMixin extends Player implements EntityExtensio
 	public Entity changeDimension(ServerLevel p_9180_, ITeleporter teleporter) {
 //		if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9180_.dimension())) return null;
 		this.isChangingDimension = true;
-		ServerLevel serverlevel = this.getLevel();
+		ServerLevel serverlevel = this.serverLevel();
 		ResourceKey<Level> resourcekey = serverlevel.dimension();
 		if (resourcekey == Level.END && p_9180_.dimension() == Level.OVERWORLD && teleporter.isVanilla()) { //Forge: Fix non-vanilla teleporters triggering end credits
 			this.unRide();
-			this.getLevel().removePlayerImmediately((ServerPlayer) (Object) this, Entity.RemovalReason.CHANGED_DIMENSION);
+			this.serverLevel().removePlayerImmediately((ServerPlayer) (Object) this, Entity.RemovalReason.CHANGED_DIMENSION);
 			if (!this.wonGame) {
 				this.wonGame = true;
 				this.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.WIN_GAME, this.seenCredits ? 0.0F : 1.0F));
@@ -140,7 +137,7 @@ public abstract class ServerPlayerMixin extends Player implements EntityExtensio
 			return this;
 		} else {
 			LevelData leveldata = p_9180_.getLevelData();
-			this.connection.send(new ClientboundRespawnPacket(p_9180_.dimensionTypeId(), p_9180_.dimension(), BiomeManager.obfuscateSeed(p_9180_.getSeed()), this.gameMode.getGameModeForPlayer(), this.gameMode.getPreviousGameModeForPlayer(), p_9180_.isDebug(), p_9180_.isFlat(), (byte) 3, this.getLastDeathLocation()));
+			this.connection.send(new ClientboundRespawnPacket(p_9180_.dimensionTypeId(), p_9180_.dimension(), BiomeManager.obfuscateSeed(p_9180_.getSeed()), this.gameMode.getGameModeForPlayer(), this.gameMode.getPreviousGameModeForPlayer(), p_9180_.isDebug(), p_9180_.isFlat(), (byte) 3, this.getLastDeathLocation(), getPortalCooldown()));
 			this.connection.send(new ClientboundChangeDifficultyPacket(leveldata.getDifficulty(), leveldata.isDifficultyLocked()));
 			PlayerList playerlist = this.server.getPlayerList();
 			playerlist.sendPlayerPermissionLevel((ServerPlayer) (Object) this);

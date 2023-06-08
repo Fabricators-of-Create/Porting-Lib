@@ -2,23 +2,16 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
 
-import io.github.fabricators_of_create.porting_lib.PortingLib;
-import io.github.fabricators_of_create.porting_lib.item.ContinueUsingItem;
-import io.github.fabricators_of_create.porting_lib.item.UsingTickItem;
+import com.llamalad7.mixinextras.sugar.Local;
 
 import org.jetbrains.annotations.Nullable;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Slice;
@@ -33,11 +26,13 @@ import io.github.fabricators_of_create.porting_lib.block.CustomFrictionBlock;
 import io.github.fabricators_of_create.porting_lib.block.CustomLandingEffectsBlock;
 import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEvents.Fall.FallEvent;
-import io.github.fabricators_of_create.porting_lib.event.common.PotionEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityUseItemEvents;
+import io.github.fabricators_of_create.porting_lib.event.common.PotionEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.EntityExtensions;
+import io.github.fabricators_of_create.porting_lib.item.ContinueUsingItem;
 import io.github.fabricators_of_create.porting_lib.item.EntitySwingListenerItem;
 import io.github.fabricators_of_create.porting_lib.item.EquipmentItem;
+import io.github.fabricators_of_create.porting_lib.item.UsingTickItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -126,7 +121,7 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 				(LivingEntity) (Object) this, source, drops, port_lib$lootingLevel, lastHurtByPlayerTime > 0
 		);
 		if (!cancelled)
-			drops.forEach(e -> level.addFreshEntity(e));
+			drops.forEach(e -> level().addFreshEntity(e));
 	}
 
 	@Unique
@@ -205,10 +200,10 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
-	protected void port_lib$updateFallState(double y, boolean onGround, BlockState state, BlockPos pos,
-										  CallbackInfo ci, float f, double d, int i) {
+	protected void updateFallState(double y, boolean onGround, BlockState state, BlockPos pos,
+								   CallbackInfo ci, @Local(index = 16) int count) {
 		if (state.getBlock() instanceof CustomLandingEffectsBlock custom &&
-				custom.addLandingEffects(state, (ServerLevel) level, pos, state, (LivingEntity) (Object) this, i)) {
+				custom.addLandingEffects(state, (ServerLevel) level(), pos, state, (LivingEntity) (Object) this, count)) {
 			super.checkFallDamage(y, onGround, state, pos);
 			ci.cancel();
 		}
@@ -222,9 +217,9 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 	)
 	public float port_lib$setSlipperiness(float p) {
 		BlockPos pos = getBlockPosBelowThatAffectsMyMovement();
-		BlockState state = level.getBlockState(pos);
+		BlockState state = level().getBlockState(pos);
 		if (state.getBlock() instanceof CustomFrictionBlock custom) {
-			return custom.getFriction(state, level, pos, (LivingEntity) (Object) this);
+			return custom.getFriction(state, level(), pos, (LivingEntity) (Object) this);
 		}
 		return p;
 	}
@@ -280,7 +275,7 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 		}
 	}
 
-	@ModifyExpressionValue(method = "updatingUsingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isSame(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
+	@ModifyExpressionValue(method = "updatingUsingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isSameItem(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
 	public boolean port_lib$canContinueUsing(boolean original) {
 		if (useItem.getItem() instanceof ContinueUsingItem continueUsingItem) {
 			ItemStack to = this.getItemInHand(this.getUsedItemHand());

@@ -137,7 +137,7 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializableC
 			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
-	public void port_lib$spawnSprintParticle(CallbackInfo ci, int i, int j, int k, BlockPos pos, BlockState state) {
+	public void port_lib$spawnSprintParticle(CallbackInfo ci, BlockPos pos, BlockState state) {
 		if (state.getBlock() instanceof CustomRunningEffectsBlock custom &&
 				custom.addRunningEffects(state, level, pos, (Entity) (Object) this)) {
 			ci.cancel();

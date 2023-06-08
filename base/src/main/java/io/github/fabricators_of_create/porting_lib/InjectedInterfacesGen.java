@@ -18,6 +18,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Transformation;
 
 import io.github.fabricators_of_create.porting_lib.common.extensions.LanguageManagerExtensions;
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.AbstractMinecartExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.AbstractTextureExtensions;
@@ -107,7 +108,7 @@ public class InjectedInterfacesGen {
 		boolean inception = Boolean.parseBoolean(System.getProperty(IT_GOES_DEEPER));
 		if (inception) {
 			InjectedInterfacesGenGen.run();
-			PortingConstants.LOGGER.info("Porting Lib successfully generated the generator for injected interfaces. my head hurts.");
+			PortingLib.LOGGER.info("Porting Lib successfully generated the generator for injected interfaces. my head hurts.");
 			System.exit(0);
 			return;
 		}
@@ -124,8 +125,8 @@ public class InjectedInterfacesGen {
 			}
 			entries.add(target.replaceAll("\\.", "/"), injectionsJson);
 		});
-		PortingConstants.LOGGER.info("\n{}", gson.toJson(root));
-		PortingConstants.LOGGER.info("Porting Lib successfully generated injected interfaces.");
+		PortingLib.LOGGER.info("\n{}", gson.toJson(root));
+		PortingLib.LOGGER.info("Porting Lib successfully generated injected interfaces.");
 		System.exit(0);
 	}
 
@@ -327,7 +328,7 @@ public class InjectedInterfacesGen {
 //				end(code);
 //			}
 
-			PortingConstants.LOGGER.info(code.toString());
+			PortingLib.LOGGER.info(code.toString());
 		}
 	}
 

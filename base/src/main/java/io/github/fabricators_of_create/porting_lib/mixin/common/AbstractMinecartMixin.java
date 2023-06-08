@@ -67,7 +67,7 @@ public abstract class AbstractMinecartMixin extends Entity implements AbstractMi
 	public BlockPos getCurrentRailPos() {
 		BlockPos pos = new BlockPos(Mth.floor(getX()), Mth.floor(getY()), Mth.floor(getZ()));
 		BlockPos below = pos.below();
-		if (level.getBlockState(below).is(BlockTags.RAILS)) {
+		if (level().getBlockState(below).is(BlockTags.RAILS)) {
 			pos = below;
 		}
 

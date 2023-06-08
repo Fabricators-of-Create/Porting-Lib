@@ -138,7 +138,7 @@ public abstract class PlayerInteractionEvents extends PlayerEvents {
 	 * @return Convenience method to get the level of this interaction.
 	 */
 	public Level getLevel() {
-		return getEntity().level;
+		return getEntity().level();
 	}
 
 	/**
