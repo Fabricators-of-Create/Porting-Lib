@@ -42,19 +42,21 @@ public class PortingLibConfig implements ModInitializer {
 		});
 
 		ServerLoginConnectionEvents.QUERY_START.register((handler, server, sender, synchronizer) -> {
-			final Map<String, byte[]> configData = ConfigTracker.INSTANCE.configSets().get(ConfigType.SERVER).stream().collect(Collectors.toMap(ModConfig::getFileName, mc -> {
-				try {
-					return Files.readAllBytes(mc.getFullPath());
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
+			synchronizer.waitFor(server.submit(() -> {
+				final Map<String, byte[]> configData = ConfigTracker.INSTANCE.configSets().get(ConfigType.SERVER).stream().collect(Collectors.toMap(ModConfig::getFileName, mc -> {
+					try {
+						return Files.readAllBytes(mc.getFullPath());
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+				}));
+				configData.forEach((key, value) -> {
+					FriendlyByteBuf buf = PacketByteBufs.create();
+					buf.writeUtf(key);
+					buf.writeByteArray(value);
+					sender.sendPacket(CONFIG_SYNC, buf);
+				});
 			}));
-			configData.forEach((key, value) -> {
-				FriendlyByteBuf buf = PacketByteBufs.create();
-				buf.writeUtf(key);
-				buf.writeByteArray(value);
-				sender.sendPacket(CONFIG_SYNC, buf);
-			});
 		});
 	}
 

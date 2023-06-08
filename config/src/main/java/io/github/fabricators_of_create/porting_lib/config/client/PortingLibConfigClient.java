@@ -7,7 +7,6 @@ import io.github.fabricators_of_create.porting_lib.config.ConfigTracker;
 import io.github.fabricators_of_create.porting_lib.config.PortingLibConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.Minecraft;
 
 public class PortingLibConfigClient implements ClientModInitializer {
@@ -19,7 +18,7 @@ public class PortingLibConfigClient implements ClientModInitializer {
 				byte[] bytes = buf.readByteArray();
 				Optional.ofNullable(ConfigTracker.INSTANCE.fileMap().get(fileName)).ifPresent(mc-> mc.acceptSyncedConfig(bytes));
 			}
-			return CompletableFuture.completedFuture(PacketByteBufs.create());
+			return CompletableFuture.completedFuture(null);
 		});
 	}
 }
