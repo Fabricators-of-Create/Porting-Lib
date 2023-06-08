@@ -1,7 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.util.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -33,7 +31,7 @@ public class ExtendedButton extends Button {
 	public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
 		int k = this.getTextureY();
-		GuiUtils.drawContinuousTexturedBox(guiGraphics, WIDGETS_LOCATION, this.getX(), this.getY(), 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, 0);
+		ScreenUtils.drawContinuousTexturedBox(guiGraphics, WIDGETS_LOCATION, this.getX(), this.getY(), 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, 0);
 
 		Component buttonText = this.getMessage();
 		int strWidth = mc.font.width(buttonText);

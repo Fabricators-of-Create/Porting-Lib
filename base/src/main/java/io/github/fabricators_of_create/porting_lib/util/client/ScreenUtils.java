@@ -1,14 +1,19 @@
 package io.github.fabricators_of_create.porting_lib.util.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Matrix4f;
 
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.locale.Language;
@@ -17,10 +22,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.Nonnull;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.joml.Matrix4f;
 
 public class ScreenUtils {
 	public static final int DEFAULT_BACKGROUND_COLOR = 0xF0100010;
@@ -37,7 +39,6 @@ public class ScreenUtils {
 		float endBlue    = (float)(endColor         & 255) / 255.0F;
 
 		RenderSystem.enableDepthTest();
-		RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
@@ -52,7 +53,6 @@ public class ScreenUtils {
 		tessellator.end();
 
 		RenderSystem.disableBlend();
-		RenderSystem.enableTexture();
 	}
 
 	public static void drawHoveringText(PoseStack mStack, List<? extends FormattedText> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, int backgroundColor, int borderColorStart, int borderColorEnd, Font font) {
@@ -161,7 +161,7 @@ public class ScreenUtils {
 			{
 				FormattedText line = textLines.get(lineNumber);
 				if (line != null)
-					font.drawInBatch(Language.getInstance().getVisualOrder(line), (float)tooltipX, (float)tooltipY, -1, true, mat, renderType, false, 0, 15728880);
+					font.drawInBatch(Language.getInstance().getVisualOrder(line), (float)tooltipX, (float)tooltipY, -1, true, mat, renderType, Font.DisplayMode.NORMAL, 0, 15728880);
 
 				if (lineNumber + 1 == titleLinesCount)
 					tooltipY += 2;
@@ -182,7 +182,7 @@ public class ScreenUtils {
 	 * and filler. The provided ResourceLocation object will be bound using
 	 * Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation).
 	 *
-	 * @param poseStack the gui pose stack
+	 * @param guiGraphics the gui pose stack
 	 * @param res the ResourceLocation object that contains the desired image
 	 * @param x x axis offset
 	 * @param y y axis offset
@@ -198,11 +198,11 @@ public class ScreenUtils {
 	 * @param rightBorder the size of the box's right border
 	 * @param zLevel the zLevel to draw at
 	 */
-	public static void drawContinuousTexturedBox(PoseStack poseStack, ResourceLocation res, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
+	public static void drawContinuousTexturedBox(GuiGraphics guiGraphics, ResourceLocation res, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
 												 int topBorder, int bottomBorder, int leftBorder, int rightBorder, float zLevel) {
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderTexture(0, res);
-		drawContinuousTexturedBox(poseStack, x, y, u, v, width, height, textureWidth, textureHeight, topBorder, bottomBorder, leftBorder, rightBorder, zLevel);
+		drawContinuousTexturedBox(guiGraphics, x, y, u, v, width, height, textureWidth, textureHeight, topBorder, bottomBorder, leftBorder, rightBorder, zLevel);
 	}
 
 	/**
@@ -210,7 +210,7 @@ public class ScreenUtils {
 	 * and filler. It is assumed that the desired texture ResourceLocation object has been bound using
 	 * Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation).
 	 *
-	 * @param poseStack the gui pose stack
+	 * @param guiGraphics the gui pose stack
 	 * @param x x axis offset
 	 * @param y y axis offset
 	 * @param u bound resource location image x offset
@@ -225,7 +225,7 @@ public class ScreenUtils {
 	 * @param rightBorder the size of the box's right border
 	 * @param zLevel the zLevel to draw at
 	 */
-	public static void drawContinuousTexturedBox(PoseStack poseStack, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
+	public static void drawContinuousTexturedBox(GuiGraphics guiGraphics, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
 												 int topBorder, int bottomBorder, int leftBorder, int rightBorder, float zLevel) {
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.enableBlend();
@@ -242,42 +242,42 @@ public class ScreenUtils {
 
 		// Draw Border
 		// Top Left
-		drawTexturedModalRect(poseStack, x, y, u, v, leftBorder, topBorder, zLevel);
+		drawTexturedModalRect(guiGraphics, x, y, u, v, leftBorder, topBorder, zLevel);
 		// Top Right
-		drawTexturedModalRect(poseStack, x + leftBorder + canvasWidth, y, u + leftBorder + fillerWidth, v, rightBorder, topBorder, zLevel);
+		drawTexturedModalRect(guiGraphics, x + leftBorder + canvasWidth, y, u + leftBorder + fillerWidth, v, rightBorder, topBorder, zLevel);
 		// Bottom Left
-		drawTexturedModalRect(poseStack, x, y + topBorder + canvasHeight, u, v + topBorder + fillerHeight, leftBorder, bottomBorder, zLevel);
+		drawTexturedModalRect(guiGraphics, x, y + topBorder + canvasHeight, u, v + topBorder + fillerHeight, leftBorder, bottomBorder, zLevel);
 		// Bottom Right
-		drawTexturedModalRect(poseStack, x + leftBorder + canvasWidth, y + topBorder + canvasHeight, u + leftBorder + fillerWidth, v + topBorder + fillerHeight, rightBorder, bottomBorder, zLevel);
+		drawTexturedModalRect(guiGraphics, x + leftBorder + canvasWidth, y + topBorder + canvasHeight, u + leftBorder + fillerWidth, v + topBorder + fillerHeight, rightBorder, bottomBorder, zLevel);
 
 		for (int i = 0; i < xPasses + (remainderWidth > 0 ? 1 : 0); i++) {
 			// Top Border
-			drawTexturedModalRect(poseStack, x + leftBorder + (i * fillerWidth), y, u + leftBorder, v, (i == xPasses ? remainderWidth : fillerWidth), topBorder, zLevel);
+			drawTexturedModalRect(guiGraphics, x + leftBorder + (i * fillerWidth), y, u + leftBorder, v, (i == xPasses ? remainderWidth : fillerWidth), topBorder, zLevel);
 			// Bottom Border
-			drawTexturedModalRect(poseStack, x + leftBorder + (i * fillerWidth), y + topBorder + canvasHeight, u + leftBorder, v + topBorder + fillerHeight, (i == xPasses ? remainderWidth : fillerWidth), bottomBorder, zLevel);
+			drawTexturedModalRect(guiGraphics, x + leftBorder + (i * fillerWidth), y + topBorder + canvasHeight, u + leftBorder, v + topBorder + fillerHeight, (i == xPasses ? remainderWidth : fillerWidth), bottomBorder, zLevel);
 
 			// Throw in some filler for good measure
 			for (int j = 0; j < yPasses + (remainderHeight > 0 ? 1 : 0); j++)
-				drawTexturedModalRect(poseStack, x + leftBorder + (i * fillerWidth), y + topBorder + (j * fillerHeight), u + leftBorder, v + topBorder, (i == xPasses ? remainderWidth : fillerWidth), (j == yPasses ? remainderHeight : fillerHeight), zLevel);
+				drawTexturedModalRect(guiGraphics, x + leftBorder + (i * fillerWidth), y + topBorder + (j * fillerHeight), u + leftBorder, v + topBorder, (i == xPasses ? remainderWidth : fillerWidth), (j == yPasses ? remainderHeight : fillerHeight), zLevel);
 		}
 
 		// Side Borders
 		for (int j = 0; j < yPasses + (remainderHeight > 0 ? 1 : 0); j++) {
 			// Left Border
-			drawTexturedModalRect(poseStack, x, y + topBorder + (j * fillerHeight), u, v + topBorder, leftBorder, (j == yPasses ? remainderHeight : fillerHeight), zLevel);
+			drawTexturedModalRect(guiGraphics, x, y + topBorder + (j * fillerHeight), u, v + topBorder, leftBorder, (j == yPasses ? remainderHeight : fillerHeight), zLevel);
 			// Right Border
-			drawTexturedModalRect(poseStack, x + leftBorder + canvasWidth, y + topBorder + (j * fillerHeight), u + leftBorder + fillerWidth, v + topBorder, rightBorder, (j == yPasses ? remainderHeight : fillerHeight), zLevel);
+			drawTexturedModalRect(guiGraphics, x + leftBorder + canvasWidth, y + topBorder + (j * fillerHeight), u + leftBorder + fillerWidth, v + topBorder, rightBorder, (j == yPasses ? remainderHeight : fillerHeight), zLevel);
 		}
 	}
 
-	public static void drawTexturedModalRect(PoseStack poseStack, int x, int y, int u, int v, int width, int height, float zLevel) {
+	public static void drawTexturedModalRect(GuiGraphics guiGraphics, int x, int y, int u, int v, int width, int height, float zLevel) {
 		final float uScale = 1f / 0x100;
 		final float vScale = 1f / 0x100;
 
 		Tesselator tessellator = Tesselator.getInstance();
 		BufferBuilder wr = tessellator.getBuilder();
 		wr.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-		Matrix4f matrix = poseStack.last().pose();
+		Matrix4f matrix = guiGraphics.pose().last().pose();
 		wr.vertex(matrix, x        , y + height, zLevel).uv( u          * uScale, ((v + height) * vScale)).endVertex();
 		wr.vertex(matrix, x + width, y + height, zLevel).uv((u + width) * uScale, ((v + height) * vScale)).endVertex();
 		wr.vertex(matrix, x + width, y         , zLevel).uv((u + width) * uScale, ( v           * vScale)).endVertex();

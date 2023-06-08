@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 
@@ -333,7 +332,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
 	}
 
 	protected void drawGradientRect(GuiGraphics guiGraphics, int left, int top, int right, int bottom, int color1, int color2) {
-		GuiUtils.drawGradientRect(guiGraphics.pose().last().pose(), 0, left, top, right, bottom, color1, color2);
+		ScreenUtils.drawGradientRect(guiGraphics.pose().last().pose(), 0, left, top, right, bottom, color1, color2);
 	}
 
 	@Override
