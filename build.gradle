@@ -147,7 +147,7 @@ allprojects {
 		maven { url = "https://mvn.devos.one/snapshots/" }
 		maven { url = "https://maven.wispforest.io" }
 		maven { url = "https://cursemaven.com" }
-		maven { url "https://maven.vram.io" }
+		maven { url = "https://maven.vram.io" }
 		maven {
 			url = "https://jitpack.io"
 			content {
@@ -192,7 +192,7 @@ allprojects {
 		modImplementation("net.fabricmc.fabric-api:fabric-api:$fabric_version")
 
 		// Make sure we don't break canvas
-		modCompileOnly("io.vram:frex-fabric:$frex_version")
+		modImplementation("io.vram:frex-fabric:$frex_version")
 
 		implementation("javax.annotation:javax.annotation-api:1.3.2")
 		implementation("com.google.code.findbugs:jsr305:3.0.2")
