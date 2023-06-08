@@ -3,6 +3,7 @@ package io.github.fabricators_of_create.porting_lib.models;
 import com.mojang.math.Transformation;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
+import io.github.fabricators_of_create.porting_lib.models.geometry.RegisterGeometryLoadersCallback;
 import io.github.fabricators_of_create.porting_lib.models.util.TransformationHelper;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
