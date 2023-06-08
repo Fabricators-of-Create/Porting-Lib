@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
+
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -57,6 +59,9 @@ public class PortingLibConfig implements ModInitializer {
 					sender.sendPacket(CONFIG_SYNC, buf);
 				});
 			}));
+		});
+		ServerLoginNetworking.registerGlobalReceiver(CONFIG_SYNC, (server, handler, understood, buf, synchronizer, responseSender) -> {
+
 		});
 	}
 
