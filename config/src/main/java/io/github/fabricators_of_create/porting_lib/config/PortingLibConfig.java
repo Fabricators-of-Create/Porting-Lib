@@ -4,15 +4,24 @@ import com.mojang.logging.LogUtils;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PortingLibConfig implements ModInitializer {
 	private static final Logger LOGGER = LogUtils.getLogger();
@@ -24,6 +33,8 @@ public class PortingLibConfig implements ModInitializer {
 		return serverConfig;
 	}
 
+	public static final ResourceLocation CONFIG_SYNC = new ResourceLocation("porting_lib_config", "config_sync");
+
 	@Override
 	public void onInitialize() {
 		ServerLifecycleEvents.SERVER_STARTING.register(server -> {
@@ -31,6 +42,22 @@ public class PortingLibConfig implements ModInitializer {
 		});
 		ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
 			ConfigTracker.INSTANCE.unloadConfigs(ConfigType.SERVER, getServerConfigPath(server));
+		});
+
+		ServerLoginConnectionEvents.QUERY_START.register((handler, server, sender, synchronizer) -> {
+			final Map<String, byte[]> configData = ConfigTracker.INSTANCE.configSets().get(ConfigType.SERVER).stream().collect(Collectors.toMap(ModConfig::getFileName, mc -> {
+				try {
+					return Files.readAllBytes(mc.getFullPath());
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}));
+			configData.forEach((key, value) -> {
+				FriendlyByteBuf buf = PacketByteBufs.create();
+				buf.writeUtf(key);
+				buf.writeByteArray(value);
+				sender.sendPacket(CONFIG_SYNC, buf);
+			});
 		});
 	}
 
