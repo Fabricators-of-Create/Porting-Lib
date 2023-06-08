@@ -81,16 +81,16 @@ def moduleDependencies(Project project, List<String> depNames) {
 	project.publishing {
 		publications {
 			mavenJava(MavenPublication) {
-				pom.withXml {
-					def depsNode = asNode().appendNode("dependencies")
-					deps.each {
-						def depNode = depsNode.appendNode("dependency")
-						depNode.appendNode("groupId", it.group)
-						depNode.appendNode("artifactId", it.name)
-						depNode.appendNode("version", it.version)
-						depNode.appendNode("scope", "compile")
-					}
-				}
+//				pom.withXml {
+//					def depsNode = asNode().appendNode("dependencies")
+//					deps.each {
+//						def depNode = depsNode.appendNode("dependency")
+//						depNode.appendNode("groupId", it.group)
+//						depNode.appendNode("artifactId", it.name)
+//						depNode.appendNode("version", it.version)
+//						depNode.appendNode("scope", "compile")
+//					}
+//				}
 			}
 		}
 	}
@@ -212,7 +212,7 @@ allprojects {
 		        version: version,
 				loader_version: loader_version,
 				fabric_version: fabric_version,
-				minecraft_version: minecraft_semvar_version,
+				minecraft_version: minecraft_semantic_version,
 				java_version: sourceCompatibility,
 
 				// property replacement is a bit too eager
