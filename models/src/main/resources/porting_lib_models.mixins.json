@@ -5,9 +5,17 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "BlockModelDeserializerMixin",
-    "BlockModelMixin"
+    "BlockModelMixin",
+    "ScreenEffectRendererMixin",
+    "TerrainParticleProviderMixin",
+    "TextureSheetParticleAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+    "BlockParticleOptionMixin",
+    "EntityMixin",
+    "LivingEntityMixin"
+  ]
 }

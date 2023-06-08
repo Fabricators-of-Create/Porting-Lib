@@ -31,8 +31,8 @@ public abstract class ScreenEffectRendererMixin {
 			double d1 = pPlayer.getEyeY() + (double)(((float)((i >> 1) % 2) - 0.5F) * 0.1F);
 			double d2 = pPlayer.getZ() + (double)(((float)((i >> 2) % 2) - 0.5F) * pPlayer.getBbWidth() * 0.8F);
 			blockpos$mutableblockpos.set(d0, d1, d2);
-			BlockState blockstate = pPlayer.level.getBlockState(blockpos$mutableblockpos);
-			if (blockstate.getRenderShape() != RenderShape.INVISIBLE && blockstate.isViewBlocking(pPlayer.level, blockpos$mutableblockpos)) {
+			BlockState blockstate = pPlayer.level().getBlockState(blockpos$mutableblockpos);
+			if (blockstate.getRenderShape() != RenderShape.INVISIBLE && blockstate.isViewBlocking(pPlayer.level(), blockpos$mutableblockpos)) {
 				return org.apache.commons.lang3.tuple.Pair.of(blockstate, blockpos$mutableblockpos.immutable());
 			}
 		}
