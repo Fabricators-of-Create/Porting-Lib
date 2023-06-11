@@ -1,10 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.models.mixin;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
+
+import io.github.fabricators_of_create.porting_lib.models.extensions.BlockParticleOptionExtensions;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,10 +24,6 @@ public abstract class EntityMixin {
 			)
 	)
 	private ParticleOptions addSourcePos(ParticleOptions options) {
-		if (options instanceof BlockParticleOption block) {
-			BlockPos posBelow = new BlockPos(position().subtract(0, 0.2, 0));
-			block.setSourcePos(posBelow);
-		}
-		return options;
+		return BlockParticleOptionExtensions.setSourceFromEntity(options, (Entity) (Object) this);
 	}
 }

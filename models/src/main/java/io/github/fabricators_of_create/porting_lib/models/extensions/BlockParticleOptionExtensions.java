@@ -4,6 +4,8 @@ import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.world.entity.Entity;
 
 public interface BlockParticleOptionExtensions {
 	/**
@@ -19,5 +21,16 @@ public interface BlockParticleOptionExtensions {
 	@Nullable
 	default BlockPos getSourcePos() {
 		throw new AssertionError("Should be implemented in a mixin");
+	}
+
+	/**
+	 * Helper to set the source to the block an entity is standing on.
+	 */
+	static ParticleOptions setSourceFromEntity(ParticleOptions options, Entity entity) {
+		if (options instanceof BlockParticleOption block) {
+			BlockPos posBelow = new BlockPos(entity.position().subtract(0, 0.2, 0));
+			block.setSourcePos(posBelow);
+		}
+		return options;
 	}
 }
