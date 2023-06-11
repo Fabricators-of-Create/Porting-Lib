@@ -1,19 +1,24 @@
 package io.github.fabricators_of_create.porting_lib.block;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 
 public interface CustomHitEffectsBlock {
 	/**
-	 * Custom effects when your block is hit by a player.
-	 * @return true to cancel vanilla effects
+	 * Spawn a digging particle effect in the level, this is a wrapper
+	 * around EffectRenderer.addBlockHitEffects to allow the block more
+	 * control over the particles. Useful when you have entirely different
+	 * texture sheets for different sides/locations in the level.
+	 *
+	 * @param state   The current state
+	 * @param level   The current level
+	 * @param target  The target the player is looking at {x/y/z/side/sub}
+	 * @param manager A reference to the current particle manager.
+	 * @return True to prevent vanilla digging particles form spawning.
 	 */
-	@Environment(EnvType.CLIENT)
-	boolean applyCustomHitEffects(BlockState state, Level level, HitResult target, ParticleEngine engine);
+	default boolean addHitEffects(BlockState state, Level level, HitResult target, ParticleEngine manager) {
+		return false;
+	}
 }

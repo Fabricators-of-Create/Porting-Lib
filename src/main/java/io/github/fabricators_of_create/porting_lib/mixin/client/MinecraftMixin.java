@@ -151,7 +151,7 @@ public abstract class MinecraftMixin {
 	private boolean customHitEffects(ParticleEngine engine, BlockPos pos, Direction side) {
 		BlockState state = level.getBlockState(pos);
 		if (state.getBlock() instanceof CustomHitEffectsBlock custom)
-			return !custom.applyCustomHitEffects(state, level, hitResult, engine);
+			return !custom.addHitEffects(state, level, hitResult, engine);
 		return true;
 	}
 }

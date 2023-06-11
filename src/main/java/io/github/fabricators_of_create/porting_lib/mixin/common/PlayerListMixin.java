@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.event.common.OnDatapackSyncCallback;
+import io.github.fabricators_of_create.porting_lib.util.UsernameCache;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
@@ -27,5 +28,10 @@ public abstract class PlayerListMixin {
 	)
 	private void port_lib$placeNewPlayer(CallbackInfo ci) {
 		OnDatapackSyncCallback.EVENT.invoker().onDatapackSync((PlayerList) (Object) this, null);
+	}
+
+	@Inject(method = "placeNewPlayer", at = @At("TAIL"))
+	private void setPlayerUsername(Connection netManager, ServerPlayer player, CallbackInfo ci) {
+		UsernameCache.setUsername(player.getUUID(), player.getGameProfile().getName());
 	}
 }
