@@ -5,12 +5,14 @@ import io.github.fabricators_of_create.porting_lib.event.common.EntityEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.EntityReadExtraDataCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.MinecartEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.MountEntityCallback;
+import io.github.fabricators_of_create.porting_lib.extensions.BlockParticleOptionExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.EntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.ITeleporter;
 import io.github.fabricators_of_create.porting_lib.extensions.RegistryNameProvider;
 import io.github.fabricators_of_create.porting_lib.util.EntityHelper;
 import io.github.fabricators_of_create.porting_lib.util.INBTSerializable;
 import net.minecraft.core.Registry;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
@@ -27,6 +29,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
@@ -92,6 +95,9 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializable<
 
 	@Shadow
 	public float maxUpStep;
+
+	@Shadow
+	public abstract Vec3 position();
 
 	@Inject(at = @At("TAIL"), method = "<init>")
 	public void port_lib$entityInit(EntityType<?> entityType, Level world, CallbackInfo ci) {
@@ -276,5 +282,16 @@ public abstract class EntityMixin implements EntityExtensions, INBTSerializable<
 	@Inject(method = "collide", at = @At(value = "JUMP", opcode = Opcodes.IFGE))
 	public void port_lib$modifyStepHeight(Vec3 movement, CallbackInfoReturnable<Vec3> cir) {
 		this.maxUpStep = this.getStepHeight();
+	}
+
+	@ModifyArg(
+			method = "spawnSprintParticle",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/Level;addParticle(Lnet/minecraft/core/particles/ParticleOptions;DDDDDD)V"
+			)
+	)
+	private ParticleOptions addSourcePos(ParticleOptions options) {
+		return BlockParticleOptionExtensions.setSourceFromEntity(options, (Entity) (Object) this);
 	}
 }

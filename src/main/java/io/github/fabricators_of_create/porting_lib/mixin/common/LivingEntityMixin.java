@@ -11,6 +11,8 @@ import io.github.fabricators_of_create.porting_lib.util.ContinueUsingItem;
 import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.util.UsingTickItem;
 
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 
@@ -369,5 +371,18 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 		if (state.getBlock() instanceof CustomScaffoldingBlock custom)
 			return custom.isScaffolding(state, level, blockPosition(), (LivingEntity) (Object) this);
 		return original;
+	}
+
+	@ModifyArgs(
+			method = "checkFallDamage",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/server/level/ServerLevel;sendParticles(Lnet/minecraft/core/particles/ParticleOptions;DDDIDDDD)I"
+			)
+	)
+	private void addSourcePos(Args args, double y, boolean onGround, BlockState state, BlockPos pos) {
+		ParticleOptions options = args.get(0);
+		if (options instanceof BlockParticleOption block)
+			block.setSourcePos(pos);
 	}
 }

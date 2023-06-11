@@ -46,9 +46,12 @@
     "PostChainMixin",
     "RemotePlayerMixin",
     "RenderTargetMixin",
+    "ScreenEffectRendererMixin",
     "ScreenMixin",
     "ShaderInstanceMixin",
     "SkullBlockRendererMixin",
+    "TerrainParticle$ProviderMixin",
+    "TerrainParticleMixin",
     "TextureAtlasMixin",
     "TextureAtlasSpriteMixin",
     "TextureManagerMixin",
@@ -84,5 +87,8 @@
   "injectors": {
     "defaultRequire": 1,
     "maxShiftBy": 999999
-  }
+  },
+  "mixins": [
+    "BlockParticleOptionMixin"
+  ]
 }

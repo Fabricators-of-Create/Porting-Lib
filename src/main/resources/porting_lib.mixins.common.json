@@ -44,6 +44,7 @@
     "FireBlockMixin",
     "FluidMixin",
     "FlyingMobMixin",
+    "IronGolemMixin",
     "ItemEntityMixin",
     "ItemMixin",
     "ItemPredicateMixin",
