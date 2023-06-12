@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.entity.events;
 
-import io.github.fabricators_of_create.porting_lib.core.event.CancellableEvent;
+import io.github.fabricators_of_create.porting_lib.core.event.object.CancellableEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.entity.Entity;
@@ -21,7 +21,7 @@ public interface EntitySizeCallback {
 
 	void modifySize(EntitySizeEvent event);
 
-	class EntitySizeEvent extends CancellableEvent.Base {
+	class EntitySizeEvent extends CancellableEvent {
 		public final Entity entity;
 		public final Pose pose;
 		public final float originalEyeHeight;

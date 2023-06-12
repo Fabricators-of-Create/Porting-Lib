@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.entity.events.living;
 
-import io.github.fabricators_of_create.porting_lib.core.event.CancellableEvent;
+import io.github.fabricators_of_create.porting_lib.core.event.object.CancellableEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.damagesource.DamageSource;
@@ -27,7 +27,7 @@ public class LivingEntityDamageEvents {
 		void onHurt(HurtEvent event);
 	}
 
-	public static class HurtEvent extends CancellableEvent.Base {
+	public static class HurtEvent extends CancellableEvent {
 		public final LivingEntity damaged;
 		public final DamageSource damageSource;
 
@@ -60,7 +60,7 @@ public class LivingEntityDamageEvents {
 		void onFall(FallEvent event);
 	}
 
-	public static class FallEvent extends CancellableEvent.Base {
+	public static class FallEvent extends CancellableEvent {
 		public final LivingEntity entity;
 		public final DamageSource damageSource;
 

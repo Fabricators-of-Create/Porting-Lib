@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.entity.events;
 
-import io.github.fabricators_of_create.porting_lib.core.event.CancellableEvent;
+import io.github.fabricators_of_create.porting_lib.core.event.object.CancellableEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.damagesource.DamageSource;
@@ -23,7 +23,7 @@ public interface ShieldBlockCallback {
 
 	void onShieldBlock(ShieldBlockEvent event);
 
-	class ShieldBlockEvent extends CancellableEvent.Base {
+	class ShieldBlockEvent extends CancellableEvent {
 		public final LivingEntity blocker;
 		public final ItemStack shield;
 		public final DamageSource source;
