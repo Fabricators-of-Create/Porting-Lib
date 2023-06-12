@@ -20,8 +20,14 @@ public abstract class BlockMixin extends BlockBehaviour implements BlockExtensio
 		super(properties);
 	}
 
-	@ModifyExpressionValue(method = "shouldRenderFace", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;skipRendering(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;)Z"))
-	private static boolean shouldRenderFace(boolean orignial, BlockState pState, BlockGetter pLevel, BlockPos pOffset, Direction pFace, BlockPos pPos) {
+	@ModifyExpressionValue(
+			method = "shouldRenderFace",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/block/state/BlockState;skipRendering(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;)Z"
+			)
+	)
+	private static boolean customFaceHiding(boolean orignial, BlockState pState, BlockGetter pLevel, BlockPos pOffset, Direction pFace, BlockPos pPos) {
 		return orignial || (pState.supportsExternalFaceHiding() && pLevel.getBlockState(pPos).hidesNeighborFace(pLevel, pPos, pState, pFace.getOpposite()));
 	}
 }
