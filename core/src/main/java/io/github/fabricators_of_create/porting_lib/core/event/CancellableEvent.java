@@ -1,16 +1,23 @@
 package io.github.fabricators_of_create.porting_lib.core.event;
 
 /**
- * The base of an event that may be cancelled.
+ * An event that may be cancelled.
+ * @see EventWithResult
+ * @see CancellableEventWithResult
  */
-public class CancellableEvent {
-	private boolean cancelled;
+public interface CancellableEvent {
+	void setCancelled();
+	boolean isCancelled();
 
-	public void setCancelled() {
-		cancelled = true;
-	}
+	class Base implements CancellableEvent {
+		private boolean cancelled;
 
-	public boolean isCancelled() {
-		return cancelled;
+		public void setCancelled() {
+			cancelled = true;
+		}
+
+		public boolean isCancelled() {
+			return cancelled;
+		}
 	}
 }

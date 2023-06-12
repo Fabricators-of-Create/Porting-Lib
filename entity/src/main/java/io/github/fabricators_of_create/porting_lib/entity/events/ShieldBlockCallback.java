@@ -23,7 +23,7 @@ public interface ShieldBlockCallback {
 
 	void onShieldBlock(ShieldBlockEvent event);
 
-	class ShieldBlockEvent extends CancellableEvent {
+	class ShieldBlockEvent extends CancellableEvent.Base {
 		public final LivingEntity blocker;
 		public final ItemStack shield;
 		public final DamageSource source;

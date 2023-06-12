@@ -21,7 +21,7 @@ public interface EntitySizeCallback {
 
 	void modifySize(EntitySizeEvent event);
 
-	class EntitySizeEvent extends CancellableEvent {
+	class EntitySizeEvent extends CancellableEvent.Base {
 		public final Entity entity;
 		public final Pose pose;
 		public final float originalEyeHeight;

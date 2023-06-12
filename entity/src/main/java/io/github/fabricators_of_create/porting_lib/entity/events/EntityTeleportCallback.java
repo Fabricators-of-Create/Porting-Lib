@@ -30,7 +30,7 @@ public interface EntityTeleportCallback {
 	 */
 	void onTeleport(EntityTeleportEvent event);
 
-	class EntityTeleportEvent extends CancellableEvent {
+	class EntityTeleportEvent extends CancellableEvent.Base {
 		public final Entity entity;
 		public double targetX, targetY, targetZ;
 

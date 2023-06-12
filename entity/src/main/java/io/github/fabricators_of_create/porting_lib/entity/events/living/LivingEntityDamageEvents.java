@@ -27,7 +27,7 @@ public class LivingEntityDamageEvents {
 		void onHurt(HurtEvent event);
 	}
 
-	public static class HurtEvent extends CancellableEvent {
+	public static class HurtEvent extends CancellableEvent.Base {
 		public final LivingEntity damaged;
 		public final DamageSource damageSource;
 
@@ -60,7 +60,7 @@ public class LivingEntityDamageEvents {
 		void onFall(FallEvent event);
 	}
 
-	public static class FallEvent extends CancellableEvent {
+	public static class FallEvent extends CancellableEvent.Base {
 		public final LivingEntity entity;
 		public final DamageSource damageSource;
 
