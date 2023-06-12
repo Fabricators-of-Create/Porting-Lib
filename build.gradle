@@ -30,7 +30,7 @@ if (grgit != null) {
 
 @SuppressWarnings("unused") // for subprojects
 def mixinExtras(DependencyHandler deps) {
-	deps.api(deps.include("com.github.llamalad7.mixinextras:mixinextras-fabric:$mixin_extras_version"))
+	deps.implementation(deps.include("com.github.llamalad7.mixinextras:mixinextras-fabric:$mixin_extras_version"))
 	deps.annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:$mixin_extras_version")
 }
 
@@ -48,10 +48,7 @@ def moduleDependencies(Project project, List<String> depNames) {
 	}
 	project.dependencies {
 		deps.each {
-			api(include(it)) {
-				// prevent accidentally using MixinExtras without applying the AP
-				exclude(group: "com.github.llamalad7.mixinextras")
-			}
+			api(include(it))
 		}
 	}
 
