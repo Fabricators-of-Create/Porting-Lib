@@ -29,8 +29,6 @@ public class PortingLibClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(FluidTextUtil.NUMBER_FORMAT);
-
-		InjectedInterfacesGen.run();
 		ClientPlayNetworking.registerGlobalReceiver(NetworkHooks.OPEN_ID, (client, handler, buf, responseSender) -> {
 			int typeId = buf.readVarInt();
 			int syncId = buf.readVarInt();
