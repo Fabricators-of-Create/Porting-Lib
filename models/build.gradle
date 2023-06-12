@@ -5,6 +5,8 @@ moduleDependencies(project, [
 		"transfer"
 ])
 
+mixinExtras(dependencies)
+
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }

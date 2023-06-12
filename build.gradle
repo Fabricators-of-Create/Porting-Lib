@@ -48,7 +48,10 @@ def moduleDependencies(Project project, List<String> depNames) {
 	}
 	project.dependencies {
 		deps.each {
-			api(include(it))
+			api(include(it)) {
+				// prevent accidentally using MixinExtras without applying the AP
+				exclude(group: "com.github.llamalad7.mixinextras")
+			}
 		}
 	}
 
