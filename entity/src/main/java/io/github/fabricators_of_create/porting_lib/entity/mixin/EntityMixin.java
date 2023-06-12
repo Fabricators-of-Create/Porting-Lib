@@ -3,6 +3,13 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Local;
+
+import io.github.fabricators_of_create.porting_lib.entity.events.EntitySizeCallback;
+
+import io.github.fabricators_of_create.porting_lib.entity.events.EntitySizeCallback.EntitySizeEvent;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,17 +28,55 @@ import io.github.fabricators_of_create.porting_lib.entity.events.EntityMountEven
 import io.github.fabricators_of_create.porting_lib.entity.extensions.EntityExtensions;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBundlePacket;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.Level;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin implements EntityExtensions {
+
+	// size event
+
+	@Shadow
+	private float eyeHeight;
+	@Shadow
+	private EntityDimensions dimensions;
+
+	@Inject(method = "<init>", at = @At("RETURN"))
+	private void fireSizeEventOnConstructor(EntityType<?> variant, Level world, CallbackInfo ci) {
+		EntitySizeEvent event = new EntitySizeEvent((Entity) (Object) this, Pose.STANDING, eyeHeight, dimensions);
+		EntitySizeCallback.EVENT.invoker().modifySize(event);
+		this.eyeHeight = event.eyeHeight;
+		this.dimensions = event.dimensions;
+	}
+
+	@ModifyExpressionValue(
+			method = "refreshDimensions",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/entity/Entity;getEyeHeight(Lnet/minecraft/world/entity/Pose;Lnet/minecraft/world/entity/EntityDimensions;)F"
+			)
+	)
+	private float fireSizeEventOnRefresh(float newEyeHeight,
+										@Local(ordinal = 0) EntityDimensions oldDimensions,
+										@Local(ordinal = 0) Pose pose,
+										@Local(ordinal = 1) EntityDimensions newDimensions) {
+		EntitySizeEvent event = new EntitySizeEvent((Entity) (Object) this, pose, eyeHeight, newEyeHeight, oldDimensions, newDimensions);
+		EntitySizeCallback.EVENT.invoker().modifySize(event);
+		this.dimensions = event.dimensions;
+		return event.eyeHeight;
+	}
+
+
 	// custom spawn packets
 
 	@ModifyReturnValue(method = "getAddEntityPacket", at = @At("RETURN"))

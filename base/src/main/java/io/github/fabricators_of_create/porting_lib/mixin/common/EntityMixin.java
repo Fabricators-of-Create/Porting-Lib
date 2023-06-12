@@ -15,7 +15,6 @@ import io.github.fabricators_of_create.porting_lib.block.CustomRunningEffectsBlo
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -24,8 +23,6 @@ public abstract class EntityMixin implements INBTSerializableCompound {
 	@Shadow
 	public Level level;
 	@Shadow
-	public abstract EntityType<?> getType();
-	@Shadow
 	@Nullable
 	protected abstract String getEncodeId();
 	@Shadow
@@ -33,7 +30,7 @@ public abstract class EntityMixin implements INBTSerializableCompound {
 	@Shadow
 	public abstract void load(CompoundTag compoundTag);
 
-	// RUNNING EFFECTS
+	// running effects
 
 	@Inject(
 			method = "spawnSprintParticle",
