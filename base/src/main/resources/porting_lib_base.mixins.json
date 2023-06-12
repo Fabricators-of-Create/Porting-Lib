@@ -60,7 +60,6 @@
     "common.NaturalSpawnerMixin",
     "common.PackRepositoryMixin",
     "common.PiglinAiMixin",
-    "common.PlayerListMixin",
     "common.PlayerMixin",
     "common.PowderSnowBlockMixin",
     "common.RailStateMixin",

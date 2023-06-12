@@ -40,10 +40,7 @@ public abstract class BlockEvents extends BaseEvent {
 			if (result != null)
 				return result;
 		}
-//		return InteractionResult.PASS;
-		//noinspection removal
-		InteractionResult legacyResult = BlockPlaceCallback.EVENT.invoker().onBlockPlace(context);
-		return legacyResult == InteractionResult.PASS ? null : legacyResult;
+		return null;
 	});
 
 	public interface BeforePlace {

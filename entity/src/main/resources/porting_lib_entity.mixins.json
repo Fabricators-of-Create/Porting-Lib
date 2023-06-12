@@ -1,13 +1,43 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "io.github.fabricators_of_create.porting_lib.mixin.common",
+  "package": "io.github.fabricators_of_create.porting_lib.entity.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "entity.LevelMixin",
-    "entity.SlimeMixin"
+    "common.AbstractMinecartMixin",
+    "common.CatSpawnerMixin",
+    "common.ChorusFruitItemMixin",
+    "common.EntityMixin",
+    "common.ExperienceOrbMixin",
+    "common.LevelMixin",
+    "common.LightningBoltMixin",
+    "common.LivingEntityMixin",
+    "common.NaturalSpawnerMixin",
+    "common.PatrolSpawnerMixin",
+    "common.PersistentEntitySectionManager$CallbackMixin",
+    "common.PersistentEntitySectionManagerMixin",
+    "common.PlayerListMixin",
+    "common.PlayerMixin",
+    "common.ProjectileMixin",
+    "common.ProjectileUtilMixin",
+    "common.ServerLevelMixin",
+    "common.ServerPlayerGameModeMixin",
+    "common.ServerPlayerMixin",
+    "common.SlimeMixin",
+    "common.SpreadPlayersCommandMixin",
+    "common.TeleportCommandMixin",
+    "common.ThrownEnderpearlMixin",
+    "common.TransientEntitySectionManager$CallbackMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "client": [
+    "client.ClientLevel$EntityCallbacksMixin",
+    "client.ClientLevelMixin",
+    "client.EntityRenderDispatcherMixin",
+    "client.LocalPlayerMixin",
+    "client.MultiPlayerGameModeMixin",
+    "client.RemotePlayerMixin"
+  ]
 }

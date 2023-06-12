@@ -2,29 +2,28 @@ package io.github.fabricators_of_create.porting_lib.util;
 
 import javax.annotation.Nullable;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvents;
+
+import net.fabricmc.api.EnvType;
+import net.minecraft.server.TickTask;
+import net.minecraft.world.entity.item.ItemEntity;
+
 import org.jetbrains.annotations.NotNull;
 
-import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
-import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
-import io.github.fabricators_of_create.porting_lib.event.common.EntityEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.GrindstoneEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockItemExtensions;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryRemovedCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
-import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -91,26 +90,6 @@ public class PortingHooks {
 	}
 
 	public static void init() {
-		ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
-			if (entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
-				PartEntity<?>[] parts = partEntity.getParts();
-				if (parts != null) {
-					for (PartEntity<?> part : parts) {
-						world.getPartEntityMap().put(part.getId(), part);
-					}
-				}
-			}
-		});
-		ServerEntityEvents.ENTITY_UNLOAD.register((entity, world) -> {
-			if(entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
-				PartEntity<?>[] parts = partEntity.getParts();
-				if (parts != null) {
-					for (PartEntity<?> part : parts) {
-						world.getPartEntityMap().remove(part.getId());
-					}
-				}
-			}
-		});
 		EntityEvents.ON_JOIN_WORLD.register((entity, world, loadedFromDisk) -> {
 			if (entity.getClass().equals(ItemEntity.class)) {
 				ItemStack stack = ((ItemEntity)entity).getItem();

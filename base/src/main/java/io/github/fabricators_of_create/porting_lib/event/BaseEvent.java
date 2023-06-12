@@ -1,7 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.event;
 
-import net.minecraft.world.InteractionResult;
-
 public abstract class BaseEvent {
 	public enum Result {
 		DENY,
