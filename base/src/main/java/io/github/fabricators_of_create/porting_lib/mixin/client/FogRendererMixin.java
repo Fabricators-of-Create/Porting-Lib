@@ -34,7 +34,7 @@ public abstract class FogRendererMixin {
 	private static float fogBlue;
 
 	@ModifyArgs(method = "setupColor", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V", remap = false))
-	private static void port_lib$modifyFogColors(Args args, Camera camera, float partialTicks, ClientLevel level, int renderDistanceChunks, float bossColorModifier) {
+	private static void modifyFogColors(Args args, Camera camera, float partialTicks, ClientLevel level, int renderDistanceChunks, float bossColorModifier) {
 		ColorData data = new ColorData(camera, fogRed, fogGreen, fogBlue);
 		FogEvents.SET_COLOR.invoker().setColor(data, partialTicks);
 		fogRed = data.getRed();
@@ -43,7 +43,7 @@ public abstract class FogRendererMixin {
 	}
 
 	@Inject(method = "setupFog", at = @At("HEAD"), cancellable = true)
-	private static void port_lib$setupFog(Camera camera, FogRenderer.FogMode fogType, float viewDistance, boolean thickFog, float tickDelta, CallbackInfo ci) {
+	private static void setupFog(Camera camera, FogRenderer.FogMode fogType, float viewDistance, boolean thickFog, float tickDelta, CallbackInfo ci) {
 		float density = FogEvents.SET_DENSITY.invoker().setDensity(camera, 0.1f);
 		if (density != 0.1f) {
 			RenderSystem.setShaderFogStart(-8.0F);
@@ -52,9 +52,9 @@ public abstract class FogRendererMixin {
 		}
 	}
 
-	@Inject(method = "setupFog", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	private static void port_lib$fogRenderEvent(Camera camera, FogRenderer.FogMode fogMode, float viewDistance, boolean thickFog, float partialTick, CallbackInfo ci, FogType fogType, Entity entity, FogRenderer.FogData fogData) {
-		FogEvents.FogData data = new FogEvents.FogData(fogData.end, fogData.start, fogData.shape);
+	@Inject(method = "setupFog", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
+	private static void fogRenderEvent(Camera camera, FogRenderer.FogMode fogMode, float viewDistance, boolean thickFog, float partialTick, CallbackInfo ci, FogType fogType, Entity entity, FogRenderer.FogData fogData) {
+		FogEvents.FogData data = new FogEvents.FogData(fogData.start, fogData.end, fogData.shape);
 		if (FogEvents.RENDER_FOG.invoker().onFogRender(fogMode, fogType, camera, partialTick, viewDistance, fogData.start, fogData.end, fogData.shape, data)) {
 			RenderSystem.setShaderFogStart(data.getNearPlaneDistance());
 			RenderSystem.setShaderFogEnd(data.getFarPlaneDistance());

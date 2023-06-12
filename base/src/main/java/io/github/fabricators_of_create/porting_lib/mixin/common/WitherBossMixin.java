@@ -38,10 +38,10 @@ public abstract class WitherBossMixin extends Entity {
 
 	@Inject(method = "customServerAiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void port_lib$shouldDestroy(CallbackInfo ci, int i, int j, int k, boolean bl, int l, int m, int n, int o, int p, int q, BlockPos blockPos) {
-		BlockState blockState = this.level.getBlockState(blockPos);
+		BlockState blockState = this.level().getBlockState(blockPos);
 		if (blockState.getBlock() instanceof EntityDestroyBlock destroyBlock) {
 			customLogic = true;
-			shouldBreak = destroyBlock.canEntityDestroy(blockState, this.level, blockPos, this);
+			shouldBreak = destroyBlock.canEntityDestroy(blockState, this.level(), blockPos, this);
 		} else
 			customLogic = false;
 	}

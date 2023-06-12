@@ -25,29 +25,6 @@ public class ConditionalAdvancement {
 		return new Builder();
 	}
 
-	/**
-	 * Processes the conditional advancement during loading.
-	 * @param json The incoming json from the advancement file.
-	 * @return The advancement that passed the conditions, or null if none did.
-	 */
-	@Nullable
-	public static JsonObject processConditional(JsonObject json) {
-		JsonArray entries = GsonHelper.getAsJsonArray(json, "advancements", null);
-		if (entries == null) {
-			return CraftingHelper.processConditions(json, ResourceConditions.CONDITIONS_KEY) ? json : null;
-		}
-
-		int idx = 0;
-		for (JsonElement ele : entries) {
-			if (!ele.isJsonObject())
-				throw new JsonSyntaxException("Invalid advancement entry at index " + idx + " Must be JsonObject");
-			if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), ResourceConditions.CONDITIONS_KEY)))
-				return GsonHelper.getAsJsonObject(ele.getAsJsonObject(), "advancement");
-			idx++;
-		}
-		return null;
-	}
-
 	public static class Builder {
 		private List<ConditionJsonProvider[]> conditions = new ArrayList<>();
 		private List<Supplier<JsonElement>> advancements = new ArrayList<>();

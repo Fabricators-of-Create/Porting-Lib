@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.world.effect.MobEffectInstance;
 
@@ -17,7 +17,7 @@ public abstract class EffectRenderer {
 		}
 
 		@Override
-		public void renderHUDEffect(MobEffectInstance effect, GuiComponent gui, PoseStack mStack, int x, int y, float z, float alpha) {
+		public void renderHUDEffect(MobEffectInstance effect, GuiGraphics guiGraphics, int x, int y, float z, float alpha) {
 
 		}
 	};
@@ -70,12 +70,11 @@ public abstract class EffectRenderer {
 	 * This can be used to e.g. render Potion icons from your own texture.
 	 *
 	 * @param effect the active PotionEffect
-	 * @param gui    the gui instance
-	 * @param mStack The PoseStack
+	 * @param gui    the gui graphics instance
 	 * @param x      the x coordinate
 	 * @param y      the y coordinate
 	 * @param z      the z level
 	 * @param alpha  the alpha value, blinks when the potion is about to run out
 	 */
-	public abstract void renderHUDEffect(MobEffectInstance effect, GuiComponent gui, PoseStack mStack, int x, int y, float z, float alpha);
+	public abstract void renderHUDEffect(MobEffectInstance effect, GuiGraphics gui, int x, int y, float z, float alpha);
 }

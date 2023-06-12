@@ -53,7 +53,7 @@ public abstract class BoatMixin extends Entity {
 	)
 	private float port_lib$setFriction(float original) {
 		if (port_lib$state.getBlock() instanceof CustomFrictionBlock custom) {
-			return custom.getFriction(port_lib$state, level, port_lib$pos, this);
+			return custom.getFriction(port_lib$state, level(), port_lib$pos, this);
 		}
 		return original;
 	}

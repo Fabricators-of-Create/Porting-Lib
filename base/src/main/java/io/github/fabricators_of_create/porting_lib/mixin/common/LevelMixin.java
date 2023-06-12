@@ -16,6 +16,7 @@ import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockEn
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.LevelExtensions;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.FullChunkStatus;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -152,61 +153,6 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		}
 	}
 
-	// by the time light is checked, the new state has already been set
-	// grab the light earlier and save it for later to avoid this
-	@Inject(
-			method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/Level;getChunkAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/chunk/LevelChunk;"
-			)
-	)
-	private void port_lib$grabOldStateLight(BlockPos pos, BlockState state, int flags, int maxUpdateDepth, CallbackInfoReturnable<Boolean> cir) {
-		BlockState oldState = getBlockState(pos);
-		if (oldState.getBlock() instanceof LightEmissiveBlock custom) {
-			port_lib$oldStateLight = custom.getLightEmission(oldState, this, pos);
-		} else {
-			// not custom? store nothing to not interfere
-			port_lib$oldStateLight = null;
-		}
-	}
-
-	// replace the old state's light
-	@WrapOperation(
-			method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/block/state/BlockState;getLightEmission()I",
-					ordinal = 1
-			)
-	)
-	private int port_lib$oldCustomLight(BlockState state, Operation<Integer> original,
-										BlockPos pos, BlockState state2, int flags, int maxUpdateDepth) {
-		Integer light = port_lib$oldStateLight;
-		if (light != null) {
-			return light;
-		}
-		return original.call(state);
-		// no need to clear the stored light, will be reset on the next call
-	}
-
-	// replace the new state's light
-	@WrapOperation(
-			method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/block/state/BlockState;getLightEmission()I",
-					ordinal = 0
-			)
-	)
-	private int port_lib$newCustomLight(BlockState state, Operation<Integer> original,
-										BlockPos pos, BlockState state2, int flags, int maxUpdateDepth) {
-		if (state.getBlock() instanceof LightEmissiveBlock custom) {
-			return custom.getLightEmission(state, this, pos);
-		}
-		return original.call(state);
-	}
-
 	@Inject(
 			method = "updateNeighbourForOutputSignal",
 			at = @At(
@@ -277,7 +223,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 						this.setBlocksDirty(pos, oldState, blockstate1);
 					}
 
-					if ((flags & 2) != 0 && (!this.isClientSide || (flags & 4) == 0) && (this.isClientSide || levelchunk.getFullStatus() != null && levelchunk.getFullStatus().isOrAfter(ChunkHolder.FullChunkStatus.TICKING))) {
+					if ((flags & 2) != 0 && (!this.isClientSide || (flags & 4) == 0) && (this.isClientSide || levelchunk.getFullStatus() != null && levelchunk.getFullStatus().isOrAfter(FullChunkStatus.BLOCK_TICKING))) {
 						this.sendBlockUpdated(pos, oldState, newState, flags);
 					}
 

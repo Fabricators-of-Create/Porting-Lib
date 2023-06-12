@@ -45,9 +45,9 @@ public abstract class ExperienceOrbMixin extends Entity {
 	)
 	private float port_lib$setFriction(float original) {
 		BlockPos pos = BlockPos.containing(getX(), getY() - 1, getZ());
-		BlockState state = level.getBlockState(pos);
+		BlockState state = level().getBlockState(pos);
 		if (state.getBlock() instanceof CustomFrictionBlock custom) {
-			return custom.getFriction(state, level, pos, this);
+			return custom.getFriction(state, level(), pos, this);
 		}
 		return original;
 	}

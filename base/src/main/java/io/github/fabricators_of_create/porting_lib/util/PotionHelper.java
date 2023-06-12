@@ -13,7 +13,7 @@ public class PotionHelper {
 	 * @param curativeItem The itemstack we are using to cure potion effects
 	 */
 	public static boolean curePotionEffects(LivingEntity livingEntity, ItemStack curativeItem) {
-		if (livingEntity.level.isClientSide)
+		if (livingEntity.level().isClientSide)
 			return false;
 		boolean ret = false;
 		Iterator<MobEffectInstance> itr = livingEntity.getActiveEffects().iterator();

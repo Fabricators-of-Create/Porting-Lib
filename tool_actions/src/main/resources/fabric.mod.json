@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_tool_actions",
+  "version": "${version}",
+  "name": "Porting Lib Tool Actions",
+  "description": "Utilities for tool interactions.",
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_1792": ["io/github/fabricators_of_create/porting_lib/tool/extensions/ItemExtensions"],
+      "net/minecraft/class_1799": ["io/github/fabricators_of_create/porting_lib/tool/extensions/ItemStackExtensions"],
+      "net/minecraft/class_2248": ["io/github/fabricators_of_create/porting_lib/tool/extensions/BlockExtensions"],
+      "net/minecraft/class_2680": ["io/github/fabricators_of_create/porting_lib/tool/extensions/BlockStateExtensions"]
+    }
+  }
+}

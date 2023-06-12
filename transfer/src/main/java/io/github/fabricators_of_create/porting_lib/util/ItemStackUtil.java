@@ -9,7 +9,7 @@ public class ItemStackUtil {
 			return stack2.isEmpty();
 		} else {
 			return !stack2.isEmpty() && stack1.getCount() == stack2.getCount() && stack1.getItem() == stack2.getItem() &&
-					(limitTags ? areTagsEqual(stack1, stack2) : ItemStack.tagMatches(stack1, stack2));
+					(limitTags ? areTagsEqual(stack1, stack2) : ItemStack.isSameItemSameTags(stack1, stack2));
 		}
 	}
 
@@ -24,7 +24,7 @@ public class ItemStackUtil {
 	}
 
 	public static boolean canItemStacksStack(ItemStack first, ItemStack second) {
-		if (first.isEmpty() || !first.sameItem(second) || first.hasTag() != second.hasTag()) return false;
+		if (first.isEmpty() || !ItemStack.isSameItem(first, second) || first.hasTag() != second.hasTag()) return false;
 
 		return !first.hasTag() || first.getTag().equals(second.getTag());
 	}

@@ -214,7 +214,7 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapsh
 		ItemStack oldStack = stacks[slot];
 		stacks[slot] = newStack;
 		variants[slot] = ItemVariant.of(newStack);
-		if (!oldStack.sameItem(newStack)) {
+		if (!ItemStack.isSameItem(oldStack, newStack)) {
 			// item changed, update the lookup
 			updateLookup(oldStack.getItem(), newStack.getItem(), slot);
 		}

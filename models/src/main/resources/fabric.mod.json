@@ -6,11 +6,14 @@
   "description": "Adds different types of model loaders",
 
   "entrypoints": {
-    "main": [
+    "client": [
       "io.github.fabricators_of_create.porting_lib.models.PortingLibModels"
     ],
     "preLaunch": [
       "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
     ]
-  }
+  },
+  "mixins": [
+    "porting_lib_models.mixins.json"
+  ]
 }

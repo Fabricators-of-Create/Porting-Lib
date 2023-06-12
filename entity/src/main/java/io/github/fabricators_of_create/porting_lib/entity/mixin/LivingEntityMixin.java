@@ -103,7 +103,7 @@ public abstract class LivingEntityMixin extends Entity {
 				(LivingEntity) (Object) this, source, drops, lootingLevel, lastHurtByPlayerTime > 0
 		);
 		if (!cancelled)
-			drops.forEach(level::addFreshEntity);
+			drops.forEach(level()::addFreshEntity);
 	}
 
 	// shield blocking

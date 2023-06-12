@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_brewing",
+  "version": "${version}",
+  "name": "Porting Lib Brewing",
+  "description": "Small library for adding brewing recipes"
+}

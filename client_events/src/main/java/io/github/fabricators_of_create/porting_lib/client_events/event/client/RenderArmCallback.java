@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.HumanoidArm;
 
 /**
- * Fired before the player's arm is rendered in first person. This is a more targeted version of {@link RenderHandEvent},
+ * Fired before the player's arm is rendered in first person. This is a more targeted version of {@link RenderHandCallback},
  * and can be used to replace the rendering of the player's arm, such as for rendering armor on the arm or outright
  * replacing the arm with armor.
  *

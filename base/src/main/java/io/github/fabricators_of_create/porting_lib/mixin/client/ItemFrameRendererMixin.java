@@ -57,7 +57,7 @@ public abstract class ItemFrameRendererMixin<T extends ItemFrame> extends Entity
 	private MapItemSavedData port_lib$getCorrectMapData(MapItemSavedData original, T entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
 		ItemStack stack = entity.getItem();
 		if (stack.getItem() instanceof CustomMapItem custom) {
-			return custom.getCustomMapData(stack, entity.level);
+			return custom.getCustomMapData(stack, entity.level());
 		}
 		return original;
 	}

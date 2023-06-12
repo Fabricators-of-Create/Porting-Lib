@@ -8,7 +8,7 @@ import java.util.function.BiConsumer;
 
 import com.google.gson.JsonArray;
 
-import io.github.fabricators_of_create.porting_lib.util.LamdbaExceptionUtils;
+import io.github.fabricators_of_create.porting_lib.core.util.LamdbaExceptionUtils;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 
 import org.slf4j.Logger;

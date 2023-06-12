@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_loot",
+  "version": "${version}",
+  "name": "Porting Lib Loot",
+  "description": "A small library to modify mob loot",
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.loot.PortingLibLoot"
+    ]
+  },
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_47": [
+        "io/github/fabricators_of_create/porting_lib/loot/extensions/LootContextExtensions"
+      ],
+      "net/minecraft/class_52": [
+        "io/github/fabricators_of_create/porting_lib/loot/extensions/LootTableExtensions"
+      ],
+      "net/minecraft/class_55": [
+        "io/github/fabricators_of_create/porting_lib/loot/extensions/LootPoolExtensions"
+      ],
+      "net/minecraft/class_55$class_56": [
+        "io/github/fabricators_of_create/porting_lib/loot/extensions/LootPoolBuilderExtension"
+      ]
+    }
+  }
+}
