@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.entity.mixin;
+package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.entity.extensions.MobEffectExtensions;
 import net.minecraft.world.effect.MobEffect;
