@@ -11,6 +11,7 @@
     "LevelMixin",
     "LightningBoltMixin",
     "LivingEntityMixin",
+    "MobEffectMixin",
     "MobMixin",
     "PersistentEntitySectionManager$CallbackMixin",
     "PlayerAdvancementsMixin",
@@ -38,6 +39,8 @@
     "defaultRequire": 1
   },
   "client": [
-    "EntityRenderDispatcherMixin"
+    "EntityRenderDispatcherMixin",
+    "client.EffectRenderingInventoryScreenMixin",
+    "client.GuiMixin"
   ]
 }

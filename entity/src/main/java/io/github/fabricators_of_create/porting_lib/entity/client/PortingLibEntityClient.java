@@ -1,6 +1,9 @@
-package io.github.fabricators_of_create.porting_lib.entity;
+package io.github.fabricators_of_create.porting_lib.entity.client;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
+import io.github.fabricators_of_create.porting_lib.entity.ExtraSpawnDataEntity;
+import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
+import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
