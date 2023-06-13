@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_core_testmod",
+  "version": "${version}",
+  "name": "Porting Lib Core Testmod",
+  "description": "Tests the core module",
+  "authors": [
+    "The Create Fabric Team"
+  ],
+  "license": "LGPL",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.core.testmod.PortingLibCoreTestmod"
+    ]
+  }
+}
