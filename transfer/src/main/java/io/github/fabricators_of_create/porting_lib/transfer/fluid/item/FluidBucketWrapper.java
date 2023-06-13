@@ -1,7 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.transfer.fluid.item;
 
-import io.github.fabricators_of_create.porting_lib.mixin.accessors.common.accessor.BucketItemAccessor;
-
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,8 +40,8 @@ public class FluidBucketWrapper implements SingleSlotStorage<FluidVariant> {
 	@NotNull
 	public FluidStack getFluid() {
 		Item item = context.getItemVariant().getItem();
-		if (item instanceof BucketItem) {
-			return new FluidStack(((BucketItemAccessor)item).port_lib$getContent(), FluidConstants.BUCKET);
+		if (item instanceof BucketItem bucketItem) {
+			return new FluidStack(bucketItem.content, FluidConstants.BUCKET);
 		} else {
 			return FluidStack.EMPTY;
 		}

@@ -5,7 +5,6 @@ import java.util.Locale;
 
 import com.google.common.math.LongMath;
 
-import io.github.fabricators_of_create.porting_lib.common.util.MinecraftClientUtil;
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.resources.ResourceLocation;
@@ -33,7 +32,7 @@ public class FluidTextUtil {
 		}
 
 		public void update() {
-			format = NumberFormat.getInstance(MinecraftClientUtil.getLocale());
+			format = NumberFormat.getInstance();
 			format.setMaximumFractionDigits(2);
 			format.setMinimumFractionDigits(0);
 			format.setGroupingUsed(true);

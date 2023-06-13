@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.extensions.extensions;
+package io.github.fabricators_of_create.porting_lib.core.util;
 
 import net.minecraft.nbt.Tag;
 

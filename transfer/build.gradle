@@ -1,8 +1,3 @@
-moduleDependencies(project, [
-		"common",
-		"extensions"
-])
-
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }

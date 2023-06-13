@@ -3,6 +3,8 @@ moduleDependencies(project, [
 		"transfer"
 ])
 
+testMod(project)
+
 mixinExtras(dependencies)
 
 processResources {
