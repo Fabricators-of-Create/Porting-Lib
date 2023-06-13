@@ -10,12 +10,7 @@ moduleDependencies(project, [
 ])
 
 mixinExtras(dependencies)
-
-dependencies {
-	modImplementation(include("com.github.Chocohead:Fabric-ASM:v2.3"))
-
-//	modCompileOnly("com.yungnickyoung.minecraft.yungsapi:YungsApi:1.19.2-Fabric-3.8.0") not updated to 1.19.3
-}
+fabricAsm(dependencies)
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN

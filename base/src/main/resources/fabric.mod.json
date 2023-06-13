@@ -11,7 +11,7 @@
     "client": [
       "io.github.fabricators_of_create.porting_lib.PortingLibClient"
     ],
-    "mm:early_risers": [
+    "mm_shedaniel:early_risers": [
       "io.github.fabricators_of_create.porting_lib.PortingLibER"
     ]
   }

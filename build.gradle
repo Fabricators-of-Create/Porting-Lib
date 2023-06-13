@@ -35,6 +35,11 @@ def mixinExtras(DependencyHandler deps) {
 }
 
 @SuppressWarnings("unused") // for subprojects
+def fabricAsm(DependencyHandler deps) {
+	deps.modImplementation(deps.include("me.shedaniel:mm:2.4.1"))
+}
+
+@SuppressWarnings("unused") // for subprojects
 def testMod(Project project) {
 	project.sourceSets {
 		testmod {

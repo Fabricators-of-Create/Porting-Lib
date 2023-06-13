@@ -14,6 +14,7 @@
   },
   "custom": {
     "loom:injected_interfaces": {
+      "net/minecraft/class_1291": ["io/github/fabricators_of_create/porting_lib/entity/extensions/MobEffectExtensions"],
       "net/minecraft/class_1297": ["io/github/fabricators_of_create/porting_lib/entity/extensions/EntityExtensions"],
       "net/minecraft/class_1621": ["io/github/fabricators_of_create/porting_lib/entity/extensions/SlimeExtension"],
       "net/minecraft/class_1688": ["io/github/fabricators_of_create/porting_lib/entity/extensions/AbstractMinecartExtensions"],
