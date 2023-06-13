@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_models_testmod",
+  "version": "${version}",
+  "name": "Porting Lib Models Testmod",
+  "description": "Tests the models module",
+  "authors": [
+    "The Create Fabric Team"
+  ],
+  "license": "LGPL",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.models.testmod.PortingLibModelsTestmod"
+    ],
+    "client": [
+      "io.github.fabricators_of_create.porting_lib.models.testmod.client.PortingLibModelsTestmodClient"
+    ]
+  }
+}

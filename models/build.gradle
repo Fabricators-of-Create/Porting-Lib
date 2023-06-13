@@ -4,6 +4,7 @@ moduleDependencies(project, [
 ])
 
 testMod(project)
+
 mixinExtras(dependencies)
 
 dependencies {

@@ -9,7 +9,6 @@
     "ClientPacketListenerMixin",
     "GameRendererMixin",
     "LocalPlayerMixin",
-    "ModelManagerMixin",
     "PlayerRendererMixin",
     "SoundEngineMixin"
   ],

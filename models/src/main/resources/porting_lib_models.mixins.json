@@ -17,6 +17,10 @@
     "client.ParticleEngineMixin",
     "client.TerrainParticle$ProviderMixin",
     "client.TerrainParticleMixin",
+    "client.BlockModelDeserializerMixin",
+    "client.BlockModelMixin",
+    "client.ItemRendererMixin",
+    "client.ModelManagerMixin",
     "client.frex.ItemRenderContextMixin"
   ],
   "injectors": {

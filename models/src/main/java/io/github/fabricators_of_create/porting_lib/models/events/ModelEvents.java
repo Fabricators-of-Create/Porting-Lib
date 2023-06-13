@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.client_events.event.client;
+package io.github.fabricators_of_create.porting_lib.models.events;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
