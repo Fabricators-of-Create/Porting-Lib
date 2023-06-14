@@ -3,6 +3,10 @@ package io.github.fabricators_of_create.porting_lib.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.fabricmc.fabric.api.renderer.v1.model.WrapperBakedModel;
+
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
+
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.resources.model.BakedModel;
@@ -11,7 +15,10 @@ public interface TransformTypeDependentItemBakedModel {
 	/**
 	 * Applies a transform for the given {@link ItemTransforms.TransformType} and {@code applyLeftHandTransform}, and
 	 * returns the model to be rendered.
+	 * {@link #maybeApplyTransform(BakedModel, TransformType, PoseStack, boolean)} should always be used, do not call directly
+	 * unless for super or you know what you're doing.
 	 */
+	@OverrideOnly
 	default BakedModel applyTransform(ItemTransforms.TransformType transformType, PoseStack poseStack, boolean applyLeftHandTransform) {
 		((BakedModel) this).getTransforms().getTransform(transformType).apply(applyLeftHandTransform, poseStack);
 		return (BakedModel) this;
