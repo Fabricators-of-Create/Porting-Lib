@@ -1,7 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import com.llamalad7.mixinextras.injector.ModifyReceiver;
+
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -9,51 +14,64 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import com.google.common.collect.Lists;
 
 import io.github.fabricators_of_create.porting_lib.extensions.StructureTemplateExtensions;
-import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.StructureTemplateAccessor;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.DoubleTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureEntityInfo;
 import net.minecraft.world.phys.Vec3;
 
 @Mixin(StructureTemplate.class)
 public abstract class StructureTemplateMixin implements StructureTemplateExtensions {
 	@Shadow
 	@Final
-	private List<StructureTemplate.StructureEntityInfo> entityInfoList;
+	private List<StructureEntityInfo> entityInfoList;
+
+	@Shadow
+	protected abstract void placeEntities(ServerLevelAccessor serverLevel, BlockPos pos, Mirror mirror, Rotation rotation, BlockPos pivot, @Nullable BoundingBox boundingBox, boolean withEntities);
 
 	@Unique
-	@Override
-	public List<StructureTemplate.StructureEntityInfo> getEntities() {
-		return entityInfoList;
-	}
+	private StructurePlaceSettings settings;
 
-	@Inject(
+	@WrapWithCondition(
 			method = "placeInWorld",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate;placeEntities(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/Mirror;Lnet/minecraft/world/level/block/Rotation;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/levelgen/structure/BoundingBox;Z)V",
-					shift = At.Shift.BEFORE
-			),
-			cancellable = true
+					target = "Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate;placeEntities(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/Mirror;Lnet/minecraft/world/level/block/Rotation;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/levelgen/structure/BoundingBox;Z)V"
+			)
 	)
-	public void port_lib$place(ServerLevelAccessor iServerWorld, BlockPos blockPos, BlockPos blockPos2, StructurePlaceSettings placementSettings, Random random, int i, CallbackInfoReturnable<Boolean> cir) {
-		addEntitiesToWorld(iServerWorld, blockPos, placementSettings);
-		cir.setReturnValue(true);
+	private boolean grabSettings(StructureTemplate self,
+								 ServerLevelAccessor serverLevel, BlockPos pos, Mirror mirror, Rotation rotation,
+								 BlockPos pivot, @Nullable BoundingBox boundingBox, boolean withEntities,
+								 ServerLevelAccessor serverLevel2, BlockPos pos2, BlockPos pivot2,
+								 StructurePlaceSettings settings, Random random, int flags) {
+		this.settings = settings;
+		return true;
+	}
+
+	@ModifyReceiver(
+			method = "placeEntities",
+			at = @At(
+					value = "INVOKE",
+					target = "Ljava/util/List;iterator()Ljava/util/Iterator;"
+			)
+	)
+	private List<StructureEntityInfo> processEntities(List<StructureEntityInfo> original,
+													  ServerLevelAccessor level, BlockPos pos, Mirror mirror, Rotation rotation,
+													  BlockPos pivot, @Nullable BoundingBox boundingBox, boolean withEntities) {
+		return processEntityInfos((StructureTemplate) (Object) this, level, pos, settings, original);
+	}
+
+	@Override
+	public List<StructureEntityInfo> getEntities() {
+		return entityInfoList;
 	}
 
 	@Override
@@ -61,49 +79,40 @@ public abstract class StructureTemplateMixin implements StructureTemplateExtensi
 		return StructureTemplate.transform(pos, placementIn.getMirror(), placementIn.getRotation(), placementIn.getRotationPivot());
 	}
 
+	@SuppressWarnings("removal")
 	@Override
-	public List<StructureTemplate.StructureEntityInfo> processEntityInfos(@Nullable StructureTemplate template, LevelAccessor world, BlockPos blockPos, StructurePlaceSettings settings, List<StructureTemplate.StructureEntityInfo> infos) {
-		List<StructureTemplate.StructureEntityInfo> list = Lists.newArrayList();
-		for(StructureTemplate.StructureEntityInfo entityInfo : infos) {
-			Vec3 pos = transformedVec3d(settings, entityInfo.pos).add(Vec3.atLowerCornerOf(blockPos));
-			BlockPos blockpos = StructureTemplate.calculateRelativePosition(settings, entityInfo.blockPos).offset(blockPos);
-			StructureTemplate.StructureEntityInfo info = new StructureTemplate.StructureEntityInfo(pos, blockpos, entityInfo.nbt);
-			for (StructureProcessor proc : settings.getProcessors()) {
-				info = proc.processEntity(world, blockPos, entityInfo, info, settings, template);
-				if (info == null)
-					break;
+	public List<StructureEntityInfo> processEntityInfos(@Nullable StructureTemplate template, LevelAccessor level, BlockPos pos, StructurePlaceSettings settings, List<StructureEntityInfo> unprocessedEntities) {
+		// this does not transform positions, unlike forge
+		List<StructureEntityInfo> processedEntities = new ArrayList<>();
+		entities: for (StructureEntityInfo entity : unprocessedEntities) {
+			Vec3 vec = transformedVec3d(settings, entity.pos).add(Vec3.atLowerCornerOf(pos));
+			BlockPos blockPos = StructureTemplate.calculateRelativePosition(settings, entity.blockPos).offset(pos);
+			StructureEntityInfo info = new StructureEntityInfo(vec, blockPos, entity.nbt);
+
+			for (StructureProcessor processor : settings.getProcessors()) {
+				StructureEntityInfo newInfo = processor.processEntity(level, pos, entity, info, settings, template);
+				if (newInfo == null) {
+					continue entities;
+				} else if (newInfo == info) {
+					processedEntities.add(entity);
+				} else {
+					// processors transformed the positions. Apply the transformation to the original positions instead.
+					Vec3 vecOffset = newInfo.pos.subtract(info.pos);
+					BlockPos posOffset = newInfo.blockPos.subtract(info.blockPos);
+					Vec3 newVec = entity.pos.add(vecOffset);
+					BlockPos newPos = entity.blockPos.offset(posOffset);
+					processedEntities.add(new StructureEntityInfo(newVec, newPos, entity.nbt));
+				}
 			}
-			if (info != null)
-				list.add(info);
+
+			processedEntities.add(info);
 		}
-		return list;
+		return processedEntities;
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	public void addEntitiesToWorld(ServerLevelAccessor world, BlockPos blockPos, StructurePlaceSettings settings) {
-		for(StructureTemplate.StructureEntityInfo template$entityinfo : processEntityInfos((StructureTemplate) (Object) this, world, blockPos, settings, this.getEntities())) {
-			BlockPos blockpos = StructureTemplate.transform(template$entityinfo.blockPos, settings.getMirror(), settings.getRotation(), settings.getRotationPivot()).offset(blockPos);
-			blockpos = template$entityinfo.blockPos;
-			if (settings.getBoundingBox() == null || settings.getBoundingBox().isInside(blockpos)) {
-				CompoundTag compoundnbt = template$entityinfo.nbt.copy();
-				Vec3 vector3d1 = template$entityinfo.pos;
-				ListTag listnbt = new ListTag();
-				listnbt.add(DoubleTag.valueOf(vector3d1.x));
-				listnbt.add(DoubleTag.valueOf(vector3d1.y));
-				listnbt.add(DoubleTag.valueOf(vector3d1.z));
-				compoundnbt.put("Pos", listnbt);
-				compoundnbt.remove("UUID");
-				StructureTemplateAccessor.port_lib$createEntityIgnoreException(world, compoundnbt).ifPresent((entity) -> {
-					float f = entity.mirror(settings.getMirror());
-					f = f + (entity.getYRot() - entity.rotate(settings.getRotation()));
-					entity.moveTo(vector3d1.x, vector3d1.y, vector3d1.z, f, entity.getXRot());
-					if (settings.shouldFinalizeEntities() && entity instanceof Mob) {
-						((Mob) entity).finalizeSpawn(world, world.getCurrentDifficultyAt(new BlockPos(vector3d1)), MobSpawnType.STRUCTURE, (SpawnGroupData)null, compoundnbt);
-					}
-
-					world.addFreshEntityWithPassengers(entity);
-				});
-			}
-		}
+		placeEntities(world, blockPos, settings.getMirror(), settings.getRotation(), settings.getRotationPivot(), settings.getBoundingBox(), settings.shouldFinalizeEntities());
 	}
 }
