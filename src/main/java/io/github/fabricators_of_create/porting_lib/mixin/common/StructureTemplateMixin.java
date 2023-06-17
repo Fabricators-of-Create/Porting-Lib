@@ -87,25 +87,25 @@ public abstract class StructureTemplateMixin implements StructureTemplateExtensi
 		entities: for (StructureEntityInfo entity : unprocessedEntities) {
 			Vec3 vec = transformedVec3d(settings, entity.pos).add(Vec3.atLowerCornerOf(pos));
 			BlockPos blockPos = StructureTemplate.calculateRelativePosition(settings, entity.blockPos).offset(pos);
-			StructureEntityInfo info = new StructureEntityInfo(vec, blockPos, entity.nbt);
+			StructureEntityInfo absoluteInfo = new StructureEntityInfo(vec, blockPos, entity.nbt);
 
+			StructureEntityInfo processed = absoluteInfo;
 			for (StructureProcessor processor : settings.getProcessors()) {
-				StructureEntityInfo newInfo = processor.processEntity(level, pos, entity, info, settings, template);
-				if (newInfo == null) {
+				processed = processor.processEntity(level, pos, entity, processed, settings, template);
+				if (processed == null)
 					continue entities;
-				} else if (newInfo == info) {
-					processedEntities.add(entity);
-				} else {
-					// processors transformed the positions. Apply the transformation to the original positions instead.
-					Vec3 vecOffset = newInfo.pos.subtract(info.pos);
-					BlockPos posOffset = newInfo.blockPos.subtract(info.blockPos);
-					Vec3 newVec = entity.pos.add(vecOffset);
-					BlockPos newPos = entity.blockPos.offset(posOffset);
-					processedEntities.add(new StructureEntityInfo(newVec, newPos, entity.nbt));
-				}
 			}
-
-			processedEntities.add(info);
+			if (processed == absoluteInfo) {
+				processedEntities.add(entity); // unchanged, shortcut
+			} else {
+				// Undo the original offsets since they will be re-applied later
+				// TODO: this might still be broken? testing soon.
+				Vec3 vecOffset = vec.subtract(entity.pos);
+				BlockPos posOffset = blockPos.subtract(entity.blockPos);
+				Vec3 newVec = processed.pos.subtract(vecOffset);
+				BlockPos newPos = processed.blockPos.subtract(posOffset);
+				processedEntities.add(new StructureEntityInfo(newVec, newPos, entity.nbt));
+			}
 		}
 		return processedEntities;
 	}
