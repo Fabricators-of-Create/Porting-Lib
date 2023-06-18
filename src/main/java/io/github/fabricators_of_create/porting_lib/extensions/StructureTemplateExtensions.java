@@ -20,12 +20,10 @@ public interface StructureTemplateExtensions {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 
-	@Deprecated(forRemoval = true)
 	default List<StructureTemplate.StructureEntityInfo> processEntityInfos(@Nullable StructureTemplate template, LevelAccessor world, BlockPos blockPos, StructurePlaceSettings settings, List<StructureTemplate.StructureEntityInfo> infos) {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 
-	@Deprecated(forRemoval = true)
 	default void addEntitiesToWorld(ServerLevelAccessor world, BlockPos blockPos, StructurePlaceSettings settings) {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
