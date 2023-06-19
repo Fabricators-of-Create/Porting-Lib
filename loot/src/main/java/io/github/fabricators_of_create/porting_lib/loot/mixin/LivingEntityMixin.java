@@ -2,9 +2,15 @@ package io.github.fabricators_of_create.porting_lib.loot.mixin;
 
 import java.util.function.Consumer;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
+import io.github.fabricators_of_create.porting_lib.loot.LootHooks;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -20,8 +26,18 @@ public abstract class LivingEntityMixin extends Entity {
 		super(type, world);
 	}
 
-	@Redirect(method = "dropFromLootTable", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/loot/LootTable;getRandomItems(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V"))
-	private void patchLootTable(LootTable lootTable, LootContext context, Consumer<ItemStack> lootConsumer) {
-		lootTable.getRandomItems(context).forEach(this::spawnAtLocation);
+	@WrapOperation(
+			method = "dropFromLootTable",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/storage/loot/LootTable;getRandomItems(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V"
+			)
+	)
+	private void wrapConsumer(LootTable lootTable, LootContext ctx, Consumer<ItemStack> consumer, Operation<Void> original) {
+		ObjectArrayList<ItemStack> stacks = new ObjectArrayList<>();
+		Consumer<ItemStack> collector = stacks::add;
+		original.call(lootTable, ctx, collector);
+		ObjectArrayList<ItemStack> modified = LootHooks.modifyLoot(lootTable.getLootTableId(), stacks, ctx);
+		modified.forEach(consumer);
 	}
 }

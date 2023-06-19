@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.loot.mixin;
 
+import java.util.Objects;
+
 import io.github.fabricators_of_create.porting_lib.loot.LootHooks;
 import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableExtensions;
 
@@ -20,15 +22,18 @@ public class LootTableMixin implements LootTableExtensions {
 
 	@Override
 	public void setLootTableId(final ResourceLocation id) {
-		if (this.lootTableId != null) throw new IllegalStateException("Attempted to rename loot table from '" + this.lootTableId + "' to '" + id + "': this is not supported");
-		this.lootTableId = java.util.Objects.requireNonNull(id);
+		if (this.lootTableId != null)
+			throw new IllegalStateException("Attempted to rename loot table from '" + this.lootTableId + "' to '" + id + "': this is not supported");
+		this.lootTableId = Objects.requireNonNull(id);
 	}
 
 	@Override
-	public ResourceLocation getLootTableId() { return this.lootTableId; }
+	public ResourceLocation getLootTableId() {
+		return this.lootTableId;
+	}
 
 	@ModifyReturnValue(method = "getRandomItems(Lnet/minecraft/world/level/storage/loot/LootContext;)Lit/unimi/dsi/fastutil/objects/ObjectArrayList;", at = @At("RETURN"))
-	public ObjectArrayList<ItemStack> port_lib$modifyGlobalLootTable(ObjectArrayList<ItemStack> list, LootContext context) {
+	private ObjectArrayList<ItemStack> applyGlobalModifiers(ObjectArrayList<ItemStack> list, LootContext context) {
 		return LootHooks.modifyLoot(getLootTableId(), list, context);
 	}
 }
