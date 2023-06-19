@@ -2,13 +2,18 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
 import io.github.fabricators_of_create.porting_lib.block.CustomScaffoldingBlock;
 import io.github.fabricators_of_create.porting_lib.util.ContinueUsingItem;
 import io.github.fabricators_of_create.porting_lib.util.MixinHelper;
+import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import io.github.fabricators_of_create.porting_lib.util.UsingTickItem;
 
 import net.minecraft.core.particles.BlockParticleOption;
@@ -354,9 +359,19 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 			cir.setReturnValue(Math.max(0, newVis));
 	}
 
-	@Redirect(method = "dropFromLootTable", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/loot/LootTable;getRandomItems(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V"))
-	public void port_lib$modifyLootTable(LootTable instance, LootContext contextData, Consumer<ItemStack> stacksOut) {
-		instance.getRandomItems(contextData).forEach(stacksOut);
+	@WrapOperation(
+			method = "dropFromLootTable",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/storage/loot/LootTable;getRandomItems(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V"
+			)
+	)
+	private void wrapConsumer(LootTable lootTable, LootContext ctx, Consumer<ItemStack> consumer, Operation<Void> original) {
+		List<ItemStack> stacks = new ArrayList<>();
+		Consumer<ItemStack> collector = stacks::add;
+		original.call(lootTable, ctx, collector);
+		List<ItemStack> modified = PortingHooks.modifyLoot(lootTable.getLootTableId(), stacks, ctx);
+		modified.forEach(consumer);
 	}
 
 	@ModifyExpressionValue(
