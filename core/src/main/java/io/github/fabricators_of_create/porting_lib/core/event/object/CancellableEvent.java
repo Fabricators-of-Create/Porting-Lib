@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.core.event.object;
 
 import io.github.fabricators_of_create.porting_lib.core.event.CancelBypass;
+import net.fabricmc.fabric.api.event.Event;
 
 /**
  * An event that may be cancelled.
@@ -22,21 +23,8 @@ public class CancellableEvent {
 		return cancelled;
 	}
 
-	/**
-	 * Shortcut to {@link #shouldInvokeListener(Class, String, Object)} where the field name is assumed to be 'EVENT'.
-	 * @param callbackClass the class holding the associated event
-	 */
-	public <T> boolean shouldInvokeListener(Class<T> callbackClass, T listener) {
-		return shouldInvokeListener(callbackClass, "EVENT", listener);
-	}
-
-	/**
-	 *
-	 * @param callbackClass the class holding the associated event
-	 * @param eventField the field name of the associated event
-	 */
-	public <T> boolean shouldInvokeListener(Class<T> callbackClass, String eventField, T listener) {
-		return !isCancelled() || CancelBypass.ignoresCancellation(callbackClass, eventField, listener);
+	public <T> boolean shouldInvokeListener(Event<T> event, T listener) {
+		return !isCancelled() || CancelBypass.ignoresCancellation(event, listener);
 	}
 
 	// forge uses 1 L. both spellings are valid, but I prefer 2, so here's some bridges.
