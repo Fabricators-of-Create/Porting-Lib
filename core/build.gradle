@@ -2,6 +2,8 @@ moduleDependencies(project, [
 		"gametest"
 ])
 
+testMod(project)
+
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }
