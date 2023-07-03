@@ -2,13 +2,15 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin.teleport;
 
 import java.util.Set;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityMoveEvents;
+
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityMoveEvents.EntityTeleportEvent;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityTeleportCallback;
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityTeleportCallback.EntityTeleportEvent;
 import net.minecraft.server.commands.SpreadPlayersCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -28,7 +30,7 @@ public abstract class SpreadPlayersCommandMixin {
 													   Set<RelativeMovement> set,
 													   float yaw, float pitch) {
 		EntityTeleportEvent event = new EntityTeleportEvent(entity, x, y, z);
-		EntityTeleportCallback.EVENT.invoker().onTeleport(event);
+		EntityMoveEvents.TELEPORT.invoker().onTeleport(event);
 		return !event.isCancelled();
 	}
 }

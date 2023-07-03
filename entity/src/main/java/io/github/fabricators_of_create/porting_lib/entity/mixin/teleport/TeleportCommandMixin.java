@@ -2,14 +2,16 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin.teleport;
 
 import java.util.Set;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityMoveEvents;
+
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityMoveEvents.EntityTeleportEvent;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityTeleportCallback;
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityTeleportCallback.EntityTeleportEvent;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.commands.TeleportCommand;
 import net.minecraft.server.level.ServerLevel;
@@ -24,7 +26,7 @@ public abstract class TeleportCommandMixin {
 										  Set<RelativeMovement> movementFlags, float yaw, float pitch,
 										  @Nullable TeleportCommand.LookAt facingLocation, CallbackInfo ci) {
 		EntityTeleportEvent event = new EntityTeleportEvent(target, x, y, z);
-		EntityTeleportCallback.EVENT.invoker().onTeleport(event);
+		EntityMoveEvents.TELEPORT.invoker().onTeleport(event);
 		if (event.isCancelled())
 			ci.cancel();
 	}

@@ -1,5 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityMoveEvents;
+
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityMoveEvents.ChunkSectionChangeContext;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -11,8 +15,6 @@ import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalLongRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityChangeChunkSectionCallback;
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityChangeChunkSectionCallback.Context;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.entity.EntityAccess;
 import net.minecraft.world.level.entity.EntitySection;
@@ -50,8 +52,8 @@ public abstract class TransientEntitySectionManager$CallbackMixin<T extends Enti
 		EntitySection<T> old = oldSection.get();
 		// if old != null, both != null
 		if (old != null && entity instanceof Entity e) {
-			EntityChangeChunkSectionCallback.EVENT.invoker().onChunkSectionChange(
-					new Context(e, old, oldSectionKey.get(), currentSection, currentSectionKey)
+			EntityMoveEvents.CHUNK_SECTION_CHANGE.invoker().onChunkSectionChange(
+					new ChunkSectionChangeContext(e, old, oldSectionKey.get(), currentSection, currentSectionKey)
 			);
 		}
 	}

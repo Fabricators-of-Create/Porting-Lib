@@ -7,7 +7,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 
 public class LivingEntityDamageEvents {
-
 	/**
 	 * Fired when an entity takes damage.
 	 */

@@ -1,12 +1,13 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.spawning;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityEvents;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.living.NaturalMobSpawnCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -29,7 +30,7 @@ public abstract class WanderingTraderSpawnerMixin implements CustomSpawner {
 	private Entity fireSpawnEventForTrader(EntityType<WanderingTrader> type, ServerLevel level, BlockPos pos,
 										   MobSpawnType reason, Operation<WanderingTrader> original) {
 		WanderingTrader trader = type.create(level);
-		boolean allowed = NaturalMobSpawnCallback.EVENT.invoker().canSpawnMob(
+		boolean allowed = LivingEntityEvents.NATURAL_SPAWN.invoker().canSpawnMob(
 				trader, pos.getX(), pos.getY(), pos.getZ(), level, this, reason
 		).orElse(true);
 		if (!allowed)
@@ -47,7 +48,7 @@ public abstract class WanderingTraderSpawnerMixin implements CustomSpawner {
 	private Entity fireSpawnEventForLlama(EntityType<TraderLlama> type, ServerLevel level, BlockPos pos,
 												MobSpawnType reason, Operation<TraderLlama> original) {
 		TraderLlama llama = type.create(level);
-		boolean allowed = NaturalMobSpawnCallback.EVENT.invoker().canSpawnMob(
+		boolean allowed = LivingEntityEvents.NATURAL_SPAWN.invoker().canSpawnMob(
 				llama, pos.getX(), pos.getY(), pos.getZ(), level, this, reason
 		).orElse(true);
 		if (!allowed)

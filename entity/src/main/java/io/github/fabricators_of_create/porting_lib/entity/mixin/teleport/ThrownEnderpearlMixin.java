@@ -1,12 +1,14 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.teleport;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityMoveEvents;
+
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityMoveEvents.EntityTeleportEvent;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityTeleportCallback;
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityTeleportCallback.EntityTeleportEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
@@ -29,7 +31,7 @@ public abstract class ThrownEnderpearlMixin extends ThrowableItemProjectile {
 	)
 	private void fireTeleportEvent(HitResult result, CallbackInfo ci) {
 		EntityTeleportEvent event = new EntityTeleportEvent(getOwner(), getX(), getY(), getZ());
-		EntityTeleportCallback.EVENT.invoker().onTeleport(event);
+		EntityMoveEvents.TELEPORT.invoker().onTeleport(event);
 		if (event.isCancelled()) {
 			discard();
 			ci.cancel();

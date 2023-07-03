@@ -1,13 +1,14 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.teleport;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityMoveEvents;
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityMoveEvents.EntityTeleportEvent;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityTeleportCallback;
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityTeleportCallback.EntityTeleportEvent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ChorusFruitItem;
 import net.minecraft.world.item.ItemStack;
@@ -27,7 +28,7 @@ public abstract class ChorusFruitItemMixin {
 										  int i,
 										  double g, double h, double j) { // target x/y/z
 		EntityTeleportEvent event = new EntityTeleportEvent(livingEntity, g, h, j);
-		EntityTeleportCallback.EVENT.invoker().onTeleport(event);
+		EntityMoveEvents.TELEPORT.invoker().onTeleport(event);
 		if (event.isCancelled()) {
 			cir.setReturnValue(superResult);
 		}

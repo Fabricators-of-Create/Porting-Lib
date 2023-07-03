@@ -6,9 +6,8 @@ import java.util.List;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.EntitySizeCallback;
-
-import io.github.fabricators_of_create.porting_lib.entity.events.EntitySizeCallback.EntitySizeEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvents;
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvents.EntitySizeEvent;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -54,7 +53,7 @@ public abstract class EntityMixin implements EntityExtensions {
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void fireSizeEventOnConstructor(EntityType<?> variant, Level world, CallbackInfo ci) {
 		EntitySizeEvent event = new EntitySizeEvent((Entity) (Object) this, Pose.STANDING, eyeHeight, dimensions);
-		EntitySizeCallback.EVENT.invoker().modifySize(event);
+		EntityEvents.SIZE.invoker().modifySize(event);
 		this.eyeHeight = event.eyeHeight;
 		this.dimensions = event.dimensions;
 	}
@@ -71,7 +70,7 @@ public abstract class EntityMixin implements EntityExtensions {
 										@Local(ordinal = 0) Pose pose,
 										@Local(ordinal = 1) EntityDimensions newDimensions) {
 		EntitySizeEvent event = new EntitySizeEvent((Entity) (Object) this, pose, eyeHeight, newEyeHeight, oldDimensions, newDimensions);
-		EntitySizeCallback.EVENT.invoker().modifySize(event);
+		EntityEvents.SIZE.invoker().modifySize(event);
 		this.dimensions = event.dimensions;
 		return event.eyeHeight;
 	}

@@ -1,11 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.spawning;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityEvents;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.living.NaturalMobSpawnCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -24,7 +25,7 @@ public abstract class CatSpawnerMixin implements CustomSpawner {
 			)
 	)
 	private Entity fireSpawnEvent(Entity cat, BlockPos pos, ServerLevel level) {
-		return NaturalMobSpawnCallback.EVENT.invoker().canSpawnMob(
+		return LivingEntityEvents.NATURAL_SPAWN.invoker().canSpawnMob(
 				(Cat) cat, pos.getX(), pos.getY(), pos.getZ(), level, this, MobSpawnType.NATURAL
 		).orElse(true) ? cat : null;
 	}

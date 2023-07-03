@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.spawning;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityEvents;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -8,7 +10,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.living.NaturalMobSpawnCallback;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Mob;
@@ -27,7 +28,7 @@ public abstract class NaturalSpawnerMixin {
 			)
 	)
 	private static boolean fireSpawnEvent(ServerLevel level, Mob mob, double distSqr, Operation<Boolean> original) {
-		return NaturalMobSpawnCallback.EVENT.invoker().canSpawnMob(
+		return LivingEntityEvents.NATURAL_SPAWN.invoker().canSpawnMob(
 				mob, mob.getX(), mob.getY(), mob.getZ(), level, null, MobSpawnType.NATURAL
 		).orElseGet(() -> original.call(level, mob, distSqr));
 	}
@@ -41,7 +42,7 @@ public abstract class NaturalSpawnerMixin {
 	)
 	private static boolean fireSpawnEventForChunkGen(Mob mob, LevelAccessor level, MobSpawnType type, Operation<Boolean> original,
 													 @Share("NaturalMobSpawnCallback") LocalRef<TriState> sharedResult) {
-		TriState result = NaturalMobSpawnCallback.EVENT.invoker().canSpawnMob(
+		TriState result = LivingEntityEvents.NATURAL_SPAWN.invoker().canSpawnMob(
 				mob, mob.getX(), mob.getY(), mob.getZ(), level, null, type
 		);
 		sharedResult.set(result);

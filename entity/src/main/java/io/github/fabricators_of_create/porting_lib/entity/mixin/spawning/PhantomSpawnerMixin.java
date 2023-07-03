@@ -1,12 +1,13 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.spawning;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityEvents;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.living.NaturalMobSpawnCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -27,7 +28,7 @@ public abstract class PhantomSpawnerMixin implements CustomSpawner {
 	private Entity fireSpawnEvent(Entity phantom,
 								  ServerLevel level, boolean spawnMonsters, boolean spawnAnimals,
 								  @Local(ordinal = 1) BlockPos pos) { // blockPos2, random offset after 72000
-		return NaturalMobSpawnCallback.EVENT.invoker().canSpawnMob(
+		return LivingEntityEvents.NATURAL_SPAWN.invoker().canSpawnMob(
 				(Phantom) phantom, pos.getX(), pos.getY(), pos.getZ(), level, this, MobSpawnType.NATURAL
 		).orElse(true) ? phantom : null;
 

@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.player.PlayerEvents;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -7,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityInteractCallback;
 import io.github.fabricators_of_create.porting_lib.entity.events.player.PlayerExperienceEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.player.PlayerTickEvents;
 import net.minecraft.world.InteractionHand;
@@ -45,7 +46,7 @@ public abstract class PlayerMixin extends LivingEntity {
 			cancellable = true
 	)
 	public void onEntityInteract(Entity entityToInteractOn, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
-		InteractionResult result = EntityInteractCallback.EVENT.invoker().onEntityInteract((Player) (Object) this, hand, entityToInteractOn);
+		InteractionResult result = PlayerEvents.USE_ENTITY.invoker().onUseEntity((Player) (Object) this, hand, entityToInteractOn);
 		if (result != null)
 			cir.setReturnValue(result);
 	}

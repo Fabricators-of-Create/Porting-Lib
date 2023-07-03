@@ -1,5 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityMoveEvents;
+
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityMoveEvents.ChunkSectionChangeContext;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -11,8 +15,6 @@ import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalLongRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityChangeChunkSectionCallback;
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityChangeChunkSectionCallback.Context;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.entity.EntityAccess;
 import net.minecraft.world.level.entity.EntitySection;
@@ -53,8 +55,8 @@ public abstract class PersistentEntitySectionManager$CallbackMixin<T extends Ent
 									   @Share("oldSection") LocalRef<EntitySection<T>> oldSection,
 									   @Share("oldSectionKey") LocalLongRef oldSectionKey) {
 		if (entity instanceof Entity e) {
-			EntityChangeChunkSectionCallback.EVENT.invoker().onChunkSectionChange(
-					new Context(e, oldSection.get(), oldSectionKey.get(), currentSection, currentSectionKey)
+			EntityMoveEvents.CHUNK_SECTION_CHANGE.invoker().onChunkSectionChange(
+					new ChunkSectionChangeContext(e, oldSection.get(), oldSectionKey.get(), currentSection, currentSectionKey)
 			);
 		}
 	}

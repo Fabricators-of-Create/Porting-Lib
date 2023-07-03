@@ -1,12 +1,13 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.spawning;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityEvents;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.living.NaturalMobSpawnCallback;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.MobSpawnType;
@@ -27,7 +28,7 @@ public abstract class VillageSiegeMixin implements CustomSpawner {
 			cancellable = true
 	)
 	private void fireSpawnEvent(ServerLevel level, CallbackInfo ci, Vec3 pos, Zombie zombie) {
-		boolean cancelled = NaturalMobSpawnCallback.EVENT.invoker().canSpawnMob(
+		boolean cancelled = LivingEntityEvents.NATURAL_SPAWN.invoker().canSpawnMob(
 				zombie, pos.x, pos.y, pos.z, level, this, MobSpawnType.EVENT
 		) == TriState.FALSE;
 		if (cancelled)

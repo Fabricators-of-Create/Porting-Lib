@@ -2,6 +2,9 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin;
 
 import java.util.List;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvents;
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvents.ShieldBlockEvent;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,13 +27,10 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.ShieldBlockCallback;
-import io.github.fabricators_of_create.porting_lib.entity.events.ShieldBlockCallback.ShieldBlockEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityDamageEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityDamageEvents.FallEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityDamageEvents.HurtEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityEvents;
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityFinishUsingItemCallback;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityLootEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -122,7 +122,7 @@ public abstract class LivingEntityMixin extends Entity {
 			return false;
 		ShieldBlockEvent event = new ShieldBlockEvent((LivingEntity) (Object) this, getUseItem(), source, amount);
 		sharedEvent.set(event); // save to check if the shield gets damaged later
-		ShieldBlockCallback.EVENT.invoker().onShieldBlock(event);
+		EntityEvents.SHIELD_BLOCK.invoker().onShieldBlock(event);
 		return !event.isCancelled();
 	}
 
@@ -254,7 +254,7 @@ public abstract class LivingEntityMixin extends Entity {
 	public ItemStack onItemUseFinish(ItemStack used, Level level, LivingEntity self, Operation<ItemStack> original) {
 		ItemStack copy = used.copy();
 		ItemStack result = original.call(used, level, self);
-		ItemStack modified = LivingEntityFinishUsingItemCallback.EVENT.invoker().modifyUseResult(
+		ItemStack modified = LivingEntityEvents.FINISH_USING_ITEM.invoker().modifyUseResult(
 				(LivingEntity) (Object) this, copy, result
 		);
 		return modified != null ? modified : result;

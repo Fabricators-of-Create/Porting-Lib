@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.spawning;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityEvents;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -7,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.llamalad7.mixinextras.sugar.Local;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.living.NaturalMobSpawnCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -28,7 +29,7 @@ public abstract class PatrolSpawnerMixin implements CustomSpawner {
 	)
 	private void fireSpawnEvent(ServerLevel world, BlockPos pos, RandomSource random, boolean captain,
 									CallbackInfoReturnable<Boolean> cir, @Local PatrollingMonster mob) {
-		boolean allowed = NaturalMobSpawnCallback.EVENT.invoker().canSpawnMob(
+		boolean allowed = LivingEntityEvents.NATURAL_SPAWN.invoker().canSpawnMob(
 				mob, mob.getX(), mob.getY(), mob.getZ(), world, this, MobSpawnType.PATROL
 		).orElse(true);
 		if (!allowed)

@@ -1,11 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.player.PlayerEvents;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.player.PlayerBreakSpeedCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
@@ -23,6 +24,6 @@ public abstract class BlockBehaviourMixin {
 	)
 	public float modifyDestroySpeed(float original,
 									BlockState state, Player player, BlockGetter world, BlockPos pos) {
-		return PlayerBreakSpeedCallback.EVENT.invoker().modifyBreakSpeed(player, state, pos, original);
+		return PlayerEvents.BREAK_SPEED.invoker().modifyBreakSpeed(player, state, pos, original);
 	}
 }
