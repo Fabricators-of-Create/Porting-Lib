@@ -1,8 +1,9 @@
 moduleDependencies(project, [
 		"lazy_registration",
-		"tool_actions",
-		"core"
+		"tool_actions"
 ])
+
+mixinExtras(dependencies)
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
