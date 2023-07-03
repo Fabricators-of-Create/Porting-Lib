@@ -83,6 +83,8 @@ def moduleDependencies(Project project, List<String> depNames) {
 				// prevent accidentally using MixinExtras without applying the AP
 				exclude(group: "com.github.llamalad7.mixinextras")
 			}
+			// runtime mixin extras, needed if it was removed above
+			localRuntime("com.github.llamalad7.mixinextras:mixinextras-fabric:$mixin_extras_version")
 		}
 	}
 
