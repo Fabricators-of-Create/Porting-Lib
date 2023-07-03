@@ -3,7 +3,12 @@ moduleDependencies(project, [
 		"transfer"
 ])
 
+testMod(project)
 mixinExtras(dependencies)
+
+dependencies {
+	modCompileOnly("io.vram:frex-fabric:$frex_version")
+}
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
