@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.core.event.object;
 
 import io.github.fabricators_of_create.porting_lib.core.event.CancelBypass;
+import io.github.fabricators_of_create.porting_lib.core.event.CancelBypass.EventHolder;
 import net.fabricmc.fabric.api.event.Event;
 
 /**
@@ -23,8 +24,8 @@ public class CancellableEvent {
 		return cancelled;
 	}
 
-	public <T> boolean shouldInvokeListener(Event<T> event, T listener) {
-		return !isCancelled() || CancelBypass.ignoresCancellation(event, listener);
+	public <T> boolean shouldInvokeListener(EventHolder<T> event, T listener) {
+		return !isCancelled() || CancelBypass.ignoresCancellation(event.get(), listener);
 	}
 
 	// forge uses 1 L. both spellings are valid, but I prefer 2, so here's some bridges.
