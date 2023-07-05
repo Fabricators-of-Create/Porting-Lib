@@ -17,6 +17,7 @@ public class PortingLibModels implements ClientModInitializer {
 		PortingLibModelLoadingRegistry.LOADERS.put(PortingLib.id("composite"), CompositeModelLoader.INSTANCE);
 		PortingLibModelLoadingRegistry.LOADERS.put(PortingLib.id("item_layers"), ItemLayerModel.Loader.INSTANCE);
 		RegisterGeometryLoadersCallback.EVENT.register(loaders -> {
+			loaders.put(PortingLib.id("elements"), ElementsModel.Loader.INSTANCE);
 			loaders.put(PortingLib.id("fluid_container"), DynamicFluidContainerModel.Loader.INSTANCE);
 			loaders.put(new ResourceLocation("forge", "bucket"), DynamicFluidContainerModel.Loader.INSTANCE_DEPRECATED);
 		});

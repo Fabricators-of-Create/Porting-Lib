@@ -21,8 +21,7 @@ import net.minecraft.resources.ResourceLocation;
  * @see IGeometryLoader
  * @see BlockModel
  */
-public interface IUnbakedGeometry<T extends IUnbakedGeometry<T>>
-{
+public interface IUnbakedGeometry<T extends IUnbakedGeometry<T>> {
 	BakedModel bake(BlockModel context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation);
 
 	/**
@@ -30,16 +29,14 @@ public interface IUnbakedGeometry<T extends IUnbakedGeometry<T>>
 	 * {@link IUnbakedGeometry#bake(BlockModel, ModelBaker, Function, ModelState, ItemOverrides, ResourceLocation)}
 	 * via {@link BlockModel#resolveParents(Function)}
 	 */
-	default void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, BlockModel context)
-	{
+	default void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, BlockModel context) {
 
 	}
 
 	/**
 	 * {@return a set of all the components whose visibility may be configured via {@link BlockModel}}
 	 */
-	default Set<String> getConfigurableComponentNames()
-	{
+	default Set<String> getConfigurableComponentNames() {
 		return Set.of();
 	}
 }

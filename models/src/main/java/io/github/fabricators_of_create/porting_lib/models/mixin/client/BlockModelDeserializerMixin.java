@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import io.github.fabricators_of_create.porting_lib.models.PortingLibModelLoadingRegistry;
-import io.github.fabricators_of_create.porting_lib.models.RenderTypeUtil;
+import io.github.fabricators_of_create.porting_lib.models.util.RenderTypeUtil;
 import io.github.fabricators_of_create.porting_lib.models.extensions.BlockModelExtensions;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;

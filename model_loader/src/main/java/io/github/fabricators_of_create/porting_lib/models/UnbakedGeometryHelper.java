@@ -1,5 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.models;
 
+import com.mojang.math.Transformation;
+
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockElement;
@@ -80,6 +83,22 @@ public class UnbakedGeometryHelper {
 	 */
 	public static BakedQuad bakeElementFace(BlockElement element, BlockElementFace face, TextureAtlasSprite sprite, Direction direction, ModelState state, ResourceLocation modelLocation) {
 		return FACE_BAKERY.bakeQuad(element.from, element.to, face, sprite, direction, state, element.rotation, element.shade, modelLocation);
+	}
+
+	/**
+	 * Create an {@link RenderContext.QuadTransform} to apply a {@link Transformation} that undoes the {@link ModelState}
+	 * transform (blockstate transform), applies the given root transform and then re-applies the
+	 * blockstate transform.
+	 *
+	 * @return an {@code IQuadTransformer} that applies the root transform to a baked quad that already has the
+	 * transformation of the given {@code ModelState} applied to it
+	 */
+	public static RenderContext.QuadTransform applyRootTransform(ModelState modelState, Transformation rootTransform) {
+		// Move the origin of the ModelState transform and its inverse from the negative corner to the block center
+		// to replicate the way the ModelState transform is applied in the FaceBakery by moving the vertices such that
+		// the negative corner acts as the block center
+		Transformation transform = modelState.getRotation().applyOrigin(new Vector3f(.5F, .5F, .5F));
+		return QuadTransformers.applying(transform.compose(rootTransform).compose(transform.inverse()));
 	}
 
 	public static void bakeElements(List<BakedQuad> quads, List<BlockElement> elements, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation) {
