@@ -20,8 +20,10 @@ The latest patch can be found from GitHub Actions as the build number.
 | `accessors`              | Accessor mixins aplenty                                                               |
 | `attributes`             | Additional Entity Attributes; step height, gravity, swim speed                        |
 | `base`                   | Code that has not yet been split into modules                                         |
+| `brewing`                | Small library for adding brewing recipes                                              |
 | `client_events`          | Useful client-side events                                                             |
 | `common`                 | Miscellaneous utilities for other modules                                             |
+| `config`                 | Super light weight implementation of forge's config library                           |
 | `core`                   | Core functionality used across other modules                                          |
 | `data`                   | Additional data generation providers                                                  |
 | `entity`                 | Multipart entities, extra spawn data, removal listening                               |
@@ -29,6 +31,7 @@ The latest patch can be found from GitHub Actions as the build number.
 | `fake_players`           | A basic fake server player implementation that can be used to simulate player actions |
 | `gametest`               | Tools to make GameTest creation as easy as possible                                   |
 | `lazy_registration`      | A implementation of forge's DeferredRegister system rewritten for fabric              |
+| `loot`                   | A small library to modify mob loot                                                    |
 | `model_builders`         | Additional model builders for data generation                                         |
 | `model_generators`       | Forge model generators                                                                |
 | `model_loader`           | Base loader for custom model types                                                    |
@@ -39,6 +42,7 @@ The latest patch can be found from GitHub Actions as the build number.
 | `recipe_book_categories` | Allows mods to add additional recipe book categories                                  |
 | `registries`             | Custom datapack registries and registry utils                                         |
 | `tags`                   | Forge tags                                                                            |
+| `tool_actions`           | Utilities for tool interactions.                                                      |
 | `transfer`               | Storage implementations, client-side lookup, FluidStack, assorted transfer utilities  |
 | `utility`                | Miscellaneous utilities that are too niche for other modules                          |
 

@@ -6,6 +6,7 @@
   "plugin": "io.github.fabricators_of_create.porting_lib.mixin.PortingLibMixinPlugin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "client.frex.EntityBlockRenderContextMixin",
     "common.AbstractMinecartMixin",
     "common.AnvilMenuMixin",
     "common.BambooStalkBlockMixin",
@@ -105,6 +106,7 @@
     "client.EntityRenderDispatcherMixin",
     "client.FogRendererMixin",
     "client.GameRendererMixin",
+    "client.GuiGraphicsMixin",
     "client.GuiMixin",
     "client.HumanoidArmorLayerMixin",
     "client.I18nMixin",
@@ -126,7 +128,6 @@
     "client.PlayerRendererMixin",
     "client.PostChainMixin",
     "client.RenderTargetMixin",
-    "client.GuiGraphicsMixin",
     "client.SkullBlockRendererMixin",
     "client.TextureAtlasMixin"
   ],

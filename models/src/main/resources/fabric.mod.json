@@ -12,8 +12,5 @@
     "preLaunch": [
       "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
     ]
-  },
-  "mixins": [
-    "porting_lib_models.mixins.json"
-  ]
+  }
 }
