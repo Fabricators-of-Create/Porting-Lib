@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import io.github.fabricators_of_create.porting_lib.block.CustomScaffoldingBlock;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -161,7 +163,7 @@ public abstract class LivingEntityMixin extends Entity {
 	private boolean customScaffoldingMovement(boolean original) {
 		BlockState state = getFeetBlockState();
 		if (state.getBlock() instanceof CustomScaffoldingBlock custom)
-			return custom.isScaffolding(state, level, blockPosition(), (LivingEntity) (Object) this);
+			return custom.isScaffolding(state, level(), blockPosition(), (LivingEntity) (Object) this);
 		return original;
 	}
 }

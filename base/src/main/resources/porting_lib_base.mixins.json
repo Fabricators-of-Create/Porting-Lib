@@ -60,6 +60,7 @@
     "common.NaturalSpawnerMixin",
     "common.PackRepositoryMixin",
     "common.PiglinAiMixin",
+    "common.PlayerListMixin",
     "common.PlayerMixin",
     "common.PowderSnowBlockMixin",
     "common.RailStateMixin",
@@ -104,6 +105,7 @@
     "client.EntityRenderDispatcherMixin",
     "client.FogRendererMixin",
     "client.GameRendererMixin",
+    "client.GuiGraphicsMixin",
     "client.GuiMixin",
     "client.HumanoidArmorLayerMixin",
     "client.I18nMixin",
@@ -125,7 +127,6 @@
     "client.PlayerRendererMixin",
     "client.PostChainMixin",
     "client.RenderTargetMixin",
-    "client.GuiGraphicsMixin",
     "client.SkullBlockRendererMixin",
     "client.TextureAtlasMixin"
   ],

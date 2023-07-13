@@ -1,6 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
+
+import io.github.fabricators_of_create.porting_lib.block.CustomHitEffectsBlock;
+import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.level.block.state.BlockState;
 
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
