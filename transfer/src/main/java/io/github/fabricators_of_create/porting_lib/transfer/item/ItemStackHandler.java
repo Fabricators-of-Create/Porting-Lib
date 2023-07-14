@@ -1,7 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.INBTSerializable;
-import io.github.fabricators_of_create.porting_lib.transfer.ExtendedStorage;
 import io.github.fabricators_of_create.porting_lib.transfer.StorageViewArrayIterator;
 import io.github.fabricators_of_create.porting_lib.transfer.callbacks.TransactionCallback;
 import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
@@ -12,7 +11,6 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.nbt.CompoundTag;
@@ -29,9 +27,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.function.Predicate;
 
-public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapshot> implements Storage<ItemVariant>, ExtendedStorage<ItemVariant>, INBTSerializable<CompoundTag>, SlotExposedStorage {
+public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapshot> implements Storage<ItemVariant>, INBTSerializable<CompoundTag>, SlotExposedStorage {
 	private static final ItemVariant blank = ItemVariant.blank();
 
 	/**
@@ -174,27 +171,6 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapsh
 
 	@Override
 	@Nullable
-	public ResourceAmount<ItemVariant> extractMatching(Predicate<ItemVariant> predicate, long maxAmount, TransactionContext transaction) {
-		if (nonEmptyViews.isEmpty())
-			return null;
-		ItemVariant variant = null;
-		for (ItemStackHandlerSlotView view : nonEmptyViews) {
-			ItemVariant resource = view.getResource();
-			if (predicate.test(resource)) {
-				variant = resource;
-				break;
-			}
-		}
-		if (variant == null)
-			return null;
-		long extracted = extract(variant, maxAmount, transaction);
-		if (extracted == 0)
-			return null;
-		return new ResourceAmount<>(variant, extracted);
-	}
-
-	@Override
-	@Nullable
 	public StorageView<ItemVariant> exactView(ItemVariant resource) {
 		StoragePreconditions.notBlank(resource);
 		IntSortedSet indices = lookup.get(resource.getItem());
@@ -235,8 +211,15 @@ public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapsh
 	}
 
 	@Override
-	public Iterable<? extends StorageView<ItemVariant>> nonEmptyIterable() {
-		return nonEmptyViews;
+	public Iterable<StorageView<ItemVariant>> nonEmptyViews() {
+		//noinspection unchecked,rawtypes
+		return (Iterable) nonEmptyViews;
+	}
+
+	@Override
+	public Iterator<StorageView<ItemVariant>> nonEmptyIterator() {
+		//noinspection unchecked,rawtypes
+		return (Iterator) nonEmptyViews.iterator();
 	}
 
 	@Override

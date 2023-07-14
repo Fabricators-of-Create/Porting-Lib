@@ -121,12 +121,6 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
-	@Nullable
-	public ResourceAmount<ItemVariant> extractMatching(Predicate<ItemVariant> predicate, long maxAmount, TransactionContext transaction) {
-		return handler.extractMatching(predicate, maxAmount, transaction);
-	}
-
-	@Override
 	public long extractSlot(int slot, ItemVariant resource, long maxAmount, TransactionContext transaction) {
 		return handler.extractSlot(slot, resource, maxAmount, transaction);
 	}
@@ -142,8 +136,8 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
-	public Iterable<? extends StorageView<ItemVariant>> nonEmptyIterable() {
-		return handler.nonEmptyIterable();
+	public Iterator<StorageView<ItemVariant>> nonEmptyIterator() {
+		return handler.nonEmptyIterator();
 	}
 
 	@Override
