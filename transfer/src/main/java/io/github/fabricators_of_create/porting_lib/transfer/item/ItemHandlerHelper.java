@@ -3,10 +3,9 @@ package io.github.fabricators_of_create.porting_lib.transfer.item;
 import net.minecraft.world.item.ItemStack;
 
 public class ItemHandlerHelper {
+	// left for drop-in compat
 	public static boolean canItemStacksStack(ItemStack first, ItemStack second) {
-		if (first.isEmpty() || !ItemStack.isSameItem(first, second) || first.hasTag() != second.hasTag()) return false;
-
-		return !first.hasTag() || first.getTag().equals(second.getTag());
+		return ItemStack.matches(first, second);
 	}
 
 	public static ItemStack copyStackWithSize(ItemStack stack, int size) {

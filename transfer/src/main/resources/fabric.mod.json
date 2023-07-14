@@ -5,17 +5,8 @@
   "name": "Porting Lib Transfer",
   "description": "Utilities for transferring items and fluids.",
   "entrypoints": {
-    "main": [
-      "io.github.fabricators_of_create.porting_lib.transfer.TransferUtil"
-    ],
     "client": [
       "io.github.fabricators_of_create.porting_lib.PortingLibTransfer"
     ]
-  },
-  "custom": {
-    "loom:injected_interfaces": {
-      "net/minecraft/class_638": ["io/github/fabricators_of_create/porting_lib/extensions/ClientLevelExtensions"],
-      "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/extensions/transfer/LevelExtensions"]
-    }
   }
 }

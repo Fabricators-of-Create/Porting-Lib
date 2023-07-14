@@ -2,7 +2,7 @@ package io.github.fabricators_of_create.porting_lib.util;
 
 public enum FluidUnit {
 	DROPLETS(1, "generic.unit.droplets"),
-	MILIBUCKETS(81, "generic.unit.millibuckets");
+	MILLIBUCKETS(81, "generic.unit.millibuckets");
 
 	private final int oneBucket;
 	private final String langKey;

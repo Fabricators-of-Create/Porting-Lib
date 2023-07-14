@@ -3,6 +3,9 @@ package io.github.fabricators_of_create.porting_lib.transfer.item;
 import it.unimi.dsi.fastutil.ints.IntIterator;
 import it.unimi.dsi.fastutil.ints.IntSortedSet;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -38,6 +41,7 @@ public class ItemStackHandlerContainer extends ItemStackHandler implements Conta
 	}
 
 	@Override
+	@NotNull
 	public ItemStack getItem(int slot) {
 		if (indexInvalid(slot))
 			return ItemStack.EMPTY;
@@ -45,6 +49,7 @@ public class ItemStackHandlerContainer extends ItemStackHandler implements Conta
 	}
 
 	@Override
+	@NotNull
 	public ItemStack removeItem(int slot, int amount) {
 		if (indexInvalid(slot))
 			return ItemStack.EMPTY;
@@ -53,6 +58,7 @@ public class ItemStackHandlerContainer extends ItemStackHandler implements Conta
 	}
 
 	@Override
+	@NotNull
 	public ItemStack removeItemNoUpdate(int slot) {
 		if (indexInvalid(slot))
 			return ItemStack.EMPTY;
@@ -62,7 +68,7 @@ public class ItemStackHandlerContainer extends ItemStackHandler implements Conta
 	}
 
 	@Override
-	public void setItem(int slot, ItemStack stack) {
+	public void setItem(int slot, @NotNull ItemStack stack) {
 		if (indexInvalid(slot))
 			return;
 		setStackInSlot(slot, stack);
@@ -73,19 +79,19 @@ public class ItemStackHandlerContainer extends ItemStackHandler implements Conta
 	}
 
 	@Override
-	public boolean stillValid(Player player) {
+	public boolean stillValid(@NotNull Player player) {
 		return false;
 	}
 
 	@Override
-	public boolean canPlaceItem(int index, ItemStack stack) {
+	public boolean canPlaceItem(int index, @NotNull ItemStack stack) {
 		if (indexInvalid(index))
 			return false;
 		return isItemValid(index, ItemVariant.of(stack), stack.getCount());
 	}
 
 	@Override
-	public int countItem(Item item) {
+	public int countItem(@NotNull Item item) {
 		int total = 0;
 		IntSortedSet indices = getIndices(item);
 		for (IntIterator itr = indices.intIterator(); itr.hasNext();) {
