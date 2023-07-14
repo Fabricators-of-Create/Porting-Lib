@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.block;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,6 +20,7 @@ public interface CustomHitEffectsBlock {
 	 * @param manager A reference to the current particle manager.
 	 * @return True to prevent vanilla digging particles form spawning.
 	 */
+	@Environment(EnvType.CLIENT)
 	default boolean addHitEffects(BlockState state, Level level, HitResult target, ParticleEngine manager) {
 		return false;
 	}

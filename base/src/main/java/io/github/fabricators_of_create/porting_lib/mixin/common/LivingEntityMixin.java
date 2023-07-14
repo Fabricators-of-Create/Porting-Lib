@@ -2,23 +2,21 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import com.llamalad7.mixinextras.sugar.Local;
 
+import io.github.fabricators_of_create.porting_lib.block.CustomScaffoldingBlock;
 import io.github.fabricators_of_create.porting_lib.item.ContinueUsingItem;
 import io.github.fabricators_of_create.porting_lib.item.UsingTickItem;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
@@ -178,7 +176,7 @@ public abstract class LivingEntityMixin extends Entity {
 	private boolean customScaffoldingMovement(boolean original) {
 		BlockState state = getFeetBlockState();
 		if (state.getBlock() instanceof CustomScaffoldingBlock custom)
-			return custom.isScaffolding(state, level, blockPosition(), (LivingEntity) (Object) this);
+			return custom.isScaffolding(state, level(), blockPosition(), (LivingEntity) (Object) this);
 		return original;
 	}
 }

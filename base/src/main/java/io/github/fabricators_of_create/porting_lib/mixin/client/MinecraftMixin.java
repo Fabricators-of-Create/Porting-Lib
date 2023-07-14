@@ -1,6 +1,11 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.world.item.ItemStack;
+
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
+
+import io.github.fabricators_of_create.porting_lib.block.CustomHitEffectsBlock;
 
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
@@ -35,6 +40,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 
 @Environment(EnvType.CLIENT)
