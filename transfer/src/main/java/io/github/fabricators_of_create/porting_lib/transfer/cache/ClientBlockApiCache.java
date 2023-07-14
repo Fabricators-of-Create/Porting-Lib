@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.transfer.cache;
 
+import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
 import io.github.fabricators_of_create.porting_lib.util.StorageProvider;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientBlockEntityEvents;
 
@@ -14,8 +15,8 @@ public interface ClientBlockApiCache {
 
 	static void init() {
 		ClientBlockEntityEvents.BLOCK_ENTITY_LOAD.register((be, level) ->
-				level.port_lib$invalidateCache(be.getBlockPos()));
+				((ClientLevelExtensions) level).port_lib$invalidateCache(be.getBlockPos()));
 		ClientBlockEntityEvents.BLOCK_ENTITY_UNLOAD.register((be, level) ->
-				level.port_lib$invalidateCache(be.getBlockPos()));
+				((ClientLevelExtensions) level).port_lib$invalidateCache(be.getBlockPos()));
 	}
 }

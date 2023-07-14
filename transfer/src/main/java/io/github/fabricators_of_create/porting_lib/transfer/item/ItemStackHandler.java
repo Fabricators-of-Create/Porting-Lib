@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.transfer.item;
 
 import io.github.fabricators_of_create.porting_lib.core.util.INBTSerializable;
 import io.github.fabricators_of_create.porting_lib.util.DualSortedSetIterator;
+import io.github.fabricators_of_create.porting_lib.util.EmptySortedSet;
 import io.github.fabricators_of_create.porting_lib.util.ItemStackUtil;
 import it.unimi.dsi.fastutil.objects.ObjectAVLTreeSet;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -75,8 +76,8 @@ public class ItemStackHandler implements SlottedStorage<ItemVariant>, INBTSerial
 	public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
 		StoragePreconditions.notBlankNotNegative(resource, maxAmount);
 		Item item = resource.getItem();
-		SortedSet<ItemStackHandlerSlot> slots = lookup.get(item);
-		if (slots == null || slots.isEmpty())
+		SortedSet<ItemStackHandlerSlot> slots = getSlotsContaining(item);
+		if (slots.isEmpty())
 			return 0; // no slots hold this item
 		long extracted = 0;
 		for (ItemStackHandlerSlot slot : slots) {
@@ -91,8 +92,8 @@ public class ItemStackHandler implements SlottedStorage<ItemVariant>, INBTSerial
 	@Nullable
 	public StorageView<ItemVariant> exactView(ItemVariant resource) {
 		StoragePreconditions.notBlank(resource);
-		SortedSet<ItemStackHandlerSlot> slots = lookup.get(resource.getItem());
-		return slots == null || slots.isEmpty() ? null : slots.first();
+		SortedSet<ItemStackHandlerSlot> slots = getSlotsContaining(resource.getItem());
+		return slots.isEmpty() ? null : slots.first();
 	}
 
 	// iteration
@@ -181,9 +182,24 @@ public class ItemStackHandler implements SlottedStorage<ItemVariant>, INBTSerial
 	}
 
 	/**
+	 * Get a set of all slots containing the given item, sorted by ascending indices.
+	 * The returned set may be empty, and should not be modified in any way.
+	 */
+	public SortedSet<ItemStackHandlerSlot> getSlotsContaining(Item item) {
+		return lookup.containsKey(item) ? lookup.get(item) : EmptySortedSet.cast();
+	}
+
+	/**
 	 * Called after NBT is loaded and this handler has been updated.
 	 */
 	protected void onLoad() {
+	}
+
+	/**
+	 * True if this handler only contains empty stacks.
+	 */
+	public boolean empty() {
+		return nonEmptySlots.isEmpty();
 	}
 
 	/**
@@ -239,8 +255,8 @@ public class ItemStackHandler implements SlottedStorage<ItemVariant>, INBTSerial
 	void onStackChange(ItemStackHandlerSlot slot, ItemStack oldStack, ItemStack newStack) {
 		if (ItemStack.isSameItem(oldStack, newStack))
 			return;
-		SortedSet<ItemStackHandlerSlot> oldItemSlots = lookup.get(oldStack.getItem());
-		if (oldItemSlots != null) { // just in case
+		SortedSet<ItemStackHandlerSlot> oldItemSlots = getSlotsContaining(oldStack.getItem());
+		if (!oldItemSlots.isEmpty()) {
 			oldItemSlots.remove(slot);
 		}
 		lookup.computeIfAbsent(newStack.getItem(), $ -> createSlotSet()).add(slot);
@@ -257,12 +273,12 @@ public class ItemStackHandler implements SlottedStorage<ItemVariant>, INBTSerial
 	}
 
 	private Iterator<ItemStackHandlerSlot> getInsertableSlotsFor(ItemVariant variant) {
-		SortedSet<ItemStackHandlerSlot> slots = lookup.get(variant.getItem());
-		SortedSet<ItemStackHandlerSlot> emptySlots = lookup.get(Items.AIR);
+		SortedSet<ItemStackHandlerSlot> slots = getSlotsContaining(variant.getItem());
+		SortedSet<ItemStackHandlerSlot> emptySlots = getSlotsContaining(Items.AIR);
 		if (slots.isEmpty()) {
 			return emptySlots.isEmpty() ? Collections.emptyIterator() : emptySlots.iterator();
 		} else {
-			return new DualSortedSetIterator<>(slots, emptySlots);
+			return emptySlots.isEmpty() ? slots.iterator() : new DualSortedSetIterator<>(slots, emptySlots);
 		}
 	}
 
