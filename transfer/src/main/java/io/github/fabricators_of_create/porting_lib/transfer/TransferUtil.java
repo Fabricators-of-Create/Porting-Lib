@@ -680,7 +680,7 @@ public class TransferUtil implements ModInitializer {
 	public static <T> Iterable<? extends StorageView<T>> getNonEmpty(Storage<T> storage) {
 		if (storage instanceof ExtendedStorage<T> extended)
 			return extended.nonEmptyIterable();
-		return () -> (Iterator) Iterators.filter(storage.iterator(), view -> !view.isResourceBlank());
+		return () -> (Iterator) Iterators.filter(storage.iterator(), view -> !view.isResourceBlank() && view.getAmount() > 0);
 	}
 
 	/**
