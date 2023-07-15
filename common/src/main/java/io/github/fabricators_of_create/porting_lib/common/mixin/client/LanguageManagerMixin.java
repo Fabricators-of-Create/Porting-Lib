@@ -10,6 +10,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -26,6 +27,10 @@ public abstract class LanguageManagerMixin implements LanguageManagerExtensions 
 	@Shadow
 	private Map<String, LanguageInfo> languages;
 
+	@Shadow
+	public abstract String getSelected();
+
+	@Unique
 	private final Map<String, Locale> codeToLocales = new HashMap<>();
 
 	@Inject(method = "onResourceManagerReload", at = @At("TAIL"))
@@ -44,5 +49,10 @@ public abstract class LanguageManagerMixin implements LanguageManagerExtensions 
 	@Override
 	public Locale getJavaLocale(String code) {
 		return codeToLocales.get(code);
+	}
+
+	@Override
+	public Locale getSelectedJavaLocale() {
+		return getJavaLocale(getSelected());
 	}
 }
