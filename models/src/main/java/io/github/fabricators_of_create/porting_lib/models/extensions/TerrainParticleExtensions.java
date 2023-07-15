@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.models.extensions;
 
-import io.github.fabricators_of_create.porting_lib.model.CustomParticleIconModel;
+import io.github.fabricators_of_create.porting_lib.models.CustomParticleIconModel;
 import net.minecraft.client.particle.TerrainParticle;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
