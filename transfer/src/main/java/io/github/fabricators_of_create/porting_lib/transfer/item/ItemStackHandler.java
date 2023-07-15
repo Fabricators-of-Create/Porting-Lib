@@ -32,7 +32,7 @@ import java.util.SortedSet;
 /**
  * An implementation of a item storage designed for ease of use and speed.
  */
-public class ItemStackHandler implements SlottedStorage<ItemVariant>, INBTSerializable<CompoundTag> {
+public class ItemStackHandler implements SlottedStackStorage, INBTSerializable<CompoundTag> {
 	private final List<ItemStackHandlerSlot> slots;
 	private final SortedSet<ItemStackHandlerSlot> nonEmptySlots;
 	private final Map<Item, SortedSet<ItemStackHandlerSlot>> lookup;
@@ -99,12 +99,6 @@ public class ItemStackHandler implements SlottedStorage<ItemVariant>, INBTSerial
 	// iteration
 
 	@Override
-	public Iterator<StorageView<ItemVariant>> iterator() {
-		//noinspection unchecked,rawtypes
-		return (Iterator) slots.iterator();
-	}
-
-	@Override
 	public Iterable<StorageView<ItemVariant>> nonEmptyViews() {
 		//noinspection unchecked,rawtypes
 		return (Iterable) nonEmptySlots;
@@ -136,27 +130,19 @@ public class ItemStackHandler implements SlottedStorage<ItemVariant>, INBTSerial
 
 	// API, mostly from forge, with extras
 
-	/**
-	 * Set the stack in the given slot. Once set, the provided stack should NOT be mutated, as it is not copied.
-	 */
-	public void setStackInSlot(int slot, ItemStack stack) {
-		getSlot(slot).setStack(stack);
-	}
 
-	/**
-	 * This stack should never be modified. Use {@link #setStackInSlot(int, ItemStack)} for modification.
-	 */
 	public ItemStack getStackInSlot(int slot) {
 		return getSlot(slot).getStack();
+	}
+
+	public void setStackInSlot(int slot, ItemStack stack) {
+		getSlot(slot).setStack(stack);
 	}
 
 	public ItemVariant getVariantInSlot(int slot) {
 		return getSlot(slot).getResource();
 	}
 
-	/**
-	 * Determines the maximum amount of items the given slot can hold.
-	 */
 	public int getSlotLimit(int slot) {
 		return getStackInSlot(slot).getMaxStackSize();
 	}
@@ -166,13 +152,6 @@ public class ItemStackHandler implements SlottedStorage<ItemVariant>, INBTSerial
 	 */
 	protected int getStackLimit(int slot, ItemVariant resource) {
 		return Math.min(getSlotLimit(slot), resource.getItem().getMaxStackSize());
-	}
-
-	/**
-	 * Determines if the given ItemVariant can be stored in the given slot.
-	 */
-	public boolean isItemValid(int slot, ItemVariant resource) {
-		return true;
 	}
 
 	/**
