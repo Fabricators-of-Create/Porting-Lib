@@ -200,7 +200,7 @@ public abstract class EntityMixin implements EntityExtensions {
 
 	@Inject(method = "removeVehicle", at = @At(value = "CONSTANT", args = "nullValue=true"), cancellable = true)
 	public void onStopRiding(CallbackInfo ci) {
-		if (EntityMountEvents.DISMOUNT.invoker().onStopRiding(vehicle, (Entity) (Object) this))
+		if (!EntityMountEvents.DISMOUNT.invoker().onStopRiding(vehicle, (Entity) (Object) this))
 			ci.cancel();
 	}
 }
