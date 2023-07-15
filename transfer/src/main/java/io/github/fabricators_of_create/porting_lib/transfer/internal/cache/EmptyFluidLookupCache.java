@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.transfer.cache;
+package io.github.fabricators_of_create.porting_lib.transfer.internal.cache;
 
 import io.github.fabricators_of_create.porting_lib.util.StorageProvider;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;

@@ -1,6 +1,6 @@
-package io.github.fabricators_of_create.porting_lib.extensions;
+package io.github.fabricators_of_create.porting_lib.transfer.internal.extensions;
 
-import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientBlockApiCache;
+import io.github.fabricators_of_create.porting_lib.transfer.internal.cache.ClientBlockApiCache;
 
 import org.jetbrains.annotations.ApiStatus.Internal;
 
