@@ -7,8 +7,8 @@ import net.minecraft.world.item.ItemStack;
 public class ItemStackHandlerSlot extends SingleStackStorage {
 	private final int index;
 	private final ItemStackHandler handler;
-	private ItemStack stack;
-	private ItemVariant variant;
+	private ItemStack stack = ItemStack.EMPTY;
+	private ItemVariant variant = ItemVariant.blank();
 
 	public ItemStackHandlerSlot(int index, ItemStackHandler handler, ItemStack initial) {
 		this.index = index;
@@ -17,22 +17,22 @@ public class ItemStackHandlerSlot extends SingleStackStorage {
 	}
 
 	@Override
-	protected boolean canInsert(ItemVariant itemVariant) {
+	public boolean canInsert(ItemVariant itemVariant) {
 		return handler.isItemValid(index, itemVariant);
 	}
 
 	@Override
-	protected int getCapacity(ItemVariant itemVariant) {
+	public int getCapacity(ItemVariant itemVariant) {
 		return handler.getStackLimit(index, itemVariant);
 	}
 
 	@Override
-	protected ItemStack getStack() {
+	public ItemStack getStack() {
 		return stack;
 	}
 
 	@Override
-	protected void setStack(ItemStack stack) {
+	public void setStack(ItemStack stack) {
 		handler.onStackChange(this, this.stack, stack);
 		this.stack = stack;
 		this.variant = ItemVariant.of(stack);
