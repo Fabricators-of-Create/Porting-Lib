@@ -56,7 +56,7 @@ public abstract class BlockEntityMixin implements BlockEntityExtensions, INBTSer
 	}
 
 	@Override
-	public CompoundTag getExtraCustomData() {
+	public CompoundTag getCustomData() {
 		if (port_lib$extraData == null) {
 			port_lib$extraData = new CompoundTag();
 		}
