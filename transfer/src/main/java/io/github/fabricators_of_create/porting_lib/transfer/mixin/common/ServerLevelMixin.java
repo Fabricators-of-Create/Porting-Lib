@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.transfer.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.extensions.transfer.LevelExtensions;
+import io.github.fabricators_of_create.porting_lib.transfer.internal.extensions.LevelExtensions;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;

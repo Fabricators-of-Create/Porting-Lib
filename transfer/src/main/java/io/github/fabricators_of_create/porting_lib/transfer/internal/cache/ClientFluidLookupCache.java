@@ -1,6 +1,6 @@
-package io.github.fabricators_of_create.porting_lib.transfer.cache;
+package io.github.fabricators_of_create.porting_lib.transfer.internal.cache;
 
-import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
+import io.github.fabricators_of_create.porting_lib.transfer.internal.extensions.ClientLevelExtensions;
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import io.github.fabricators_of_create.porting_lib.util.StorageProvider;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;

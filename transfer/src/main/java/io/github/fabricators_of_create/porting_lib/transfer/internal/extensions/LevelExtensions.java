@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.extensions.transfer;
+package io.github.fabricators_of_create.porting_lib.transfer.internal.extensions;
 
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;

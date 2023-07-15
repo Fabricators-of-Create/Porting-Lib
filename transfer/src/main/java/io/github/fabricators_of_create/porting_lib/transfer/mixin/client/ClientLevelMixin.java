@@ -1,10 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.transfer.mixin.client;
 
-import io.github.fabricators_of_create.porting_lib.extensions.ClientLevelExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.transfer.LevelExtensions;
-import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientBlockApiCache;
-import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientFluidLookupCache;
-import io.github.fabricators_of_create.porting_lib.transfer.cache.ClientItemLookupCache;
+import io.github.fabricators_of_create.porting_lib.transfer.internal.extensions.ClientLevelExtensions;
+import io.github.fabricators_of_create.porting_lib.transfer.internal.extensions.LevelExtensions;
+import io.github.fabricators_of_create.porting_lib.transfer.internal.cache.ClientBlockApiCache;
+import io.github.fabricators_of_create.porting_lib.transfer.internal.cache.ClientFluidLookupCache;
+import io.github.fabricators_of_create.porting_lib.transfer.internal.cache.ClientItemLookupCache;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
