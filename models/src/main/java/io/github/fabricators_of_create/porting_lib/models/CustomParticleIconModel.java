@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.model;
+package io.github.fabricators_of_create.porting_lib.models;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 

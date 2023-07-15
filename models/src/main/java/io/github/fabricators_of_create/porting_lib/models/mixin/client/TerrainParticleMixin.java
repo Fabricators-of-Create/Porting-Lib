@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.models.mixin.client;
 
-import io.github.fabricators_of_create.porting_lib.model.CustomParticleIconModel;
+import io.github.fabricators_of_create.porting_lib.models.CustomParticleIconModel;
 import io.github.fabricators_of_create.porting_lib.models.extensions.TerrainParticleExtensions;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
 
