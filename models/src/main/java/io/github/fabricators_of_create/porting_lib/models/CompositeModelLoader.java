@@ -16,6 +16,7 @@ import net.minecraft.client.resources.model.UnbakedModel;
 
 public enum CompositeModelLoader implements ModelLoader {
 	INSTANCE;
+
 	@Override
 	public UnbakedModel readModel(BlockModel parent, JsonObject jsonObject) {
 		List<String> itemPasses = new ArrayList<>();
