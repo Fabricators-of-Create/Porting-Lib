@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.models;
 
 import com.mojang.math.Transformation;
 
+import io.github.fabricators_of_create.porting_lib.models.geometry.SimpleModelState;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -195,5 +196,15 @@ public class UnbakedGeometryHelper {
 			}
 		}
 		return elements;
+	}
+
+	/**
+	 * {@return a {@link ModelState} that combines the existing model state and the {@linkplain Transformation root transform}}
+	 */
+	public static ModelState composeRootTransformIntoModelState(ModelState modelState, Transformation rootTransform) {
+		// Move the origin of the root transform as if the negative corner were the block center to match the way the
+		// ModelState transform is applied in the FaceBakery by moving the vertices to be centered on that corner
+		rootTransform = rootTransform.applyOrigin(new Vector3f(-.5F, -.5F, -.5F));
+		return new SimpleModelState(modelState.getRotation().compose(rootTransform), modelState.isUvLocked());
 	}
 }

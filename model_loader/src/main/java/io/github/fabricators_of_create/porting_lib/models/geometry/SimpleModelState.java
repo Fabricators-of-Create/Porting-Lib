@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.models;
+package io.github.fabricators_of_create.porting_lib.models.geometry;
 
 import com.mojang.math.Transformation;
 import net.minecraft.client.resources.model.ModelState;

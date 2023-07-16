@@ -10,9 +10,11 @@ import net.minecraft.world.item.Item;
 
 public class PortingLibModelsTestmod implements ModInitializer {
 	public static Item DERPY_HELMET = new Item(new FabricItemSettings().equipmentSlot(stack -> EquipmentSlot.HEAD));
+	public static final Item STONE_2 = new Item(new FabricItemSettings());
 
 	@Override
 	public void onInitialize() {
 		Registry.register(BuiltInRegistries.ITEM, PortingLib.id("derp_helmet"), DERPY_HELMET);
+		Registry.register(BuiltInRegistries.ITEM, PortingLib.id("stone_2"), STONE_2);
 	}
 }
