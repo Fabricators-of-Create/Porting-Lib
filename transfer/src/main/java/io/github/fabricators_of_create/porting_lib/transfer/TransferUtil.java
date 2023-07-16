@@ -354,7 +354,7 @@ public class TransferUtil {
 		if (!storage.supportsExtraction())
 			return FluidStack.EMPTY;
 		ResourceAmount<FluidVariant> extracted = StorageUtil.extractAny(storage, maxAmount, tx);
-		return extracted == null ? null : new FluidStack(extracted);
+		return extracted == null ? FluidStack.EMPTY : new FluidStack(extracted);
 	}
 
 	/**
@@ -385,7 +385,7 @@ public class TransferUtil {
 			return ItemStack.EMPTY;
 		int max = (int) Math.min(Integer.MAX_VALUE, maxAmount);
 		ResourceAmount<ItemVariant> extracted = StorageUtil.extractAny(storage, max, tx);
-		return extracted == null ? null : extracted.resource().toStack(max);
+		return extracted == null ? ItemStack.EMPTY : extracted.resource().toStack(max);
 	}
 
 	/** @see TransferUtil#extractAnyFluid(Storage, long) */
