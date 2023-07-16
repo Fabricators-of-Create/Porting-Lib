@@ -15,15 +15,15 @@ public class PortingLibModels implements ClientModInitializer {
 	public void onInitializeClient() {
 		ModelLoadingRegistry.INSTANCE.registerResourceProvider(manager -> PortingLibModelLoadingRegistry.INSTANCE);
 
-		PortingLibModelLoadingRegistry.LOADERS.put(PortingLib.id("composite"), CompositeModelLoader.INSTANCE);
-		PortingLibModelLoadingRegistry.LOADERS.put(PortingLib.forgeId("composite"), CompositeModelLoader.INSTANCE);
-
 		PortingLibModelLoadingRegistry.LOADERS.put(PortingLib.id("item_layers"), ItemLayerModel.Loader.INSTANCE);
 		PortingLibModelLoadingRegistry.LOADERS.put(PortingLib.forgeId("item_layers"), ItemLayerModel.Loader.INSTANCE);
 
 		RegisterGeometryLoadersCallback.EVENT.register(loaders -> {
 			loaders.put(PortingLib.id("elements"), ElementsModel.Loader.INSTANCE);
 			loaders.put(PortingLib.forgeId("elements"), ElementsModel.Loader.INSTANCE);
+
+			loaders.put(PortingLib.id("composite"), CompositeModelLoader.INSTANCE);
+			loaders.put(PortingLib.forgeId("composite"), CompositeModelLoader.INSTANCE);
 
 			loaders.put(PortingLib.id("fluid_container"), DynamicFluidContainerModel.Loader.INSTANCE);
 			loaders.put(PortingLib.forgeId("fluid_container"), DynamicFluidContainerModel.Loader.INSTANCE);

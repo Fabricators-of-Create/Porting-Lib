@@ -5,19 +5,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import net.minecraft.client.resources.model.SimpleBakedModel;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import io.github.fabricators_of_create.porting_lib.models.geometry.IUnbakedGeometry;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -29,6 +26,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -38,38 +36,31 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class CompositeModel implements UnbakedModel {
-	private static final Logger LOGGER = LogManager.getLogger();
-
-	private final BlockModel owner;
+public class CompositeModel implements IUnbakedGeometry<CompositeModel> {
 	private final ImmutableMap<String, BlockModel> children;
 	private final ImmutableList<String> itemPasses;
 
-	public CompositeModel(BlockModel owner, ImmutableMap<String, BlockModel> children, ImmutableList<String> itemPasses) {
-		this.owner = owner;
+	public CompositeModel(ImmutableMap<String, BlockModel> children, ImmutableList<String> itemPasses) {
 		this.children = children;
 		this.itemPasses = itemPasses;
 	}
 
 	@Override
-	public Collection<ResourceLocation> getDependencies() {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter) {
-		children.values().forEach(child -> child.resolveParents(modelGetter));
-	}
-
-	@Nullable
-	@Override
-	public BakedModel bake(ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation) {
-		Material particleLocation = owner.getMaterial("particle");
+	public BakedModel bake(BlockModel context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
+		Material particleLocation = context.getMaterial("particle");
 		TextureAtlasSprite particle = spriteGetter.apply(particleLocation);
+
+		var rootTransform = context.getRootTransform();
+		if (!rootTransform.isIdentity()) {
+			modelState = UnbakedGeometryHelper.composeRootTransformIntoModelState(modelState, rootTransform);
+		}
 
 		var bakedPartsBuilder = ImmutableMap.<String, BakedModel>builder();
 		for (var entry : children.entrySet()) {
 			var name = entry.getKey();
+			if (!context.isComponentVisible(name, true)) {
+				continue;
+			}
 			var model = entry.getValue();
 			bakedPartsBuilder.put(name, model.bake(baker, model, spriteGetter, modelState, modelLocation, true));
 		}
@@ -78,12 +69,23 @@ public class CompositeModel implements UnbakedModel {
 		var itemPassesBuilder = ImmutableList.<BakedModel>builder();
 		for (String name : this.itemPasses) {
 			var model = bakedParts.get(name);
-			if (model == null)
+			if (model == null) {
 				throw new IllegalStateException("Specified \"" + name + "\" in \"item_render_order\", but that is not a child of this model.");
+			}
 			itemPassesBuilder.add(model);
 		}
 
-		return new Baked(true, owner.getGuiLight().lightLikeBlock(), owner.hasAmbientOcclusion(), particle, owner.getTransforms(), owner.getItemOverrides(baker, owner), bakedParts, itemPassesBuilder.build());
+		return new Baked(true, context.getGuiLight().lightLikeBlock(), context.hasAmbientOcclusion(), particle, context.getTransforms(), context.getItemOverrides(baker, context), bakedParts, itemPassesBuilder.build());
+	}
+
+	@Override
+	public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, BlockModel context) {
+		children.values().forEach(child -> child.resolveParents(modelGetter));
+	}
+
+	@Override
+	public Set<String> getConfigurableComponentNames() {
+		return children.keySet();
 	}
 
 	public static class Baked implements BakedModel, FabricBakedModel {
