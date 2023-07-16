@@ -36,6 +36,7 @@ import java.util.Optional;
 
 public enum PortingLibModelLoadingRegistry implements ModelResourceProvider {
 	INSTANCE;
+
 	public static final Map<ResourceLocation, ModelLoader> LOADERS = new HashMap<>();
 
 	public static final Gson GSON = BlockModel.GSON.newBuilder().registerTypeAdapter(RenderMaterial.class, new RenderMaterialDeserializer()).create();
