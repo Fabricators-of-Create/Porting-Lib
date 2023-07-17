@@ -246,6 +246,13 @@ public class ItemStackHandler implements SlottedStackStorage, INBTSerializable<C
 		}
 	}
 
+	void initSlot(ItemStackHandlerSlot slot) {
+		ItemStack stack = slot.getStack();
+		lookup.computeIfAbsent(stack.getItem(), $ -> createSlotSet()).add(slot);
+		if (!stack.isEmpty())
+			nonEmptySlots.add(slot);
+	}
+
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + '[' + slots + ']';

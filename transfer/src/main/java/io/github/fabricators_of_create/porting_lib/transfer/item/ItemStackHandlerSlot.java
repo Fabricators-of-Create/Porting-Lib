@@ -8,12 +8,15 @@ public class ItemStackHandlerSlot extends SingleStackStorage {
 	private final int index;
 	private final ItemStackHandler handler;
 	private ItemStack stack;
+	private ItemStack lastStack; // last stack pre-transaction
 	private ItemVariant variant;
 
 	public ItemStackHandlerSlot(int index, ItemStackHandler handler, ItemStack initial) {
 		this.index = index;
 		this.handler = handler;
+		this.lastStack = initial;
 		this.setStack(initial);
+		handler.initSlot(this);
 	}
 
 	@Override
@@ -31,11 +34,16 @@ public class ItemStackHandlerSlot extends SingleStackStorage {
 		return stack;
 	}
 
-	@Override
+	@Override // for transactions
 	protected void setStack(ItemStack stack) {
-		handler.onStackChange(this, this.stack, stack);
 		this.stack = stack;
 		this.variant = ItemVariant.of(stack);
+	}
+
+	// for manual setting
+	public void setNewStack(ItemStack stack) {
+		setStack(stack);
+		onFinalCommit();
 	}
 
 	@Override
@@ -49,6 +57,8 @@ public class ItemStackHandlerSlot extends SingleStackStorage {
 
 	@Override
 	protected void onFinalCommit() {
+		handler.onStackChange(this, lastStack, stack);
+		this.lastStack = stack;
 		handler.onContentsChanged(index);
 	}
 }
