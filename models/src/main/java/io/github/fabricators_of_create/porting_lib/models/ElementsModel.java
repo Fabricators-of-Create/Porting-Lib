@@ -77,6 +77,8 @@ public class ElementsModel implements IUnbakedGeometry<ElementsModel> {
 		public ElementsModel read(JsonObject jsonObject, JsonDeserializationContext deserializationContext) throws JsonParseException {
 			if (!jsonObject.has("elements"))
 				throw new JsonParseException("An element model must have an \"elements\" member.");
+			if (!RendererAccess.INSTANCE.hasRenderer())
+				throw new JsonParseException("The Fabric Rendering API is not available. If you have Sodium, install Indium!");
 
 			List<BlockElement> elements = new ArrayList<>();
 			for (JsonElement element : GsonHelper.getAsJsonArray(jsonObject, "elements")) {

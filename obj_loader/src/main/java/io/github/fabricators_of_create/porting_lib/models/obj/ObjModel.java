@@ -21,6 +21,8 @@ import java.util.stream.Stream;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 
+import com.google.gson.JsonParseException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -111,6 +113,8 @@ public class ObjModel implements IUnbakedGeometry<ObjModel>, UnbakedModel {
 
 	static ObjModel parse(ObjTokenizer tokenizer, ModelSettings settings, Map<String, String> deprecationWarnings) throws IOException
 	{
+		if (!RendererAccess.INSTANCE.hasRenderer())
+			throw new JsonParseException("The Fabric Rendering API is not available. If you have Sodium, install Indium!");
 		var modelLocation = settings.modelLocation;
 		var materialLibraryOverrideLocation = settings.mtlOverride;
 		var model = new ObjModel(settings, deprecationWarnings);

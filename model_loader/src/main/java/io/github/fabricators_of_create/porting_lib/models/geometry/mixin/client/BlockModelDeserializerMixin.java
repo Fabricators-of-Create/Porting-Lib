@@ -69,8 +69,8 @@ public abstract class BlockModelDeserializerMixin {
 		if (loader == null) {
 			if (!GeometryLoaderManager.KNOWN_MISSING_LOADERS.contains(name)) {
 				GeometryLoaderManager.KNOWN_MISSING_LOADERS.add(name);
-				PortingLib.LOGGER.debug(String.format(Locale.ENGLISH, "Model loader '%s' not found. Registered loaders: %s", name, GeometryLoaderManager.getLoaderList()));
-				PortingLib.LOGGER.debug("Falling back to vanilla logic.");
+				PortingLib.LOGGER.warn(String.format(Locale.ENGLISH, "Model loader '%s' not found. Registered loaders: %s", name, GeometryLoaderManager.getLoaderList()));
+				PortingLib.LOGGER.warn("Falling back to vanilla logic.");
 			}
 			return null;
 		}
