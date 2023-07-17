@@ -216,4 +216,9 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	void onStackChange(ItemStackHandlerSlot slot, ItemStack oldStack, ItemStack newStack) {
 		handler.onStackChange(slot, oldStack, newStack);
 	}
+
+	@Override
+	void initSlot(ItemStackHandlerSlot slot) {
+		handler.initSlot(slot);
+	}
 }
