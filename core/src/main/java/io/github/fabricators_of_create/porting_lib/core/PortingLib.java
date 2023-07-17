@@ -12,13 +12,8 @@ public class PortingLib {
 	public static final String ID = "porting_lib";
 	public static final String NAME = "Porting Lib";
 	public static final Logger LOGGER = LoggerFactory.getLogger(NAME);
-	public static final String FORGE = "forge";
 
 	public static ResourceLocation id(String path) {
 		return new ResourceLocation(ID, path);
-	}
-
-	public static ResourceLocation forgeId(String path) {
-		return new ResourceLocation(FORGE, path);
 	}
 }
