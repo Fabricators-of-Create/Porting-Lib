@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Function;
 
+import com.google.gson.JsonParseException;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -85,6 +87,8 @@ public class ItemLayerModel implements UnbakedModel {
 
 		@Override
 		public UnbakedModel readModel(BlockModel parent, JsonObject jsonObject) {
+			if (!RendererAccess.INSTANCE.hasRenderer())
+				throw new JsonParseException("The Fabric Rendering API is not available. If you have Sodium, install Indium!");
 			var emissiveLayers = new Int2ObjectArrayMap<RenderMaterial>();
 			if(jsonObject.has("render_materials")) {
 				JsonObject forgeData = jsonObject.get("render_materials").getAsJsonObject();

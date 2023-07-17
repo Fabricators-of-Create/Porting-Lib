@@ -1,6 +1,6 @@
 {
 	"credit": "Made with Blockbench",
-  "loader": "forge:composite",
+  "loader": "porting_lib:composite",
   "parent": "block/block",
   "children": {
     "first": {

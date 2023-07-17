@@ -39,10 +39,10 @@ public class PortingLibObjLoader implements ClientModInitializer {
 			if (resourceLocation.getPath().endsWith(".json")) {
 				manager.getResource(resourceLocation).ifPresent(resource -> {
 					try {
-					JsonObject jsonObject = Streams.parse(new JsonReader(new InputStreamReader(resource.open(), Charsets.UTF_8))).getAsJsonObject();
-					if (jsonObject.has(PortingLib.ID + ":" + "obj_marker")) {
-						out.accept(resourceLocation);
-					}
+						JsonObject jsonObject = Streams.parse(new JsonReader(new InputStreamReader(resource.open(), Charsets.UTF_8))).getAsJsonObject();
+						if (jsonObject.has(PortingLib.ID + ":" + "obj_marker")) {
+							out.accept(resourceLocation);
+						}
 					} catch (IOException | NoSuchElementException e) {
 						e.fillInStackTrace();
 					}

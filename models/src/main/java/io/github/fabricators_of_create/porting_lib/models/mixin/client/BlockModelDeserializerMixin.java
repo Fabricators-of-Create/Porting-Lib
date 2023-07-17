@@ -2,10 +2,12 @@ package io.github.fabricators_of_create.porting_lib.models.mixin.client;
 
 import java.lang.reflect.Type;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
+import net.fabricmc.fabric.api.renderer.v1.Renderer;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
@@ -23,16 +25,24 @@ import net.minecraft.util.GsonHelper;
 
 @Mixin(BlockModel.Deserializer.class)
 public class BlockModelDeserializerMixin {
-	@Inject(method = "deserialize(Lcom/google/gson/JsonElement;Ljava/lang/reflect/Type;Lcom/google/gson/JsonDeserializationContext;)Lnet/minecraft/client/renderer/block/model/BlockModel;", at = @At("RETURN"))
-	private void port_lib$addModelRenderType(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext, CallbackInfoReturnable<BlockModel> cir) {
+	@ModifyReturnValue(method = "deserialize(Lcom/google/gson/JsonElement;Ljava/lang/reflect/Type;Lcom/google/gson/JsonDeserializationContext;)Lnet/minecraft/client/renderer/block/model/BlockModel;", at = @At("RETURN"))
+	private BlockModel addModelRenderType(BlockModel model, JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) {
 		JsonObject modelJson = jsonElement.getAsJsonObject();
+
 		if (modelJson.has("render_material")) {
-			((BlockModelExtensions)cir.getReturnValue()).port_lib$setRenderMaterial(PortingLibModelLoadingRegistry.GSON.fromJson(GsonHelper.getAsJsonObject(modelJson, "render_material"), RenderMaterial.class));
-			return;
+			JsonObject materialObj = GsonHelper.getAsJsonObject(modelJson, "render_material");
+			RenderMaterial material = PortingLibModelLoadingRegistry.GSON.fromJson(materialObj, RenderMaterial.class);
+			((BlockModelExtensions) model).port_lib$setRenderMaterial(material);
+		} else if (modelJson.has("render_type")) {
+			Renderer renderer = RendererAccess.INSTANCE.getRenderer();
+			if (renderer != null) {
+				String typeName = GsonHelper.getAsString(modelJson, "render_type");
+				BlendMode blendMode = BlendMode.fromRenderLayer(RenderTypeUtil.get(new ResourceLocation(typeName)));
+				RenderMaterial material = renderer.materialFinder().blendMode(blendMode).find();
+				((BlockModelExtensions) model).port_lib$setRenderMaterial(material);
+			}
 		}
-		if (modelJson.has("render_type")) {
-			var renderTypeHintName = GsonHelper.getAsString(modelJson, "render_type");
-			((BlockModelExtensions)cir.getReturnValue()).port_lib$setRenderMaterial(RendererAccess.INSTANCE.getRenderer().materialFinder().blendMode(0, BlendMode.fromRenderLayer(RenderTypeUtil.get(new ResourceLocation(renderTypeHintName)))).find());
-		}
+
+		return model;
 	}
 }
