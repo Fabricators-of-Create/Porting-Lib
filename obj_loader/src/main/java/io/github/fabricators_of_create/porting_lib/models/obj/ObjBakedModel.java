@@ -45,7 +45,7 @@ public record ObjBakedModel(List<Mesh> meshes, TextureAtlasSprite texture) imple
 	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction direction, RandomSource random) {
 		List<BakedQuad> bakedQuads = new ArrayList<>();
 		meshes.forEach(mesh -> {
-			mesh.forEach(quadView -> bakedQuads.add(quadView.toBakedQuad(0, texture, state == null)));
+			mesh.forEach(quadView -> bakedQuads.add(quadView.toBakedQuad(texture)));
 		});
 		return bakedQuads;
 	}
