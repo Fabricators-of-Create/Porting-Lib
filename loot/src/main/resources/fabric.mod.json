@@ -9,6 +9,9 @@
       "io.github.fabricators_of_create.porting_lib.loot.PortingLibLoot"
     ]
   },
+  "mixins": [
+    "porting_lib_loot.mixins.json"
+  ],
   "custom": {
     "loom:injected_interfaces": {
       "net/minecraft/class_47": [
