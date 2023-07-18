@@ -24,13 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class ObjBakedModel implements BakedModel, FabricBakedModel {
-
-	private final List<MeshInfo> meshes;
-
-	public ObjBakedModel(List<MeshInfo> meshes) {
-		this.meshes = meshes;
-	}
+public record ObjBakedModel(List<Mesh> meshes, TextureAtlasSprite texture) implements BakedModel, FabricBakedModel {
 
 	@Override
 	public boolean isVanillaAdapter() {
@@ -39,20 +33,19 @@ public class ObjBakedModel implements BakedModel, FabricBakedModel {
 
 	@Override
 	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
-		meshes.forEach(meshInfo -> context.meshConsumer().accept(meshInfo.mesh()));
+		meshes.forEach(mesh -> context.meshConsumer().accept(mesh));
 	}
 
 	@Override
 	public void emitItemQuads(ItemStack stack, Supplier<RandomSource> randomSupplier, RenderContext context) {
-		meshes.forEach(meshInfo -> context.meshConsumer().accept(meshInfo.mesh()));
+		meshes.forEach(mesh -> context.meshConsumer().accept(mesh));
 	}
 
 	@Override
 	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction direction, RandomSource random) {
 		List<BakedQuad> bakedQuads = new ArrayList<>();
 		meshes.forEach(mesh -> {
-			TextureAtlasSprite sprite = mesh.sprite();
-			mesh.mesh().forEach(quadView -> bakedQuads.add(quadView.toBakedQuad(0, sprite, state == null)));
+			mesh.forEach(quadView -> bakedQuads.add(quadView.toBakedQuad(texture)));
 		});
 		return bakedQuads;
 	}
@@ -79,7 +72,7 @@ public class ObjBakedModel implements BakedModel, FabricBakedModel {
 
 	@Override
 	public TextureAtlasSprite getParticleIcon() {
-		return Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(meshes.get(0) != null ? meshes.get(0).mat().texture : MissingTextureAtlasSprite.getLocation());
+		return texture;
 	}
 
 	@Override
@@ -90,8 +83,5 @@ public class ObjBakedModel implements BakedModel, FabricBakedModel {
 	@Override
 	public ItemOverrides getOverrides() {
 		return ItemOverrides.EMPTY;
-	}
-
-	public record MeshInfo(TextureAtlasSprite sprite, Mesh mesh, ObjMaterialLibrary.Material mat) {
 	}
 }

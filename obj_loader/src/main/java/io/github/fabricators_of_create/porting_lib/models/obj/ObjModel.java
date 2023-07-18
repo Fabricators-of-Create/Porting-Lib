@@ -410,7 +410,7 @@ public class ObjModel implements IUnbakedGeometry<ObjModel>, UnbakedModel {
 
 		var quadBaker = builder.getEmitter();
 
-		quadBaker.spriteBake(0, texture, MutableQuadView.BAKE_ROTATE_NONE);
+		quadBaker.spriteBake(texture, MutableQuadView.BAKE_ROTATE_NONE);
 		quadBaker.colorIndex(tintIndex);
 
 		int uv2 = 0;
@@ -448,8 +448,8 @@ public class ObjModel implements IUnbakedGeometry<ObjModel>, UnbakedModel {
 					color.w() * colorTint.w());
 			quadBaker.pos(i, position.x(), position.y(), position.z());
 			int spriteColor = encodeQuadColor(tintedColor);
-			quadBaker.spriteColor(0, spriteColor, spriteColor, spriteColor, spriteColor);
-			quadBaker.sprite(i, 0,
+			quadBaker.color(spriteColor, spriteColor, spriteColor, spriteColor);
+			quadBaker.uv(i,
 					texture.getU(texCoord.x * 16),
 					texture.getV((flipV ? 1 - texCoord.y : texCoord.y) * 16)
 			);
