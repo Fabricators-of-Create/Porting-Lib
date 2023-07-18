@@ -3,6 +3,7 @@ accessWidener v2 named
 transitive-accessible class net/minecraft/client/gui/MapRenderer$MapInstance
 transitive-accessible class net/minecraft/client/renderer/FogRenderer$FogData
 transitive-accessible class net/minecraft/world/item/crafting/Ingredient$Value
+transitive-accessible class net/minecraft/world/item/enchantment/EnchantmentHelper$EnchantmentVisitor
 transitive-accessible class net/minecraft/world/level/entity/PersistentEntitySectionManager$Callback
 transitive-accessible class net/minecraft/world/level/entity/TransientEntitySectionManager$Callback
 transitive-accessible class net/minecraft/world/level/lighting/BlockLightSectionStorage$BlockDataLayerStorageMap

@@ -1,425 +1,274 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
 import io.github.fabricators_of_create.porting_lib.core.util.INBTSerializable;
-import io.github.fabricators_of_create.porting_lib.transfer.ExtendedStorage;
-import io.github.fabricators_of_create.porting_lib.transfer.StorageViewArrayIterator;
-import io.github.fabricators_of_create.porting_lib.transfer.callbacks.TransactionCallback;
-import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
-import it.unimi.dsi.fastutil.ints.IntIterator;
-import it.unimi.dsi.fastutil.ints.IntSortedSet;
+import io.github.fabricators_of_create.porting_lib.util.DualSortedSetIterator;
+import io.github.fabricators_of_create.porting_lib.util.EmptySortedSet;
+import io.github.fabricators_of_create.porting_lib.util.ItemStackUtil;
 import it.unimi.dsi.fastutil.objects.ObjectAVLTreeSet;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.storage.SlottedStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
-import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import javax.annotation.Nullable;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.function.Predicate;
 
-public class ItemStackHandler extends SnapshotParticipant<ItemStackHandlerSnapshot> implements Storage<ItemVariant>, ExtendedStorage<ItemVariant>, INBTSerializable<CompoundTag>, SlotExposedStorage {
-	private static final ItemVariant blank = ItemVariant.blank();
-
-	/**
-	 * Do not directly access this array. It must be kept in sync with the others. Restricting access may break existing mods.
-	 */
-	@Deprecated
-	public ItemStack[] stacks;
-	protected ItemVariant[] variants;
-	protected Map<Item, IntSortedSet> lookup;
-	protected ItemStackHandlerSlotView[] views;
-	protected SortedSet<ItemStackHandlerSlotView> nonEmptyViews;
+/**
+ * An implementation of a item storage designed for ease of use and speed.
+ */
+public class ItemStackHandler implements SlottedStackStorage, INBTSerializable<CompoundTag> {
+	private final List<ItemStackHandlerSlot> slots;
+	private final SortedSet<ItemStackHandlerSlot> nonEmptySlots;
+	private final Map<Item, SortedSet<ItemStackHandlerSlot>> lookup;
 
 	public ItemStackHandler() {
 		this(1);
 	}
 
 	public ItemStackHandler(int stacks) {
-		this(emptyStackArray(stacks));
+		this(ItemStackUtil.createEmptyStackArray(stacks));
 	}
 
 	public ItemStackHandler(ItemStack[] stacks) {
-		this.stacks = stacks;
-		this.variants = new ItemVariant[stacks.length];
+		this.slots = new ArrayList<>(stacks.length);
+		this.nonEmptySlots = createSlotSet();
 		this.lookup = new HashMap<>();
-		this.views = new ItemStackHandlerSlotView[stacks.length];
-		this.nonEmptyViews = makeViewSet(null);
 		for (int i = 0; i < stacks.length; i++) {
 			ItemStack stack = stacks[i];
-			this.variants[i] = ItemVariant.of(stack);
-			getIndices(stack.getItem()).add(i);
-			ItemStackHandlerSlotView view = new ItemStackHandlerSlotView(this, i);
-			this.views[i] = view;
-			if (!stack.isEmpty())
-				nonEmptyViews.add(view);
+			// slot handles filling lookup
+			slots.add(new ItemStackHandlerSlot(i, this, stack));
 		}
 	}
+
+	// core functionality
 
 	@Override
 	public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
 		StoragePreconditions.notBlankNotNegative(resource, maxAmount);
 		long inserted = 0;
-		for (int i = 0; i < stacks.length; i++) {
-			if (!isItemValid(i, resource, maxAmount))
-				continue;
-			ItemStack stack = stacks[i];
-			if (!stack.isEmpty()) { // add to an existing stack
-				inserted += insertToExistingStack(i, stack, resource, maxAmount - inserted, transaction);
-			} else { // create a new stack
-				inserted += insertToNewStack(i, resource, maxAmount - inserted, transaction);
-			}
-			if (maxAmount - inserted <= 0)
-				break; // fully inserted
+		Iterator<ItemStackHandlerSlot> itr = getInsertableSlotsFor(resource);
+		while (itr.hasNext()) {
+			ItemStackHandlerSlot slot = itr.next();
+			inserted += slot.insert(resource, maxAmount - inserted, transaction);
+			if (inserted >= maxAmount)
+				break;
 		}
 		return inserted;
-	}
-
-	protected long insertToExistingStack(int index, ItemStack stack, ItemVariant resource, long maxAmount, TransactionContext ctx) {
-		int space = getSpace(index, resource, stack);
-		if (space <= 0)
-			return 0; // no room? skip
-		if (!resource.matches(stack))
-			return 0; // can't stack? skip
-		int toInsert = (int) Math.min(space, maxAmount);
-		updateSnapshots(ctx);
-		stack = ItemHandlerHelper.growCopy(stack, toInsert);
-		contentsChangedInternal(index, stack, ctx);
-		// no types were changed, only counts. Lookup is unchanged.
-		return toInsert;
-	}
-
-	protected long insertToNewStack(int index, ItemVariant resource, long maxAmount, TransactionContext ctx) {
-		int maxSize = getStackLimit(index, resource);
-		int toInsert = (int) Math.min(maxSize, maxAmount);
-		ItemStack stack = resource.toStack(toInsert);
-		updateSnapshots(ctx);
-		contentsChangedInternal(index, stack, ctx);
-		return toInsert;
-	}
-
-	protected int getSpace(int index, ItemVariant resource, ItemStack stack) {
-		int maxSize = getStackLimit(index, resource);
-		int size = stack.getCount();
-		return maxSize - size;
-	}
-
-	@Override
-	public long insertSlot(int slot, ItemVariant resource, long maxAmount, TransactionContext transaction) {
-		if (slot < 0 || slot > getSlots())
-			return 0;
-		ItemStack stack = stacks[slot];
-		if (!isItemValid(slot, resource, maxAmount))
-			return 0;
-		if (!stack.isEmpty()) { // add to an existing stack
-			return insertToExistingStack(slot, stack, resource, maxAmount, transaction);
-		} else { // create a new stack
-			return insertToNewStack(slot, resource, maxAmount, transaction);
-		}
 	}
 
 	@Override
 	public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
 		StoragePreconditions.notBlankNotNegative(resource, maxAmount);
 		Item item = resource.getItem();
-		IntSortedSet indices = lookup.get(item);
-		if (indices == null || indices.isEmpty())
+		SortedSet<ItemStackHandlerSlot> slots = getSlotsContaining(item);
+		if (slots.isEmpty())
 			return 0; // no slots hold this item
 		long extracted = 0;
-		for (IntIterator itr = indices.intIterator(); itr.hasNext();) {
-			int i = itr.nextInt();
-			ItemStack stack = stacks[i];
-			if (stack.hasTag() && !resource.matches(stack))
-				continue; // nbt doesn't allow stacking? skip
-			int size = stack.getCount();
-			int toExtract = (int) Math.min(size, maxAmount - extracted);
-			extracted += toExtract;
-			int newSize = size - toExtract;
-			boolean empty = newSize <= 0;
-			stack = empty ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(stack, newSize);
-			updateSnapshots(transaction);
-			contentsChangedInternal(i, stack, transaction);
-		}
-		return extracted;
-	}
-
-	@Override
-	public long extractSlot(int slot, ItemVariant resource, long maxAmount, TransactionContext transaction) {
-		if (slot < 0 || slot > getSlots())
-			return 0;
-		ItemStack stack = stacks[slot];
-		if (stack.isEmpty() || !resource.matches(stack))
-			return 0;
-		int count = stack.getCount();
-		int extracted = (int) Math.min(maxAmount, count);
-		boolean empty = extracted >= count;
-		ItemStack newStack = empty ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(stack, count - extracted);
-		updateSnapshots(transaction);
-		contentsChangedInternal(slot, newStack, transaction);
-		return extracted;
-	}
-
-	@Override
-	@Nullable
-	public ResourceAmount<ItemVariant> extractMatching(Predicate<ItemVariant> predicate, long maxAmount, TransactionContext transaction) {
-		if (nonEmptyViews.isEmpty())
-			return null;
-		ItemVariant variant = null;
-		for (ItemStackHandlerSlotView view : nonEmptyViews) {
-			ItemVariant resource = view.getResource();
-			if (predicate.test(resource)) {
-				variant = resource;
+		for (ItemStackHandlerSlot slot : slots) {
+			extracted += slot.extract(resource, maxAmount - extracted, transaction);
+			if (extracted >= maxAmount)
 				break;
-			}
 		}
-		if (variant == null)
-			return null;
-		long extracted = extract(variant, maxAmount, transaction);
-		if (extracted == 0)
-			return null;
-		return new ResourceAmount<>(variant, extracted);
+		return extracted;
 	}
 
 	@Override
 	@Nullable
 	public StorageView<ItemVariant> exactView(ItemVariant resource) {
 		StoragePreconditions.notBlank(resource);
-		IntSortedSet indices = lookup.get(resource.getItem());
-		if (indices == null || indices.isEmpty())
-			return null;
-		for (IntIterator itr = indices.intIterator(); itr.hasNext();) {
-			int i = itr.nextInt();
-			ItemStack stack = stacks[i];
-			if (resource.matches(stack)) {
-				return new ItemStackHandlerSlotView(this, i);
-			}
-		}
-		return null;
+		SortedSet<ItemStackHandlerSlot> slots = getSlotsContaining(resource.getItem());
+		return slots.isEmpty() ? null : slots.first();
 	}
 
-	protected void contentsChangedInternal(int slot, ItemStack newStack, @Nullable TransactionContext ctx) {
-		ItemStack oldStack = stacks[slot];
-		stacks[slot] = newStack;
-		variants[slot] = ItemVariant.of(newStack);
-		if (!ItemStack.isSameItem(oldStack, newStack)) {
-			// item changed, update the lookup
-			updateLookup(oldStack.getItem(), newStack.getItem(), slot);
-		}
-		boolean oldEmpty = oldStack.isEmpty();
-		boolean newEmpty = newStack.isEmpty();
-		// if empty status changed, the non-empty views must be updated
-		if (oldEmpty && !newEmpty) {
-			nonEmptyViews.add(views[slot]);
-		} else if (!oldEmpty && newEmpty) {
-			nonEmptyViews.remove(views[slot]);
-		}
-		if (ctx != null) TransactionCallback.onSuccess(ctx, () -> onContentsChanged(slot));
+	// iteration
+
+	@Override
+	public Iterable<StorageView<ItemVariant>> nonEmptyViews() {
+		//noinspection unchecked,rawtypes
+		return (Iterable) nonEmptySlots;
 	}
 
 	@Override
-	public Iterator<StorageView<ItemVariant>> iterator() {
-		return new StorageViewArrayIterator<>(views);
+	public Iterator<StorageView<ItemVariant>> nonEmptyIterator() {
+		//noinspection unchecked,rawtypes
+		return (Iterator) nonEmptySlots.iterator();
+	}
+
+	// slot support
+
+	@Override
+	public int getSlotCount() {
+		return slots.size();
 	}
 
 	@Override
-	public Iterable<? extends StorageView<ItemVariant>> nonEmptyIterable() {
-		return nonEmptyViews;
+	public ItemStackHandlerSlot getSlot(int slot) {
+		return slots.get(slot);
 	}
 
 	@Override
-	protected ItemStackHandlerSnapshot createSnapshot() {
-		return SnapshotData.of(this);
+	public List<SingleSlotStorage<ItemVariant>> getSlots() {
+		//noinspection unchecked,rawtypes
+		return (List) slots;
 	}
 
-	@Override
-	protected void readSnapshot(ItemStackHandlerSnapshot snapshot) {
-		snapshot.apply(this);
-	}
+	// API, mostly from forge, with extras
 
-	@Override
-	public String toString() {
-		return  getClass().getSimpleName() + '{' + "stacks=" + Arrays.toString(stacks) + ", variants=" + Arrays.toString(variants) + '}';
-	}
 
-	public int getSlots() {
-		return stacks.length;
+	public ItemStack getStackInSlot(int slot) {
+		return getSlot(slot).getStack();
 	}
 
 	public void setStackInSlot(int slot, ItemStack stack) {
-		contentsChangedInternal(slot, stack, null);
-		onContentsChanged(slot);
-	}
-
-	/**
-	 * This stack should never be modified.
-	 */
-	public ItemStack getStackInSlot(int slot) {
-		return stacks[slot];
+		getSlot(slot).setNewStack(stack);
 	}
 
 	public ItemVariant getVariantInSlot(int slot) {
-		return variants[slot];
+		return getSlot(slot).getResource();
 	}
 
 	public int getSlotLimit(int slot) {
 		return getStackInSlot(slot).getMaxStackSize();
 	}
 
+	/**
+	 * Determines the maximum amount of an item that can be stored in the given slot.
+	 */
 	protected int getStackLimit(int slot, ItemVariant resource) {
 		return Math.min(getSlotLimit(slot), resource.getItem().getMaxStackSize());
 	}
 
-	public boolean isItemValid(int slot, ItemVariant resource, long amount) {
-		return true;
-	}
-
-	protected void onLoad() {
-	}
-
+	/**
+	 * Once a transaction is committed, this is invoked once for each modified slot.
+	 */
 	protected void onContentsChanged(int slot) {
 	}
 
-	public void setSize(int size) {
-		this.stacks = new ItemStack[size];
-		this.variants = new ItemVariant[size];
-		this.views = new ItemStackHandlerSlotView[size];
-		for (int i = 0; i < this.stacks.length; i++) {
-			stacks[i] = ItemStack.EMPTY;
-			variants[i] = blank;
-			views[i] = new ItemStackHandlerSlotView(this, i);
-		}
-		lookup.clear();
-		nonEmptyViews.clear();
+	/**
+	 * Get a set of all slots containing the given item, sorted by ascending indices.
+	 * The returned set may be empty, and should not be modified in any way.
+	 */
+	public SortedSet<ItemStackHandlerSlot> getSlotsContaining(Item item) {
+		return lookup.containsKey(item) ? lookup.get(item) : EmptySortedSet.cast();
 	}
+
+	/**
+	 * Called after NBT is loaded and this handler has been updated.
+	 */
+	protected void onLoad() {
+	}
+
+	/**
+	 * True if this handler only contains empty stacks.
+	 */
+	public boolean empty() {
+		return nonEmptySlots.isEmpty();
+	}
+
+	/**
+	 * Resize this handler, clearing all existing content.
+	 */
+	public void setSize(int size) {
+		slots.clear();
+		nonEmptySlots.clear();
+		lookup.clear();
+		for (int i = 0; i < size; i++) {
+			slots.add(new ItemStackHandlerSlot(i, this, ItemStack.EMPTY));
+		}
+	}
+
+	// serialization
 
 	@Override
 	public CompoundTag serializeNBT() {
 		ListTag nbtTagList = new ListTag();
-		for (int i = 0; i < stacks.length; i++) {
-			ItemStack stack = stacks[i];
+		for (ItemStackHandlerSlot slot : slots) {
+			ItemStack stack = slot.getStack();
 			if (!stack.isEmpty()) {
 				CompoundTag itemTag = new CompoundTag();
-				itemTag.putInt("Slot", i);
+				itemTag.putInt("Slot", slot.getIndex());
 				stack.save(itemTag);
 				nbtTagList.add(itemTag);
 			}
 		}
 		CompoundTag nbt = new CompoundTag();
 		nbt.put("Items", nbtTagList);
-		nbt.putInt("Size", stacks.length);
+		nbt.putInt("Size", slots.size());
 		return nbt;
 	}
 
 	@Override
 	public void deserializeNBT(CompoundTag nbt) {
-		setSize(nbt.contains("Size", Tag.TAG_INT) ? nbt.getInt("Size") : stacks.length);
+		setSize(nbt.contains("Size", Tag.TAG_INT) ? nbt.getInt("Size") : slots.size()); // also clears
 		ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
 		for (int i = 0; i < tagList.size(); i++) {
 			CompoundTag itemTags = tagList.getCompound(i);
 			int slot = itemTags.getInt("Slot");
 
-			if (slot >= 0 && slot < stacks.length) {
+			if (slot >= 0 && slot < slots.size()) {
 				ItemStack stack = ItemStack.of(itemTags);
-				contentsChangedInternal(slot, stack, null);
+				slots.get(i).setNewStack(stack);
 			}
-		}
-		// fill in lookup with deserialized data
-		for (int i = 0; i < stacks.length; i++) {
-			ItemStack stack = stacks[i];
-			getIndices(stack.getItem()).add(i);
 		}
 		onLoad();
 	}
 
-	protected void updateLookup(Item oldItem, Item newItem, int index) {
-		getIndices(oldItem).remove(index);
-		getIndices(newItem).add(index);
-	}
+	// misc
 
-	protected IntSortedSet getIndices(Item item) {
-		return getIndices(lookup, item);
-	}
-
-	protected static IntSortedSet getIndices(Map<Item, IntSortedSet> lookup, Item item) {
-		return lookup.computeIfAbsent(item, ItemStackHandler::makeSet);
-	}
-
-	protected static IntSortedSet makeSet(Item item) {
-		return new IntAVLTreeSet(Integer::compareTo);
-	}
-
-	protected static SortedSet<ItemStackHandlerSlotView> makeViewSet(@Nullable SortedSet<ItemStackHandlerSlotView> original) {
-		return original != null
-				? new ObjectAVLTreeSet<>(original)
-				: new ObjectAVLTreeSet<>(Comparator.comparingInt(view -> view.index));
-	}
-
-	public static ItemStack[] emptyStackArray(int size) {
-		ItemStack[] stacks = new ItemStack[size];
-		Arrays.fill(stacks, ItemStack.EMPTY);
-		return stacks;
-	}
-
-	public static class SnapshotData implements ItemStackHandlerSnapshot {
-		public final ItemStack[] stacks;
-		public final ItemVariant[] variants;
-		public final Map<Item, IntSortedSet> lookup;
-		public final SortedSet<ItemStackHandlerSlotView> nonEmptyViews;
-
-		protected SnapshotData(ItemStack[] stacks, ItemVariant[] variants, Map<Item, IntSortedSet> lookup, SortedSet<ItemStackHandlerSlotView> nonEmptyViews) {
-			this.stacks = stacks;
-			this.variants = variants;
-			this.lookup = lookup;
-			this.nonEmptyViews = nonEmptyViews;
+	void onStackChange(ItemStackHandlerSlot slot, ItemStack oldStack, ItemStack newStack) {
+		if (ItemStack.isSameItem(oldStack, newStack))
+			return;
+		SortedSet<ItemStackHandlerSlot> oldItemSlots = getSlotsContaining(oldStack.getItem());
+		if (!oldItemSlots.isEmpty()) {
+			oldItemSlots.remove(slot);
 		}
-
-		@Override
-		public void apply(ItemStackHandler handler) {
-			handler.stacks = stacks;
-			handler.variants = variants;
-			handler.lookup = lookup;
-			handler.nonEmptyViews = nonEmptyViews;
+		lookup.computeIfAbsent(newStack.getItem(), $ -> createSlotSet()).add(slot);
+		if (oldStack.isEmpty()) { // no longer empty
+			nonEmptySlots.add(slot);
+		} else if (newStack.isEmpty()) { // became empty
+			nonEmptySlots.remove(slot);
 		}
+	}
 
-		public static SnapshotData of(ItemStackHandler handler) {
-			ItemStack[] stacks = handler.stacks;
-			ItemStack[] items = new ItemStack[stacks.length];
-			System.arraycopy(stacks, 0, items, 0, stacks.length);
-
-			ItemVariant[] variants = handler.variants;
-			ItemVariant[] vars = new ItemVariant[variants.length];
-			System.arraycopy(variants, 0, vars, 0, variants.length);
-
-			Map<Item, IntSortedSet> lookup = handler.lookup;
-			Map<Item, IntSortedSet> map = new HashMap<>();
-			// a deep copy here seems unavoidable
-			lookup.forEach((item, set) -> {
-				IntSortedSet copy = makeSet(item);
-				copy.addAll(set);
-				map.put(item, copy);
-			});
-
-			SortedSet<ItemStackHandlerSlotView> nonEmptyViews = handler.nonEmptyViews;
-			SortedSet<ItemStackHandlerSlotView> views = makeViewSet(nonEmptyViews);
-			return new SnapshotData(items, vars, map, views);
-		}
+	void initSlot(ItemStackHandlerSlot slot) {
+		ItemStack stack = slot.getStack();
+		lookup.computeIfAbsent(stack.getItem(), $ -> createSlotSet()).add(slot);
+		if (!stack.isEmpty())
+			nonEmptySlots.add(slot);
 	}
 
 	@Override
-	protected void onFinalCommit() {
-		super.onFinalCommit();
+	public String toString() {
+		return getClass().getSimpleName() + '[' + slots + ']';
+	}
+
+	private Iterator<ItemStackHandlerSlot> getInsertableSlotsFor(ItemVariant variant) {
+		SortedSet<ItemStackHandlerSlot> slots = getSlotsContaining(variant.getItem());
+		SortedSet<ItemStackHandlerSlot> emptySlots = getSlotsContaining(Items.AIR);
+		if (slots.isEmpty()) {
+			return emptySlots.isEmpty() ? Collections.emptyIterator() : emptySlots.iterator();
+		} else {
+			return emptySlots.isEmpty() ? slots.iterator() : new DualSortedSetIterator<>(slots, emptySlots);
+		}
+	}
+
+	private static SortedSet<ItemStackHandlerSlot> createSlotSet() {
+		return new ObjectAVLTreeSet<>(Comparator.comparingInt(ItemStackHandlerSlot::getIndex));
 	}
 }

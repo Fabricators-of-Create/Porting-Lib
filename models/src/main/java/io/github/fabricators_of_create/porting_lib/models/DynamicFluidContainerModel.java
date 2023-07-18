@@ -3,6 +3,8 @@ package io.github.fabricators_of_create.porting_lib.models;
 import java.util.Map;
 import java.util.function.Function;
 
+import io.github.fabricators_of_create.porting_lib.models.geometry.SimpleModelState;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;

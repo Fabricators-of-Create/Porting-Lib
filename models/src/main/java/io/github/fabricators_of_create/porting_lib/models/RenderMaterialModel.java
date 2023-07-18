@@ -14,9 +14,15 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class RenderMaterialModel extends ForwardingBakedModel {
 	protected final RenderMaterial material;
+
 	public RenderMaterialModel(BakedModel owner, RenderMaterial material) {
 		this.wrapped = owner;
 		this.material = material;
+	}
+
+	@Override
+	public boolean isVanillaAdapter() {
+		return false;
 	}
 
 	@Override

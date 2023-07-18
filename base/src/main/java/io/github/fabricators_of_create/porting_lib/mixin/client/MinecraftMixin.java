@@ -1,6 +1,11 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.world.item.ItemStack;
+
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
+
+import io.github.fabricators_of_create.porting_lib.block.CustomHitEffectsBlock;
 
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
@@ -35,6 +40,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 
 @Environment(EnvType.CLIENT)
@@ -170,5 +176,19 @@ public abstract class MinecraftMixin {
 		if (InteractEvents.PICK.invoker().onPick((Minecraft) (Object) this, hitResult)) {
 			ci.cancel();
 		}
+	}
+
+	@WrapWithCondition(
+			method = "continueAttack",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/particle/ParticleEngine;crack(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)V"
+			)
+	)
+	private boolean customHitEffects(ParticleEngine engine, BlockPos pos, Direction side) {
+		BlockState state = level.getBlockState(pos);
+		if (state.getBlock() instanceof CustomHitEffectsBlock custom)
+			return !custom.addHitEffects(state, level, hitResult, engine);
+		return true;
 	}
 }

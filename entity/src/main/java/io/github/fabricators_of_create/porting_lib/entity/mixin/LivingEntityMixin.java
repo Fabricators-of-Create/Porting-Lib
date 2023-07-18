@@ -136,7 +136,8 @@ public abstract class LivingEntityMixin extends Entity {
 	private boolean checkHurtShield(LivingEntity self, float shieldDamage,
 									DamageSource source, float amount,
 									@Share("ShieldBlockEvent") LocalRef<ShieldBlockEvent> sharedEvent) {
-		return sharedEvent.get().damageShield;
+		ShieldBlockEvent event = sharedEvent.get();
+		return event == null || event.damageShield;
 	}
 
 	@ModifyVariable(
@@ -153,7 +154,8 @@ public abstract class LivingEntityMixin extends Entity {
 	private float modifyBlockedAmount(float originalStored,
 									 DamageSource source, float amount,
 									 @Share("ShieldBlockEvent") LocalRef<ShieldBlockEvent> sharedEvent) {
-		return sharedEvent.get().damageBlocked;
+		ShieldBlockEvent event = sharedEvent.get();
+		return event == null ? originalStored : event.damageBlocked;
 	}
 
 	@ModifyExpressionValue(
@@ -169,7 +171,9 @@ public abstract class LivingEntityMixin extends Entity {
 	private float modifyDamage(float newDamage, // should be 0
 							   DamageSource source, float amount,
 							   @Share("ShieldBlockEvent") LocalRef<ShieldBlockEvent> sharedEvent) {
-		return amount - sharedEvent.get().damageBlocked;
+		ShieldBlockEvent event = sharedEvent.get();
+		float blocked = event == null ? amount : event.damageBlocked;
+		return amount - blocked;
 	}
 
 	// fall event

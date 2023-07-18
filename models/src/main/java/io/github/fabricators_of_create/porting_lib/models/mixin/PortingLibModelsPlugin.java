@@ -10,13 +10,12 @@ import java.util.List;
 import java.util.Set;
 
 public class PortingLibModelsPlugin implements IMixinConfigPlugin {
+	private static final boolean frexLoaded = FabricLoader.getInstance().isModLoaded("frex");
 
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-		if (mixinClassName.contains("ItemRendererMixin") && FabricLoader.getInstance().isModLoaded("frex"))
-			return false;
-		if (mixinClassName.contains("ItemRenderContextMixin") && FabricLoader.getInstance().isModLoaded("frex"))
-			return true;
+		if (mixinClassName.contains(".frex."))
+			return frexLoaded;
 		return true;
 	}
 

@@ -10,4 +10,8 @@ public interface LanguageManagerExtensions {
 	default Locale getJavaLocale(String code) {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
+
+	default Locale getSelectedJavaLocale() {
+		throw new RuntimeException("mixin not implemented");
+	}
 }

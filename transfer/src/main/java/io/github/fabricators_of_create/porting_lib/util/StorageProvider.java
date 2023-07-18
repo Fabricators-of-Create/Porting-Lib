@@ -1,7 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
-import io.github.fabricators_of_create.porting_lib.transfer.cache.EmptyFluidLookupCache;
-import io.github.fabricators_of_create.porting_lib.transfer.cache.EmptyItemLookupCache;
+import io.github.fabricators_of_create.porting_lib.transfer.internal.extensions.LevelExtensions;
+import io.github.fabricators_of_create.porting_lib.transfer.internal.cache.EmptyFluidLookupCache;
+import io.github.fabricators_of_create.porting_lib.transfer.internal.cache.EmptyItemLookupCache;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
@@ -66,7 +67,7 @@ public class StorageProvider<T> implements Function<Direction, Storage<T>> {
 	 * Create a storage provider for {@link FluidStorage#SIDED fluids}.
 	 */
 	public static StorageProvider<FluidVariant> createForFluids(Level level, BlockPos pos) {
-		BlockApiCache<Storage<FluidVariant>, Direction> cache = level.port_lib$getFluidApiCache(pos);
+		BlockApiCache<Storage<FluidVariant>, Direction> cache = ((LevelExtensions) level).port_lib$getFluidApiCache(pos);
 		if (cache instanceof EmptyFluidLookupCache)
 			return create(FluidStorage.SIDED, level, pos);
 		return create(cache, level);
@@ -76,7 +77,7 @@ public class StorageProvider<T> implements Function<Direction, Storage<T>> {
 	 * Create a storage provider for {@link ItemStorage#SIDED items}.
 	 */
 	public static StorageProvider<ItemVariant> createForItems(Level level, BlockPos pos) {
-		BlockApiCache<Storage<ItemVariant>, Direction> cache = level.port_lib$getItemCache(pos);
+		BlockApiCache<Storage<ItemVariant>, Direction> cache = ((LevelExtensions) level).port_lib$getItemCache(pos);
 		if (cache instanceof EmptyItemLookupCache)
 			return create(ItemStorage.SIDED, level, pos);
 		return create(cache, level);

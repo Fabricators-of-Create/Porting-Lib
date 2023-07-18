@@ -4,7 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 
 public interface BlockEntityExtensions {
-	default CompoundTag getExtraCustomData() {
+	default CompoundTag getCustomData() {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 

@@ -1,11 +1,12 @@
-package io.github.fabricators_of_create.porting_lib.transfer.cache;
+package io.github.fabricators_of_create.porting_lib.transfer.internal.cache;
 
+import io.github.fabricators_of_create.porting_lib.transfer.internal.extensions.ClientLevelExtensions;
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import io.github.fabricators_of_create.porting_lib.util.StorageProvider;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -23,20 +24,20 @@ import org.jetbrains.annotations.Nullable;
  */
 @Internal
 @SuppressWarnings("NonExtendableApiUsage")
-public class ClientItemLookupCache implements BlockApiCache<Storage<ItemVariant>, Direction>, ClientBlockApiCache {
+public class ClientFluidLookupCache implements BlockApiCache<Storage<FluidVariant>, Direction>, ClientBlockApiCache {
 	private final ClientLevel world;
 	private final BlockPos pos;
 	private boolean blockEntityCacheValid = false;
 	private BlockEntity cachedBlockEntity = null;
 
-	public static BlockApiCache<Storage<ItemVariant>, Direction> get(Level level, BlockPos pos) {
+	public static BlockApiCache<Storage<FluidVariant>, Direction> get(Level level, BlockPos pos) {
 		if (level instanceof ClientLevel c)
-			return new ClientItemLookupCache(c, pos);
-		return new EmptyItemLookupCache(pos);
+			return new ClientFluidLookupCache(c, pos);
+		return new EmptyFluidLookupCache(pos);
 	}
 
-	public ClientItemLookupCache(ClientLevel world, BlockPos pos) {
-		world.port_lib$registerCache(pos ,this);
+	public ClientFluidLookupCache(ClientLevel world, BlockPos pos) {
+		((ClientLevelExtensions) world).port_lib$registerCache(pos ,this);
 		this.world = world;
 		this.pos = pos.immutable();
 	}
@@ -48,13 +49,13 @@ public class ClientItemLookupCache implements BlockApiCache<Storage<ItemVariant>
 
 	@Nullable
 	@Override
-	public Storage<ItemVariant> find(@Nullable BlockState state, Direction context) {
+	public Storage<FluidVariant> find(@Nullable BlockState state, Direction context) {
 		// Update block entity cache
 		getBlockEntity();
 		// Query the provider
 		if (cachedBlockEntity == null)
 			return null;
-		return TransferUtil.getItemStorage(world, pos, cachedBlockEntity, context);
+		return TransferUtil.getFluidStorage(world, pos, cachedBlockEntity, context);
 	}
 
 	@Override
@@ -69,8 +70,8 @@ public class ClientItemLookupCache implements BlockApiCache<Storage<ItemVariant>
 	}
 
 	@Override
-	public BlockApiLookup<Storage<ItemVariant>, Direction> getLookup() {
-		return ItemStorage.SIDED;
+	public BlockApiLookup<Storage<FluidVariant>, Direction> getLookup() {
+		return FluidStorage.SIDED;
 	}
 
 	@Override

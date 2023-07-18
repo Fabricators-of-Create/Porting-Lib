@@ -8,9 +8,13 @@
   "entrypoints": {
     "client": [
       "io.github.fabricators_of_create.porting_lib.models.PortingLibModels"
-    ],
-    "preLaunch": [
-      "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
     ]
+  },
+
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_727": [ "io/github/fabricators_of_create/porting_lib/models/extensions/TerrainParticleExtensions" ],
+      "net/minecraft/class_2388": [ "io/github/fabricators_of_create/porting_lib/models/extensions/BlockParticleOptionExtensions" ]
+    }
   }
 }

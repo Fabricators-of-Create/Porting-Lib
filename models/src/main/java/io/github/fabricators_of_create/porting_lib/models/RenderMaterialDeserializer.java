@@ -11,6 +11,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 import io.github.fabricators_of_create.porting_lib.models.util.RenderTypeUtil;
+import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.renderer.v1.material.MaterialFinder;
@@ -20,7 +21,10 @@ import net.minecraft.resources.ResourceLocation;
 public class RenderMaterialDeserializer implements JsonDeserializer<RenderMaterial> {
 	@Override
 	public RenderMaterial deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-		MaterialFinder finder = RendererAccess.INSTANCE.getRenderer().materialFinder();
+		Renderer renderer = RendererAccess.INSTANCE.getRenderer();
+		if (renderer == null)
+			throw new JsonParseException("The Fabric Rendering API is not available. If you have Sodium, install Indium!");
+		MaterialFinder finder = renderer.materialFinder();
 		JsonObject obj = json.getAsJsonObject();
 		forEachSpriteIndex(obj, "blendMode", (spriteIndex, jsonElement) -> finder.blendMode(spriteIndex, BlendMode.fromRenderLayer(RenderTypeUtil.get(new ResourceLocation(jsonElement.getAsString())))));
 		forEachSpriteIndex(obj, "disableColorIndex", (spriteIndex, jsonElement) -> finder.disableColorIndex(spriteIndex, jsonElement.getAsBoolean()));

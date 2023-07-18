@@ -1,8 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
-import it.unimi.dsi.fastutil.ints.IntIterator;
-import it.unimi.dsi.fastutil.ints.IntSortedSet;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -29,15 +30,16 @@ public class ItemStackHandlerContainer extends ItemStackHandler implements Conta
 
 	@Override
 	public int getContainerSize() {
-		return getSlots();
+		return getSlotCount();
 	}
 
 	@Override
 	public boolean isEmpty() {
-		return nonEmptyViews.isEmpty();
+		return super.empty();
 	}
 
 	@Override
+	@NotNull
 	public ItemStack getItem(int slot) {
 		if (indexInvalid(slot))
 			return ItemStack.EMPTY;
@@ -45,6 +47,7 @@ public class ItemStackHandlerContainer extends ItemStackHandler implements Conta
 	}
 
 	@Override
+	@NotNull
 	public ItemStack removeItem(int slot, int amount) {
 		if (indexInvalid(slot))
 			return ItemStack.EMPTY;
@@ -53,6 +56,7 @@ public class ItemStackHandlerContainer extends ItemStackHandler implements Conta
 	}
 
 	@Override
+	@NotNull
 	public ItemStack removeItemNoUpdate(int slot) {
 		if (indexInvalid(slot))
 			return ItemStack.EMPTY;
@@ -62,7 +66,7 @@ public class ItemStackHandlerContainer extends ItemStackHandler implements Conta
 	}
 
 	@Override
-	public void setItem(int slot, ItemStack stack) {
+	public void setItem(int slot, @NotNull ItemStack stack) {
 		if (indexInvalid(slot))
 			return;
 		setStackInSlot(slot, stack);
@@ -73,25 +77,22 @@ public class ItemStackHandlerContainer extends ItemStackHandler implements Conta
 	}
 
 	@Override
-	public boolean stillValid(Player player) {
+	public boolean stillValid(@NotNull Player player) {
 		return false;
 	}
 
 	@Override
-	public boolean canPlaceItem(int index, ItemStack stack) {
+	public boolean canPlaceItem(int index, @NotNull ItemStack stack) {
 		if (indexInvalid(index))
 			return false;
-		return isItemValid(index, ItemVariant.of(stack), stack.getCount());
+		return isItemValid(index, ItemVariant.of(stack));
 	}
 
 	@Override
-	public int countItem(Item item) {
+	public int countItem(@NotNull Item item) {
 		int total = 0;
-		IntSortedSet indices = getIndices(item);
-		for (IntIterator itr = indices.intIterator(); itr.hasNext();) {
-			int i = itr.nextInt();
-			ItemStack stack = getStackInSlot(i);
-			total += stack.getCount();
+		for (ItemStackHandlerSlot slot : getSlotsContaining(item)) {
+			total += slot.getStack().getCount();
 		}
 		return total;
 	}
@@ -99,7 +100,7 @@ public class ItemStackHandlerContainer extends ItemStackHandler implements Conta
 	@Override
 	public boolean hasAnyOf(Set<Item> set) {
 		for (Item item : set) {
-			if (!getIndices(item).isEmpty())
+			if (!getSlotsContaining(item).isEmpty())
 				return true;
 		}
 		return false;
@@ -107,12 +108,12 @@ public class ItemStackHandlerContainer extends ItemStackHandler implements Conta
 
 	@Override
 	public void clearContent() {
-		for (int i = 0; i < getSlots(); i++) {
+		for (int i = 0; i < getSlotCount(); i++) {
 			setStackInSlot(i, ItemStack.EMPTY);
 		}
 	}
 
 	public boolean indexInvalid(int slot) {
-		return slot < 0 || slot >= getSlots();
+		return slot < 0 || slot >= getSlotCount();
 	}
 }
