@@ -16,8 +16,9 @@ public class DerpyItemModel extends ForwardingBakedModel implements TransformTyp
 	}
 
 	@Override
-	public BakedModel applyTransform(ItemDisplayContext transformType, PoseStack poseStack, boolean applyLeftHandTransform) {
+	public BakedModel applyTransform(ItemDisplayContext transformType, PoseStack poseStack, boolean applyLeftHandTransform, DefaultTransform defaultTransform) {
 		poseStack.mulPose(Axis.YP.rotation((float) (((Minecraft.getInstance().level.getGameTime() * 66.666666666666)) / 1000.0F)));
-		return TransformTypeDependentItemBakedModel.super.applyTransform(transformType, poseStack, applyLeftHandTransform);
+		defaultTransform.apply(this);
+		return this;
 	}
 }
