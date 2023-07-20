@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_obj_loader_testmod",
+  "version": "${version}",
+  "name": "Porting Lib Obj Loader Testmod",
+  "description": "Tests the Obj Loader module",
+  "authors": [
+    "The Create Fabric Team"
+  ],
+  "license": "LGPL",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.obj_loader.testmod.PortingLibObjLoaderTestmod"
+    ]
+  }
+}

@@ -3,6 +3,8 @@ moduleDependencies(project, [
 		"model_loader"
 ])
 
+testMod(project)
+
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }

@@ -3,10 +3,8 @@ package io.github.fabricators_of_create.porting_lib.models.obj;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.function.Consumer;
-import java.util.function.Function;
-
-import javax.naming.spi.Resolver;
 
 import com.google.common.collect.Maps;
 import com.google.gson.JsonDeserializationContext;
@@ -15,15 +13,13 @@ import com.google.gson.JsonParseException;
 
 import com.google.gson.JsonParser;
 
-import com.google.gson.JsonSyntaxException;
 import com.mojang.datafixers.util.Either;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryLoader;
 import io.github.fabricators_of_create.porting_lib.models.obj.ObjModel.ModelSettings;
-import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin.Context;
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelResolver;
-import net.fabricmc.fabric.api.client.model.loading.v1.PreparableModelLoadingPlugin;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.UnbakedModel;
@@ -40,18 +36,16 @@ import org.jetbrains.annotations.Nullable;
  * Allows the user to enable automatic face culling, toggle quad shading, flip UVs, render emissively and specify a
  * {@link ObjMaterialLibrary material library} override.
  */
-public class ObjLoader implements PreparableModelLoadingPlugin<ResourceManager>, IGeometryLoader<ObjModel> {
+public class ObjLoader implements ModelLoadingPlugin, IGeometryLoader<ObjModel> {
+	public static final ResourceLocation ID = PortingLib.id("obj");
 	public static final ObjLoader INSTANCE = new ObjLoader();
 	public static final String OBJ_MARKER = PortingLib.id("obj_marker").toString();
 
 	private final Map<ModelSettings, ObjModel> modelCache = Maps.newConcurrentMap();
 	private final Map<ResourceLocation, ObjMaterialLibrary> materialCache = Maps.newConcurrentMap();
 
-	private ResourceManager manager;
-
 	@Override
-	public void onInitializeModelLoader(ResourceManager manager, Context ctx) {
-		this.manager = manager;
+	public void onInitializeModelLoader(Context ctx) {
 		// called every reload, clear caches
 		modelCache.clear();
 		materialCache.clear();
@@ -64,6 +58,7 @@ public class ObjLoader implements PreparableModelLoadingPlugin<ResourceManager>,
 	 * models/misc is automatically scanned for OBJ models.
 	 */
 	private void findModels(Consumer<ResourceLocation> out) {
+		ResourceManager manager = getResourceManager();
 		manager.listResources("models/misc", id -> {
 			if (id.getPath().endsWith(".json")) {
 				manager.getResource(id).ifPresent(resource -> {
@@ -113,7 +108,9 @@ public class ObjLoader implements PreparableModelLoadingPlugin<ResourceManager>,
 	}
 
 	private ObjModel loadModel(ObjModel.ModelSettings settings) {
-		return loadModel(manager.getResource(settings.modelLocation()).orElseThrow(), settings);
+		ResourceLocation id = settings.modelLocation();
+		Resource resource = getResourceManager().getResource(id).orElseThrow(() -> new NoSuchElementException(id.toString()));
+		return loadModel(resource, settings);
 	}
 
 	private ObjModel loadModel(Resource resource, ObjModel.ModelSettings settings) {
@@ -130,7 +127,7 @@ public class ObjLoader implements PreparableModelLoadingPlugin<ResourceManager>,
 
 	public ObjMaterialLibrary loadMaterialLibrary(ResourceLocation materialLocation) {
 		return materialCache.computeIfAbsent(materialLocation, location -> {
-			Resource resource = manager.getResource(location).orElseThrow();
+			Resource resource = getResourceManager().getResource(location).orElseThrow();
 			try (ObjTokenizer rdr = new ObjTokenizer(resource.open())) {
 				return new ObjMaterialLibrary(rdr);
 			} catch (FileNotFoundException e) {
@@ -141,15 +138,19 @@ public class ObjLoader implements PreparableModelLoadingPlugin<ResourceManager>,
 		});
 	}
 
+	private static ResourceManager getResourceManager() {
+		return Minecraft.getInstance().getResourceManager();
+	}
+
 	private class Resolver implements ModelResolver {
 		@Override
 		@Nullable
 		public UnbakedModel resolveModel(Context context) {
 			ResourceLocation id = context.id();
 			ResourceLocation fileId = ModelBakery.MODEL_LISTER.idToFile(id);
-			return manager.getResource(fileId).map(resource -> {
+			return getResourceManager().getResource(fileId).map(resource -> {
 				JsonObject json = tryLoadModelJson(id, resource);
-				return tryReadSettings(json).map(settings -> loadModel(resource, settings), exception -> {
+				return json == null ? null : tryReadSettings(json).map(settings -> loadModel(resource, settings), exception -> {
 					PortingLib.LOGGER.error("Error loading obj model: " + id, exception);
 					return null;
 				});

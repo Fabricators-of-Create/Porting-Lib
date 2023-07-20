@@ -204,7 +204,7 @@ allprojects {
 
 		// Testing
 		// Make sure we don't break canvas
-		modLocalRuntime("io.vram:frex-fabric:$frex_version")
+//		modLocalRuntime("io.vram:frex-fabric:$frex_version")
 	}
 
 	allprojects.each { p ->
