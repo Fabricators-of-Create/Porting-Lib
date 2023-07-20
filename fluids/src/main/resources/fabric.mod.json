@@ -6,12 +6,17 @@
   "description": "A small library for fluid types",
   "entrypoints": {
     "main": [
-
+      "io.github.fabricators_of_create.porting_lib.fluids.PortingLibFluids"
     ]
   },
   "custom": {
     "loom:injected_interfaces": {
-
+      "net/minecraft/class_3610": [
+        "io/github/fabricators_of_create/porting_lib/fluids/extensions/FluidStateExtension"
+      ],
+      "net/minecraft/class_3611": [
+        "io/github/fabricators_of_create/porting_lib/fluids/extensions/FluidExtension"
+      ]
     }
   }
 }
