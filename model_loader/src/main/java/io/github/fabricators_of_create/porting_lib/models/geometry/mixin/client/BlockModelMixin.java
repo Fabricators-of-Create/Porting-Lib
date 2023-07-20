@@ -38,7 +38,7 @@ public class BlockModelMixin implements BlockModelExtensions {
 	private List<ItemOverride> overrides;
 	@Shadow
 	@Nullable
-	protected BlockModel parent;
+	public BlockModel parent;
 	@Unique
 	private IUnbakedGeometry<?> customModel;
 	@Unique
@@ -47,12 +47,19 @@ public class BlockModelMixin implements BlockModelExtensions {
 	@Unique
 	public final VisibilityData visibilityData = new VisibilityData();
 
-	@Inject(method = "bake(Lnet/minecraft/client/resources/model/ModelBaker;Lnet/minecraft/client/renderer/block/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/resources/model/BakedModel;", at = @At("HEAD"), cancellable = true)
-	public void handleCustomModels(ModelBaker modelBaker, BlockModel ownerModel, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation, boolean guiLight3d, CallbackInfoReturnable<BakedModel> cir) {
-		BlockModel blockModel = self();
-
-		if (getCustomGeometry() != null) {
-			cir.setReturnValue(getCustomGeometry().bake(blockModel, modelBaker, spriteGetter, modelTransform, blockModel.getOverrides(modelBaker, ownerModel, spriteGetter), modelLocation));
+	@Inject(
+			method = "bake(Lnet/minecraft/client/resources/model/ModelBaker;Lnet/minecraft/client/renderer/block/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/resources/model/BakedModel;",
+			at = @At("HEAD"),
+			cancellable = true
+	)
+	public void handleCustomModels(ModelBaker modelBaker, BlockModel ownerModel, Function<Material, TextureAtlasSprite> spriteGetter,
+								   ModelState modelTransform, ResourceLocation modelLocation, boolean guiLight3d, CallbackInfoReturnable<BakedModel> cir) {
+		IUnbakedGeometry<?> geometry = getCustomGeometry();
+		if (geometry != null) {
+			ItemOverrides overrides = getOverrides(modelBaker, ownerModel, spriteGetter);
+			cir.setReturnValue(geometry.bake(
+					(BlockModel) (Object) this, modelBaker, spriteGetter, modelTransform, overrides, modelLocation, guiLight3d
+			));
 		}
 	}
 

@@ -35,7 +35,7 @@ public class ElementsModel implements IUnbakedGeometry<ElementsModel> {
 	}
 
 	@Override
-	public BakedModel bake(BlockModel context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
+	public BakedModel bake(BlockModel context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation, boolean isGui3d) {
 		// If there is a root transform, undo the ModelState transform, apply it, then re-apply the ModelState transform.
 		// This is necessary because of things like UV locking, which should only respond to the ModelState, and as such
 		// that is the only transform that should be applied during face bake.
