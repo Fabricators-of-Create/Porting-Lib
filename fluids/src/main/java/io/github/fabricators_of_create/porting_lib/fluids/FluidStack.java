@@ -1,12 +1,7 @@
-package io.github.fabricators_of_create.porting_lib.util;
+package io.github.fabricators_of_create.porting_lib.fluids;
 
 import java.util.Objects;
 import java.util.Optional;
-
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
-import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
-import net.minecraft.network.chat.Component;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -16,6 +11,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -213,13 +209,13 @@ public class FluidStack {
 
 	public CompoundTag getOrCreateTag() {
 		if (tag == null) tag = new CompoundTag();
-        return tag;
+		return tag;
 	}
 
 	public void removeChildTag(String key) {
-        if (getTag() == null) return;
-        getTag().remove(key);
-    }
+		if (getTag() == null) return;
+		getTag().remove(key);
+	}
 
 	public Component getDisplayName() {
 		return FluidVariantAttributes.getName(this.type);
