@@ -1,8 +1,8 @@
-package me.alphamode.forgetags.data;
+package io.github.fabricators_of_create.porting_lib.tags.data;
 
 import java.util.concurrent.CompletableFuture;
 
-import me.alphamode.forgetags.Tags;
+import io.github.fabricators_of_create.porting_lib.tags.Tags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.core.HolderLookup;

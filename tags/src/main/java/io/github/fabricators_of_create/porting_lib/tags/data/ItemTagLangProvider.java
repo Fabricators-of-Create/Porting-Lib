@@ -1,7 +1,5 @@
-package me.alphamode.forgetags.data;
+package io.github.fabricators_of_create.porting_lib.tags.data;
 
-import me.alphamode.forgetags.Tags;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.resources.ResourceLocation;

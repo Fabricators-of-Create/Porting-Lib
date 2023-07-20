@@ -1,4 +1,4 @@
-package me.alphamode.forgetags.data;
+package io.github.fabricators_of_create.porting_lib.tags.data;
 
 import java.util.concurrent.CompletableFuture;
 

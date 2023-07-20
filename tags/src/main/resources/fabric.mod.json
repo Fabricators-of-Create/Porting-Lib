@@ -9,15 +9,15 @@
   ],
   "entrypoints": {
     "main": [
-      "me.alphamode.forgetags.Tags"
+      "io.github.fabricators_of_create.porting_lib.tags.Tags"
     ],
     "fabric-datagen": [
-      "me.alphamode.forgetags.data.DataGenerators"
+      "io.github.fabricators_of_create.porting_lib.tags.data.DataGenerators"
     ]
   },
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_1767": ["me/alphamode/forgetags/extensions/DyeExtension"]
+      "net/minecraft/class_1767": ["io/github/fabricators_of_create/porting_lib/tags/extensions/DyeExtension"]
     }
   }
 }
