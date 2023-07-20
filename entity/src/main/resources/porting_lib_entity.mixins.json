@@ -6,6 +6,7 @@
   "mixins": [
     "AbstractMinecartMixin",
     "BlockBehaviourMixin",
+    "BundlePacketMixin",
     "EntityMixin",
     "ExperienceOrbMixin",
     "LevelMixin",
