@@ -88,7 +88,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 	}
 
 	@Override
-	public BakedModel bake(BlockModel context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
+	public BakedModel bake(BlockModel context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation, boolean isGui3d) {
 		if (deprecatedLoader)
 			LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated loader \"forge:bucket\" instead of \"forge:fluid_container\". This loader will be removed in 1.20.");
 		for (var entry : deprecationWarnings.entrySet())
@@ -223,7 +223,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 
 						if (!cache.containsKey(name)) {
 							DynamicFluidContainerModel unbaked = this.parent.withFluid(fluid);
-							BakedModel bakedModel = unbaked.bake(owner, baker, Material::sprite, BlockModelRotation.X0_Y0, this, new ResourceLocation("forge:bucket_override"));
+							BakedModel bakedModel = unbaked.bake(owner, baker, Material::sprite, BlockModelRotation.X0_Y0, this, new ResourceLocation("forge:bucket_override"), false);
 							cache.put(name, bakedModel);
 							return bakedModel;
 						}

@@ -1,9 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.models.obj;
 
-import com.google.common.base.Charsets;
-import joptsimple.internal.Strings;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +7,12 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
+
+import com.google.common.base.Charsets;
+
+import joptsimple.internal.Strings;
 
 /**
  * A tokenizer for OBJ and MTL files.
@@ -29,13 +31,15 @@ public class ObjTokenizer implements AutoCloseable {
 		//noinspection LoopConditionNotUpdatedInsideLoop
 		do {
 			String currentLine = lineReader.readLine();
-			if (currentLine == null)
+			if (currentLine == null) {
 				return null;
+			}
 
 			List<String> lineParts = new ArrayList<>();
 
-			if (currentLine.startsWith("#"))
+			if (currentLine.startsWith("#")) {
 				currentLine = "";
+			}
 
 			if (currentLine.length() > 0) {
 
@@ -48,17 +52,20 @@ public class ObjTokenizer implements AutoCloseable {
 
 					if (hasContinuation) {
 						currentLine = lineReader.readLine();
-						if (currentLine == null)
+						if (currentLine == null) {
 							break;
+						}
 
-						if (currentLine.length() == 0 || currentLine.startsWith("#"))
+						if (currentLine.length() == 0 || currentLine.startsWith("#")) {
 							break;
+						}
 					}
 				} while (hasContinuation);
 			}
 
-			if (lineParts.size() > 0)
+			if (lineParts.size() > 0) {
 				return lineParts.toArray(new String[0]);
+			}
 		}
 		while (ignoreEmptyLines);
 

@@ -46,7 +46,7 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel> {
 	}
 
 	@Override
-	public BakedModel bake(BlockModel context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
+	public BakedModel bake(BlockModel context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation, boolean isGui3d) {
 		Material particleLocation = context.getMaterial("particle");
 		TextureAtlasSprite particle = spriteGetter.apply(particleLocation);
 

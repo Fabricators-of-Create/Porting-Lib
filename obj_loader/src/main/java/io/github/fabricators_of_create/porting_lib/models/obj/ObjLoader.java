@@ -6,13 +6,13 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.collect.Maps;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-
 import com.google.gson.JsonParser;
-
 import com.mojang.datafixers.util.Either;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
@@ -27,8 +27,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
-
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A loader for {@link ObjModel OBJ models}.
@@ -62,8 +60,9 @@ public class ObjLoader implements ModelLoadingPlugin, IGeometryLoader<ObjModel> 
 		manager.listResources("models/misc", id -> {
 			if (id.getPath().endsWith(".json")) {
 				manager.getResource(id).ifPresent(resource -> {
-					if (tryLoadModelJson(id, resource) != null)
+					if (tryLoadModelJson(id, resource) != null) {
 						out.accept(id);
+					}
 				});
 			}
 			return true;
@@ -116,7 +115,7 @@ public class ObjLoader implements ModelLoadingPlugin, IGeometryLoader<ObjModel> 
 	private ObjModel loadModel(Resource resource, ObjModel.ModelSettings settings) {
 		return modelCache.computeIfAbsent(settings, data -> {
 			try (ObjTokenizer tokenizer = new ObjTokenizer(resource.open())) {
-				return ObjModel.parse(tokenizer, settings);
+				return ObjParser.parse(tokenizer, settings);
 			} catch (FileNotFoundException e) {
 				throw new RuntimeException("Could not find OBJ model", e);
 			} catch (Exception e) {

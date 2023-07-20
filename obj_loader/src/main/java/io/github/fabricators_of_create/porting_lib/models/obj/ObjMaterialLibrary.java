@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.joml.Vector4f;
+
 import com.google.common.collect.Maps;
 
 import joptsimple.internal.Strings;
@@ -13,8 +15,6 @@ import net.fabricmc.fabric.api.renderer.v1.material.MaterialFinder;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
 import net.minecraft.resources.ResourceLocation;
 
-import org.joml.Vector4f;
-
 /**
  * An OBJ material library (MTL), composed of named {@link Material materials}.
  */
@@ -22,7 +22,8 @@ public class ObjMaterialLibrary {
 	public static final ObjMaterialLibrary EMPTY = new ObjMaterialLibrary();
 	final Map<String, Material> materials = Maps.newHashMap();
 
-	private ObjMaterialLibrary() {}
+	private ObjMaterialLibrary() {
+	}
 
 	public ObjMaterialLibrary(ObjTokenizer reader) throws IOException {
 		Material currentMaterial = null;
@@ -41,7 +42,7 @@ public class ObjMaterialLibrary {
 					break;
 
 				case "Ka":
-					currentMaterial.ambientColor = ObjModel.parseVector4(line);
+					currentMaterial.ambientColor = ObjParser.parseVector4(line);
 					break;
 
 				case "map_Ka":
@@ -50,7 +51,7 @@ public class ObjMaterialLibrary {
 					break;
 
 				case "Kd":
-					currentMaterial.diffuseColor = ObjModel.parseVector4(line);
+					currentMaterial.diffuseColor = ObjParser.parseVector4(line);
 					break;
 
 				case "forge_TintIndex":
@@ -63,7 +64,7 @@ public class ObjMaterialLibrary {
 					break;
 
 				case "Ks":
-					currentMaterial.specularColor = ObjModel.parseVector4(line);
+					currentMaterial.specularColor = ObjParser.parseVector4(line);
 					break;
 
 				case "Ns":
@@ -88,8 +89,9 @@ public class ObjMaterialLibrary {
 	}
 
 	public Material getMaterial(String mat) {
-		if (!materials.containsKey(mat))
+		if (!materials.containsKey(mat)) {
 			throw new NoSuchElementException("The material was not found in the library: " + mat);
+		}
 		return materials.get(mat);
 	}
 
@@ -121,8 +123,7 @@ public class ObjMaterialLibrary {
 			return this.material;
 		}
 
-		public Material(String name)
-		{
+		public Material(String name) {
 			this.name = name;
 		}
 	}
