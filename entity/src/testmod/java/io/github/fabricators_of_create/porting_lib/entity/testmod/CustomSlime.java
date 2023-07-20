@@ -2,14 +2,12 @@ package io.github.fabricators_of_create.porting_lib.entity.testmod;
 
 import org.jetbrains.annotations.NotNull;
 
-import io.github.fabricators_of_create.porting_lib.entity.CustomLandingEffectsSlime;
-import io.github.fabricators_of_create.porting_lib.entity.ExtraSpawnDataEntity;
+import io.github.fabricators_of_create.porting_lib.entity.IEntityAdditionalSpawnData;
 import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Slime;
@@ -19,7 +17,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public class CustomSlime extends Slime implements CustomLandingEffectsSlime, ExtraSpawnDataEntity, MultiPartEntity {
+public class CustomSlime extends Slime implements IEntityAdditionalSpawnData, MultiPartEntity {
 
 	public final OrbitingItem item;
 	public final PartEntity<?>[] parts;
@@ -61,8 +59,8 @@ public class CustomSlime extends Slime implements CustomLandingEffectsSlime, Ext
 	}
 
 	@Override
-	public boolean playLandingSound(SoundEvent squishSound, float volume, float pitch) {
-		playSound(SoundEvents.GENERIC_EXPLODE, volume, pitch);
+	public boolean spawnCustomParticles() {
+		playSound(SoundEvents.GENERIC_EXPLODE, this.getSoundVolume(), ((this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F) / 0.8F);
 		return true;
 	}
 

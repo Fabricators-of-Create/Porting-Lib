@@ -1,10 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.entity.client;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
-import io.github.fabricators_of_create.porting_lib.entity.ExtraSpawnDataEntity;
+import io.github.fabricators_of_create.porting_lib.entity.IEntityAdditionalSpawnData;
 import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
-import io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -27,7 +26,7 @@ public class PortingLibEntityClient implements ClientModInitializer {
 			int entityId = spawnPacket.getId();
 			handler.handleAddEntity(spawnPacket);
 			Entity entity = client.level.getEntity(entityId);
-			if (entity instanceof ExtraSpawnDataEntity extra) {
+			if (entity instanceof IEntityAdditionalSpawnData extra) {
 				extra.readSpawnData(copy);
 			} else {
 				PortingLib.LOGGER.error("ExtraSpawnDataEntity spawn data received, but no corresponding entity was found! Entity: [{}]", entity);
@@ -37,7 +36,7 @@ public class PortingLibEntityClient implements ClientModInitializer {
 	}
 	@Override
 	public void onInitializeClient() {
-		ClientPlayNetworking.registerGlobalReceiver(ExtraSpawnDataEntity.EXTRA_DATA_PACKET, PortingLibEntityClient::handlePacketReceived);
+		ClientPlayNetworking.registerGlobalReceiver(IEntityAdditionalSpawnData.EXTRA_DATA_PACKET, PortingLibEntityClient::handlePacketReceived);
 		ClientEntityEvents.ENTITY_LOAD.register((entity, world) -> {
 			if (entity instanceof MultiPartEntity partEntity && partEntity.isMultipartEntity()) {
 				for (PartEntity<?> part : partEntity.getParts()) {
