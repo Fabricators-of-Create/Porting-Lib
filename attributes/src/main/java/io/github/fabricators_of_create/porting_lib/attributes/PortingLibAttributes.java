@@ -20,8 +20,6 @@ public class PortingLibAttributes implements ModInitializer {
 	 */
 	public static final Attribute BLOCK_REACH = new RangedAttribute("porting_lib.block_reach", 4.5D, 0.0D, 1024.0D).setSyncable(true);
 
-	@Deprecated(forRemoval = true, since = "1.19.4")
-	public static final Attribute REACH_DISTANCE = BLOCK_REACH;
 	public static final Attribute ENTITY_GRAVITY = new RangedAttribute("porting_lib.entity_gravity", 0.08D, -8.0D, 8.0D).setSyncable(true);
 	public static final Attribute SWIM_SPEED = new RangedAttribute("porting_lib.swimSpeed", 1.0D, 0.0D, 1024.0D).setSyncable(true);
 
@@ -32,9 +30,7 @@ public class PortingLibAttributes implements ModInitializer {
 	 * @see PlayerAttributesExtensions#canReach(Entity, double)
 	 * @see PlayerAttributesExtensions#canReach(Vec3, double)
 	 */
-	public static final Attribute ENTITY_REACH =new RangedAttribute("porting_lib.entity_reach", 3.0D, 0.0D, 1024.0D).setSyncable(true);
-
-	public static final Attribute ATTACK_RANGE = ENTITY_REACH;
+	public static final Attribute ENTITY_REACH = new RangedAttribute("porting_lib.entity_reach", 3.0D, 0.0D, 1024.0D).setSyncable(true);
 
 	@Override
 	public void onInitialize() {

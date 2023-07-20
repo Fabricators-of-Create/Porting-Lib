@@ -1,7 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.event.common;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomExpBlock;
-import io.github.fabricators_of_create.porting_lib.event.BaseEvent;
+import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
 import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;

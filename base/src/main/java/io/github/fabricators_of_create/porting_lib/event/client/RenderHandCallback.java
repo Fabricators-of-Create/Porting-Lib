@@ -2,7 +2,7 @@ package io.github.fabricators_of_create.porting_lib.event.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import io.github.fabricators_of_create.porting_lib.event.BaseEvent;
+import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.Event;
