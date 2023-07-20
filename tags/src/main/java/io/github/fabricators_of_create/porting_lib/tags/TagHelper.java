@@ -1,4 +1,4 @@
-package me.alphamode.forgetags;
+package io.github.fabricators_of_create.porting_lib.tags;
 
 import net.minecraft.Util;
 import net.minecraft.core.Holder;

@@ -1,4 +1,4 @@
-package me.alphamode.forgetags.mixin;
+package io.github.fabricators_of_create.porting_lib.tags.mixin;
 
 import net.minecraft.world.level.material.MapColor;
 
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import me.alphamode.forgetags.extensions.DyeExtension;
+import io.github.fabricators_of_create.porting_lib.tags.extensions.DyeExtension;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
