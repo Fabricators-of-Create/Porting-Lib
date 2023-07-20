@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_fluids",
+  "version": "${version}",
+  "name": "Porting Lib Fluids",
+  "description": "A small library for fluid types",
+  "entrypoints": {
+    "main": [
+
+    ]
+  },
+  "custom": {
+    "loom:injected_interfaces": {
+
+    }
+  }
+}
