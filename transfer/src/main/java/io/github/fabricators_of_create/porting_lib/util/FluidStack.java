@@ -229,7 +229,7 @@ public class FluidStack {
 		return tag != null;
 	}
 
-	public static FluidStack fromBuffer(FriendlyByteBuf buffer) {
+	public static FluidStack readFromPacket(FriendlyByteBuf buffer) {
 		FluidVariant fluid = FluidVariant.fromPacket(buffer);
 		long amount = buffer.readVarLong();
 		CompoundTag tag = buffer.readNbt();
@@ -237,14 +237,10 @@ public class FluidStack {
 		return new FluidStack(fluid, amount, tag);
 	}
 
-	public FriendlyByteBuf toBuffer(FriendlyByteBuf buffer) {
-		return toBuffer(this, buffer);
-	}
-
-	public static FriendlyByteBuf toBuffer(FluidStack stack, FriendlyByteBuf buffer) {
-		stack.getType().toPacket(buffer);
-		buffer.writeVarLong(stack.getAmount());
-		buffer.writeNbt(stack.tag);
+	public FriendlyByteBuf writeToPacket(FriendlyByteBuf buffer) {
+		getType().toPacket(buffer);
+		buffer.writeVarLong(getAmount());
+		buffer.writeNbt(getTag());
 		return buffer;
 	}
 
