@@ -18,10 +18,34 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 public class NetworkHooks {
 	public static final ResourceLocation OPEN_ID = PortingLib.id("open_screen");
 
+	/**
+	 * Request to open a GUI on the client, from the server
+	 *
+	 * @param player The player to open the GUI for
+	 * @param containerSupplier A supplier creating a menu instance on the server.
+	 */
+	public static void openScreen(ServerPlayer player, MenuProvider containerSupplier) {
+		openScreen(player, containerSupplier, buf -> {});
+	}
+
+	/**
+	 * Request to open a GUI on the client, from the server
+	 *
+	 * @param player The player to open the GUI for
+	 * @param containerProvider A supplier creating a menu instance on the server.
+	 * @param pos A block pos, which will be encoded into the auxillary data for this request
+	 */
 	public static void openScreen(ServerPlayer player, MenuProvider containerProvider, BlockPos pos) {
 		openScreen(player, containerProvider, buf -> buf.writeBlockPos(pos));
 	}
 
+	/**
+	 * Request to open a GUI on the client, from the server
+	 *
+	 * @param player The player to open the GUI for
+	 * @param factory A supplier creating a menu instance on the server.
+	 * @param extraDataWriter Consumer to write any additional data the GUI needs
+	 */
 	public static void openScreen(ServerPlayer player, MenuProvider factory, Consumer<FriendlyByteBuf> extraDataWriter) {
 		player.doCloseContainer();
 		((ServerPlayerAccessor)player).callNextContainerCounter();
