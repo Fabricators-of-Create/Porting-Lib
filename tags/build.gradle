@@ -1,4 +1,4 @@
-setupDatagen(project, "forge_tags")
+setupDatagen(project, "tags")
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN

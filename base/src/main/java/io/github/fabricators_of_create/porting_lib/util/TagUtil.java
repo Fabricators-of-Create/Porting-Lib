@@ -2,7 +2,7 @@ package io.github.fabricators_of_create.porting_lib.util;
 
 import javax.annotation.Nullable;
 
-import me.alphamode.forgetags.Tags;
+import io.github.fabricators_of_create.porting_lib.tags.Tags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
