@@ -17,7 +17,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.fabricmc.api.EnvType;
@@ -60,7 +59,7 @@ public abstract class ParticleEngineMixin {
 	@ModifyExpressionValue(method = "destroy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;shouldSpawnParticlesOnBreak()Z"))
 	private boolean port_lib$customDestroyEffects(boolean original, BlockPos blockPos, BlockState blockState) {
 		if (blockState.getBlock() instanceof CustomDestroyEffectsBlock custom) {
-			if (!custom.addHitEffects(blockState, level, blockPos, (ParticleEngine) (Object) this)) {
+			if (!custom.addDestroyEffects(blockState, level, blockPos, (ParticleEngine) (Object) this)) {
 				return false;
 			}
 		}
