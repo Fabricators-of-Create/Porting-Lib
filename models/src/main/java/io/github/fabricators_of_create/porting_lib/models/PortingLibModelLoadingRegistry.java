@@ -56,6 +56,8 @@ public enum PortingLibModelLoadingRegistry implements ModelLoadingPlugin {
 		@Nullable
 		public UnbakedModel resolveModel(Context context) {
 			ResourceLocation modelId = context.id();
+			if (modelId.getPath().contains("builtin"))
+				return null;
 			try {
 				JsonObject object = GSON.fromJson(getModelJson(modelId), JsonObject.class);
 				if (object.has("loader")) {
