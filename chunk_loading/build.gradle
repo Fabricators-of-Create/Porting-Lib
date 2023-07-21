@@ -1,0 +1,5 @@
+mixinExtras(dependencies)
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+}
