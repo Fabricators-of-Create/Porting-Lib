@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+
 import io.github.fabricators_of_create.porting_lib.block.CustomDestroyEffectsBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
@@ -55,12 +57,13 @@ public abstract class ParticleEngineMixin {
 		}
 	}
 
-	@Inject(method = "destroy", at = @At("HEAD"), cancellable = true)
-	private void port_lib$customDestroyEffects(BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
+	@ModifyExpressionValue(method = "destroy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;shouldSpawnParticlesOnBreak()Z"))
+	private boolean port_lib$customDestroyEffects(boolean original, BlockPos blockPos, BlockState blockState) {
 		if (blockState.getBlock() instanceof CustomDestroyEffectsBlock custom) {
-			if (custom.applyCustomDestroyEffects(blockState, level, blockPos, (ParticleEngine) (Object) this)) {
-				ci.cancel();
+			if (!custom.addHitEffects(blockState, level, blockPos, (ParticleEngine) (Object) this)) {
+				return false;
 			}
 		}
+		return original;
 	}
 }
