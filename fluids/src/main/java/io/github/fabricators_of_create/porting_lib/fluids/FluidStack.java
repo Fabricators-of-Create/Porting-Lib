@@ -3,6 +3,13 @@ package io.github.fabricators_of_create.porting_lib.fluids;
 import java.util.Objects;
 import java.util.Optional;
 
+import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
+import net.minecraft.world.item.ItemStack;
+
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -143,6 +150,13 @@ public class FluidStack {
 		setAmount(getAmount() - amount);
 	}
 
+	/**
+	 * Determines if the FluidIDs and NBT Tags are equal. This does not check amounts.
+	 *
+	 * @param other
+	 *            The FluidStack for comparison
+	 * @return true if the Fluids (IDs and NBT Tags) are the same
+	 */
 	public boolean isFluidEqual(FluidStack other) {
 		if (this == other) return true;
 		return isFluidEqual(other.getType());
@@ -244,6 +258,52 @@ public class FluidStack {
 		CompoundTag tag = getTag();
 		if (tag != null) tag = tag.copy();
 		return new FluidStack(getType(), getAmount(), tag);
+	}
+
+	private boolean isFluidStackTagEqual(FluidStack other) {
+		return tag == null ? other.tag == null : other.tag != null && tag.equals(other.tag);
+	}
+
+	/**
+	 * Determines if the NBT Tags are equal. Useful if the FluidIDs are known to be equal.
+	 */
+	public static boolean areFluidStackTagsEqual(@NotNull FluidStack stack1, @NotNull FluidStack stack2) {
+		return stack1.isFluidStackTagEqual(stack2);
+	}
+
+	/**
+	 * Determines if the Fluids are equal and this stack is larger.
+	 *
+	 * @return true if this FluidStack contains the other FluidStack (same fluid and >= amount)
+	 */
+	public boolean containsFluid(@NotNull FluidStack other) {
+		return isFluidEqual(other) && amount >= other.amount;
+	}
+
+	/**
+	 * Determines if the FluidIDs, Amounts, and NBT Tags are all equal.
+	 *
+	 * @param other
+	 *            - the FluidStack for comparison
+	 * @return true if the two FluidStacks are exactly the same
+	 */
+	public boolean isFluidStackIdentical(FluidStack other) {
+		return isFluidEqual(other) && amount == other.amount;
+	}
+
+	/**
+	 * Determines if the FluidIDs and NBT Tags are equal compared to a registered container
+	 * ItemStack. This does not check amounts.
+	 *
+	 * @param other
+	 *            The ItemStack for comparison
+	 * @return true if the Fluids (IDs and NBT Tags) are the same
+	 */
+	public boolean isFluidEqual(@NotNull ItemStack other) {
+		Storage<FluidVariant> storage = FluidStorage.ITEM.find(other, ContainerItemContext.withInitial(other));;
+		if (storage == null)
+			return false;
+		return new FluidStack(StorageUtil.findExtractableContent(storage, null)).isFluidEqual(this);
 	}
 
 	@Override
