@@ -20,7 +20,7 @@ public interface CustomDestroyEffectsBlock {
 	 * @return True to prevent vanilla break particles from spawning.
 	 */
 	@Environment(EnvType.CLIENT)
-	default boolean addHitEffects(BlockState state, ClientLevel Level, BlockPos pos, ParticleEngine engine) {
+	default boolean addDestroyEffects(BlockState state, ClientLevel Level, BlockPos pos, ParticleEngine engine) {
 		return !state.shouldSpawnParticlesOnBreak();
 	}
 }
