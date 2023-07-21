@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.models.events;
 
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.resources.model.BakedModel;
@@ -9,6 +10,10 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.Map;
 
+/**
+ * @deprecated switch to a {@link ModelLoadingPlugin}
+ */
+@Deprecated(forRemoval = true)
 public final class ModelEvents {
 	public static final Event<ModelsBakedCallback> MODELS_BAKED = EventFactory.createArrayBacked(ModelsBakedCallback.class, callbacks -> (manager, models, loader) -> {
 		for (ModelsBakedCallback callback : callbacks) {
