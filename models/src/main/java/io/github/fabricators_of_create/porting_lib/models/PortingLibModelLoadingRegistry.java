@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
+import io.github.fabricators_of_create.porting_lib.models.geometry.GeometryLoaderManager;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelResolver;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
@@ -60,7 +61,7 @@ public enum PortingLibModelLoadingRegistry implements ModelLoadingPlugin {
 				return null;
 			try {
 				JsonObject object = GSON.fromJson(getModelJson(modelId), JsonObject.class);
-				String loader = getLoader(object);
+				String loader = GeometryLoaderManager.getModelLoader(object);
 				if (loader != null) {
 					ResourceLocation id = new ResourceLocation(loader);
 					if (!LOADERS.containsKey(id))
@@ -72,17 +73,6 @@ public enum PortingLibModelLoadingRegistry implements ModelLoadingPlugin {
 				PortingLib.LOGGER.error("Unhandled error loading model: " + modelId, e);
 			}
 			return null;
-		}
-
-		@Nullable
-		private static String getLoader(JsonObject json) {
-			if (json.has("porting_lib:loader")) {
-				return GsonHelper.getAsString(json, "porting_lib:loader");
-			} else if (json.has("loader")) {
-				return GsonHelper.getAsString(json, "loader");
-			} else {
-				return null;
-			}
 		}
 	}
 }
