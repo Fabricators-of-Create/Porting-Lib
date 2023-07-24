@@ -60,8 +60,9 @@ public enum PortingLibModelLoadingRegistry implements ModelLoadingPlugin {
 				return null;
 			try {
 				JsonObject object = GSON.fromJson(getModelJson(modelId), JsonObject.class);
-				if (object.has("loader")) {
-					ResourceLocation id = new ResourceLocation(GsonHelper.getAsString(object, "loader"));
+				String loader = getLoader(object);
+				if (loader != null) {
+					ResourceLocation id = new ResourceLocation(loader);
 					if (!LOADERS.containsKey(id))
 						return null;
 					BlockModel ownerModel = BlockModel.fromString(object.toString());
@@ -71,6 +72,17 @@ public enum PortingLibModelLoadingRegistry implements ModelLoadingPlugin {
 				PortingLib.LOGGER.error("Unhandled error loading model: " + modelId, e);
 			}
 			return null;
+		}
+
+		@Nullable
+		private static String getLoader(JsonObject json) {
+			if (json.has("porting_lib:loader")) {
+				return GsonHelper.getAsString(json, "porting_lib:loader");
+			} else if (json.has("loader")) {
+				return GsonHelper.getAsString(json, "loader");
+			} else {
+				return null;
+			}
 		}
 	}
 }
