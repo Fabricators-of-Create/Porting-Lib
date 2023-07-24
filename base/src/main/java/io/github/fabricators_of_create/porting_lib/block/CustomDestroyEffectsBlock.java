@@ -9,9 +9,18 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public interface CustomDestroyEffectsBlock {
 	/**
-	 * Custom effects when your block is broken.
-	 * @return true to cancel vanilla effects
+	 * Spawn particles for when the block is destroyed. Due to the nature
+	 * of how this is invoked, the x/y/z locations are not always guaranteed
+	 * to host your block. So be sure to do proper sanity checks before assuming
+	 * that the location is this block.
+	 *
+	 * @param Level   The current Level
+	 * @param pos     Position to spawn the particle
+	 * @param engine  A reference to the current particle engine.
+	 * @return True to prevent vanilla break particles from spawning.
 	 */
 	@Environment(EnvType.CLIENT)
-	boolean applyCustomDestroyEffects(BlockState state, ClientLevel Level, BlockPos pos, ParticleEngine engine);
+	default boolean addDestroyEffects(BlockState state, ClientLevel Level, BlockPos pos, ParticleEngine engine) {
+		return !state.shouldSpawnParticlesOnBreak();
+	}
 }
