@@ -138,9 +138,8 @@ public abstract class MinecraftMixin {
 	@Inject(
 			method = "startAttack",
 			at = @At(
-					value = "FIELD",
-					ordinal = 2,
-					target = "Lnet/minecraft/client/Minecraft;player:Lnet/minecraft/client/player/LocalPlayer;"
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/player/LocalPlayer;resetAttackStrengthTicker()V"
 			)
 	)
 	private void port_lib$onAttackMiss(CallbackInfoReturnable<Boolean> cir) {
