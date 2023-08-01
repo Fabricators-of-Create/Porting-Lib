@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.models.obj;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -28,6 +29,8 @@ public class ObjBakedModel implements BakedModel {
 	private final ItemOverrides overrides;
 	private final TextureAtlasSprite particle;
 
+	private final List<BakedQuad> bakedQuads;
+
 	public ObjBakedModel(List<Mesh> meshes, boolean ao, boolean isGui3d, boolean blockLight, boolean customRenderer,
 						 ItemTransforms transforms, ItemOverrides overrides, TextureAtlasSprite particle) {
 		this.meshes = meshes;
@@ -38,6 +41,9 @@ public class ObjBakedModel implements BakedModel {
 		this.transforms = transforms;
 		this.overrides = overrides;
 		this.particle = particle;
+
+		this.bakedQuads = new ArrayList<>();
+		meshes.forEach(mesh -> mesh.forEach(quad -> bakedQuads.add(quad.toBakedQuad(particle))));
 	}
 
 	@Override
@@ -53,7 +59,7 @@ public class ObjBakedModel implements BakedModel {
 	@Override
 	@NotNull
 	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction direction, @NotNull RandomSource random) {
-		throw new UnsupportedOperationException("isVanillaAdapter is false, use FabricBakedModel methods!");
+		return bakedQuads;
 	}
 
 	@Override
