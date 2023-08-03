@@ -33,6 +33,7 @@ The latest patch can be found from GitHub Actions as the build number.
 | `gametest`               | Tools to make GameTest creation as easy as possible                                   |
 | `lazy_registration`      | A implementation of forge's DeferredRegister system rewritten for fabric              |
 | `loot`                   | A small library to modify mob loot                                                    |
+| `mixin_extensions`       | More features for Mixins                                                              |
 | `model_builders`         | Additional model builders for data generation                                         |
 | `model_generators`       | Forge model generators                                                                |
 | `model_loader`           | Base loader for custom model types                                                    |

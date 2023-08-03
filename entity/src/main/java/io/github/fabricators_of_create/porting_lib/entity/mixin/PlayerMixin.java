@@ -1,11 +1,16 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
 import io.github.fabricators_of_create.porting_lib.entity.events.player.PlayerEvents;
+
+import io.github.fabricators_of_create.porting_lib.mixin_extensions.injectors.wrap_variable.WrapVariable;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -51,13 +56,64 @@ public abstract class PlayerMixin extends LivingEntity {
 			cir.setReturnValue(result);
 	}
 
-	@Inject(method = "createAttributes", at = @At("RETURN"))
-	private static void addKnockbackAttribute(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
-		cir.getReturnValue().add(Attributes.ATTACK_KNOCKBACK);
-	}
-
 	@ModifyVariable(method = "giveExperiencePoints", at = @At("HEAD"), argsOnly = true)
 	private int onXpGrant(int experience) {
 		return PlayerExperienceEvents.EXP_GRANT.invoker().modifyExpChange((Player) (Object) this, experience);
+	}
+
+	// make the knockback attribute apply to players - https://bugs.mojang.com/browse/MC-138868
+
+	@ModifyReturnValue(method = "createAttributes", at = @At("RETURN"))
+	private static AttributeSupplier.Builder addKnockbackAttribute(AttributeSupplier.Builder builder) {
+		return builder.add(Attributes.ATTACK_KNOCKBACK);
+	}
+
+	@WrapVariable(
+			method = "attack",
+			slice = @Slice(
+					from = @At(
+							value = "INVOKE",
+							target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"
+					)
+			),
+			at = @At(
+					value = "PORTING_LIB:WRAPPABLE",
+					args = "opcodes=ILOAD",
+					ordinal = 1 // first one is the boolean check
+			)
+	)
+	private int triggerKnockbackCode(int knockback) {
+		if (knockback == 0) {
+			boolean hasKnockback = getAttributeValue(Attributes.ATTACK_KNOCKBACK) != 0;
+			return hasKnockback ? 1 : 0;
+		}
+		return knockback;
+	}
+
+	@WrapVariable(
+			method = "attack",
+			slice = @Slice(
+					from = @At(
+							value = "CONSTANT",
+							ordinal = 0,
+							args = {
+									"intValue=0",
+									"expandZeroConditions=GREATER_THAN_ZERO"
+							}
+					),
+					to = @At(
+							value = "INVOKE",
+							target = "Lnet/minecraft/world/entity/player/Player;setSprinting(Z)V"
+					)
+			),
+			at = @At(
+					value = "PORTING_LIB:WRAPPABLE",
+					args = "opcodes=I2F"
+			),
+			require = 3,
+			allow = 3
+	)
+	private float addKnockbackAttribute(float knockback) {
+		return knockback + (float) getAttributeValue(Attributes.ATTACK_KNOCKBACK);
 	}
 }

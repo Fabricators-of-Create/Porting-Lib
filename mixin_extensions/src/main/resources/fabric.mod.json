@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_mixin_extensions",
+  "version": "${version}",
+  "name": "Porting Lib Mixin Extensions",
+  "description": "Additional features for use in Mixins."
+}
