@@ -21,6 +21,7 @@ The latest patch can be found from GitHub Actions as the build number.
 | `attributes`             | Additional Entity Attributes; step height, gravity, swim speed                        |
 | `base`                   | Code that has not yet been split into modules                                         |
 | `brewing`                | Small library for adding brewing recipes                                              |
+| `chunk_loading`          | Chunk loading management                                                              |
 | `client_events`          | Useful client-side events                                                             |
 | `common`                 | Miscellaneous utilities for other modules                                             |
 | `config`                 | Super light weight implementation of forge's config library                           |
