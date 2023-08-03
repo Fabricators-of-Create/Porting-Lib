@@ -12,7 +12,6 @@ import java.util.Set;
 public class PortingLibMixinPlugin implements IMixinConfigPlugin {
 	@Override
 	public void onLoad(String mixinPackage) {
-
 	}
 
 	@Override

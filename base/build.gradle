@@ -10,7 +10,6 @@ moduleDependencies(project, [
 ])
 
 mixinExtras(dependencies)
-fabricAsm(dependencies)
 
 dependencies {
 	modCompileOnly("io.vram:frex-fabric:$frex_version")
