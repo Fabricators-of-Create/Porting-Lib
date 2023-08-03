@@ -17,8 +17,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 
 public class ItemTagProvider extends FabricTagProvider.ItemTagProvider {
-	public ItemTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
-		super(output, registriesFuture);
+	public ItemTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture, BlockTagProvider blockTags) {
+		super(output, registriesFuture, blockTags);
 	}
 
 	@Override

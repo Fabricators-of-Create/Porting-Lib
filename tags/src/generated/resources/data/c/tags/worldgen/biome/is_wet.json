@@ -1,7 +1,6 @@
 {
   "replace": false,
   "values": [
-    "minecraft:mangrove_swamp",
     "#c:is_wet/overworld",
     {
       "id": "#c:is_wet/nether",

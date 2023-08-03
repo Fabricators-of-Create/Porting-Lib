@@ -16,6 +16,7 @@ import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
 import net.minecraft.network.protocol.game.CommonPlayerSpawnInfo;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -94,7 +95,7 @@ public abstract class ServerPlayerMixin extends Player {
 	public abstract CommonPlayerSpawnInfo createCommonSpawnInfo(ServerLevel world);
 
 	@Inject(method = "<init>", at = @At("RETURN"))
-	private void port_lib$init(MinecraftServer minecraftServer, ServerLevel serverLevel, GameProfile gameProfile, CallbackInfo ci) {
+	private void port_lib$init(MinecraftServer minecraftServer, ServerLevel serverLevel, GameProfile gameProfile, ClientInformation information, CallbackInfo ci) {
 		ServerPlayerCreationCallback.EVENT.invoker().onCreate((ServerPlayer) (Object) this);
 	}
 

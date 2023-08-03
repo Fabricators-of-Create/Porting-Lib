@@ -12,7 +12,6 @@
     "LootPoolAccessor",
     "LootPoolMixin",
     "LootPoolMixin$LootPoolBuilderMixin",
-    "LootTableMixin",
-    "LootTableMixin$BuilderMixin"
+    "LootTableMixin"
   ]
 }

@@ -7,9 +7,6 @@
   "entrypoints": {
     "main": [
       "io.github.fabricators_of_create.porting_lib.tool.loot.CanToolPerformAction::init"
-    ],
-    "fabric-datagen": [
-      "io.github.fabricators_of_create.porting_lib.tool.data.ToolActionsData"
     ]
   },
   "custom": {

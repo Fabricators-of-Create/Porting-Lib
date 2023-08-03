@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.client_events.mixin.client;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
 import net.minecraft.client.multiplayer.CommonListenerCookie;
 import net.minecraft.network.Connection;
@@ -30,8 +32,8 @@ public abstract class ClientPacketListenerMixin extends ClientCommonPacketListen
 		super(client, connection, commonListenerCookie);
 	}
 
-	@Inject(method = "handleRespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;addPlayer(ILnet/minecraft/client/player/AbstractClientPlayer;)V"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
-	private void onClientPlayerRespawn(ClientboundRespawnPacket packet, CallbackInfo ci, CommonPlayerSpawnInfo commonPlayerSpawnInfo, ResourceKey<Level> level, Holder<DimensionType> holder, LocalPlayer oldPlayer, int i, LocalPlayer newPlayer) {
-		ClientPlayerNetworkCloneCallback.EVENT.invoker().onPlayerRespawn(this.minecraft.gameMode, commonPlayerSpawnInfo, oldPlayer, newPlayer, newPlayer.connection.getConnection());
+	@Inject(method = "handleRespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;addEntity(Lnet/minecraft/world/entity/Entity;)V"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
+	private void onClientPlayerRespawn(ClientboundRespawnPacket packet, CallbackInfo ci, @Local(index = 5) LocalPlayer oldPlayer, @Local(index = 6) LocalPlayer newPlayer) {
+		ClientPlayerNetworkCloneCallback.EVENT.invoker().onPlayerRespawn(this.minecraft.gameMode, oldPlayer, newPlayer, newPlayer.connection.getConnection());
 	}
 }

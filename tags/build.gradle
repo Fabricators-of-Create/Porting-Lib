@@ -1,5 +1,3 @@
-setupDatagen(project, "tags")
-
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }

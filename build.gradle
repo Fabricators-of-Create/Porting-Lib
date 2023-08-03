@@ -66,6 +66,29 @@ def testMod(Project project) {
 	}
 }
 
+def allModules(Project project) {
+	def deps = project.getRootProject().getSubprojects().iterator().collect { project.dependencies.project(path: ":" + it.getName(), configuration: "namedElements") }
+	project.getSubprojects().iterator().forEachRemaining {
+		Project dependProject = it
+		project.loom {
+			interfaceInjection {
+				interfaceInjectionSourceSets.add(dependProject.sourceSets.main)
+			}
+		}
+	}
+	project.dependencies {
+		deps.each {
+			if (!it.name.equals(project.getName())) {
+				annotationProcessor(api(include(it)))
+			}
+		}
+	}
+}
+
+loom {
+
+}
+
 def moduleDependencies(Project project, List<String> depNames) {
 	def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: "namedElements") }
 
@@ -75,6 +98,7 @@ def moduleDependencies(Project project, List<String> depNames) {
 			interfaceInjection {
 				interfaceInjectionSourceSets.add(dependProject.sourceSets.main)
 			}
+
 		}
 	}
 	project.dependencies {
@@ -105,21 +129,18 @@ def moduleDependencies(Project project, List<String> depNames) {
 }
 
 @SuppressWarnings("unused") // for subprojects
-def setupDatagen(Project module) {
-	setupDatagen(module, "porting_lib_" + module.name)
-}
-
-@SuppressWarnings("unused") // for subprojects
-def setupDatagen(Project module, String modId) {
+def setupDatagen(Project module, String location) {
+	String modId = "porting_lib_" + location
 	module.loom {
 		runs {
-			datagen {
+			"datagen_$location" {
 				client()
-				name = "Data Generation"
+				name = "Data Generation ($location)"
 				source module.sourceSets.main
 				vmArg "-Dfabric-api.datagen"
-				vmArg "-Dfabric-api.datagen.output-dir=${module.file("src/generated/resources")}"
-				vmArg "-Dfabric-api.datagen.modid=$modId"
+				vmArg "-Dfabric-api.datagen.output-dir=${findProject(location).file("src/generated/resources")}"
+				vmArg "-Dfabric-api.datagen.modid=porting_lib_data_generators"
+				vmArg "-Dporting_lib.datagen.mod=$modId"
 				runDir "build/datagen"
 				ideConfigGenerated true // loom will only make run configs for the root project by default
 			}
@@ -294,6 +315,8 @@ dependencies {
 	afterEvaluate {
 		// fat jar depends on and includes all modules
 		for (Project module : subprojects) {
+			if (module.getName().equals("data_generators"))
+				continue
 			api(include(module))
 		}
 	}

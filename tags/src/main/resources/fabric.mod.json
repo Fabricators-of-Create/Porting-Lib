@@ -10,9 +10,6 @@
   "entrypoints": {
     "main": [
       "io.github.fabricators_of_create.porting_lib.tags.Tags"
-    ],
-    "fabric-datagen": [
-      "io.github.fabricators_of_create.porting_lib.tags.data.DataGenerators"
     ]
   },
   "custom": {

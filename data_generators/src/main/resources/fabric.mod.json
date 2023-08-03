@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_data_generators",
+  "version": "${version}",
+  "name": "Porting Lib Data Generators",
+  "description": "Generates data for individual modules so they don't depend on each other.",
+  "entrypoints": {
+    "fabric-datagen": [
+      "io.github.fabricators_of_create.porting_lib.data.generators.PortingLibDataGenerators"
+    ]
+  }
+}

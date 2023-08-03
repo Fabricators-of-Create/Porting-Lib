@@ -42,3 +42,5 @@ include("utility")
 include("fluids")
 include("registries")
 include("recipe_book_categories")
+
+include("data_generators")

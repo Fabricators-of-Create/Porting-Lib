@@ -1,7 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.loot.mixin;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,8 +10,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -22,7 +21,6 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntries;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
@@ -33,9 +31,6 @@ public class LootPoolMixin implements LootPoolExtensions {
 	@Shadow
 	@Final
 	public static Codec<LootPool> CODEC;
-	@Shadow
-	@Final
-	public List<LootItemCondition> conditions;
 	@Unique
 	private String name;
 
@@ -62,8 +57,9 @@ public class LootPoolMixin implements LootPoolExtensions {
 		}
 
 		@ModifyReturnValue(method = "build", at = @At("RETURN"))
-		public void setName(LootPool pool) {
+		public LootPool setName(LootPool pool) {
 			pool.setName(name);
+			return pool;
 		}
 	}
 
@@ -81,12 +77,7 @@ public class LootPoolMixin implements LootPoolExtensions {
 				return lootPool.rolls;
 			}), NumberProviders.CODEC.fieldOf("bonus_rolls").orElse(ConstantValue.exactly(0.0F)).forGetter((lootPool) -> {
 				return lootPool.bonusRolls;
-			}), Codec.STRING.optionalFieldOf("name").forGetter(lootPool -> {
-				String name = lootPool.getName();
-				if (name != null && !name.startsWith("custom#"))
-					return Optional.of(name);
-				return Optional.empty();
-			})).apply(instance, (entries, conditions, functions, rolls, bonus_rolls, name) -> {
+			}), Codec.STRING.optionalFieldOf("name").forGetter(pool -> java.util.Optional.ofNullable(pool.getName()).filter(name -> !name.startsWith("custom#")))).apply(instance, (entries, conditions, functions, rolls, bonus_rolls, name) -> {
 				LootPool pool = LootPoolAccessor.createLootPool(entries, conditions, functions, rolls, bonus_rolls);
 				pool.setName(name.orElse(null));
 				return pool;

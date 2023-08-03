@@ -43,22 +43,23 @@ public class ModdedLootTableProvider extends LootTableProvider {
 	}
 
 	@Override
-	public CompletableFuture<?> run(CachedOutput pOutput) {
+	public CompletableFuture<?> run(CachedOutput p_254060_) {
 		final Map<ResourceLocation, LootTable> map = Maps.newHashMap();
 		Map<RandomSupport.Seed128bit, ResourceLocation> map1 = new Object2ObjectOpenHashMap<>();
-		this.getTables().forEach((entry) -> entry.provider().get().generate((key, builder) -> {
-			ResourceLocation id = map1.put(RandomSequence.seedForKey(key), key);
-			if (id != null) {
-				Util.logAndPauseIfInIde("Loot table random sequence seed collision on " + id + " and " + key);
+		getTables().forEach(p_288263_ -> p_288263_.provider().get().generate((p_288259_, p_288260_) -> {
+			ResourceLocation resourcelocation1 = map1.put(RandomSequence.seedForKey(p_288259_), p_288259_);
+			if (resourcelocation1 != null) {
+				Util.logAndPauseIfInIde("Loot table random sequence seed collision on " + resourcelocation1 + " and " + p_288259_);
 			}
 
-			builder.setRandomSequence(key);
-			if (map.put(key, builder.setParamSet(entry.paramSet()).build()) != null) {
-				throw new IllegalStateException("Duplicate loot table " + key);
+			p_288260_.setRandomSequence(p_288259_);
+			if (map.put(p_288259_, p_288260_.setParamSet(p_288263_.paramSet()).build()) != null) {
+				throw new IllegalStateException("Duplicate loot table " + p_288259_);
 			}
 		}));
 		ValidationContext validationcontext = new ValidationContext(LootContextParamSets.ALL_PARAMS, new LootDataResolver() {
-			@Nullable
+			@javax.annotation.Nullable
+			@Override
 			public <T> T getElement(LootDataId<T> p_279283_) {
 				return (T)(p_279283_.type() == LootDataType.TABLE ? map.get(p_279283_.location()) : null);
 			}
@@ -68,16 +69,14 @@ public class ModdedLootTableProvider extends LootTableProvider {
 
 		Multimap<String, String> multimap = validationcontext.getProblems();
 		if (!multimap.isEmpty()) {
-			multimap.forEach((p_124446_, p_124447_) -> {
-				LOGGER.warn("Found validation problem in {}: {}", p_124446_, p_124447_);
-			});
+			multimap.forEach((p_124446_, p_124447_) -> LOGGER.warn("Found validation problem in {}: {}", p_124446_, p_124447_));
 			throw new IllegalStateException("Failed to validate loot tables, see logs");
 		} else {
-			return CompletableFuture.allOf(map.entrySet().stream().map((lootTableEntry) -> {
-				ResourceLocation lootTableId = lootTableEntry.getKey();
-				LootTable loottable = lootTableEntry.getValue();
-				Path path = this.pathProvider.json(lootTableId);
-				return DataProvider.saveStable(pOutput, LootTable.CODEC, loottable, path);
+			return CompletableFuture.allOf(map.entrySet().stream().map(p_297942_ -> {
+				ResourceLocation resourcelocation1 = p_297942_.getKey();
+				LootTable loottable = p_297942_.getValue();
+				Path path = this.pathProvider.json(resourcelocation1);
+				return DataProvider.saveStable(p_254060_, LootTable.CODEC, loottable, path);
 			}).toArray(CompletableFuture[]::new));
 		}
 	}

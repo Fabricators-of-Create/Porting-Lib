@@ -6,7 +6,7 @@
   "description": "Adds additional data generation providers.",
   "entrypoints": {
     "main": [
-      "io.github.fabricators_of_create.porting_lib.data.ConditionalRecipe::init"
+      //"io.github.fabricators_of_create.porting_lib.data.ConditionalRecipe::init"
     ]
   }
 }
