@@ -1,14 +1,25 @@
 package io.github.fabricators_of_create.porting_lib.loot.mixin;
 
+import java.util.Objects;
+import java.util.function.Consumer;
+
+import io.github.fabricators_of_create.porting_lib.loot.LootCollector;
 import io.github.fabricators_of_create.porting_lib.loot.PortingLibLoot;
 import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableExtensions;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -16,19 +27,36 @@ import net.minecraft.world.level.storage.loot.LootTable;
 
 @Mixin(LootTable.class)
 public class LootTableMixin implements LootTableExtensions {
+	@Unique
 	private ResourceLocation lootTableId;
 
 	@Override
 	public void setLootTableId(final ResourceLocation id) {
-		if (this.lootTableId != null) throw new IllegalStateException("Attempted to rename loot table from '" + this.lootTableId + "' to '" + id + "': this is not supported");
-		this.lootTableId = java.util.Objects.requireNonNull(id);
+		if (this.lootTableId != null)
+			throw new IllegalStateException("Attempted to rename loot table from '" + this.lootTableId + "' to '" + id + "': this is not supported");
+		this.lootTableId = Objects.requireNonNull(id);
 	}
 
 	@Override
-	public ResourceLocation getLootTableId() { return this.lootTableId; }
+	public ResourceLocation getLootTableId() {
+		return this.lootTableId;
+	}
 
-	@ModifyReturnValue(method = "getRandomItems(Lnet/minecraft/world/level/storage/loot/LootContext;)Lit/unimi/dsi/fastutil/objects/ObjectArrayList;", at = @At("RETURN"))
-	public ObjectArrayList<ItemStack> port_lib$modifyGlobalLootTable(ObjectArrayList<ItemStack> list, LootContext context) {
-		return PortingLibLoot.modifyLoot(getLootTableId(), list, context);
+	@ModifyVariable(
+			method = "getRandomItemsRaw(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V",
+			at = @At("HEAD"),
+			argsOnly = true
+	)
+	private Consumer<ItemStack> wrapConsumer(Consumer<ItemStack> output) {
+		return new LootCollector(output);
+	}
+
+	@Inject(
+			method = "getRandomItemsRaw(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V",
+			at = @At("RETURN")
+	)
+	private void finishCollectingLoot(LootContext context, Consumer<ItemStack> output, CallbackInfo ci) {
+		if (output instanceof LootCollector collector)
+			collector.finish(this.lootTableId, context);
 	}
 }
