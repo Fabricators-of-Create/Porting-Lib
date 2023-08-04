@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.loot;
 
+import java.util.Objects;
+
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -30,7 +32,7 @@ public class LootTableIdCondition implements LootItemCondition {
 
 	@Override
 	public boolean test(LootContext lootContext) {
-		return lootContext.getQueriedLootTableId().equals(this.targetLootTableId);
+		return Objects.equals(lootContext.getQueriedLootTableId(), this.targetLootTableId);
 	}
 
 	public static Builder builder(final ResourceLocation targetLootTableId) {
