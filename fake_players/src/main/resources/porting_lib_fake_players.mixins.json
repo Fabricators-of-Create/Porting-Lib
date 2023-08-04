@@ -4,6 +4,8 @@
   "package": "io.github.fabricators_of_create.porting_lib.fake_players.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "common.PlayerAdvancementsMixin",
+    "common.PlayerListMixin",
     "common.PlayerMixin",
     "common.accessor.ConnectionAccessor"
   ],
