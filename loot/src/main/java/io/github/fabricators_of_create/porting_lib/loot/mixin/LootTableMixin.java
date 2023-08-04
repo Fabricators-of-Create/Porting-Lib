@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import io.github.fabricators_of_create.porting_lib.loot.LootCollector;
+import io.github.fabricators_of_create.porting_lib.loot.PortingLibLoot;
 import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableExtensions;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,7 +13,10 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -43,10 +47,8 @@ public class LootTableMixin implements LootTableExtensions {
 			at = @At("HEAD"),
 			argsOnly = true
 	)
-	private Consumer<ItemStack> setupGlobalLootModification(Consumer<ItemStack> output,
-															LootContext context, Consumer<ItemStack> outputAgain) {
-		context.setQueriedLootTableId(this.lootTableId); // this is needed before conditions are checked by pools
-		return new LootCollector(output); // collect loot, run through modifiers, send modified loot to original output
+	private Consumer<ItemStack> wrapConsumer(Consumer<ItemStack> output) {
+		return new LootCollector(output);
 	}
 
 	@Inject(
