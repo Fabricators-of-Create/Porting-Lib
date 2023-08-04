@@ -12,6 +12,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(LootContext.class)
 public abstract class LootContextMixin implements LootContextExtensions {
@@ -19,16 +20,18 @@ public abstract class LootContextMixin implements LootContextExtensions {
 	@Nullable
 	public abstract <T> T getParamOrNull(LootContextParam<T> lootContextParam);
 
+	@Unique
 	private ResourceLocation queriedLootTableId;
 
 	@Override
 	public void setQueriedLootTableId(ResourceLocation queriedLootTableId) {
-		if (this.queriedLootTableId == null && queriedLootTableId != null) this.queriedLootTableId = queriedLootTableId;
+		if (this.queriedLootTableId == null && queriedLootTableId != null)
+			this.queriedLootTableId = queriedLootTableId;
 	}
 
 	@Override
 	public ResourceLocation getQueriedLootTableId() {
-		return this.queriedLootTableId == null? LootTableIdCondition.UNKNOWN_LOOT_TABLE : this.queriedLootTableId;
+		return this.queriedLootTableId == null ? LootTableIdCondition.UNKNOWN_LOOT_TABLE : this.queriedLootTableId;
 	}
 
 	@Override

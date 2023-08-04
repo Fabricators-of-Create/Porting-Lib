@@ -10,6 +10,7 @@
     "LootContextMixin",
     "LootPoolMixin",
     "LootPoolMixin$LootPoolBuilderMixin",
+    "LootPoolMixin$LootPoolSerializerMixin",
     "LootTableMixin"
   ]
 }
