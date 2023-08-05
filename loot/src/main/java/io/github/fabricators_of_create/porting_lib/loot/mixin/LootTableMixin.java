@@ -47,8 +47,10 @@ public class LootTableMixin implements LootTableExtensions {
 			at = @At("HEAD"),
 			argsOnly = true
 	)
-	private Consumer<ItemStack> wrapConsumer(Consumer<ItemStack> output) {
-		return new LootCollector(output);
+	private Consumer<ItemStack> setupGlobalLootModification(Consumer<ItemStack> output,
+															LootContext context, Consumer<ItemStack> outputAgain) {
+		context.setQueriedLootTableId(this.lootTableId); // this is needed before conditions are checked by pools
+		return new LootCollector(output); // collect loot, run through modifiers, send modified loot to original output
 	}
 
 	@Inject(

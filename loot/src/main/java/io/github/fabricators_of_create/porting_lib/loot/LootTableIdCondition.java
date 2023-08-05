@@ -1,7 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.loot;
 
-import java.util.Objects;
-
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
