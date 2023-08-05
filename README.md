@@ -26,7 +26,6 @@ The latest patch can be found from GitHub Actions as the build number.
 | `data`                   | Additional data generation providers                                                  |
 | `entity`                 | Multipart entities, extra spawn data, removal listening                               |
 | `extensions`             | Extensions to vanilla classes for additional functionality                            |
-| `fake_players`           | A basic fake server player implementation that can be used to simulate player actions |
 | `gametest`               | Tools to make GameTest creation as easy as possible                                   |
 | `lazy_registration`      | A implementation of forge's DeferredRegister system rewritten for fabric              |
 | `loot`                   | A small library to modify mob loot                                                    |
