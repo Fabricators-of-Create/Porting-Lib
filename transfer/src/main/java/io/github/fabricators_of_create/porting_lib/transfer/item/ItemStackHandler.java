@@ -52,7 +52,7 @@ public class ItemStackHandler implements SlottedStackStorage, INBTSerializable<C
 		for (int i = 0; i < stacks.length; i++) {
 			ItemStack stack = stacks[i];
 			// slot handles filling lookup
-			slots.add(new ItemStackHandlerSlot(i, this, stack));
+			slots.add(makeSlot(i, stack));
 		}
 	}
 
@@ -189,8 +189,12 @@ public class ItemStackHandler implements SlottedStackStorage, INBTSerializable<C
 		nonEmptySlots.clear();
 		lookup.clear();
 		for (int i = 0; i < size; i++) {
-			slots.add(new ItemStackHandlerSlot(i, this, ItemStack.EMPTY));
+			slots.add(makeSlot(i, ItemStack.EMPTY));
 		}
+	}
+
+	protected ItemStackHandlerSlot makeSlot(int index, ItemStack stack) {
+		return new ItemStackHandlerSlot(index, this, stack);
 	}
 
 	// serialization
