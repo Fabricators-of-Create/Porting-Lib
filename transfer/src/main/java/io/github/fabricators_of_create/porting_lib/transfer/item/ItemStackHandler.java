@@ -223,7 +223,7 @@ public class ItemStackHandler implements SlottedStackStorage, INBTSerializable<C
 
 			if (slot >= 0 && slot < slots.size()) {
 				ItemStack stack = ItemStack.of(itemTags);
-				slots.get(i).setNewStack(stack);
+				slots.get(slot).setNewStack(stack);
 			}
 		}
 		onLoad();
