@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import io.github.fabricators_of_create.porting_lib.loot.LootCollector;
-import io.github.fabricators_of_create.porting_lib.loot.PortingLibLoot;
+import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableBuilderExtensions;
 import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableExtensions;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,10 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -60,5 +57,22 @@ public class LootTableMixin implements LootTableExtensions {
 	private void finishCollectingLoot(LootContext context, Consumer<ItemStack> output, CallbackInfo ci) {
 		if (output instanceof LootCollector collector)
 			collector.finish(this.lootTableId, context);
+	}
+
+	@Mixin(LootTable.Builder.class)
+	public static class BuilderMixin implements LootTableBuilderExtensions {
+		@Unique
+		private ResourceLocation id;
+
+		@Override
+		public void port_lib$setId(ResourceLocation id) {
+			this.id = id;
+		}
+
+		@ModifyReturnValue(method = "build", at = @At("RETURN"))
+		private LootTable addId(LootTable table) {
+			table.setLootTableId(this.id);
+			return table;
+		}
 	}
 }
