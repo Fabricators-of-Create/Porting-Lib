@@ -3,9 +3,11 @@ package io.github.fabricators_of_create.porting_lib.loot;
 import com.mojang.serialization.Codec;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
+import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableBuilderExtensions;
 import io.github.fabricators_of_create.porting_lib.util.LazyRegistrar;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -34,6 +36,10 @@ public class PortingLibLoot implements ModInitializer {
 		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(LootModifierManager.INSTANCE);
 		Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, PortingLib.id("loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
 		Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, PortingLib.id("can_tool_perform_action"), CanToolPerformAction.LOOT_CONDITION_TYPE);
+
+		LootTableEvents.MODIFY.register(
+				(resources, manager, id, builder, source) -> ((LootTableBuilderExtensions) builder).port_lib$setId(id)
+		);
 	}
 
 	/**
