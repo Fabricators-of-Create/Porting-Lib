@@ -69,6 +69,8 @@ public enum PortingLibModelLoadingRegistry implements ModelLoadingPlugin {
 					BlockModel ownerModel = BlockModel.fromString(object.toString());
 					return LOADERS.get(id).readModel(ownerModel, object);
 				}
+			} catch (FileNotFoundException ignored) {
+				// model is not json-based
 			} catch (Exception e) {
 				PortingLib.LOGGER.error("Unhandled error loading model: " + modelId, e);
 			}
