@@ -16,8 +16,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import xyz.bluspring.forgecapabilities.capabilities.Capability;
-import xyz.bluspring.forgecapabilities.capabilities.ForgeCapabilities;
 import xyz.bluspring.forgecapabilities.capabilities.ICapabilityProvider;
+import xyz.bluspring.forgecapabilities.capabilities.PortingLibCapabilities;
 
 public class ShulkerItemStackInvWrapper extends ItemStackHandlerContainer implements ICapabilityProvider
 {
@@ -234,6 +234,6 @@ public class ShulkerItemStackInvWrapper extends ItemStackHandlerContainer implem
 	@NotNull
 	public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side)
 	{
-		return ForgeCapabilities.ITEM_HANDLER.orEmpty(cap, this.holder);
+		return PortingLibCapabilities.ITEM_HANDLER.orEmpty(cap, this.holder);
 	}
 }

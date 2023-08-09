@@ -24,8 +24,8 @@ import net.minecraft.world.item.MilkBucketItem;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import xyz.bluspring.forgecapabilities.capabilities.Capability;
-import xyz.bluspring.forgecapabilities.capabilities.ForgeCapabilities;
 import xyz.bluspring.forgecapabilities.capabilities.ICapabilityProvider;
+import xyz.bluspring.forgecapabilities.capabilities.PortingLibCapabilities;
 
 @ApiStatus.Experimental
 public class FluidBucketWrapper implements SingleSlotStorage<FluidVariant>, ICapabilityProvider {
@@ -130,6 +130,6 @@ public class FluidBucketWrapper implements SingleSlotStorage<FluidVariant>, ICap
 
 	@Override
 	public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-		return ForgeCapabilities.FLUID_HANDLER_ITEM.orEmpty(cap, this.holder);
+		return PortingLibCapabilities.FLUID_HANDLER_ITEM.orEmpty(cap, this.holder);
 	}
 }
