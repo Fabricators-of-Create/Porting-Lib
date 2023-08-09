@@ -1,8 +1,5 @@
 moduleDependencies(project, [
-		"constants",
-		"common",
-		"extensions",
-		"capabilities"
+		"base", "extensions", "transfer"
 ])
 
 processResources {

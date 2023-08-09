@@ -2,10 +2,15 @@ package io.github.fabricators_of_create.porting_lib.transfer.fluid.item;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import io.github.fabricators_of_create.porting_lib.capabilities.Capability;
+import io.github.fabricators_of_create.porting_lib.capabilities.ForgeCapabilities;
+import io.github.fabricators_of_create.porting_lib.capabilities.ICapabilityProvider;
 import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.BucketItemAccessor;
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import io.github.fabricators_of_create.porting_lib.util.FluidStack;
+import io.github.fabricators_of_create.porting_lib.util.LazyOptional;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -13,6 +18,7 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import net.minecraft.core.Direction;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -22,7 +28,8 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 @ApiStatus.Experimental
-public class FluidBucketWrapper implements SingleSlotStorage<FluidVariant> {
+public class FluidBucketWrapper implements SingleSlotStorage<FluidVariant>, ICapabilityProvider {
+	private final LazyOptional<SingleSlotStorage<FluidVariant>> holder = LazyOptional.of(() -> this);
 
 	@NotNull
 	protected ContainerItemContext context;
@@ -119,5 +126,10 @@ public class FluidBucketWrapper implements SingleSlotStorage<FluidVariant> {
 		}
 
 		return new ItemStack(fluidStack.getFluid().getBucket());
+	}
+
+	@Override
+	public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+		return ForgeCapabilities.FLUID_HANDLER_ITEM.orEmpty(cap, this.holder);
 	}
 }

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_capabilities",
+  "version": "${version}",
+  "name": "Porting Lib Capabilities",
+  "description": "Adds Forge's Capability system for developers.",
+  "mixins": [
+    "porting_lib_capabilities.mixins.json"
+  ],
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.capabilities.PortingLibCapabilities"
+    ]
+  },
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_1799": ["io/github/fabricators_of_create/porting_lib/extensions/capabilities/CapabilityProviderExtension", "io/github/fabricators_of_create/porting_lib/extensions/capabilities/ItemStackCapabilityProviderImpl"],
+      "net/minecraft/class_1297": ["io/github/fabricators_of_create/porting_lib/extensions/capabilities/CapabilityProviderExtension", "io/github/fabricators_of_create/porting_lib/extensions/capabilities/EntityCapabilityProviderImpl"],
+      "net/minecraft/class_2586": ["io/github/fabricators_of_create/porting_lib/extensions/capabilities/CapabilityProviderExtension", "io/github/fabricators_of_create/porting_lib/extensions/capabilities/BlockEntityCapabilityProviderImpl"],
+      "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/extensions/capabilities/CapabilityProviderExtension", "io/github/fabricators_of_create/porting_lib/extensions/capabilities/LevelCapabilityProviderImpl"],
+      "net/minecraft/class_3218": ["io/github/fabricators_of_create/porting_lib/extensions/capabilities/InitializableCapabilityExtension"],
+      "net/minecraft/class_1792": ["io/github/fabricators_of_create/porting_lib/extensions/capabilities/ItemCapabilityExtension"]
+    }
+  }
+}
