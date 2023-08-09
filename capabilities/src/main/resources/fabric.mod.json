@@ -14,12 +14,12 @@
   },
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_1799": ["io/github/fabricators_of_create/porting_lib/extensions/capabilities/CapabilityProviderExtension", "io/github/fabricators_of_create/porting_lib/extensions/capabilities/ItemStackCapabilityProviderImpl"],
-      "net/minecraft/class_1297": ["io/github/fabricators_of_create/porting_lib/extensions/capabilities/CapabilityProviderExtension", "io/github/fabricators_of_create/porting_lib/extensions/capabilities/EntityCapabilityProviderImpl"],
-      "net/minecraft/class_2586": ["io/github/fabricators_of_create/porting_lib/extensions/capabilities/CapabilityProviderExtension", "io/github/fabricators_of_create/porting_lib/extensions/capabilities/BlockEntityCapabilityProviderImpl"],
-      "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/extensions/capabilities/CapabilityProviderExtension", "io/github/fabricators_of_create/porting_lib/extensions/capabilities/LevelCapabilityProviderImpl"],
-      "net/minecraft/class_3218": ["io/github/fabricators_of_create/porting_lib/extensions/capabilities/InitializableCapabilityExtension"],
-      "net/minecraft/class_1792": ["io/github/fabricators_of_create/porting_lib/extensions/capabilities/ItemCapabilityExtension"]
+      "net/minecraft/class_1799": ["xyz/bluspring/forgecapabilities/extensions/capabilities/CapabilityProviderExtension", "xyz/bluspring/forgecapabilities/extensions/capabilities/ItemStackCapabilityProviderImpl"],
+      "net/minecraft/class_1297": ["xyz/bluspring/forgecapabilities/extensions/capabilities/CapabilityProviderExtension", "xyz/bluspring/forgecapabilities/extensions/capabilities/EntityCapabilityProviderImpl"],
+      "net/minecraft/class_2586": ["xyz/bluspring/forgecapabilities/extensions/capabilities/CapabilityProviderExtension", "xyz/bluspring/forgecapabilities/extensions/capabilities/BlockEntityCapabilityProviderImpl"],
+      "net/minecraft/class_1937": ["xyz/bluspring/forgecapabilities/extensions/capabilities/CapabilityProviderExtension", "xyz/bluspring/forgecapabilities/extensions/capabilities/LevelCapabilityProviderImpl"],
+      "net/minecraft/class_3218": ["xyz/bluspring/forgecapabilities/extensions/capabilities/InitializableCapabilityExtension"],
+      "net/minecraft/class_1792": ["xyz/bluspring/forgecapabilities/extensions/capabilities/ItemCapabilityExtension"]
     }
   }
 }
