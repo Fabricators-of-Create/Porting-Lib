@@ -4,9 +4,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import io.github.fabricators_of_create.porting_lib.capabilities.Capability;
-import io.github.fabricators_of_create.porting_lib.capabilities.ForgeCapabilities;
-import io.github.fabricators_of_create.porting_lib.capabilities.ICapabilityProvider;
 import io.github.fabricators_of_create.porting_lib.util.LazyOptional;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
@@ -18,6 +15,9 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import xyz.bluspring.forgecapabilities.capabilities.Capability;
+import xyz.bluspring.forgecapabilities.capabilities.ForgeCapabilities;
+import xyz.bluspring.forgecapabilities.capabilities.ICapabilityProvider;
 
 public class ShulkerItemStackInvWrapper extends ItemStackHandlerContainer implements ICapabilityProvider
 {

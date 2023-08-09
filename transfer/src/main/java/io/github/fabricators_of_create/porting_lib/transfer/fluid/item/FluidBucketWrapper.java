@@ -4,9 +4,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import io.github.fabricators_of_create.porting_lib.capabilities.Capability;
-import io.github.fabricators_of_create.porting_lib.capabilities.ForgeCapabilities;
-import io.github.fabricators_of_create.porting_lib.capabilities.ICapabilityProvider;
 import io.github.fabricators_of_create.porting_lib.mixin.common.accessor.BucketItemAccessor;
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import io.github.fabricators_of_create.porting_lib.util.FluidStack;
@@ -26,6 +23,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MilkBucketItem;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+import xyz.bluspring.forgecapabilities.capabilities.Capability;
+import xyz.bluspring.forgecapabilities.capabilities.ForgeCapabilities;
+import xyz.bluspring.forgecapabilities.capabilities.ICapabilityProvider;
 
 @ApiStatus.Experimental
 public class FluidBucketWrapper implements SingleSlotStorage<FluidVariant>, ICapabilityProvider {

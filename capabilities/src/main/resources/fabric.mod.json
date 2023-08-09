@@ -9,7 +9,7 @@
   ],
   "entrypoints": {
     "main": [
-      "io.github.fabricators_of_create.porting_lib.capabilities.PortingLibCapabilities"
+      "xyz.bluspring.forgecapabilities.capabilities.PortingLibCapabilities"
     ]
   },
   "custom": {
