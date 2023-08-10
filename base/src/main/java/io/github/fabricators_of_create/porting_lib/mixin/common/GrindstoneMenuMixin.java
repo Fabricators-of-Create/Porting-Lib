@@ -1,12 +1,16 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
 import io.github.fabricators_of_create.porting_lib.event.common.GrindstoneEvents;
+import io.github.fabricators_of_create.porting_lib.event.common.GrindstoneEvents.OnTakeItem;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.GrindstoneMenuExtension;
 import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
-import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -15,6 +19,7 @@ import net.minecraft.world.inventory.GrindstoneMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -41,11 +46,20 @@ public abstract class GrindstoneMenuMixin extends AbstractContainerMenu implemen
 		super(menuType, i);
 	}
 
-	@Inject(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z", ordinal = 3, shift = At.Shift.AFTER), cancellable = true)
+	@Inject(
+			method = "createResult",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z",
+					ordinal = 3,
+					shift = At.Shift.AFTER
+			),
+			cancellable = true
+	)
 	private void handleResult(CallbackInfo ci) {
-		ItemStack itemstack = this.repairSlots.getItem(0);
-		ItemStack itemstack1 = this.repairSlots.getItem(1);
-		this.xp = PortingHooks.onGrindstoneChange(itemstack, itemstack1, this.resultSlots, -1);
+		ItemStack top = this.repairSlots.getItem(0);
+		ItemStack bottom = this.repairSlots.getItem(1);
+		this.xp = PortingHooks.onGrindstoneChange(top, bottom, this.resultSlots, -1);
 		if (this.xp != Integer.MIN_VALUE) {
 			ci.cancel();
 			broadcastChanges();
@@ -61,79 +75,92 @@ public abstract class GrindstoneMenuMixin extends AbstractContainerMenu implemen
 	}
 
 	@Mixin(targets = "net/minecraft/world/inventory/GrindstoneMenu$4")
-	public abstract static class GrindstoneMenu$4Mixin {
-		@Shadow
+	public abstract static class GrindstoneMenuOutputSlotMixin {
+		@Shadow(aliases = "field_16780")
 		@Final
-		GrindstoneMenu field_16780;
+		GrindstoneMenu menu;
 
-		@Shadow
-		protected abstract int getExperienceAmount(Level par1);
+		@Unique
+		private OnTakeItem takeEvent;
 
-		private ThreadLocal<GrindstoneEvents.OnTakeItem> EVENT = new ThreadLocal<>();
+		// execute lambda
+		@WrapOperation(
+				method = "method_17417",
+				at = @At(
+						value = "INVOKE",
+						target = "Lnet/minecraft/world/entity/ExperienceOrb;award(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/phys/Vec3;I)V"
+				)
+		)
+		private void onGrindStoneTake(ServerLevel level, Vec3 pos, int amount, Operation<Void> original) {
+			Container input = this.menu.repairSlots;
+			ItemStack top = input.getItem(0);
+			ItemStack bottom = input.getItem(1);
+			this.takeEvent = new GrindstoneEvents.OnTakeItem(top, bottom, amount);
+			takeEvent.sendEvent();
+			if (!takeEvent.isCanceled())
+				original.call(level, pos, takeEvent.getXp());
+		}
 
-		@Inject(method = "method_17417", at = @At("HEAD"), cancellable = true)
-		private void onGrindStoneTake(Level level, BlockPos blockPos, CallbackInfo ci) {
-			GrindstoneEvents.OnTakeItem takeItem = EVENT.get();
-			takeItem.setXp(this.getExperienceAmount(level));
-			takeItem.sendEvent();
-			if (takeItem.isCanceled()) {
-				ci.cancel();
-				return;
+		@ModifyArg(
+				method = "onTake",
+				at = @At(
+						value = "INVOKE",
+						target = "Lnet/minecraft/world/Container;setItem(ILnet/minecraft/world/item/ItemStack;)V",
+						ordinal = 0
+				),
+				index = 1
+		)
+		private ItemStack modifyTopSlotResult(ItemStack original) {
+			if (takeEvent != null) {
+				ItemStack topItem = takeEvent.getNewTopItem();
+				if (!topItem.isEmpty()) {
+					return topItem;
+				}
 			}
-			EVENT.set(takeItem);
+			return original;
 		}
 
-		// Redirect breaks here cause of hidden classes
-		@ModifyExpressionValue(method = "method_17417", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/GrindstoneMenu$4;getExperienceAmount(Lnet/minecraft/world/level/Level;)I"))
-		private int useEventXp(int oldLevel) {
-			int newXp = EVENT.get().getXp();
-			if (oldLevel == newXp)
-				return oldLevel;
-			return newXp;
+		@ModifyArg(
+				method = "onTake",
+				at = @At(
+						value = "INVOKE",
+						target = "Lnet/minecraft/world/Container;setItem(ILnet/minecraft/world/item/ItemStack;)V",
+						ordinal = 1
+				),
+				index = 1
+		)
+		private ItemStack modifyBottomSlotResult(ItemStack original) {
+			if (takeEvent != null) {
+				ItemStack bottomItem = takeEvent.getNewBottomItem();
+				if (!bottomItem.isEmpty()) {
+					return bottomItem;
+				}
+			}
+			return original;
 		}
 
-		@Inject(method = "onTake", at = @At("HEAD"))
-		private void createEvent(Player player, ItemStack itemStack, CallbackInfo ci) {
-			var inputSlots = this.field_16780.repairSlots;
-			EVENT.set(new GrindstoneEvents.OnTakeItem(inputSlots.getItem(0), inputSlots.getItem(1), -1));
+		@WrapWithCondition(
+				method = "onTake",
+				at = @At(
+						value = "INVOKE",
+						target = "Lnet/minecraft/world/Container;setItem(ILnet/minecraft/world/item/ItemStack;)V"
+				)
+		)
+		private boolean cancelInputRemoval(Container container, int slot, ItemStack stack) {
+			return takeEvent == null || !takeEvent.isCanceled();
 		}
 
-		@ModifyArg(method = "onTake", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Container;setItem(ILnet/minecraft/world/item/ItemStack;)V", ordinal = 0), index = 1)
-		private ItemStack modifyTop(ItemStack empty) {
-			ItemStack topItem = EVENT.get().getNewTopItem();
-			if (!topItem.isEmpty())
-				return topItem;
-			return empty;
-		}
-
-		@ModifyArg(method = "onTake", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Container;setItem(ILnet/minecraft/world/item/ItemStack;)V", ordinal = 1), index = 1)
-		private ItemStack modifyBottom(ItemStack empty) {
-			ItemStack bottomItem = EVENT.get().getBottomItem();
-			if (!bottomItem.isEmpty())
-				return bottomItem;
-			return empty;
-		}
-
-		@Inject(method = "onTake", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Container;setItem(ILnet/minecraft/world/item/ItemStack;)V", ordinal = 1, shift = At.Shift.AFTER))
+		// forge does this, vanilla does not. Leaving just in case.
+		@Inject(method = "onTake", at = @At("TAIL"))
 		private void setChanged(Player player, ItemStack itemStack, CallbackInfo ci) {
-			this.field_16780.repairSlots.setChanged();
-		}
-
-		@WrapWithCondition(method = "onTake", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Container;setItem(ILnet/minecraft/world/item/ItemStack;)V", ordinal = 0))
-		private boolean shouldCancel(Container container, int amount, ItemStack stack) {
-			return !EVENT.get().isCanceled();
-		}
-
-		@WrapWithCondition(method = "onTake", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Container;setItem(ILnet/minecraft/world/item/ItemStack;)V", ordinal = 1))
-		private boolean shouldCancel2(Container container, int amount, ItemStack stack) {
-			boolean cancel = !EVENT.get().isCanceled();
-			EVENT.remove();
-			return cancel;
+			this.menu.repairSlots.setChanged();
 		}
 
 		@Inject(method = "getExperienceAmount", at = @At("HEAD"), cancellable = true)
 		private void customXp(Level level, CallbackInfoReturnable<Integer> cir) {
-			if (((GrindstoneMenuExtension)this.field_16780).getXp() > -1) cir.setReturnValue(((GrindstoneMenuExtension)this.field_16780).getXp());
+			int exp = ((GrindstoneMenuExtension) this.menu).getXp();
+			if (exp > -1)
+				cir.setReturnValue(exp);
 		}
 	}
 }
