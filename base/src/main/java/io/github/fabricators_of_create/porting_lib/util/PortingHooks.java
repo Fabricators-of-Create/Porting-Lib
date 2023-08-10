@@ -29,6 +29,9 @@ public class PortingHooks {
 		});
 	}
 
+	/**
+	 * @return -1 to cancel, MIN_VALUE to follow vanilla logic, any other number to modify granted exp
+	 */
 	public static int onGrindstoneChange(@NotNull ItemStack top, @NotNull ItemStack bottom, Container outputSlot, int xp) {
 		GrindstoneEvents.OnplaceItem e = new GrindstoneEvents.OnplaceItem(top, bottom, xp);
 		if (e.isCanceled()) {
