@@ -5,7 +5,7 @@ import net.minecraft.world.item.ItemStack;
 public class ItemHandlerHelper {
 	// left for drop-in compat
 	public static boolean canItemStacksStack(ItemStack first, ItemStack second) {
-		return ItemStack.matches(first, second);
+		return ItemStack.isSameItemSameTags(first, second);
 	}
 
 	public static ItemStack copyStackWithSize(ItemStack stack, int size) {
