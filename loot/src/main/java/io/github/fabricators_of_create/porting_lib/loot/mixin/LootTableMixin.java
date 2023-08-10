@@ -4,7 +4,6 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import io.github.fabricators_of_create.porting_lib.loot.LootCollector;
-import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableBuilderExtensions;
 import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableExtensions;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -57,22 +56,5 @@ public class LootTableMixin implements LootTableExtensions {
 	private void finishCollectingLoot(LootContext context, Consumer<ItemStack> output, CallbackInfo ci) {
 		if (output instanceof LootCollector collector)
 			collector.finish(this.lootTableId, context);
-	}
-
-	@Mixin(LootTable.Builder.class)
-	public static class BuilderMixin implements LootTableBuilderExtensions {
-		@Unique
-		private ResourceLocation id;
-
-		@Override
-		public void port_lib$setId(ResourceLocation id) {
-			this.id = id;
-		}
-
-		@ModifyReturnValue(method = "build", at = @At("RETURN"))
-		private LootTable addId(LootTable table) {
-			table.setLootTableId(this.id);
-			return table;
-		}
 	}
 }

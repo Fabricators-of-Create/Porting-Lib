@@ -8,10 +8,10 @@
   },
   "mixins": [
     "LootContextMixin",
+    "LootDataTypeMixin",
     "LootPoolMixin",
     "LootPoolMixin$LootPoolBuilderMixin",
     "LootPoolMixin$LootPoolSerializerMixin",
-    "LootTableMixin",
-    "LootTableMixin$BuilderMixin"
+    "LootTableMixin"
   ]
 }

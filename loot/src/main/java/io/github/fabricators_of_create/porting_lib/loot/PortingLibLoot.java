@@ -1,13 +1,16 @@
 package io.github.fabricators_of_create.porting_lib.loot;
 
+import java.util.List;
+import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
+
 import com.mojang.serialization.Codec;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
-import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableBuilderExtensions;
 import io.github.fabricators_of_create.porting_lib.util.LazyRegistrar;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -21,11 +24,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.storage.loot.LootContext;
 
-import javax.annotation.Nullable;
-
-import java.util.List;
-import java.util.function.Supplier;
-
 public class PortingLibLoot implements ModInitializer {
 	public static final ResourceKey<Registry<Codec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS_KEY = ResourceKey.createRegistryKey(PortingLib.id("global_loot_modifier_serializers"));
 	static final LazyRegistrar<Codec<? extends IGlobalLootModifier>> DEFERRED_GLOBAL_LOOT_MODIFIER_SERIALIZERS = LazyRegistrar.create(GLOBAL_LOOT_MODIFIER_SERIALIZERS_KEY, GLOBAL_LOOT_MODIFIER_SERIALIZERS_KEY.location().getNamespace());
@@ -36,10 +34,6 @@ public class PortingLibLoot implements ModInitializer {
 		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(LootModifierManager.INSTANCE);
 		Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, PortingLib.id("loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
 		Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, PortingLib.id("can_tool_perform_action"), CanToolPerformAction.LOOT_CONDITION_TYPE);
-
-		LootTableEvents.MODIFY.register(
-				(resources, manager, id, builder, source) -> ((LootTableBuilderExtensions) builder).port_lib$setId(id)
-		);
 	}
 
 	/**
