@@ -9,6 +9,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.util.CraftingHelper;
 import net.fabricmc.fabric.api.resource.conditions.v1.ConditionJsonProvider;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
@@ -25,7 +26,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import javax.annotation.Nullable;
 
 public class ConditionalRecipe {
-	public static final RecipeSerializer<Recipe<?>> SERIALZIER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation("forge:conditional"), new Serializer<>());
+	public static final RecipeSerializer<Recipe<?>> SERIALZIER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, PortingLib.id("conditional"), new Serializer<>());
 
 	public static Builder builder() {
 		return new Builder();
