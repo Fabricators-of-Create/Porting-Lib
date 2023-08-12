@@ -2,7 +2,5 @@
   "porting_lib.swim_speed": "Swim Speed",
   "porting_lib.name_tag_distance": "Nametag Render Distance",
   "porting_lib.entity_gravity": "Gravity",
-  "porting_lib.block_reach": "Block Reach",
-  "porting_lib.entity_reach": "Entity Reach",
   "porting_lib.step_height": "Step Height"
 }
