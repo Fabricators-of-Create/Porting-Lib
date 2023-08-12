@@ -7,9 +7,6 @@
   "entrypoints": {
     "main": [
       "io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes"
-    ],
-    "mm:early_risers": [
-      "io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributesER"
     ]
   },
   "custom": {

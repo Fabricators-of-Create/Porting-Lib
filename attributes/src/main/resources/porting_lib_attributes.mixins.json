@@ -7,18 +7,10 @@
   "mixins": [
     "AttributeMapMixin",
     "EntityMixin",
-    "ItemMixin",
-    "LivingEntityMixin",
-    "PlayerMixin",
-    "ServerGamePacketListenerImplMixin",
-    "ServerPlayerGameModeMixin"
+    "LivingEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1,
     "maxShiftBy": 5
-  },
-  "client": [
-    "GameRendererMixin",
-    "MultiPlayerGameModeMixin"
-  ]
+  }
 }

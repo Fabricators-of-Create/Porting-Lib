@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.attributes;
 
+import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
+
 import io.github.fabricators_of_create.porting_lib.attributes.extensions.PlayerAttributesExtensions;
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import net.fabricmc.api.ModInitializer;
@@ -18,7 +20,7 @@ public class PortingLibAttributes implements ModInitializer {
 	 * @see PlayerAttributesExtensions#getBlockReach()
 	 * @see PlayerAttributesExtensions#canReach(BlockPos, double)
 	 */
-	public static final Attribute BLOCK_REACH = new RangedAttribute("porting_lib.block_reach", 4.5D, 0.0D, 1024.0D).setSyncable(true);
+	public static final Attribute BLOCK_REACH = ReachEntityAttributes.REACH;
 
 	public static final Attribute ENTITY_GRAVITY = new RangedAttribute("porting_lib.entity_gravity", 0.08D, -8.0D, 8.0D).setSyncable(true);
 	public static final Attribute SWIM_SPEED = new RangedAttribute("porting_lib.swimSpeed", 1.0D, 0.0D, 1024.0D).setSyncable(true);
@@ -30,14 +32,12 @@ public class PortingLibAttributes implements ModInitializer {
 	 * @see PlayerAttributesExtensions#canReach(Entity, double)
 	 * @see PlayerAttributesExtensions#canReach(Vec3, double)
 	 */
-	public static final Attribute ENTITY_REACH = new RangedAttribute("porting_lib.entity_reach", 3.0D, 0.0D, 1024.0D).setSyncable(true);
+	public static final Attribute ENTITY_REACH = ReachEntityAttributes.ATTACK_RANGE;
 
 	@Override
 	public void onInitialize() {
 		Registry.register(BuiltInRegistries.ATTRIBUTE, PortingLib.id("step_height_addition"), STEP_HEIGHT_ADDITION);
 		Registry.register(BuiltInRegistries.ATTRIBUTE, PortingLib.id("entity_gravity"), ENTITY_GRAVITY);
 		Registry.register(BuiltInRegistries.ATTRIBUTE, PortingLib.id("swim_speed"), SWIM_SPEED);
-		Registry.register(BuiltInRegistries.ATTRIBUTE, PortingLib.id("block_reach"), BLOCK_REACH);
-		Registry.register(BuiltInRegistries.ATTRIBUTE, PortingLib.id("entity_reach"), ENTITY_REACH);
 	}
 }
