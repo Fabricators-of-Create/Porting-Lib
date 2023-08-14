@@ -201,33 +201,32 @@ public class ItemStackHandler implements SlottedStackStorage, INBTSerializable<C
 
 	@Override
 	public CompoundTag serializeNBT() {
-		ListTag nbtTagList = new ListTag();
-		for (ItemStackHandlerSlot slot : slots) {
-			ItemStack stack = slot.getStack();
-			if (!stack.isEmpty()) {
-				CompoundTag itemTag = new CompoundTag();
-				itemTag.putInt("Slot", slot.getIndex());
-				stack.save(itemTag);
-				nbtTagList.add(itemTag);
+		CompoundTag nbt = new CompoundTag();
+		nbt.putInt("Size", this.slots.size());
+
+		ListTag slots = new ListTag();
+		for (ItemStackHandlerSlot slot : this.slots) {
+			CompoundTag slotTag = slot.save();
+			if (slotTag != null) {
+				slotTag.putInt("Slot", slot.getIndex());
+				slots.add(slotTag);
 			}
 		}
-		CompoundTag nbt = new CompoundTag();
-		nbt.put("Items", nbtTagList);
-		nbt.putInt("Size", slots.size());
+
+		nbt.put("Items", slots);
 		return nbt;
 	}
 
 	@Override
 	public void deserializeNBT(CompoundTag nbt) {
 		setSize(nbt.contains("Size", Tag.TAG_INT) ? nbt.getInt("Size") : slots.size()); // also clears
-		ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
-		for (int i = 0; i < tagList.size(); i++) {
-			CompoundTag itemTags = tagList.getCompound(i);
-			int slot = itemTags.getInt("Slot");
+		ListTag slots = nbt.getList("Items", Tag.TAG_COMPOUND);
+		for (int i = 0; i < slots.size(); i++) {
+			CompoundTag slotTag = slots.getCompound(i);
+			int index = slotTag.getInt("Slot");
 
-			if (slot >= 0 && slot < slots.size()) {
-				ItemStack stack = ItemStack.of(itemTags);
-				slots.get(slot).setNewStack(stack);
+			if (index >= 0 && index < this.slots.size()) {
+				this.slots.get(index).load(slotTag);
 			}
 		}
 		onLoad();
