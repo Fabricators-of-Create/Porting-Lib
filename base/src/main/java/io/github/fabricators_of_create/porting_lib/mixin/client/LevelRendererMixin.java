@@ -1,27 +1,20 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import java.util.Iterator;
-import java.util.List;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.ModifyReceiver;
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import io.github.fabricators_of_create.porting_lib.block.CustomRenderBoundingBoxBlockEntity;
 import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
 import io.github.fabricators_of_create.porting_lib.event.client.DrawSelectionEvents;
-import io.github.fabricators_of_create.porting_lib.mixin_extensions.injectors.wrap_variable.WrapVariable;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderBuffers;
-import net.minecraft.client.renderer.chunk.SectionRenderDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -35,6 +28,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Slice;
+
+import io.github.fabricators_of_create.porting_lib.block.CullingBlockEntityIterator;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -62,19 +59,22 @@ public abstract class LevelRendererMixin {
 	@Final
 	private Minecraft minecraft;
 
-	@ModifyExpressionValue(
+	@ModifyVariable(
 		method = "renderLevel",
-		at = @At(
-				value = "INVOKE",
-				target = "Lnet/minecraft/client/renderer/chunk/SectionRenderDispatcher$CompiledSection;getRenderableBlockEntities()Ljava/util/List;"
-		)
+		slice = @Slice(
+				from = @At(
+						value = "INVOKE",
+						target = "Lnet/minecraft/client/renderer/chunk/SectionRenderDispatcher$CompiledSection;getRenderableBlockEntities()Ljava/util/List;"
+				),
+				to = @At(
+						value = "INVOKE",
+						target = "Lnet/minecraft/client/renderer/OutlineBufferSource;endOutlineBatch()V"
+				)
+		),
+		at = @At("STORE")
 	)
-	private List<BlockEntity> port_lib$wrapBlockEntityList(List<BlockEntity> blockEntities) {
-		return blockEntities.stream().filter(blockEntity -> {
-			if (blockEntity instanceof CustomRenderBoundingBoxBlockEntity aabbBE)
-				return (capturedFrustum != null ? capturedFrustum : cullingFrustum).isVisible(aabbBE.getRenderBoundingBox());
-			return true;
-		}).toList();
+	private Iterator<BlockEntity> port_lib$wrapBlockEntityIterator(Iterator<BlockEntity> iterator) {
+		return new CullingBlockEntityIterator(iterator, capturedFrustum != null ? capturedFrustum : cullingFrustum);
 	}
 
 	@WrapWithCondition(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;renderHitOutline(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/world/entity/Entity;DDDLnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V"))
