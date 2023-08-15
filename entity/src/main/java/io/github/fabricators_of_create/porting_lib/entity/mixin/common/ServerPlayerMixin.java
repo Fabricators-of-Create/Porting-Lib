@@ -13,6 +13,7 @@ import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundRespawnPacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
+import net.minecraft.network.protocol.game.CommonPlayerSpawnInfo;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -89,6 +90,9 @@ public abstract class ServerPlayerMixin extends Player {
 	@Shadow
 	protected abstract void createEndPlatform(ServerLevel world, BlockPos centerPos);
 
+	@Shadow
+	public abstract CommonPlayerSpawnInfo createCommonSpawnInfo(ServerLevel world);
+
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void port_lib$init(MinecraftServer minecraftServer, ServerLevel serverLevel, GameProfile gameProfile, CallbackInfo ci) {
 		ServerPlayerCreationCallback.EVENT.invoker().onCreate((ServerPlayer) (Object) this);
@@ -106,12 +110,12 @@ public abstract class ServerPlayerMixin extends Player {
 
 	@Nullable
 	@Override
-	public Entity changeDimension(ServerLevel p_9180_, ITeleporter teleporter) {
-//		if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9180_.dimension())) return null;
+	public Entity changeDimension(ServerLevel destination, ITeleporter teleporter) {
+//		if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, destination.dimension())) return null;
 		this.isChangingDimension = true;
 		ServerLevel serverlevel = this.serverLevel();
 		ResourceKey<Level> resourcekey = serverlevel.dimension();
-		if (resourcekey == Level.END && p_9180_.dimension() == Level.OVERWORLD && teleporter.isVanilla()) { //Forge: Fix non-vanilla teleporters triggering end credits
+		if (resourcekey == Level.END && destination.dimension() == Level.OVERWORLD && teleporter.isVanilla()) { //Forge: Fix non-vanilla teleporters triggering end credits
 			this.unRide();
 			this.serverLevel().removePlayerImmediately((ServerPlayer) (Object) this, Entity.RemovalReason.CHANGED_DIMENSION);
 			if (!this.wonGame) {
@@ -122,27 +126,27 @@ public abstract class ServerPlayerMixin extends Player {
 
 			return this;
 		} else {
-			LevelData leveldata = p_9180_.getLevelData();
-			this.connection.send(new ClientboundRespawnPacket(p_9180_.dimensionTypeId(), p_9180_.dimension(), BiomeManager.obfuscateSeed(p_9180_.getSeed()), this.gameMode.getGameModeForPlayer(), this.gameMode.getPreviousGameModeForPlayer(), p_9180_.isDebug(), p_9180_.isFlat(), (byte) 3, this.getLastDeathLocation(), getPortalCooldown()));
+			LevelData leveldata = destination.getLevelData();
+			this.connection.send(new ClientboundRespawnPacket(createCommonSpawnInfo(destination), ClientboundRespawnPacket.KEEP_ALL_DATA));
 			this.connection.send(new ClientboundChangeDifficultyPacket(leveldata.getDifficulty(), leveldata.isDifficultyLocked()));
 			PlayerList playerlist = this.server.getPlayerList();
 			playerlist.sendPlayerPermissionLevel((ServerPlayer) (Object) this);
 			serverlevel.removePlayerImmediately((ServerPlayer) (Object) this, Entity.RemovalReason.CHANGED_DIMENSION);
 			this.unsetRemoved();
-			PortalInfo portalinfo = teleporter.getPortalInfo(this, p_9180_, this::findDimensionEntryPoint);
+			PortalInfo portalinfo = teleporter.getPortalInfo(this, destination, this::findDimensionEntryPoint);
 			if (portalinfo != null) {
-				Entity e = teleporter.placeEntity(this, serverlevel, p_9180_, this.getYRot(), spawnPortal -> {//Forge: Start vanilla logic
+				Entity e = teleporter.placeEntity(this, serverlevel, destination, this.getYRot(), spawnPortal -> {//Forge: Start vanilla logic
 					serverlevel.getProfiler().push("moving");
-					if (resourcekey == Level.OVERWORLD && p_9180_.dimension() == Level.NETHER) {
+					if (resourcekey == Level.OVERWORLD && destination.dimension() == Level.NETHER) {
 						this.enteredNetherPosition = this.position();
-					} else if (spawnPortal && p_9180_.dimension() == Level.END) {
-						this.createEndPlatform(p_9180_, BlockPos.containing(portalinfo.pos));
+					} else if (spawnPortal && destination.dimension() == Level.END) {
+						this.createEndPlatform(destination, BlockPos.containing(portalinfo.pos));
 					}
 
 					serverlevel.getProfiler().pop();
 					serverlevel.getProfiler().push("placing");
-					this.setLevel(p_9180_);
-					p_9180_.addDuringPortalTeleport((ServerPlayer) (Object) this);
+					this.setLevel(destination);
+					destination.addDuringPortalTeleport((ServerPlayer) (Object) this);
 					this.setRot(portalinfo.yRot, portalinfo.xRot);
 					this.moveTo(portalinfo.pos.x, portalinfo.pos.y, portalinfo.pos.z);
 					serverlevel.getProfiler().pop();
@@ -151,19 +155,19 @@ public abstract class ServerPlayerMixin extends Player {
 				});//Forge: End vanilla logic
 				if (e != this) throw new java.lang.IllegalArgumentException(String.format(java.util.Locale.ENGLISH, "Teleporter %s returned not the player entity but instead %s, expected PlayerEntity %s", teleporter, e, this));
 				this.connection.send(new ClientboundPlayerAbilitiesPacket(this.getAbilities()));
-				playerlist.sendLevelInfo((ServerPlayer) (Object) this, p_9180_);
+				playerlist.sendLevelInfo((ServerPlayer) (Object) this, destination);
 				playerlist.sendAllPlayerInfo((ServerPlayer) (Object) this);
 
 				for(MobEffectInstance mobeffectinstance : this.getActiveEffects()) {
 					this.connection.send(new ClientboundUpdateMobEffectPacket(this.getId(), mobeffectinstance));
 				}
 
-				if (teleporter.playTeleportSound((ServerPlayer) (Object) this, serverlevel, p_9180_))
+				if (teleporter.playTeleportSound((ServerPlayer) (Object) this, serverlevel, destination))
 					this.connection.send(new ClientboundLevelEventPacket(1032, BlockPos.ZERO, 0, false));
 				this.lastSentExp = -1;
 				this.lastSentHealth = -1.0F;
 				this.lastSentFood = -1;
-//				net.minecraftforge.event.ForgeEventFactory.firePlayerChangedDimensionEvent(this, resourcekey, p_9180_.dimension());
+//				net.minecraftforge.event.ForgeEventFactory.firePlayerChangedDimensionEvent(this, resourcekey, destination.dimension());
 			}
 
 			return this;

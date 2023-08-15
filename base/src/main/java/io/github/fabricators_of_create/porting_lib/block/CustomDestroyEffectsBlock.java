@@ -21,6 +21,6 @@ public interface CustomDestroyEffectsBlock {
 	 */
 	@Environment(EnvType.CLIENT)
 	default boolean addDestroyEffects(BlockState state, ClientLevel Level, BlockPos pos, ParticleEngine engine) {
-		return !state.shouldSpawnParticlesOnBreak();
+		return !state.shouldSpawnTerrainParticles();
 	}
 }

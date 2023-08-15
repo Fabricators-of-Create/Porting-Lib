@@ -77,7 +77,7 @@ public class ModdedLootTableProvider extends LootTableProvider {
 				ResourceLocation lootTableId = lootTableEntry.getKey();
 				LootTable loottable = lootTableEntry.getValue();
 				Path path = this.pathProvider.json(lootTableId);
-				return DataProvider.saveStable(pOutput, LootDataType.TABLE.parser().toJsonTree(loottable), path);
+				return DataProvider.saveStable(pOutput, LootTable.CODEC, loottable, path);
 			}).toArray(CompletableFuture[]::new));
 		}
 	}

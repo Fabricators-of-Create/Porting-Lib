@@ -5,6 +5,7 @@
   "package": "io.github.fabricators_of_create.porting_lib.attributes.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AttributeInstanceAccessor",
     "AttributeMapMixin",
     "EntityMixin",
     "LivingEntityMixin"

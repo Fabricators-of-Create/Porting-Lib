@@ -11,11 +11,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import io.github.fabricators_of_create.porting_lib.core.PortingLib;
-import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -25,19 +23,18 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.level.storage.loot.Deserializers;
-
-import org.jetbrains.annotations.NotNull;
 
 public class LootModifierManager extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener {
 	public static final Logger LOGGER = LogManager.getLogger();
-	public static final Gson GSON_INSTANCE = Deserializers.createFunctionSerializer().create();
+	public static final Gson GSON_INSTANCE = new Gson();
 
 	private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
 	private static final String folder = "loot_modifiers";
@@ -52,8 +49,8 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener implem
 						 @NotNull ProfilerFiller profilerIn) {
 		Builder<ResourceLocation, IGlobalLootModifier> builder = ImmutableMap.builder();
 		List<ResourceLocation> finalLocations = new ArrayList<>();
-		ResourceLocation resourcelocation = new ResourceLocation("forge","loot_modifiers/global_loot_modifiers.json");
-		//read in all data files from forge:loot_modifiers/global_loot_modifiers in order to do layering
+		ResourceLocation resourcelocation = PortingLib.id("loot_modifiers/global_loot_modifiers.json");
+		//read in all data files from porting_lib:loot_modifiers/global_loot_modifiers in order to do layering
 		for(Resource iresource : resourceManagerIn.getResourceStack(resourcelocation)) {
 			try (   InputStream inputstream = iresource.open();
 					Reader reader = new BufferedReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8));

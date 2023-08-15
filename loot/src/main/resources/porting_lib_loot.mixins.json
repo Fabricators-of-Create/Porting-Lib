@@ -9,9 +9,9 @@
   "mixins": [
     "LootContextMixin",
     "LootDataTypeMixin",
+    "LootPoolAccessor",
     "LootPoolMixin",
     "LootPoolMixin$LootPoolBuilderMixin",
-    "LootPoolMixin$LootPoolSerializerMixin",
     "LootTableMixin"
   ]
 }

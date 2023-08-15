@@ -87,7 +87,7 @@ public abstract class MinecraftMixin {
 	}
 
 	@Inject(
-			method = "clearLevel(Lnet/minecraft/client/gui/screens/Screen;)V",
+			method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;)V",
 			at = @At(
 					value = "JUMP",
 					opcode = Opcodes.IFNULL,

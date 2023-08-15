@@ -1,28 +1,41 @@
 package io.github.fabricators_of_create.porting_lib.loot.mixin;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
+import java.util.List;
+import java.util.Optional;
 
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-
-import io.github.fabricators_of_create.porting_lib.loot.extensions.LootPoolBuilderExtension;
-import io.github.fabricators_of_create.porting_lib.loot.extensions.LootPoolExtensions;
-import net.minecraft.world.level.storage.loot.LootPool;
-
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.lang.reflect.Type;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import io.github.fabricators_of_create.porting_lib.loot.extensions.LootPoolBuilderExtension;
+import io.github.fabricators_of_create.porting_lib.loot.extensions.LootPoolExtensions;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntries;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
 
 @Mixin(LootPool.class)
 public class LootPoolMixin implements LootPoolExtensions {
+	@Mutable
+	@Shadow
+	@Final
+	public static Codec<LootPool> CODEC;
+	@Shadow
+	@Final
+	public List<LootItemCondition> conditions;
 	@Unique
 	private String name;
 
@@ -54,33 +67,30 @@ public class LootPoolMixin implements LootPoolExtensions {
 		}
 	}
 
-	@Mixin(LootPool.Serializer.class)
-	public static class LootPoolSerializerMixin {
-		@Inject(
-				method = "serialize(Lnet/minecraft/world/level/storage/loot/LootPool;Ljava/lang/reflect/Type;Lcom/google/gson/JsonSerializationContext;)Lcom/google/gson/JsonElement;",
-				at = @At(
-						value = "INVOKE",
-						target = "Lcom/google/gson/JsonObject;add(Ljava/lang/String;Lcom/google/gson/JsonElement;)V",
-						ordinal = 0
-				),
-				locals = LocalCapture.CAPTURE_FAILHARD
-		)
-		private void serializeName(LootPool pool, Type type, JsonSerializationContext ctx, CallbackInfoReturnable<JsonElement> cir, JsonObject json) {
-			String name = pool.getName();
-			if (name != null && !name.startsWith("custom#"))
-				json.addProperty("name", name);
-		}
-
-		@ModifyReturnValue(
-				method = "deserialize(Lcom/google/gson/JsonElement;Ljava/lang/reflect/Type;Lcom/google/gson/JsonDeserializationContext;)Lnet/minecraft/world/level/storage/loot/LootPool;",
-				at = @At("RETURN")
-		)
-		private LootPool deserializeName(LootPool pool, JsonElement element, Type type, JsonDeserializationContext ctx) {
-			JsonElement name = element.getAsJsonObject().get("name");
-			if (name instanceof JsonPrimitive primitive && primitive.isString())
-				pool.setName(name.getAsString());
-			return pool;
-		}
+	// TODO: more sane compatible solution?
+	@Inject(method = "<clinit>", at = @At("TAIL"))
+	private static void addName(CallbackInfo ci) {
+		CODEC = RecordCodecBuilder.create((instance) -> {
+			return instance.group(LootPoolEntries.CODEC.listOf().fieldOf("entries").forGetter((lootPool) -> {
+				return lootPool.entries;
+			}), ExtraCodecs.strictOptionalField(LootItemConditions.CODEC.listOf(), "conditions", List.of()).forGetter((lootPool) -> {
+				return lootPool.conditions;
+			}), ExtraCodecs.strictOptionalField(LootItemFunctions.CODEC.listOf(), "functions", List.of()).forGetter((lootPool) -> {
+				return lootPool.functions;
+			}), NumberProviders.CODEC.fieldOf("rolls").forGetter((lootPool) -> {
+				return lootPool.rolls;
+			}), NumberProviders.CODEC.fieldOf("bonus_rolls").orElse(ConstantValue.exactly(0.0F)).forGetter((lootPool) -> {
+				return lootPool.bonusRolls;
+			}), Codec.STRING.optionalFieldOf("name").forGetter(lootPool -> {
+				String name = lootPool.getName();
+				if (name != null && !name.startsWith("custom#"))
+					return Optional.of(name);
+				return Optional.empty();
+			})).apply(instance, (entries, conditions, functions, rolls, bonus_rolls, name) -> {
+				LootPool pool = LootPoolAccessor.createLootPool(entries, conditions, functions, rolls, bonus_rolls);
+				pool.setName(name.orElse(null));
+				return pool;
+			});
+		});
 	}
-
 }

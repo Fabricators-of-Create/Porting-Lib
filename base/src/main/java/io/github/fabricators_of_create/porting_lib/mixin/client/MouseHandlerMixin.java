@@ -57,9 +57,7 @@ public abstract class MouseHandlerMixin {
 			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
-	private void port_lib$beforeMouseScroll(long windowPointer, double xOffset, double yOffset, CallbackInfo ci, double deltaY) {
-		double deltaX = port_lib$getDeltaX(xOffset);
-
+	private void port_lib$beforeMouseScroll(long windowPointer, double xOffset, double yOffset, CallbackInfo ci, boolean discreteMouseScroll, double deltaX, double deltaY) {
 		if (MouseInputEvents.BEFORE_SCROLL.invoker().beforeScroll(deltaX, deltaY)) {
 			ci.cancel();
 		}
@@ -91,15 +89,7 @@ public abstract class MouseHandlerMixin {
 			},
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void port_lib$afterMouseScroll(long windowPointer, double xOffset, double yOffset, CallbackInfo ci, double deltaY) {
-		double deltaX = port_lib$getDeltaX(xOffset);
+	private void port_lib$afterMouseScroll(long windowPointer, double xOffset, double yOffset, CallbackInfo ci, boolean discreteMouseScroll, double deltaX, double deltaY) {
 		MouseInputEvents.AFTER_SCROLL.invoker().afterScroll(deltaX, deltaY);
-	}
-
-	@Unique
-	private double port_lib$getDeltaX(double xOffset) {
-		// copied processing for deltaY, but for X
-		return (this.minecraft.options.discreteMouseScroll().get() ? Math.signum(xOffset) : xOffset)
-				* this.minecraft.options.mouseWheelSensitivity().get();
 	}
 }

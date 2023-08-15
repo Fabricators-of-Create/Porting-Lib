@@ -13,7 +13,7 @@ import net.minecraft.server.players.PlayerList;
 @Mixin(PlayerList.class)
 public abstract class PlayerListMixin {
 	@Inject(method = "placeNewPlayer", at = @At("TAIL"))
-	private void setPlayerUsername(Connection netManager, ServerPlayer player, CallbackInfo ci) {
+	private void setPlayerUsername(Connection netManager, ServerPlayer player, int latency, CallbackInfo ci) {
 		UsernameCache.setUsername(player.getUUID(), player.getGameProfile().getName());
 	}
 }

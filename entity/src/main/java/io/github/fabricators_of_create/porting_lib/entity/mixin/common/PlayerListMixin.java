@@ -18,7 +18,7 @@ public abstract class PlayerListMixin {
 			method = "placeNewPlayer",
 			at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/network/protocol/game/ClientboundSetCarriedItemPacket;<init>(I)V")
 	)
-	private void port_lib$placeNewPlayer(Connection netManager, ServerPlayer player, CallbackInfo ci) {
+	private void port_lib$placeNewPlayer(Connection netManager, ServerPlayer player, int latency, CallbackInfo ci) {
 		OnDatapackSyncCallback.EVENT.invoker().onDatapackSync((PlayerList) (Object) this, player);
 	}
 
@@ -31,7 +31,7 @@ public abstract class PlayerListMixin {
 	}
 
 	@Inject(method = "placeNewPlayer", at = @At("TAIL"))
-	private void onPlayerLoggedIn(Connection connection, ServerPlayer serverPlayer, CallbackInfo ci) {
+	private void onPlayerLoggedIn(Connection connection, ServerPlayer serverPlayer, int latency, CallbackInfo ci) {
 		PlayerEvents.LOGGED_IN.invoker().handleConnection(serverPlayer);
 	}
 

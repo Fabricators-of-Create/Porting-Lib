@@ -7,16 +7,21 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.ExtractionOnlyStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.material.FluidState;
 
+import org.jetbrains.annotations.Nullable;
+
 public class BucketPickupHandlerWrapper implements SingleSlotStorage<FluidVariant>, ExtractionOnlyStorage<FluidVariant> {
+	protected final Player player;
 	protected final BucketPickup bucketPickupHandler;
 	protected final Level world;
 	protected final BlockPos blockPos;
 
-	public BucketPickupHandlerWrapper(BucketPickup bucketPickupHandler, Level world, BlockPos blockPos) {
+	public BucketPickupHandlerWrapper(@Nullable Player player, BucketPickup bucketPickupHandler, Level world, BlockPos blockPos) {
+		this.player = player;
 		this.bucketPickupHandler = bucketPickupHandler;
 		this.world = world;
 		this.blockPos = blockPos;
@@ -27,7 +32,7 @@ public class BucketPickupHandlerWrapper implements SingleSlotStorage<FluidVarian
 		if (!resource.isBlank() && FluidConstants.BUCKET <= maxAmount) {
 			FluidState fluidState = world.getFluidState(blockPos);
 			if (!fluidState.isEmpty() && resource.getFluid() == fluidState.getType()) {
-				TransactionSuccessCallback.onSuccess(tx, () -> bucketPickupHandler.pickupBlock(world, blockPos, world.getBlockState(blockPos)));
+				TransactionSuccessCallback.onSuccess(tx, () -> bucketPickupHandler.pickupBlock(player, world, blockPos, world.getBlockState(blockPos)));
 				if (resource.equals(FluidVariant.of(fluidState.getType()))) {
 					return FluidConstants.BUCKET;
 				}

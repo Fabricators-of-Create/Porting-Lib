@@ -22,7 +22,6 @@
     "common.BowItemMixin",
     "common.BushBlockMixin",
     "common.CactusBlockMixin",
-    "common.ChunkMapMixin",
     "common.ChunkStatusMixin",
     "common.ClipContextMixin",
     "common.ConnectionMixin",

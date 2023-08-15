@@ -1,9 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.loot;
 
+import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import io.github.fabricators_of_create.porting_lib.tool.ToolAction;
 import net.minecraft.world.item.ItemStack;
@@ -12,16 +15,17 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Set;
 
 /**
  * This LootItemCondition "porting_lib:can_tool_perform_action" can be used to check if a tool can perform a given ToolAction.
  */
 public class CanToolPerformAction implements LootItemCondition {
+	public static final Codec<CanToolPerformAction> CODEC = RecordCodecBuilder.create(
+			instance -> instance.group(
+					Codec.STRING.fieldOf("action").forGetter(canToolPerformAction -> canToolPerformAction.action.name())
+			).apply(instance, action -> new CanToolPerformAction(ToolAction.get(action))));
 
-	public static final LootItemConditionType LOOT_CONDITION_TYPE = new LootItemConditionType(new CanToolPerformAction.Serializer());
+	public static final LootItemConditionType LOOT_CONDITION_TYPE = new LootItemConditionType(CODEC);
 
 	final ToolAction action;
 
@@ -47,16 +51,4 @@ public class CanToolPerformAction implements LootItemCondition {
 	public static LootItemCondition.Builder canToolPerformAction(ToolAction action) {
 		return () -> new CanToolPerformAction(action);
 	}
-
-	public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<CanToolPerformAction> {
-		public void serialize(JsonObject json, CanToolPerformAction itemCondition, @NotNull JsonSerializationContext context) {
-			json.addProperty("action", itemCondition.action.name());
-		}
-
-		@NotNull
-		public CanToolPerformAction deserialize(JsonObject json, @NotNull JsonDeserializationContext context) {
-			return new CanToolPerformAction(ToolAction.get(json.get("action").getAsString()));
-		}
-	}
-
 }

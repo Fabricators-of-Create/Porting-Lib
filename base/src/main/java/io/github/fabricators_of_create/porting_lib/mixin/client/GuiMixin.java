@@ -1,10 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
-import io.github.fabricators_of_create.porting_lib.event.client.OverlayRenderCallback;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
-
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -14,13 +9,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 
+import io.github.fabricators_of_create.porting_lib.event.client.OverlayRenderCallback;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.world.entity.player.Player;
 
 @Environment(EnvType.CLIENT)
 @Mixin(Gui.class)
@@ -28,9 +25,6 @@ public abstract class GuiMixin {
 	@Shadow
 	@Final
 	private Minecraft minecraft;
-	@Shadow
-	@Final
-	private static ResourceLocation GUI_ICONS_LOCATION;
 	@Unique
 	public float port_lib$partialTicks;
 
@@ -75,7 +69,6 @@ public abstract class GuiMixin {
 		}
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderTexture(0, GUI_ICONS_LOCATION);
 		RenderSystem.enableBlend();
 	}
 }

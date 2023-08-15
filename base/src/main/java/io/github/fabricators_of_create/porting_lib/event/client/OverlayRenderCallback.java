@@ -13,22 +13,14 @@ import net.minecraft.resources.ResourceLocation;
 
 @Environment(EnvType.CLIENT)
 public interface OverlayRenderCallback {
-	ResourceLocation GUI_ICONS_LOCATION = new ResourceLocation("textures/gui/icons.png");
-
 	Event<OverlayRenderCallback> EVENT = EventFactory.createArrayBacked(OverlayRenderCallback.class, callbacks -> (guiGraphics, partialTicks, window, type) -> {
 		for (OverlayRenderCallback callback : callbacks) {
 			if (callback.onOverlayRender(guiGraphics, partialTicks, window, type)) {
-				resetTexture();
 				return true;
 			}
 		}
-		resetTexture();
 		return false;
 	});
-
-	private static void resetTexture() { // in case overlays change it, which is very likely.
-		RenderSystem.setShaderTexture(0, GUI_ICONS_LOCATION);
-	}
 
 	boolean onOverlayRender(GuiGraphics guiGraphics, float partialTicks, Window window, Types type);
 

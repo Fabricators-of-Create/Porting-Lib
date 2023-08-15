@@ -56,7 +56,7 @@ public abstract class ParticleEngineMixin {
 		}
 	}
 
-	@ModifyExpressionValue(method = "destroy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;shouldSpawnParticlesOnBreak()Z"))
+	@ModifyExpressionValue(method = "destroy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;shouldSpawnTerrainParticles()Z"))
 	private boolean port_lib$customDestroyEffects(boolean original, BlockPos blockPos, BlockState blockState) {
 		if (blockState.getBlock() instanceof CustomDestroyEffectsBlock custom) {
 			if (!custom.addDestroyEffects(blockState, level, blockPos, (ParticleEngine) (Object) this)) {
