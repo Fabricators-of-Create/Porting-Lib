@@ -3,13 +3,14 @@ package io.github.fabricators_of_create.porting_lib.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,7 +62,6 @@ public final class UsernameCache {
 		if (username.equals(map.get(uuid))) return;
 
 		map.put(uuid, username);
-		save();
 	}
 
 	/**
@@ -75,7 +75,6 @@ public final class UsernameCache {
 		Objects.requireNonNull(uuid);
 
 		if (map.remove(uuid) != null) {
-			save();
 			return true;
 		}
 
@@ -119,21 +118,28 @@ public final class UsernameCache {
 		return ImmutableMap.copyOf(map);
 	}
 
-	/**
-	 * Save the cache to file
-	 */
-	protected static void save() {
-		new SaveThread(gson.toJson(map)).start();
+	public static void init() {
+		ServerLifecycleEvents.SERVER_STARTING.register(server -> load());
+	    ServerLifecycleEvents.SERVER_STOPPED.register(server -> save());
+	}
+
+	private static void save() {
+		System.out.println("saving cache");
+		try {
+			Files.writeString(saveFile, gson.toJson(map));
+		} catch (IOException e) {
+			LOGGER.error(USRCACHE, "Could not save username cache!", e);
+		}
 	}
 
 	/**
 	 * Load the cache from file
 	 */
 	public static void load() {
+		System.out.println("loading cache");
 		if (!Files.exists(saveFile)) return;
 
 		try (final BufferedReader reader = Files.newBufferedReader(saveFile, Charsets.UTF_8)) {
-			@SuppressWarnings("serial")
 			Type type = new TypeToken<Map<UUID, String>>(){}.getType();
 			map = gson.fromJson(reader, type);
 		} catch (JsonSyntaxException | IOException e) {
@@ -149,32 +155,6 @@ public final class UsernameCache {
 			// Can sometimes occur when the json file is malformed
 			if (map == null) {
 				map = new HashMap<>();
-			}
-		}
-	}
-
-	/**
-	 * Used for saving the {@link com.google.gson.Gson#toJson(Object) Gson}
-	 * representation of the cache to disk
-	 */
-	private static class SaveThread extends Thread {
-
-		/** The data that will be saved to disk */
-		private final String data;
-
-		public SaveThread(String data) {
-			this.data = data;
-		}
-
-		@Override
-		public void run() {
-			try {
-				// Make sure we don't save when another thread is still saving
-				synchronized (saveFile) {
-					Files.write(saveFile, data.getBytes(StandardCharsets.UTF_8));
-				}
-			} catch (IOException e) {
-				LOGGER.error(USRCACHE, "Failed to save username cache to file!", e);
 			}
 		}
 	}

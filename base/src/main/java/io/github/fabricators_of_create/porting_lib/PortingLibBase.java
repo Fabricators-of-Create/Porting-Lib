@@ -23,7 +23,7 @@ public class PortingLibBase implements ModInitializer {
 		TierSortingRegistry.init();
 		ConditionalRecipe.init();
 		ItemItemStorages.init();
-		UsernameCache.load();
+		UsernameCache.init();
 		PortingHooks.init();
 		// can be used to force all mixins to apply
 		// MixinEnvironment.getCurrentEnvironment().audit();
