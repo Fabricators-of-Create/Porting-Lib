@@ -10,8 +10,11 @@ import java.util.function.Predicate;
 import io.github.fabricators_of_create.porting_lib.fluids.FluidStack;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 
+import net.minecraft.CrashReport;
+import net.minecraft.ReportedException;
 import net.minecraft.world.item.Items;
 
+import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 
 import net.fabricmc.fabric.api.transfer.v1.storage.TransferVariant;
@@ -519,26 +522,33 @@ public class TransferUtil {
 
 	/**
 	 * Extract anything matching the given predicate, or null if none available.
+	 * based on {@link StorageUtil#extractAny(Storage, long, TransactionContext)}
 	 */
 	@Nullable
 	public static <T extends TransferVariant<?>> ResourceAmount<T> extractMatching(Storage<T> storage, Predicate<T> predicate,
-																				   long maxAmount, @Nullable TransactionContext ctx) {
-		T variant = null;
-		for (StorageView<T> view : storage.nonEmptyViews()) {
-			T resource = view.getResource();
-			if (predicate.test(resource)) {
-				variant = resource;
-				break;
+																				   long maxAmount, TransactionContext transaction) {
+		StoragePreconditions.notNegative(maxAmount);
+
+		if (storage == null) return null;
+
+		try {
+			for (StorageView<T> view : storage.nonEmptyViews()) {
+				T resource = view.getResource();
+				if (predicate.test(resource)) { // only addition
+					long amount = view.extract(resource, maxAmount, transaction);
+					if (amount > 0) return new ResourceAmount<>(resource, amount);
+				}
 			}
+		} catch (Exception e) {
+			CrashReport report = CrashReport.forThrowable(e, "Extracting resources from storage");
+			report.addCategory("Extraction details")
+					.setDetail("Storage", storage::toString)
+					.setDetail("Max amount", maxAmount)
+					.setDetail("Transaction", transaction);
+			throw new ReportedException(report);
 		}
-		if (variant == null || variant.isBlank())
-			return null;
-		try (Transaction t = Transaction.openNested(ctx)) {
-			long extracted = storage.extract(variant, maxAmount, t);
-			if (extracted == 0)
-				return null;
-			return new ResourceAmount<>(variant, extracted);
-		}
+
+		return null;
 	}
 
 	/**
