@@ -124,7 +124,6 @@ public final class UsernameCache {
 	}
 
 	private static void save() {
-		System.out.println("saving cache");
 		try {
 			Files.writeString(saveFile, gson.toJson(map));
 		} catch (IOException e) {
@@ -136,7 +135,6 @@ public final class UsernameCache {
 	 * Load the cache from file
 	 */
 	public static void load() {
-		System.out.println("loading cache");
 		if (!Files.exists(saveFile)) return;
 
 		try (final BufferedReader reader = Files.newBufferedReader(saveFile, Charsets.UTF_8)) {
