@@ -21,14 +21,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -66,22 +62,24 @@ public abstract class MultiPlayerGameModeMixin {
 	}
 
 	@Inject(method = "performUseItemOn",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getMainHandItem()Lnet/minecraft/world/item/ItemStack;"), cancellable = true)
-	public void port_lib$useItemOn(LocalPlayer player, InteractionHand hand, BlockHitResult blockRayTraceResult, CallbackInfoReturnable<InteractionResult> cir) {
+	public void port_lib$useItemOn(LocalPlayer player, InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
 		ItemStack heldItem = player.getItemInHand(hand);
-		if (heldItem.getItem() instanceof UseFirstBehaviorItem first) {
-			UseOnContext ctx = new UseOnContext(player, hand, blockRayTraceResult);
-			BlockPos blockpos = ctx.getClickedPos();
-			BlockInWorld blockinworld = new BlockInWorld(ctx.getLevel(), blockpos, false);
-			if (!player.getAbilities().mayBuild && !heldItem.hasAdventureModePlaceTagForBlock(ctx.getLevel().registryAccess().registryOrThrow(Registries.BLOCK), blockinworld)) {
+		if (heldItem.getItem() instanceof UseFirstBehaviorItem useFirst) {
+			UseOnContext ctx = new UseOnContext(player, hand, hit);
+			BlockPos pos = ctx.getClickedPos();
+			BlockInWorld block = new BlockInWorld(ctx.getLevel(), pos, false);
+			if (!player.getAbilities().mayBuild && !heldItem.hasAdventureModePlaceTagForBlock(BuiltInRegistries.BLOCK, block)) {
 				cir.setReturnValue(InteractionResult.PASS);
 			} else {
 				Item item = heldItem.getItem();
-				InteractionResult interactionresult = first.onItemUseFirst(heldItem, ctx);
-				if (interactionresult.shouldAwardStats()) {
+				InteractionResult result = useFirst.onItemUseFirst(heldItem, ctx);
+				if (result.shouldAwardStats()) {
 					player.awardStat(Stats.ITEM_USED.get(item));
 				}
 
-				cir.setReturnValue(interactionresult);
+				if (result != InteractionResult.PASS) {
+					cir.setReturnValue(result);
+				}
 			}
 		}
 	}
