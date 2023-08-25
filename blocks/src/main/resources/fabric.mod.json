@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_blocks",
+  "version": "${version}",
+  "name": "Porting Lib Blocks",
+  "description": "A collections of extensions for blocks and block entities.",
+  "mixins": [
+    "porting_lib_blocks.mixins.json"
+  ],
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_2680": ["io/github/fabricators_of_create/porting_lib/blocks/api/extensions/PortingLibBlocksBlockState"]
+    }
+  }
+}

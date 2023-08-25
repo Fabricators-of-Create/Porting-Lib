@@ -11,10 +11,5 @@
     "client": [
       "io.github.fabricators_of_create.porting_lib.PortingLibClient"
     ]
-  },
-  "custom": {
-    "loom:injected_interfaces": {
-      "net/minecraft/class_2680": ["io/github/fabricators_of_create/porting_lib/extensions/BaseBlockStateExtension"]
-    }
   }
 }

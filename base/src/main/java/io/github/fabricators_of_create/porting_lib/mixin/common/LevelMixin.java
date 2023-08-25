@@ -2,30 +2,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-
-import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
-import io.github.fabricators_of_create.porting_lib.core.PortingLib;
-import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
-import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockEntityExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.extensions.LevelExtensions;
-import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
-import net.minecraft.server.level.ChunkHolder;
-import net.minecraft.server.level.FullChunkStatus;
-import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.ExplosionDamageCalculator;
-
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.chunk.LevelChunk;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -35,20 +13,28 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import io.github.fabricators_of_create.porting_lib.block.NeighborChangeListeningBlock;
-import io.github.fabricators_of_create.porting_lib.block.WeakPowerCheckingBlock;
-
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
+import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockEntityExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.extensions.LevelExtensions;
+import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.server.level.FullChunkStatus;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 @Mixin(value = Level.class, priority = 1100) // need to apply after lithium
 public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
@@ -60,9 +46,6 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	private final ArrayList<BlockEntity> port_lib$freshBlockEntities = new ArrayList<>();
 	@Unique
 	private final ArrayList<BlockEntity> port_lib$pendingFreshBlockEntities = new ArrayList<>();
-	@Unique
-	@Nullable
-	private Integer port_lib$oldStateLight = null;
 
 	@Unique
 	private final SnapshotParticipant<LevelSnapshotData> port_lib$snapshotParticipant = new SnapshotParticipant<>() {
@@ -95,9 +78,6 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 
 	@Shadow
 	private boolean tickingBlockEntities;
-
-	@Shadow
-	public abstract ProfilerFiller getProfiler();
 
 	@Shadow
 	public abstract void setBlocksDirty(BlockPos pos, BlockState old, BlockState updated);
@@ -150,25 +130,6 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		if (port_lib$modifiedStates != null) {
 			port_lib$modifiedStates.add(new ChangedPosData(pos, state, flags));
 			cir.setReturnValue(true);
-		}
-	}
-
-	@Inject(
-			method = "updateNeighbourForOutputSignal",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/Level;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;",
-					shift = Shift.BY,
-					by = 2,
-					ordinal = 0
-			),
-			locals = LocalCapture.CAPTURE_FAILHARD
-	)
-	public void port_lib$updateNeighbourForOutputSignal(BlockPos pos, Block block, CallbackInfo ci,
-														Iterator<?> var3, Direction direction, BlockPos offset,
-														BlockState state) {
-		if (state.getBlock() instanceof NeighborChangeListeningBlock listener) {
-			listener.onNeighborChange(state, this, offset, pos);
 		}
 	}
 

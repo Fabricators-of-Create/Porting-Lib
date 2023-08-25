@@ -1,13 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
-import com.llamalad7.mixinextras.injector.WrapWithCondition;
-
-import io.github.fabricators_of_create.porting_lib.block.CustomHitEffectsBlock;
-import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.world.item.ItemStack;
-
-import net.minecraft.world.level.block.state.BlockState;
-
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,7 +20,6 @@ import io.github.fabricators_of_create.porting_lib.event.client.MinecraftTailCal
 import io.github.fabricators_of_create.porting_lib.event.client.ParticleManagerRegistrationCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.RenderTickStartCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.AttackAirCallback;
-import io.github.fabricators_of_create.porting_lib.event.common.ModsLoadedCallback;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -41,6 +32,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.HitResult;
 
 @Environment(EnvType.CLIENT)
@@ -71,12 +63,6 @@ public abstract class MinecraftMixin {
 	@Inject(method = "<init>", at = @At("TAIL"))
 	public void port_lib$mcTail(GameConfig gameConfiguration, CallbackInfo ci) {
 		MinecraftTailCallback.EVENT.invoker().onMinecraftTail((Minecraft) (Object) this);
-	}
-
-	// Inject right after the fabric entrypoint
-	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Ljava/lang/Thread;currentThread()Ljava/lang/Thread;"))
-	public void port_lib$modsLoaded(GameConfig gameConfig, CallbackInfo ci) {
-		ModsLoadedCallback.EVENT.invoker().onAllModsLoaded(EnvType.CLIENT);
 	}
 
 	@Inject(method = "setLevel", at = @At("HEAD"))
@@ -176,19 +162,5 @@ public abstract class MinecraftMixin {
 		if (InteractEvents.PICK.invoker().onPick((Minecraft) (Object) this, hitResult)) {
 			ci.cancel();
 		}
-	}
-
-	@WrapWithCondition(
-			method = "continueAttack",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/particle/ParticleEngine;crack(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)V"
-			)
-	)
-	private boolean customHitEffects(ParticleEngine engine, BlockPos pos, Direction side) {
-		BlockState state = level.getBlockState(pos);
-		if (state.getBlock() instanceof CustomHitEffectsBlock custom)
-			return !custom.addHitEffects(state, level, hitResult, engine);
-		return true;
 	}
 }

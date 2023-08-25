@@ -1,0 +1,51 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "io.github.fabricators_of_create.porting_lib.blocks.impl.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "ClientPacketListenerMixin",
+    "MinecraftMixin",
+    "ModelBlockRendererMixin",
+    "MultiPlayerGameModeMixin",
+    "ParticleEngineMixin"
+  ],
+  "mixins": [
+    "AbstractMinecartMixin",
+    "BeaconBlockEntityMixin",
+    "BlockAccessor",
+    "BlockBehavior$PropertiesMixin",
+    "BlockGetterMixin",
+    "BlockItemMixin",
+    "BlockLightEngineMixin",
+    "BlockStateMixin",
+    "BoatMixin",
+    "DropExperienceBlockMixin",
+    "EnchantmentMenuMixin",
+    "EnchantmentTableBlockMixin",
+    "EntityMixin",
+    "ExperienceOrbMixin",
+    "ExplosionDamageCalculatorMixin",
+    "FireBlockMixin",
+    "FlyingMobMixin",
+    "LevelChunkMixin",
+    "LevelMixin",
+    "LightEngineMixin",
+    "LivingEntityMixin",
+    "NaturalSpawnerMixin",
+    "RailStateMixin",
+    "RedStoneOreBlockMixin",
+    "RedStoneWireBlockMixin",
+    "SculkCatalystBlockMixin",
+    "SculkSensorBlockMixin",
+    "SculkShriekerBlockMixin",
+    "ServerPlayerGameModeMixin",
+    "SignalGetterMixin",
+    "SpawnerBlockMixin",
+    "WitherBossMixin",
+    "WitherSkullMixin"
+  ]
+}
