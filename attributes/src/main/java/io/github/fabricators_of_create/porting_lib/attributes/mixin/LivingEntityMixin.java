@@ -37,9 +37,9 @@ public abstract class LivingEntityMixin extends Entity {
 		super(entityType, level);
 	}
 
-	@Inject(method = "createLivingAttributes", at = @At("RETURN"))
-	private static void port_lib$addModdedAttributes(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
-		cir.getReturnValue().add(PortingLibAttributes.ENTITY_GRAVITY).add(PortingLibAttributes.SWIM_SPEED);
+	@ModifyReturnValue(method = "createLivingAttributes", at = @At("RETURN"))
+	private static AttributeSupplier.Builder port_lib$addModdedAttributes(AttributeSupplier.Builder builder) {
+		return builder.add(PortingLibAttributes.ENTITY_GRAVITY).add(PortingLibAttributes.SWIM_SPEED).add(PortingLibAttributes.STEP_HEIGHT_ADDITION);
 	}
 
 	@Shadow
@@ -99,10 +99,6 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@ModifyReturnValue(method = "maxUpStep", at = @At("RETURN"))
 	private float modifyStepHeight(float vanillaStep) {
-		AttributeInstance stepHeightAttribute = ((LivingEntity) (Object) this).getAttribute(PortingLibAttributes.STEP_HEIGHT_ADDITION);
-		if (stepHeightAttribute != null) {
-			return (float) Math.max(0, vanillaStep + stepHeightAttribute.getValue());
-		}
-		return vanillaStep;
+		return (float) (vanillaStep + ((LivingEntity) (Object) this).getAttribute(PortingLibAttributes.STEP_HEIGHT_ADDITION).getValue());
 	}
 }
