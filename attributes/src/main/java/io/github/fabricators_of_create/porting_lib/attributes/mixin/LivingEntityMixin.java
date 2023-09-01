@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.attributes.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
 import io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
@@ -95,4 +97,12 @@ public abstract class LivingEntityMixin extends Entity {
 		return y * this.getAttribute(PortingLibAttributes.SWIM_SPEED).getValue();
 	}
 
+	@ModifyReturnValue(method = "maxUpStep", at = @At("RETURN"))
+	private float modifyStepHeight(float vanillaStep) {
+		AttributeInstance stepHeightAttribute = ((LivingEntity) (Object) this).getAttribute(PortingLibAttributes.STEP_HEIGHT_ADDITION);
+		if (stepHeightAttribute != null) {
+			return (float) Math.max(0, vanillaStep + stepHeightAttribute.getValue());
+		}
+		return vanillaStep;
+	}
 }
