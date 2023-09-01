@@ -3,5 +3,10 @@
   "id": "porting_lib_data",
   "version": "${version}",
   "name": "Porting Lib Data",
-  "description": "Adds additional data generation providers."
+  "description": "Adds additional data generation providers.",
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.data.ConditionalRecipe::init"
+    ]
+  }
 }

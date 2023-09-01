@@ -8,6 +8,7 @@ pluginManagement {
 }
 rootProject.name = "Porting-Lib"
 
+include("armor_rendering_registry")
 include("accessors")
 include("attributes")
 include("asm")

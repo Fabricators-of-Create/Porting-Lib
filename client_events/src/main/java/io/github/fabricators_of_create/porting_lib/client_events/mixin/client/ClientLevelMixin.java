@@ -1,13 +1,17 @@
 package io.github.fabricators_of_create.porting_lib.client_events.mixin.client;
 
+import io.github.fabricators_of_create.porting_lib.client_events.event.client.ClientWorldEvents;
 import io.github.fabricators_of_create.porting_lib.client_events.event.client.RegisterColorResolversCallback;
+import io.github.fabricators_of_create.porting_lib.core.util.MixinHelper;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockTintCache;
 import net.minecraft.client.multiplayer.ClientLevel;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ColorResolver;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,5 +30,14 @@ public abstract class ClientLevelMixin {
 		for (var resolver : helper.build()) {
 			target.put(resolver, new BlockTintCache(pos -> calculateBlockTint(pos, resolver)));
 		}
+	}
+
+	@Shadow
+	@Final
+	private Minecraft minecraft;
+
+	@Inject(method = "<init>", at = @At("TAIL"))
+	public void port_lib$init(CallbackInfo ci) {
+		ClientWorldEvents.LOAD.invoker().onWorldLoad(minecraft, MixinHelper.cast(this));
 	}
 }

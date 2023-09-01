@@ -7,6 +7,24 @@
     "defaultRequire": 1
   },
   "client": [
-    "GuiGraphicsMixin"
+    "GuiGraphicsMixin",
+    "ItemFrameRendererMixin",
+    "ItemInHandRendererMixin",
+    "MultiPlayerGameModeMixin"
+  ],
+  "mixins": [
+    "BlockBehaviour$BlockStateBaseMixin",
+    "BowItemMixin",
+    "EnchantmentHelperMixin",
+    "ExperienceOrbMixin",
+    "InventoryMixin",
+    "ItemEntityMixin",
+    "ItemStackMixin",
+    "LivingEntityMixin",
+    "MapItemMixin",
+    "PiglinAiMixin",
+    "PlayerMixin",
+    "PowderSnowBlockMixin",
+    "ServerPlayerGameModeMixin"
   ]
 }

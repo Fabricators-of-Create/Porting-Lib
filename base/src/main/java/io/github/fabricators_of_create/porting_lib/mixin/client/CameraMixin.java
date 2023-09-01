@@ -19,12 +19,6 @@ import net.minecraft.world.level.BlockGetter;
 @Mixin(Camera.class)
 public abstract class CameraMixin implements CameraExtensions {
 	@Shadow
-	private float yRot;
-
-	@Shadow
-	private float xRot;
-
-	@Shadow
 	private boolean initialized;
 
 	@Shadow
@@ -37,12 +31,7 @@ public abstract class CameraMixin implements CameraExtensions {
 	@Shadow
 	private Vec3 position;
 
-	@Unique
-	@Override
-	public void setAnglesInternal(float yaw, float pitch) {
-		this.yRot = yaw;
-		this.xRot = pitch;
-	}
+
 
 	@Unique
 	@Override

@@ -5,12 +5,26 @@
   "package": "io.github.fabricators_of_create.porting_lib.client_events.mixin.client",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "AbstractClientPlayerMixin",
+    "CameraMixin",
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
+    "EntityRenderDispatcherMixin",
+    "FogRendererMixin",
     "GameRendererMixin",
+    "GuiGraphicsMixin",
+    "GuiMixin",
+    "ItemInHandRendererMixin",
+    "KeyboardHandlerMixin",
+    "LevelRendererMixin",
+    "LivingEntityRendererMixin",
     "LocalPlayerMixin",
+    "MinecraftMixin",
+    "ModelBakeryMixin",
     "PlayerRendererMixin",
-    "SoundEngineMixin"
+    "SkullBlockRendererMixin",
+    "SoundEngineMixin",
+    "TextureAtlasMixin"
   ],
   "injectors": {
     "defaultRequire": 1,

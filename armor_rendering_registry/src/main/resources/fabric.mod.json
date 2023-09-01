@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_base",
+  "version": "${version}",
+  "name": "Porting Lib Base",
+  "description": "Assorted utilities for porting mods from Forge to Fabric, awaiting further sorting into modules.",
+  "mixins": [
+    "porting_lib_armor.mixins.json"
+  ]
+}

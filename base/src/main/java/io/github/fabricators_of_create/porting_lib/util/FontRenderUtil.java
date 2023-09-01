@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
-import io.github.fabricators_of_create.porting_lib.common.util.MixinHelper;
+import io.github.fabricators_of_create.porting_lib.core.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.mixin.accessors.client.accessor.FontAccessor;
 
 import net.fabricmc.api.EnvType;

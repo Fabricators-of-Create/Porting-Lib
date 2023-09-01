@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import io.github.fabricators_of_create.porting_lib.common.mixin.client.accessor.MinecraftAccessor;
 
+import io.github.fabricators_of_create.porting_lib.core.util.MixinHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
