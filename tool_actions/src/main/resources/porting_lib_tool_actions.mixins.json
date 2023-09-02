@@ -5,10 +5,22 @@
   "package": "io.github.fabricators_of_create.porting_lib.tool.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AxeItemMixin",
+    "BeehiveBlockMixin",
     "BlockMixin",
     "BlockStateMixin",
-    "ItemMixin",
-    "ItemStackMixin"
+    "BuilderAccessor",
+    "FishingRodItemMixin",
+    "HoeItemMixin",
+    "InvertedLootItemConditionAccessor",
+    "ItemStackMixin",
+    "PickaxeItemMixin",
+    "PumpkinBlockMixin",
+    "ShearsItemMixin",
+    "ShieldItemMixin",
+    "ShovelItemMixin",
+    "SwordItemMixin",
+    "TripWireBlockMixin"
   ],
   "injectors": {
     "defaultRequire": 1,
