@@ -46,6 +46,7 @@
     "client.EntityRenderDispatcherMixin",
     "client.GuiMixin",
     "client.LocalPlayerMixin",
+    "client.MinecraftMixin",
     "client.MultiPlayerGameModeMixin",
     "client.RemotePlayerMixin"
   ]
