@@ -1,15 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib_item",
+  "id": "porting_lib_items",
   "version": "${version}",
-  "name": "Porting Lib Item",
-  "description": "",
+  "name": "Porting Lib Items",
+  "description": "Adds extra item extensions",
   "entrypoints": {
     "main": [
       "io.github.fabricators_of_create.porting_lib.item.impl.client.ItemDecoratorHandler::init"
     ]
-  },
-  "mixins": [
-    "porting_lib_item.mixins.json"
-  ]
+  }
 }

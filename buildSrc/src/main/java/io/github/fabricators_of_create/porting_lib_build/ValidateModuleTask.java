@@ -95,6 +95,8 @@ public abstract class ValidateModuleTask extends DefaultTask {
 		List<String> common = getMixinFilenames(json, "mixins");
 		List<String> client = getMixinFilenames(json, "client");
 		String pkg = json.get("package").getAsString().replace('.', '/');
+		if (pkg.isEmpty())
+			return;
 		Path mixinDir = getProject().file("src/main/java/" + pkg).toPath();
 		try (Stream<Path> files = Files.walk(mixinDir)) {
 			files.filter(file -> !Files.isDirectory(file) && !file.toString().endsWith("Plugin.java")).forEach(mixin -> {

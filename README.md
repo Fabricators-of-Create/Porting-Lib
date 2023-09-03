@@ -14,34 +14,40 @@ The latest major and minor versions can be found in the `gradle.properties` file
 The latest patch can be found from GitHub Actions as the build number.
 
 ### Modules
-| Module                   | Description                                                                           |
-|--------------------------|---------------------------------------------------------------------------------------|
-| `Porting-Lib`            | Fat jar including all modules                                                         |
-| `accessors`              | Accessor mixins aplenty                                                               |
-| `attributes`             | Additional Entity Attributes; step height, gravity, swim speed                        |
-| `base`                   | Code that has not yet been split into modules                                         |
-| `client_events`          | Useful client-side events                                                             |
-| `common`                 | Miscellaneous utilities for other modules                                             |
-| `core`                   | Core functionality used across other modules                                          |
-| `data`                   | Additional data generation providers                                                  |
-| `entity`                 | Multipart entities, extra spawn data, removal listening                               |
-| `extensions`             | Extensions to vanilla classes for additional functionality                            |
-| `gametest`               | Tools to make GameTest creation as easy as possible                                   |
-| `lazy_registration`      | A implementation of forge's DeferredRegister system rewritten for fabric              |
-| `loot`                   | A small library to modify mob loot                                                    |
-| `mixin_extensions`       | More features for Mixins                                                              |
-| `model_builders`         | Additional model builders for data generation                                         |
-| `model_generators`       | Forge model generators                                                                |
-| `model_loader`           | Base loader for custom model types                                                    |
-| `model_materials`        | Material data for use in rendering                                                    |
-| `models`                 | Model implementations, ModelData, RenderTypes                                         |
-| `networking`             | A Forge-like packet system                                                            |
-| `obj_loader`             | Loading .obj models                                                                   |
-| `recipe_book_categories` | Allows mods to add additional recipe book categories                                  |
-| `registries`             | Custom datapack registries and registry utils                                         |
-| `tags`                   | Forge tags                                                                            |
-| `transfer`               | Storage implementations, client-side lookup, FluidStack, assorted transfer utilities  |
-| `utility`                | Miscellaneous utilities that are too niche for other modules                          |
+| Module                   | Description                                                                          |
+|--------------------------|--------------------------------------------------------------------------------------|
+| `Porting-Lib`            | Fat jar including all modules                                                        |
+| `asm`                    | Utils for doing asm                                                                  |
+| `accessors`              | Accessor mixins aplenty                                                              |
+| `attributes`             | Additional Entity Attributes; step height, gravity, swim speed                       |
+| `base`                   | Code that has not yet been split into modules                                        |
+| `brewing`                | A potion recipe api                                                                  |
+| `client_events`          | Useful client-side events                                                            |
+| `common`                 | Miscellaneous utilities for other modules                                            |
+| `core`                   | Core functionality used across other modules                                         |
+| `config`                 | A minimal port of forge's config api                                                 |
+| `chunk_loading`          | Custom chunk loading api                                                             |
+| `data`                   | Additional data generation providers                                                 |
+| `entity`                 | Multipart entities, extra spawn data, removal listening                              |
+| `extensions`             | Extensions to vanilla classes for additional functionality                           |
+| `fluids`                 | Api that provides additional fluid attributes for fluids                             |
+| `gametest`               | Tools to make GameTest creation as easy as possible                                  |
+| `items`                  | Adds extra item extensions                                                           |
+| `lazy_registration`      | A implementation of forge's DeferredRegister system rewritten for fabric             |
+| `loot`                   | A small library to modify mob loot                                                   |
+| `mixin_extensions`       | More features for Mixins                                                             |
+| `model_builders`         | Additional model builders for data generation                                        |
+| `model_generators`       | Forge model generators                                                               |
+| `model_loader`           | Base loader for custom model types                                                   |
+| `model_materials`        | Material data for use in rendering                                                   |
+| `models`                 | Model implementations, ModelData, RenderTypes                                        |
+| `networking`             | A Forge-like packet system                                                           |
+| `obj_loader`             | Loading .obj models                                                                  |
+| `recipe_book_categories` | Allows mods to add additional recipe book categories                                 |
+| `registries`             | Custom datapack registries and registry utils                                        |
+| `tags`                   | Forge tags                                                                           |
+| `transfer`               | Storage implementations, client-side lookup, FluidStack, assorted transfer utilities |
+| `utility`                | Miscellaneous utilities that are too niche for other modules                         |
 
 ### Contributing
 See [the contribution information](CONTRIBUTING.md).
