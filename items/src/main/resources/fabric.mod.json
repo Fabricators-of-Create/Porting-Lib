@@ -5,7 +5,7 @@
   "name": "Porting Lib Items",
   "description": "Adds extra item extensions",
   "entrypoints": {
-    "main": [
+    "client": [
       "io.github.fabricators_of_create.porting_lib.item.impl.client.ItemDecoratorHandler::init"
     ]
   }
