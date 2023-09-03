@@ -46,6 +46,7 @@ The latest patch can be found from GitHub Actions as the build number.
 | `recipe_book_categories` | Allows mods to add additional recipe book categories                                 |
 | `registries`             | Custom datapack registries and registry utils                                        |
 | `tags`                   | Forge tags                                                                           |
+| `tool_actions`           | Utilities for tool interactions                                                      |
 | `transfer`               | Storage implementations, client-side lookup, FluidStack, assorted transfer utilities |
 | `utility`                | Miscellaneous utilities that are too niche for other modules                         |
 
