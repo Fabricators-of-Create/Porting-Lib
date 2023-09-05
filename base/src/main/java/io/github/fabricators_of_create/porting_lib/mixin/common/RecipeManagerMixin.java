@@ -7,6 +7,7 @@ import java.util.function.Function;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,19 +30,19 @@ import net.minecraft.world.item.crafting.RecipeManager;
 @Mixin(RecipeManager.class)
 public class RecipeManagerMixin {
 	@Unique
-	private final ThreadLocal<Recipe<?>> capturedRecipe = new ThreadLocal<>();
+	private final ThreadLocal<RecipeHolder<?>> capturedRecipe = new ThreadLocal<>();
 
 	@Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At(value = "INVOKE", target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;"), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void port_lib$captureRecipe(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfo ci, Map map, ImmutableMap.Builder builder, Iterator var6, Map.Entry entry, ResourceLocation resourceLocation, Recipe<?> recipe) {
+	public void port_lib$captureRecipe(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfo ci, Map map, ImmutableMap.Builder builder, Iterator var6, Map.Entry entry, ResourceLocation resourceLocation, RecipeHolder<?> recipe) {
 		capturedRecipe.set(recipe);
 	}
 	@Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap$Builder;put(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMap$Builder;", ordinal = 1, shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void port_lib$invalidateRecipe(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfo ci, Map map, ImmutableMap.Builder builder, Iterator var6, Map.Entry entry, ResourceLocation resourceLocation, Recipe<?> recipe) {
+	public void port_lib$invalidateRecipe(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfo ci) {
 		capturedRecipe.set(null);
 	}
 
-	@WrapOperation(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/crafting/Recipe;getType()Lnet/minecraft/world/item/crafting/RecipeType;"))
-	public RecipeType port_lib$nullCompute(Recipe<?> recipe, Operation<RecipeType> recipeTypeOperation) {
+	@WrapOperation(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/crafting/RecipeHolder;value()Lnet/minecraft/world/item/crafting/Recipe;"))
+	public RecipeHolder<?> port_lib$nullCompute(Recipe<?> recipe, Operation<RecipeHolder<?>> recipeTypeOperation) {
 		if (recipe == null)
 			return null;
 		return recipeTypeOperation.call(recipe);

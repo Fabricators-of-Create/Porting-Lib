@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -30,9 +32,9 @@ public class RecipeBookRegistry {
 	 * Finds the category the specified recipe should display in, or null if none.
 	 */
 	@Nullable
-	public static <T extends Recipe<?>> RecipeBookCategories findCategories(RecipeType<T> type, T recipe) {
-		var lookup = RECIPE_CATEGORY_LOOKUPS.get(type);
-		return lookup != null ? lookup.apply(recipe) : null;
+	public static <T extends Recipe<?>> RecipeBookCategories findCategories(RecipeHolder<T> recipeHolder) {
+		var lookup = RECIPE_CATEGORY_LOOKUPS.get(recipeHolder.value().getType());
+		return lookup != null ? lookup.apply(recipeHolder.value()) : null;
 	}
 
 	@Nullable

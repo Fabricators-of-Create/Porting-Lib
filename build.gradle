@@ -157,6 +157,12 @@ allprojects {
 		maven { url = "https://cursemaven.com" }
 		maven { url = "https://maven.vram.io" }
 		maven {
+			url "https://maven.jamieswhiteshirt.com/libs-release"
+			content {
+				includeGroup "com.jamieswhiteshirt"
+			}
+		}
+		maven {
 			url = "https://jitpack.io"
 			content {
 				includeGroup("com.github.Chocohead")
@@ -186,7 +192,8 @@ allprojects {
 		// dev environment
 		minecraft("com.mojang:minecraft:$minecraft_version")
 		mappings(loom.layered {
-			it.mappings("org.quiltmc:quilt-mappings:$minecraft_version+build.$qm_version:intermediary-v2")
+			if (qm_version != "none")
+				it.mappings("org.quiltmc:quilt-mappings:$minecraft_version+build.$qm_version:intermediary-v2")
 			if (parchment_version != "none")
 				it.parchment("org.parchmentmc.data:parchment-$minecraft_version:$parchment_version@zip")
 			it.officialMojangMappings { nameSyntheticMembers = false }

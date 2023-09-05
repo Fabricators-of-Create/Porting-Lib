@@ -10,6 +10,7 @@ import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.crafting.Recipe;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -34,8 +35,8 @@ public class ClientRecipeBookMixin {
 	}
 
 	@Inject(method = "getCategory", at = @At(value = "INVOKE", target = "Lcom/mojang/logging/LogUtils;defer(Ljava/util/function/Supplier;)Ljava/lang/Object;", ordinal = 0), cancellable = true)
-	private static void getCustomRecipeCategory(Recipe<?> recipe, CallbackInfoReturnable<RecipeBookCategories> cir) {
-		RecipeBookCategories categories = RecipeBookRegistry.findCategories((RecipeType) recipe.getType(), recipe);
+	private static void getCustomRecipeCategory(RecipeHolder<?> recipe, CallbackInfoReturnable<RecipeBookCategories> cir) {
+		RecipeBookCategories categories = RecipeBookRegistry.findCategories(recipe);
 		if (categories != null)
 			cir.setReturnValue(categories);
 	}

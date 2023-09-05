@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.tool.mixin;
 
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 
@@ -11,5 +13,5 @@ import java.util.List;
 @Mixin(LootTable.Builder.class)
 public interface BuilderAccessor {
 	@Accessor
-	List<LootPool> getPools();
+	ImmutableList.Builder<LootPool> getPools();
 }

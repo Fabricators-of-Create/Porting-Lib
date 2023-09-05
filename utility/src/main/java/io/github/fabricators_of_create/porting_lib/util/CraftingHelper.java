@@ -15,6 +15,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import com.mojang.serialization.JsonOps;
+
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.DefaultCustomIngredients;
@@ -75,7 +77,7 @@ public class CraftingHelper {
 		if (!json.isJsonObject())
 			throw new JsonSyntaxException("Expcted ingredient to be a object or array of objects");
 
-		return Ingredient.fromJson(json);
+		return Ingredient.CODEC.decode(JsonOps.INSTANCE, json).result().orElseThrow().getFirst();
 	}
 
 	public static ItemStack getItemStack(JsonObject json, boolean readNBT) {
