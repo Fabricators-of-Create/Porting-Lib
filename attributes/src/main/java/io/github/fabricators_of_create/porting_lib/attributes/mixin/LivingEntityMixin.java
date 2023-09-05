@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.attributes.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
 import io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
@@ -35,9 +37,9 @@ public abstract class LivingEntityMixin extends Entity {
 		super(entityType, level);
 	}
 
-	@Inject(method = "createLivingAttributes", at = @At("RETURN"))
-	private static void port_lib$addModdedAttributes(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
-		cir.getReturnValue().add(PortingLibAttributes.ENTITY_GRAVITY).add(PortingLibAttributes.SWIM_SPEED);
+	@ModifyReturnValue(method = "createLivingAttributes", at = @At("RETURN"))
+	private static AttributeSupplier.Builder port_lib$addModdedAttributes(AttributeSupplier.Builder builder) {
+		return builder.add(PortingLibAttributes.ENTITY_GRAVITY).add(PortingLibAttributes.SWIM_SPEED).add(PortingLibAttributes.STEP_HEIGHT_ADDITION);
 	}
 
 	@Shadow
@@ -95,4 +97,8 @@ public abstract class LivingEntityMixin extends Entity {
 		return y * this.getAttribute(PortingLibAttributes.SWIM_SPEED).getValue();
 	}
 
+	@ModifyReturnValue(method = "maxUpStep", at = @At("RETURN"))
+	private float modifyStepHeight(float vanillaStep) {
+		return (float) (vanillaStep + ((LivingEntity) (Object) this).getAttribute(PortingLibAttributes.STEP_HEIGHT_ADDITION).getValue());
+	}
 }

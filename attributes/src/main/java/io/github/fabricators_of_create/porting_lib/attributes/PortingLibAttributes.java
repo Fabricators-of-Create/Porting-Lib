@@ -14,7 +14,7 @@ import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.phys.Vec3;
 
 public class PortingLibAttributes implements ModInitializer {
-	public static final Attribute STEP_HEIGHT_ADDITION = new RangedAttribute("porting_lib.stepHeight", 0.0D, -512.0D, 512.0D).setSyncable(true);
+	public static final Attribute STEP_HEIGHT_ADDITION = new RangedAttribute("porting_lib.step_height", 0.0D, -512.0D, 512.0D).setSyncable(true);
 	/**
 	 * Reach Distance represents the distance at which a player may interact with the world.  The default is 4.5 blocks.  Players in creative mode have an additional 0.5 blocks of block reach.
 	 * @see PlayerAttributesExtensions#getBlockReach()
@@ -23,7 +23,7 @@ public class PortingLibAttributes implements ModInitializer {
 	public static final Attribute BLOCK_REACH = ReachEntityAttributes.REACH;
 
 	public static final Attribute ENTITY_GRAVITY = new RangedAttribute("porting_lib.entity_gravity", 0.08D, -8.0D, 8.0D).setSyncable(true);
-	public static final Attribute SWIM_SPEED = new RangedAttribute("porting_lib.swimSpeed", 1.0D, 0.0D, 1024.0D).setSyncable(true);
+	public static final Attribute SWIM_SPEED = new RangedAttribute("porting_lib.swim_speed", 1.0D, 0.0D, 1024.0D).setSyncable(true);
 
 	/**
 	 * Attack Range represents the distance at which a player may attack an entity.  The default is 3 blocks.  Players in creative mode have an additional 3 blocks of entity reach.

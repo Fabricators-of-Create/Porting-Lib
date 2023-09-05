@@ -41,6 +41,16 @@ public abstract class PlayerInteractionEvents extends PlayerEvents {
 			e.onLeftClickBlock(event);
 	}));
 
+	/**
+	 * This event is fired on the client side when the player left clicks empty space with any ItemStack.
+	 * The server is not aware of when the client left clicks empty space, you will need to tell the server yourself.
+	 * This event cannot be canceled.
+	 */
+	public static final Event<PlayerLeftClickEmpty> LEFT_CLICK_EMPTY = EventFactory.createArrayBacked(PlayerLeftClickEmpty.class, callbacks -> (event -> {
+		for(PlayerLeftClickEmpty e : callbacks)
+			e.onLeftClickEmpty(event);
+	}));
+
 	private final InteractionHand hand;
 	private final BlockPos pos;
 	@Nullable
@@ -95,6 +105,18 @@ public abstract class PlayerInteractionEvents extends PlayerEvents {
 		@Override
 		public void sendEvent() {
 			LEFT_CLICK_BLOCK.invoker().onLeftClickBlock(this);
+		}
+	}
+
+	public static class LeftClickEmpty extends PlayerInteractionEvents {
+
+		public LeftClickEmpty(Player player) {
+			super(player, InteractionHand.MAIN_HAND, player.blockPosition(), null);
+		}
+
+		@Override
+		public void sendEvent() {
+			LEFT_CLICK_EMPTY.invoker().onLeftClickEmpty(this);
 		}
 	}
 
@@ -162,5 +184,10 @@ public abstract class PlayerInteractionEvents extends PlayerEvents {
 	@FunctionalInterface
 	public interface PlayerLeftClickBlock {
 		void onLeftClickBlock(LeftClickBlock event);
+	}
+
+	@FunctionalInterface
+	public interface PlayerLeftClickEmpty {
+		void onLeftClickEmpty(LeftClickEmpty event);
 	}
 }

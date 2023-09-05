@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.loot;
+package io.github.fabricators_of_create.porting_lib.tool.loot;
 
 import java.util.Set;
 
@@ -8,7 +8,10 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.tool.ToolAction;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
@@ -50,5 +53,9 @@ public class CanToolPerformAction implements LootItemCondition {
 
 	public static LootItemCondition.Builder canToolPerformAction(ToolAction action) {
 		return () -> new CanToolPerformAction(action);
+	}
+
+	public static void init() {
+		Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, PortingLib.id("can_tool_perform_action"), CanToolPerformAction.LOOT_CONDITION_TYPE);
 	}
 }
