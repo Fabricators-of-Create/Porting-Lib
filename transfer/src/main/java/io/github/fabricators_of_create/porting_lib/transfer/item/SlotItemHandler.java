@@ -54,15 +54,16 @@ public class SlotItemHandler extends Slot {
 			slottedStorage.setStackInSlot(index, stack);
 		else {
 			var slot = storage.getSlot(index);
-			if (!slot.isResourceBlank() || slot.getAmount() != 0) {
+			try (Transaction t = TransferUtil.getTransaction()) {
+				slot.extract(slot.getResource(), slot.getAmount(), t);
+				t.commit();
+			}
+			var variant = ItemVariant.of(stack);
+			if (!variant.isBlank()) {
 				try (Transaction t = TransferUtil.getTransaction()) {
-					slot.extract(slot.getResource(), slot.getAmount(), t);
+					slot.insert(variant, stack.getCount(), t);
 					t.commit();
 				}
-			}
-			try (Transaction t = TransferUtil.getTransaction()) {
-				slot.insert(ItemVariant.of(stack), stack.getCount(), t);
-				t.commit();
 			}
 		}
 		this.setChanged();
