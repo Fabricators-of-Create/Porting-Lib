@@ -54,9 +54,11 @@ public class SlotItemHandler extends Slot {
 			slottedStorage.setStackInSlot(index, stack);
 		else {
 			var slot = storage.getSlot(index);
-			try (Transaction t = TransferUtil.getTransaction()) {
-				slot.extract(slot.getResource(), slot.getAmount(), t);
-				t.commit();
+			if (!slot.isResourceBlank()) {
+				try (Transaction t = TransferUtil.getTransaction()) {
+					slot.extract(slot.getResource(), slot.getAmount(), t);
+					t.commit();
+				}
 			}
 			var variant = ItemVariant.of(stack);
 			if (!variant.isBlank()) {
@@ -105,9 +107,10 @@ public class SlotItemHandler extends Slot {
 		}
 		try (Transaction t = TransferUtil.getTransaction()) {
 			var slot = storage.getSlot(index);
+			ItemStack lastResource = slot.getResource().toStack();
 			long extraced = slot.extract(slot.getResource(), amount, t);
 			t.commit();
-			return slot.getResource().toStack((int) extraced); // todo is this right?
+			return lastResource.copyWithCount((int) extraced);
 		}
 	}
 
