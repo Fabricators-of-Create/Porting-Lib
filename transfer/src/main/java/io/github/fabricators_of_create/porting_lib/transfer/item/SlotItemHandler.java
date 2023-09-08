@@ -34,7 +34,7 @@ public class SlotItemHandler extends Slot {
 		if (stack.isEmpty())
 			return false;
 		if (storage instanceof SlottedStackStorage slottedStorage)
-			return slottedStorage.isItemValid(index, ItemVariant.of(stack));
+			return slottedStorage.isItemValid(index, ItemVariant.of(stack), stack.getCount());
 		return true;
 	}
 
