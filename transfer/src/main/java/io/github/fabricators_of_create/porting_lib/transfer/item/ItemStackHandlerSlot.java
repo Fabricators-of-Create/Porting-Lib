@@ -69,7 +69,7 @@ public class ItemStackHandlerSlot extends SingleStackStorage {
 
 	protected void onStackChange() {
 		handler.onStackChange(this, lastStack, stack);
-		this.lastStack = stack;
+		this.lastStack = stack.copy();
 	}
 
 	protected void notifyHandlerOfChange() {
