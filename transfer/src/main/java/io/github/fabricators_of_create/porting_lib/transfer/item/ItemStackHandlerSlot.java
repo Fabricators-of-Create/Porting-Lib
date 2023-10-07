@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.base.SingleStackStorage;
 
@@ -13,12 +14,14 @@ public class ItemStackHandlerSlot extends SingleStackStorage {
 	private final ItemStackHandler handler;
 	private ItemStack stack = ItemStack.EMPTY;
 	private ItemStack lastStack; // last stack pre-transaction
+	private int lastStackCount; // Because this isn't Rust so our entire universe is a lie
 	private ItemVariant variant = ItemVariant.blank();
 
 	public ItemStackHandlerSlot(int index, ItemStackHandler handler, ItemStack initial) {
 		this.index = index;
 		this.handler = handler;
 		this.lastStack = initial;
+		this.lastStackCount = initial.getCount();
 		this.setStack(initial);
 		handler.initSlot(this);
 	}
@@ -68,8 +71,13 @@ public class ItemStackHandlerSlot extends SingleStackStorage {
 	}
 
 	protected void onStackChange() {
+		if (this.lastStack.getCount() != this.lastStackCount) {
+			PortingLib.LOGGER.warn("lastStack.getCount() differs from this.lastStackCount!! _This would never happen in Rustlang_");
+			this.lastStack.setCount(this.lastStackCount);
+		}
 		handler.onStackChange(this, lastStack, stack);
 		this.lastStack = stack.copy();
+		this.lastStackCount = lastStack.getCount();
 	}
 
 	protected void notifyHandlerOfChange() {
