@@ -14,7 +14,7 @@ public class ItemStackHandlerSlot extends SingleStackStorage {
 	private final ItemStackHandler handler;
 	private ItemStack stack = ItemStack.EMPTY;
 	private ItemStack lastStack; // last stack pre-transaction
-	private int lastStackCount; // Because this isn't Rust so our entire universe is a lie
+	private int lastStackCount; // Temporary fix for ItemStack mutation
 	private ItemVariant variant = ItemVariant.blank();
 
 	public ItemStackHandlerSlot(int index, ItemStackHandler handler, ItemStack initial) {
@@ -72,7 +72,7 @@ public class ItemStackHandlerSlot extends SingleStackStorage {
 
 	protected void onStackChange() {
 		if (this.lastStack.getCount() != this.lastStackCount) {
-			PortingLib.LOGGER.warn("lastStack.getCount() differs from this.lastStackCount!! _This would never happen in Rustlang_");
+			PortingLib.LOGGER.warn("this.lastStack.getCount() differs from this.lastStackCount! Who mutated this??");
 			this.lastStack.setCount(this.lastStackCount);
 		}
 		handler.onStackChange(this, lastStack, stack);
