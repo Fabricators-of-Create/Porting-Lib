@@ -127,7 +127,7 @@ public abstract class EntityMixin implements EntityExtensions {
 	public List<ItemEntity> finishCapturingDrops() {
 		if (capturedDrops == null) capturedDrops = new ArrayList<>();
 		List<ItemEntity> captured = capturedDrops;
-		if (capturedDrops = null || capturedDropsCount <= 0) throw new RuntimeException("capturedDropsCount Error at finish");
+		if (capturedDrops == null || capturedDropsCount <= 0) throw new RuntimeException("capturedDropsCount Error at finish");
 		if (capturedDropsCount > 0) capturedDropsCount--;
 		if (capturedDropsCount == 0) capturedDrops = new ArrayList<>();
 		return captured;
