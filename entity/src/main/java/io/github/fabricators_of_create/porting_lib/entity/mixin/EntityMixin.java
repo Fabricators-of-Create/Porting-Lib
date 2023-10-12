@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin;
 import java.util.ArrayList;
 import java.util.List;
 
-static java.lang.System;
+import java.lang.System;
 import java.lang.Thread;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
