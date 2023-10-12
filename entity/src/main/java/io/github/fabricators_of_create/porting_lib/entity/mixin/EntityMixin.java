@@ -3,6 +3,9 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin;
 import java.util.ArrayList;
 import java.util.List;
 
+static java.lang.System;
+import java.lang.Thread;
+
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
@@ -116,6 +119,7 @@ public abstract class EntityMixin implements EntityExtensions {
 		if (capturedDrops == null)
 		    capturedDrops = new ArrayList<>();
 		capturedDropsCount++;
+		System.out.println("startCapturingDrops count=" + capturedDropsCount); Thread.dumpStack();
 	}
 
 	@Override
@@ -127,6 +131,7 @@ public abstract class EntityMixin implements EntityExtensions {
 	public List<ItemEntity> finishCapturingDrops() {
 		List<ItemEntity> captured = capturedDrops;
 		if (capturedDropsCount > 0) capturedDropsCount--;
+		System.out.println("finishCapturingDrops count=" + capturedDropsCount); Thread.dumpStack();		
 		if (capturedDropsCount == 0) capturedDrops = null;
 		return captured;
 	}
