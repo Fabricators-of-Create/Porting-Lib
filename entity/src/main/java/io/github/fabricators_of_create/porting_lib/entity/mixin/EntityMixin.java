@@ -120,7 +120,7 @@ public abstract class EntityMixin implements EntityExtensions {
 		if (capturedDrops == null)
 		    capturedDrops = new ArrayList<>();
 		capturedDropsCount++;
-		LOGGER.severe("startCapturingDrops count=" + capturedDropsCount, new RuntimeException("startCapturingDrops") );
+		LOGGER.severe("startCapturingDrops count=" + capturedDropsCount + "\n" + new RuntimeException("startCapturingDrops") );
 	}
 
 	@Override
@@ -132,7 +132,7 @@ public abstract class EntityMixin implements EntityExtensions {
 	public List<ItemEntity> finishCapturingDrops() {
 		List<ItemEntity> captured = capturedDrops;
 		if (capturedDropsCount > 0) capturedDropsCount--;
-		LOGGER.severe("finishCapturingDrops count=" + capturedDropsCount, new RuntimeException("finishCapturingDrops") );
+		LOGGER.severe("finishCapturingDrops count=" + capturedDropsCount + "\n" + new RuntimeException("finishCapturingDrops") );
 		if (capturedDropsCount == 0) capturedDrops = null;
 		return captured;
 	}
