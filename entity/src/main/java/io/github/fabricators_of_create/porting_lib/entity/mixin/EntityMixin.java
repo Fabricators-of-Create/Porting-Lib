@@ -43,8 +43,6 @@ import net.minecraft.world.level.Level;
 @Mixin(Entity.class)
 public abstract class EntityMixin implements EntityExtensions {
 
-	private static final Logger LOGGER = Logger.getLogger("Porting-Lib");
-
 	// size event
 
 	@Shadow
