@@ -2,7 +2,9 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import java.util.logging.Logger;
+import java.util.logging.Level as LogLevel;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -119,7 +121,7 @@ public abstract class EntityMixin implements EntityExtensions {
 		if (capturedDrops == null)
 		    capturedDrops = new ArrayList<>();
 		capturedDropsCount++;
-		LOGGER.log(Level.SEVERE, "startCapturingDrops count=" + capturedDropsCount, new RuntimeException("startCapturingDrops") );
+		LOGGER.log(LogLevel.SEVERE, "startCapturingDrops count=" + capturedDropsCount, new RuntimeException("startCapturingDrops") );
 	}
 
 	@Override
@@ -131,7 +133,7 @@ public abstract class EntityMixin implements EntityExtensions {
 	public List<ItemEntity> finishCapturingDrops() {
 		List<ItemEntity> captured = capturedDrops;
 		if (capturedDropsCount > 0) capturedDropsCount--;
-		LOGGER.log(Level.SEVERE, "finishCapturingDrops count=" + capturedDropsCount, new RuntimeException("finishCapturingDrops") );
+		LOGGER.log(LogLevel.SEVERE, "finishCapturingDrops count=" + capturedDropsCount, new RuntimeException("finishCapturingDrops") );
 		if (capturedDropsCount == 0) capturedDrops = null;
 		return captured;
 	}
