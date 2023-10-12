@@ -93,6 +93,8 @@ public abstract class EntityMixin implements EntityExtensions {
 
 	@Unique
 	private List<ItemEntity> capturedDrops = null;
+	@Unique
+	private int capturedDropsCount = 0;
 
 	@WrapWithCondition(
 			method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;",
@@ -111,7 +113,9 @@ public abstract class EntityMixin implements EntityExtensions {
 
 	@Override
 	public void startCapturingDrops() {
-		capturedDrops = new ArrayList<>();
+		if (capturedDrops == null)
+		    capturedDrops = new ArrayList<>();
+		capturedDropsCount++;
 	}
 
 	@Override
@@ -122,7 +126,8 @@ public abstract class EntityMixin implements EntityExtensions {
 	@Override
 	public List<ItemEntity> finishCapturingDrops() {
 		List<ItemEntity> captured = capturedDrops;
-		capturedDrops = null;
+		if (capturedDropsCount > 0) capturedDropsCount--;
+		if (capturedDropsCount == 0) capturedDrops = null;
 		return captured;
 	}
 
