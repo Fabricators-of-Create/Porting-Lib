@@ -92,7 +92,7 @@ public abstract class EntityMixin implements EntityExtensions {
 	// drop capturing
 
 	@Unique
-	private List<ItemEntity> capturedDrops = new ArrayList<>();
+	private List<ItemEntity> capturedDrops = null;
 	@Unique
 	private int capturedDropsCount = 0;
 
@@ -104,7 +104,7 @@ public abstract class EntityMixin implements EntityExtensions {
 			)
 	)
 	public boolean captureDroppedItem(Level level, Entity entity) {
-		if (capturedDropsCount > 0 && entity instanceof ItemEntity item) {
+		if (capturedDrops != null && entity instanceof ItemEntity item) {
 			capturedDrops.add(item);
 			return false;
 		}
@@ -113,6 +113,7 @@ public abstract class EntityMixin implements EntityExtensions {
 
 	@Override
 	public void startCapturingDrops() {
+		if (capturedDrops == null) capturedDrops = new List<ItemEntity>();
 		capturedDropsCount++;
 	}
 
@@ -125,7 +126,7 @@ public abstract class EntityMixin implements EntityExtensions {
 	public List<ItemEntity> finishCapturingDrops() {
 		List<ItemEntity> captured = capturedDrops;
 		if (capturedDropsCount > 0) capturedDropsCount--;
-		if (capturedDropsCount == 0) capturedDrops.clear();
+		if (capturedDropsCount == 0) capturedDrops = null;
 		return captured;
 	}
 
