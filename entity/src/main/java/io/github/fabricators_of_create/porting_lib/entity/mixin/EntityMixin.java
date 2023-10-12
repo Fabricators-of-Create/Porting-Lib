@@ -2,9 +2,7 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import java.lang.System;
-import java.lang.Thread;
+import java.util.logging.Logger;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -45,6 +43,8 @@ import net.minecraft.world.level.Level;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin implements EntityExtensions {
+
+	private static final Logger LOGGER = Logger.getLogger("Porting-Lib");
 
 	// size event
 
@@ -119,7 +119,7 @@ public abstract class EntityMixin implements EntityExtensions {
 		if (capturedDrops == null)
 		    capturedDrops = new ArrayList<>();
 		capturedDropsCount++;
-		System.out.println("startCapturingDrops count=" + capturedDropsCount); Thread.dumpStack();
+		LOGGER.log(Level.SEVERE, "startCapturingDrops count=" + capturedDropsCount, new RuntimeException("startCapturingDrops") );
 	}
 
 	@Override
@@ -131,7 +131,7 @@ public abstract class EntityMixin implements EntityExtensions {
 	public List<ItemEntity> finishCapturingDrops() {
 		List<ItemEntity> captured = capturedDrops;
 		if (capturedDropsCount > 0) capturedDropsCount--;
-		System.out.println("finishCapturingDrops count=" + capturedDropsCount); Thread.dumpStack();		
+		LOGGER.log(Level.SEVERE, "finishCapturingDrops count=" + capturedDropsCount, new RuntimeException("finishCapturingDrops") );
 		if (capturedDropsCount == 0) capturedDrops = null;
 		return captured;
 	}
