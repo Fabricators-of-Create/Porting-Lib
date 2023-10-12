@@ -113,7 +113,7 @@ public abstract class EntityMixin implements EntityExtensions {
 
 	@Override
 	public void startCapturingDrops() {
-		if (capturedDrops == null) capturedDrops = new List<ItemEntity>();
+		if (capturedDrops == null) capturedDrops = new ArrayList<ItemEntity>();
 		capturedDropsCount++;
 	}
 
