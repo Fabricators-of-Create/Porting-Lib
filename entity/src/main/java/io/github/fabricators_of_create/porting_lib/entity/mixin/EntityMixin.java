@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.util.logging.Logger;
-import java.util.logging.Level as LogLevel;
+import java.util.logging.Level;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -56,7 +56,7 @@ public abstract class EntityMixin implements EntityExtensions {
 	private EntityDimensions dimensions;
 
 	@Inject(method = "<init>", at = @At("RETURN"))
-	private void fireSizeEventOnConstructor(EntityType<?> variant, Level world, CallbackInfo ci) {
+	private void fireSizeEventOnConstructor(EntityType<?> variant, net.minecraft.world.level.Level world, CallbackInfo ci) {
 		EntitySizeEvent event = new EntitySizeEvent((Entity) (Object) this, Pose.STANDING, eyeHeight, dimensions);
 		EntityEvents.SIZE.invoker().modifySize(event);
 		this.eyeHeight = event.eyeHeight;
@@ -108,7 +108,7 @@ public abstract class EntityMixin implements EntityExtensions {
 					target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
 			)
 	)
-	public boolean captureDroppedItem(Level level, Entity entity) {
+	public boolean captureDroppedItem(net.minecraft.world.level.Level level, Entity entity) {
 		if (capturedDrops != null && entity instanceof ItemEntity item) {
 			capturedDrops.add(item);
 			return false;
@@ -121,7 +121,7 @@ public abstract class EntityMixin implements EntityExtensions {
 		if (capturedDrops == null)
 		    capturedDrops = new ArrayList<>();
 		capturedDropsCount++;
-		LOGGER.log(LogLevel.SEVERE, "startCapturingDrops count=" + capturedDropsCount, new RuntimeException("startCapturingDrops") );
+		LOGGER.log(java.util.logging.Level.SEVERE, "startCapturingDrops count=" + capturedDropsCount, new RuntimeException("startCapturingDrops") );
 	}
 
 	@Override
@@ -133,7 +133,7 @@ public abstract class EntityMixin implements EntityExtensions {
 	public List<ItemEntity> finishCapturingDrops() {
 		List<ItemEntity> captured = capturedDrops;
 		if (capturedDropsCount > 0) capturedDropsCount--;
-		LOGGER.log(LogLevel.SEVERE, "finishCapturingDrops count=" + capturedDropsCount, new RuntimeException("finishCapturingDrops") );
+		LOGGER.log(java.util.logging.Level.SEVERE, "finishCapturingDrops count=" + capturedDropsCount, new RuntimeException("finishCapturingDrops") );
 		if (capturedDropsCount == 0) capturedDrops = null;
 		return captured;
 	}
