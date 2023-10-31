@@ -98,6 +98,8 @@ public class ExistingFileHelper {
 		if (!Files.isDirectory(path))
 			throw new IllegalStateException("Path " + property + " is not a directory or does not exist");
 		String mods = System.getProperty(EXISTING_MODS);
+		if (mods == null)
+			mods = "";
 		return withResources(new HashSet<>(List.of(mods.split(","))), path);
 	}
 
