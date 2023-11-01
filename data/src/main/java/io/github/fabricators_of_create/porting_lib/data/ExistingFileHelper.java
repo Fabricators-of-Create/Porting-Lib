@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -82,6 +83,8 @@ public class ExistingFileHelper {
 
 	public static final String EXISTING_RESOURCES = "porting_lib.datagen.existing_resources";
 
+	public static final String EXISTING_MODS = "porting_lib.datagen.existing-mod";
+
 	/**
 	 * Create a helper with existing resources provided from a JVM argument.
 	 * To use, a JVM argument mapping {@link ExistingFileHelper#EXISTING_RESOURCES the key}
@@ -94,7 +97,10 @@ public class ExistingFileHelper {
 		Path path = Paths.get(property);
 		if (!Files.isDirectory(path))
 			throw new IllegalStateException("Path " + property + " is not a directory or does not exist");
-		return withResources(path);
+		String mods = System.getProperty(EXISTING_MODS);
+		if (mods == null)
+			mods = "";
+		return withResources(new HashSet<>(List.of(mods.split(","))), path);
 	}
 
 	/**
@@ -104,6 +110,15 @@ public class ExistingFileHelper {
 		GameConfig gameConfig = ((MinecraftExtension) Minecraft.getInstance()).port_lib$getGameConfig();
 		List<Path> resources = List.of(paths);
 		return new ExistingFileHelper(resources, Set.of(), true, gameConfig.location.assetIndex, gameConfig.location.assetDirectory);
+	}
+
+	/**
+	 * Create a helper with the provided paths being used for resources.
+	 */
+	public static ExistingFileHelper withResources(Set<String> mods, Path... paths) {
+		GameConfig gameConfig = ((MinecraftExtension) Minecraft.getInstance()).port_lib$getGameConfig();
+		List<Path> resources = List.of(paths);
+		return new ExistingFileHelper(resources, mods, true, gameConfig.location.assetIndex, gameConfig.location.assetDirectory);
 	}
 
 	/**

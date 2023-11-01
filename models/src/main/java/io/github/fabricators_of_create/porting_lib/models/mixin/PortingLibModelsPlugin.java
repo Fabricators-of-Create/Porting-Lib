@@ -16,6 +16,8 @@ public class PortingLibModelsPlugin implements IMixinConfigPlugin {
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
 		if (mixinClassName.contains(".frex."))
 			return frexLoaded;
+		if (mixinClassName.contains("ItemRendererMixin"))
+			return !frexLoaded;
 		return true;
 	}
 

@@ -61,9 +61,9 @@ public class LootPoolMixin implements LootPoolExtensions {
 			return (LootPool.Builder) (Object) this;
 		}
 
-		@Inject(method = "build", at = @At("RETURN"))
-		public void setName(CallbackInfoReturnable<LootPool> cir) {
-			cir.getReturnValue().setName(name);
+		@ModifyReturnValue(method = "build", at = @At("RETURN"))
+		public void setName(LootPool pool) {
+			pool.setName(name);
 		}
 	}
 

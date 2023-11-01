@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.loot;
 
+import java.util.Objects;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 

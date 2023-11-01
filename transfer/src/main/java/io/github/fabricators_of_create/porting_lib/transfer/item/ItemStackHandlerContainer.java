@@ -48,20 +48,31 @@ public class ItemStackHandlerContainer extends ItemStackHandler implements Conta
 
 	@Override
 	@NotNull
-	public ItemStack removeItem(int slot, int amount) {
-		if (indexInvalid(slot))
+	public ItemStack removeItem(int index, int amount) {
+		if (indexInvalid(index))
 			return ItemStack.EMPTY;
-		ItemStack stack = getStackInSlot(slot);
-		return stack.split(amount);
+		ItemStackHandlerSlot slot = getSlot(index);
+		ItemStack stack = slot.getStack();
+		if (stack.isEmpty())
+			return ItemStack.EMPTY;
+
+		int count = stack.getCount();
+		int toRemove = Math.min(amount, count);
+		int remaining = count - toRemove;
+		ItemStack removed = ItemHandlerHelper.copyStackWithSize(stack, toRemove);
+		ItemStack remainder = remaining <= 0 ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(stack, remaining);
+		slot.setNewStack(remainder);
+		return removed;
 	}
 
 	@Override
 	@NotNull
-	public ItemStack removeItemNoUpdate(int slot) {
-		if (indexInvalid(slot))
+	public ItemStack removeItemNoUpdate(int index) {
+		if (indexInvalid(index))
 			return ItemStack.EMPTY;
-		ItemStack stack = getStackInSlot(slot);
-		setStackInSlot(slot, ItemStack.EMPTY);
+		ItemStackHandlerSlot slot = getSlot(index);
+		ItemStack stack = slot.getStack();
+		slot.setNewStack(ItemStack.EMPTY);
 		return stack;
 	}
 
@@ -85,7 +96,7 @@ public class ItemStackHandlerContainer extends ItemStackHandler implements Conta
 	public boolean canPlaceItem(int index, @NotNull ItemStack stack) {
 		if (indexInvalid(index))
 			return false;
-		return isItemValid(index, ItemVariant.of(stack));
+		return isItemValid(index, ItemVariant.of(stack), stack.getCount());
 	}
 
 	@Override

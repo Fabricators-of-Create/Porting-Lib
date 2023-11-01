@@ -133,8 +133,8 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
-	public boolean isItemValid(int slot, ItemVariant resource) {
-		return handler.isItemValid(slot, resource);
+	public boolean isItemValid(int slot, ItemVariant resource, int count) {
+		return handler.isItemValid(slot, resource, count);
 	}
 
 	@Override
