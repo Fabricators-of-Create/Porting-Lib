@@ -15,7 +15,7 @@ public class SlimeMixin implements SlimeExtension {
 	@WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/Slime;getSize()I"))
 	private int handleParticles(Slime slime, Operation<Integer> operation) {
 		if (!spawnCustomParticles())
-			operation.call(slime);
+			return operation.call(slime);
 		return 0; // Return 0 to prevent adding particles
 	}
 }
