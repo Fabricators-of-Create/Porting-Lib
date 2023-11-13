@@ -1,8 +1,20 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
 import java.util.Collection;
+import java.util.List;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
+import io.github.fabricators_of_create.porting_lib.entity.IEntityAdditionalSpawnData;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityDataEvents;
+
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+
+import net.minecraft.network.protocol.game.ClientboundBundlePacket;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,6 +49,19 @@ public abstract class EntityMixin implements EntityExtensions {
 	@Inject(at = @At("TAIL"), method = "<init>")
 	public void port_lib$entityInit(EntityType<?> entityType, Level world, CallbackInfo ci) {
 		eyeHeight = EntityEvents.EYE_HEIGHT.invoker().onEntitySize((Entity) (Object) this, eyeHeight);
+	}
+
+	// custom spawn packets
+
+	@ModifyReturnValue(method = "getAddEntityPacket", at = @At("RETURN"))
+	private Packet<ClientGamePacketListener> useExtendedSpawnPacket(Packet<ClientGamePacketListener> base) {
+		if (!(this instanceof IEntityAdditionalSpawnData extra))
+			return base;
+		FriendlyByteBuf buf = PacketByteBufs.create();
+		buf.writeVarInt(getId());
+		extra.writeSpawnData(buf);
+		Packet<ClientGamePacketListener> extraPacket = ServerPlayNetworking.createS2CPacket(IEntityAdditionalSpawnData.EXTRA_DATA_PACKET, buf);
+		return new ClientboundBundlePacket(List.of(base, extraPacket));
 	}
 
 	// CAPTURE DROPS
@@ -98,6 +123,9 @@ public abstract class EntityMixin implements EntityExtensions {
 
 	@Shadow
 	private float yRot;
+
+	@Shadow
+	public abstract int getId();
 
 	@Inject(
 			method = "startRiding(Lnet/minecraft/world/entity/Entity;Z)Z",

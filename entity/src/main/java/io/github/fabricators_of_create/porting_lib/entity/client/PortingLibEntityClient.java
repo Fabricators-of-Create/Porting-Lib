@@ -20,18 +20,16 @@ import net.minecraft.world.entity.Entity;
 public class PortingLibEntityClient implements ClientModInitializer {
 	@Environment(EnvType.CLIENT)
 	private static void handlePacketReceived(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-		FriendlyByteBuf copy = PacketByteBufs.copy(buf); // copy so it survives client.execute()
+		int entityId = buf.readVarInt();
+		buf.retain(); // save for execute
 		client.execute(() -> {
-			ClientboundAddEntityPacket spawnPacket = new ClientboundAddEntityPacket(copy);
-			int entityId = spawnPacket.getId();
-			handler.handleAddEntity(spawnPacket);
 			Entity entity = client.level.getEntity(entityId);
 			if (entity instanceof IEntityAdditionalSpawnData extra) {
-				extra.readSpawnData(copy);
+				extra.readSpawnData(buf);
 			} else {
 				PortingLib.LOGGER.error("ExtraSpawnDataEntity spawn data received, but no corresponding entity was found! Entity: [{}]", entity);
 			}
-			copy.release();
+			buf.release();
 		});
 	}
 	@Override

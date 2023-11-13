@@ -6,6 +6,7 @@
   "mixins": [
     "common.AbstractMinecartMixin",
     "common.BlockBehaviourMixin",
+    "common.BundlePacketMixin",
     "common.CatSpawnerMixin",
     "common.ChorusFruitItemMixin",
     "common.EnderManMixin",
