@@ -49,8 +49,9 @@ public class LootPoolMixin implements LootPoolExtensions {
 		}
 
 		@ModifyReturnValue(method = "build", at = @At("RETURN"))
-		public void setName(LootPool pool) {
+		public LootPool setName(LootPool pool) {
 			pool.setName(name);
+			return pool;
 		}
 	}
 
