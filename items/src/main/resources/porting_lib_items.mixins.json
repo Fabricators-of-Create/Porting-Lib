@@ -7,6 +7,9 @@
     "defaultRequire": 1
   },
   "client": [
-    "GuiGraphicsMixin"
+    "client.GuiGraphicsMixin"
+  ],
+  "mixins": [
+    "common.RepairItemRecipeMixin"
   ]
 }

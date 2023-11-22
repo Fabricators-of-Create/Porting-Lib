@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.item.impl.mixin;
+package io.github.fabricators_of_create.porting_lib.item.impl.mixin.client;
 
 import io.github.fabricators_of_create.porting_lib.item.impl.client.ItemDecoratorHandler;
 import net.minecraft.client.gui.Font;
