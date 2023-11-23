@@ -10,6 +10,7 @@
     "common.CatSpawnerMixin",
     "common.ChorusFruitItemMixin",
     "common.EnderManMixin",
+    "common.EntityAccessor",
     "common.EntityMixin",
     "common.ExperienceOrbMixin",
     "common.ItemMixin",

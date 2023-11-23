@@ -2,6 +2,9 @@ package io.github.fabricators_of_create.porting_lib.mixin.accessors.common.acces
 
 import java.util.List;
 
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.Pose;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;

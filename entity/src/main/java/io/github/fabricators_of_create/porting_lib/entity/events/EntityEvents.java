@@ -1,12 +1,15 @@
 package io.github.fabricators_of_create.porting_lib.entity.events;
 
 import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
+import io.github.fabricators_of_create.porting_lib.entity.mixin.common.EntityAccessor;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -21,6 +24,7 @@ public abstract class EntityEvents extends BaseEvent {
 		return entity;
 	}
 
+	@Deprecated(forRemoval = true)
 	public static final Event<EyeHeight> EYE_HEIGHT = EventFactory.createArrayBacked(EyeHeight.class, callbacks -> (entity, height) -> {
 		for (EyeHeight callback : callbacks) {
 			float newHeight = callback.onEntitySize(entity, height);
@@ -29,6 +33,11 @@ public abstract class EntityEvents extends BaseEvent {
 		}
 
 		return height;
+	});
+
+	public static final Event<EntitySize> SIZE = EventFactory.createArrayBacked(EntitySize.class, callbacks -> event -> {
+		for (EntitySize callback : callbacks)
+			callback.onEntitySizeChange(event);
 	});
 
 	public static final Event<JoinWorld> ON_JOIN_WORLD = EventFactory.createArrayBacked(JoinWorld.class, callbacks -> (entity, world, loadedFromDisk) -> {
@@ -68,6 +77,11 @@ public abstract class EntityEvents extends BaseEvent {
 				return true;
 		return false;
 	});
+
+	@Override
+	public void sendEvent() {
+
+	}
 
 	@FunctionalInterface
 	public interface EnteringSection {
@@ -130,5 +144,79 @@ public abstract class EntityEvents extends BaseEvent {
 
 	public interface Tracking {
 		void onTrackingStart(Entity tracking, ServerPlayer player);
+	}
+
+	@FunctionalInterface
+	public interface EntitySize {
+		void onEntitySizeChange(Size event);
+	}
+
+	/**
+	 * This event is fired whenever the {@link Pose} changes, and in a few other hardcoded scenarios.<br>
+	 * CAREFUL: This is also fired in the Entity constructor. Therefore the entity(subclass) might not be fully initialized. Check Entity#isAddedToWorld() or !Entity#firstUpdate.<br>
+	 * If you change the player's size, you probably want to set the eye height accordingly as well<br>
+	 **/
+	public static class Size extends EntityEvents {
+		private final Pose pose;
+		private final EntityDimensions oldSize;
+		private EntityDimensions newSize;
+		private final float oldEyeHeight;
+		private float newEyeHeight;
+
+		public Size(Entity entity, Pose pose, EntityDimensions size, float defaultEyeHeight) {
+			this(entity, pose, size, size, defaultEyeHeight, defaultEyeHeight);
+		}
+
+		public Size(Entity entity, Pose pose, EntityDimensions oldSize, EntityDimensions newSize, float oldEyeHeight, float newEyeHeight) {
+			super(entity);
+			this.pose = pose;
+			this.oldSize = oldSize;
+			this.newSize = newSize;
+			this.oldEyeHeight = oldEyeHeight;
+			this.newEyeHeight = newEyeHeight;
+		}
+
+		public Pose getPose() {
+			return pose;
+		}
+
+		public EntityDimensions getOldSize() {
+			return oldSize;
+		}
+
+		public EntityDimensions getNewSize() {
+			return newSize;
+		}
+
+		public void setNewSize(EntityDimensions size) {
+			setNewSize(size, false);
+		}
+
+		/**
+		 * Set the new size of the entity. Set updateEyeHeight to true to also update the eye height according to the new size.
+		 */
+		public void setNewSize(EntityDimensions size, boolean updateEyeHeight) {
+			this.newSize = size;
+			if (updateEyeHeight) {
+				this.newEyeHeight = ((EntityAccessor)this.getEntity()).callGetEyeHeight(this.getPose(), this.newSize);
+			}
+		}
+
+		public float getOldEyeHeight() {
+			return oldEyeHeight;
+		}
+
+		public float getNewEyeHeight() {
+			return newEyeHeight;
+		}
+
+		public void setNewEyeHeight(float newHeight) {
+			this.newEyeHeight = newHeight;
+		}
+
+		@Override
+		public void sendEvent() {
+			SIZE.invoker().onEntitySizeChange(this);
+		}
 	}
 }

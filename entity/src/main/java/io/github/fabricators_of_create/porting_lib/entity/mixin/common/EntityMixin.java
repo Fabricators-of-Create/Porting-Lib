@@ -5,6 +5,15 @@ import java.util.List;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
+import com.llamalad7.mixinextras.sugar.Local;
+
+import com.llamalad7.mixinextras.sugar.Share;
+
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+
 import io.github.fabricators_of_create.porting_lib.entity.IEntityAdditionalSpawnData;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityDataEvents;
 
@@ -16,12 +25,17 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 
 import net.minecraft.network.protocol.game.ClientboundBundlePacket;
 
+import net.minecraft.world.entity.EntityDimensions;
+
+import net.minecraft.world.entity.Pose;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -49,6 +63,27 @@ public abstract class EntityMixin implements EntityExtensions {
 	@Inject(at = @At("TAIL"), method = "<init>")
 	public void port_lib$entityInit(EntityType<?> entityType, Level world, CallbackInfo ci) {
 		eyeHeight = EntityEvents.EYE_HEIGHT.invoker().onEntitySize((Entity) (Object) this, eyeHeight);
+	}
+
+	@WrapOperation(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getEyeHeight(Lnet/minecraft/world/entity/Pose;Lnet/minecraft/world/entity/EntityDimensions;)F"))
+	private float entitySizeConstructEvent(Entity instance, Pose pose, EntityDimensions dimensions, Operation<Float> original) {
+		EntityEvents.Size sizeEvent = new EntityEvents.Size((Entity) (Object) this, Pose.STANDING, this.dimensions, original.call(instance, pose, dimensions));
+		this.dimensions = sizeEvent.getNewSize();
+		return sizeEvent.getNewEyeHeight();
+	}
+
+	@WrapOperation(method = "refreshDimensions", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getEyeHeight(Lnet/minecraft/world/entity/Pose;Lnet/minecraft/world/entity/EntityDimensions;)F"))
+	private float entitySizeEvent(Entity instance, Pose pose, EntityDimensions dimensions, Operation<Float> original, @Local(index = 3) EntityDimensions old, @Share("size") LocalRef<EntityEvents.Size> event) {
+		EntityEvents.Size sizeEvent = new EntityEvents.Size((Entity) (Object) this, pose, this.dimensions, old, getEyeHeight(), original.call(instance, pose, dimensions));
+		event.set(sizeEvent);
+		sizeEvent.sendEvent();
+		this.dimensions = sizeEvent.getNewSize();
+		return sizeEvent.getNewEyeHeight();
+	}
+
+	@ModifyVariable(method = "refreshDimensions", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;reapplyPosition()V"), index = 3)
+	private EntityDimensions modifyDimensions(EntityDimensions value, @Share("size") LocalRef<EntityEvents.Size> event) {
+		return event.get().getNewSize();
 	}
 
 	// custom spawn packets
@@ -127,6 +162,18 @@ public abstract class EntityMixin implements EntityExtensions {
 	@Shadow
 	public abstract int getId();
 
+	@Shadow
+	public abstract Pose getPose();
+
+	@Shadow
+	private EntityDimensions dimensions;
+
+	@Shadow
+	protected abstract float getEyeHeight(Pose pose, EntityDimensions dimensions);
+
+	@Shadow
+	public abstract float getEyeHeight();
+
 	@Inject(
 			method = "startRiding(Lnet/minecraft/world/entity/Entity;Z)Z",
 			at = @At(
@@ -185,7 +232,7 @@ public abstract class EntityMixin implements EntityExtensions {
 
 				this.removeAfterChangingDimensions();
 				this.level.getProfiler().pop();
-				((ServerLevel)this.level).resetEmptyTime();
+				((ServerLevel) this.level).resetEmptyTime();
 				p_20118_.resetEmptyTime();
 				this.level.getProfiler().pop();
 				return transportedEntity;
