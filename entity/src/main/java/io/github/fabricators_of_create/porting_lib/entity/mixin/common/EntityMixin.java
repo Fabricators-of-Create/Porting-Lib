@@ -68,6 +68,7 @@ public abstract class EntityMixin implements EntityExtensions {
 	@WrapOperation(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getEyeHeight(Lnet/minecraft/world/entity/Pose;Lnet/minecraft/world/entity/EntityDimensions;)F"))
 	private float entitySizeConstructEvent(Entity instance, Pose pose, EntityDimensions dimensions, Operation<Float> original) {
 		EntityEvents.Size sizeEvent = new EntityEvents.Size((Entity) (Object) this, Pose.STANDING, this.dimensions, original.call(instance, pose, dimensions));
+		sizeEvent.sendEvent();
 		this.dimensions = sizeEvent.getNewSize();
 		return sizeEvent.getNewEyeHeight();
 	}
