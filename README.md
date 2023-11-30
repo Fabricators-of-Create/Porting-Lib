@@ -1,67 +1,20 @@
-# Porting Lib
-### A collection of utilities for porting mods from Forge to Fabric.
+# 1.20.1-legacy
+This branch was the original 1.20.1 version.
 
-## Use
-Porting Lib is split into modules. All modules are available on this maven:
-```groovy
-maven { url = "https://mvn.devos.one/snapshots/" }
-```
-```groovy
-modImplementation(include("io.github.fabricators_of_create.Porting-Lib:<module>:<version>"))
-```
+Due to poorly planned refactors, it diverged irreparably from
+the branch now known as `1.20.1`.
 
-The latest major and minor versions can be found in the `gradle.properties` file as `mod_version`.
-The latest patch can be found from GitHub Actions as the build number.
+The other branch was chosen to be the main one since it seems to
+be what more mods are using.
 
-### Modules
-| Module                   | Description                                                                           |
-|--------------------------|---------------------------------------------------------------------------------------|
-| `Porting-Lib`            | Fat jar including all modules                                                         |
-| `accessors`              | Accessor mixins aplenty                                                               |
-| `attributes`             | Additional Entity Attributes; step height, gravity, swim speed                        |
-| `base`                   | Code that has not yet been split into modules                                         |
-| `brewing`                | Small library for adding brewing recipes                                              |
-| `chunk_loading`          | Chunk loading management                                                              |
-| `client_events`          | Useful client-side events                                                             |
-| `common`                 | Miscellaneous utilities for other modules                                             |
-| `config`                 | Super light weight implementation of forge's config library                           |
-| `core`                   | Core functionality used across other modules                                          |
-| `data`                   | Additional data generation providers                                                  |
-| `entity`                 | Multipart entities, extra spawn data, removal listening                               |
-| `extensions`             | Extensions to vanilla classes for additional functionality                            |
-| `fake_players`           | A basic fake server player implementation that can be used to simulate player actions |
-| `gametest`               | Tools to make GameTest creation as easy as possible                                   |
-| `lazy_registration`      | A implementation of forge's DeferredRegister system rewritten for fabric              |
-| `loot`                   | A small library to modify mob loot                                                    |
-| `mixin_extensions`       | More features for Mixins                                                              |
-| `model_builders`         | Additional model builders for data generation                                         |
-| `model_generators`       | Forge model generators                                                                |
-| `model_loader`           | Base loader for custom model types                                                    |
-| `model_materials`        | Material data for use in rendering                                                    |
-| `models`                 | Model implementations, ModelData, RenderTypes                                         |
-| `networking`             | A Forge-like packet system                                                            |
-| `obj_loader`             | Loading .obj models                                                                   |
-| `recipe_book_categories` | Allows mods to add additional recipe book categories                                  |
-| `registries`             | Custom datapack registries and registry utils                                         |
-| `tags`                   | Forge tags                                                                            |
-| `tool_actions`           | Utilities for tool interactions.                                                      |
-| `transfer`               | Storage implementations, client-side lookup, FluidStack, assorted transfer utilities  |
-| `utility`                | Miscellaneous utilities that are too niche for other modules                          |
+[Tamago](https://modrinth.com/mod/tamago) is a compat mod that will
+do its best to automatically patch mods using the legacy branch to
+work on the new one.
+If you do not want to deal with the effort of porting to the new
+branch, this should work. Either include it with your mod or tell
+people to install it.
 
-### Contributing
-See [the contribution information](CONTRIBUTING.md).
-
-### Related APIs
-Some APIs (some in-house) we've found to also be useful with porting mods.
-
-| Name                                                                                        | Description                                                          |
-|---------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
-| [Forge Config API Port](https://github.com/Fuzss/forgeconfigapiport-fabric)                 | A port of the Forge config API to Fabric                             |
-| [Registrate Refabricated](https://github.com/Fabricators-of-Create/Registrate-Refabricated) | A port of Registrate to Fabric                                       |
-| [Reach Entity Attributes](https://github.com/JamiesWhiteShirt/reach-entity-attributes)      | Provides Entity Attributes for reach distance                        |
-| [Milk Lib](https://github.com/TropheusJ/milk-lib)                                           | Provides a Milk fluid as well as other milk items used often by mods |
-| [Cardinal Components API](https://github.com/OnyxStudios/Cardinal-Components-API)           | Provides Components, which can replace Capabilities                  |
-| [Trinkets](https://github.com/emilyploszaj/trinkets)                                        | Accessories, replacing Curios                                        |
-| [Here be no Dragons](https://github.com/Parzivail-Modding-Team/HereBeNoDragons)             | Hides the Experimental World Settings screen                         |
-| [Mixin Extras](https://github.com/LlamaLad7/MixinExtras)                                    | For when Mixin just isn't enough                                     |
-| [Fabric ASM](https://github.com/Chocohead/Fabric-ASM)                                       | For when Mixin Extras just isn't enough                              |
+This situation is quite a mess and has gone unresolved far too long
+due to time constraints, so now we need to do breaking changes
+extremely late into a version's lifecycle. I'm sorry to anyone this
+disrupts, and I will make sure this doesn't happen again.
