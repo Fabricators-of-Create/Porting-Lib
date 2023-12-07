@@ -10,14 +10,14 @@ public class DataGenerators implements DataGeneratorEntrypoint {
 	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
 		FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
 		pack.addProvider(FluidTagProvider::new);
-		pack.addProvider(BlockTagProvider::new);
-		pack.addProvider(ItemTagProvider::new);
+		BlockTagProvider blocks = pack.addProvider(BlockTagProvider::new);
+		pack.addProvider((output, registries) -> new ItemTagProvider(output, registries, blocks));
 		pack.addProvider(BiomeTagsProvider::new);
 		pack.addProvider(EntityTagProvider::new);
-		pack.addProvider(DataGenerators::itemTags);
+		pack.addProvider(DataGenerators::itemTagLang);
 	}
 
-	private static ItemTagLangProvider itemTags(FabricDataOutput output) {
+	private static ItemTagLangProvider itemTagLang(FabricDataOutput output) {
 		return new ItemTagLangProvider(output, Tags.Items.class);
 	}
 }
