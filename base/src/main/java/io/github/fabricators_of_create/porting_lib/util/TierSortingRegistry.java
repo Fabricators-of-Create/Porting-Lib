@@ -14,6 +14,8 @@ import javax.annotation.Nullable;
 
 import io.github.fabricators_of_create.porting_lib.PortingConstants;
 
+import net.fabricmc.fabric.api.mininglevel.v1.MiningLevelManager;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -182,15 +184,10 @@ public class TierSortingRegistry {
 	}
 
 	/**
-	 * Fallback for when a tier isn't in the registry, copy of the logic in {@link DiggerItem#isCorrectToolForDrops}
+	 * Fallback for when a tier isn't in the registry
 	 */
 	private static boolean isCorrectTierVanilla(Tier tier, BlockState state) {
-		int i = tier.getLevel();
-		if (i < 3 && state.is(BlockTags.NEEDS_DIAMOND_TOOL)) {
-			return false;
-		} else if (i < 2 && state.is(BlockTags.NEEDS_IRON_TOOL)) {
-			return false;
-		} else return i >= 1 || !state.is(BlockTags.NEEDS_STONE_TOOL);
+		return tier.getLevel() >= MiningLevelManager.getRequiredMiningLevel(state);
 	}
 
 	private static void processTier(Tier tier, ResourceLocation name, List<Object> afters, List<Object> befores) {
