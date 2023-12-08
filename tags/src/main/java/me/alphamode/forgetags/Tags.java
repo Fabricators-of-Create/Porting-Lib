@@ -8,6 +8,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.mininglevel.v1.MiningLevelManager;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalBlockTags;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
+import net.minecraft.core.Registry;
 import net.minecraft.world.entity.EntityType;
 
 import net.minecraft.world.item.Tiers;
