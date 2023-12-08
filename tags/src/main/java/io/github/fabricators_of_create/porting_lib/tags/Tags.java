@@ -5,14 +5,16 @@ import java.util.function.Supplier;
 
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.mininglevel.v1.MiningLevelManager;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalBlockTags;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 
+import net.minecraft.world.item.Tiers;
+
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
@@ -173,9 +175,9 @@ public class Tags implements ModInitializer {
 		public static final TagKey<Block> STORAGE_BLOCKS_RAW_IRON = tag("raw_iron_blocks");
 		public static final TagKey<Block> STORAGE_BLOCKS_REDSTONE = tag("redstone_blocks");
 
-		public static final TagKey<Block> NEEDS_WOOD_TOOL = tag("needs_wood_tool");
-		public static final TagKey<Block> NEEDS_GOLD_TOOL = tag("needs_gold_tool");
-		public static final TagKey<Block> NEEDS_NETHERITE_TOOL = tag("needs_netherite_tool");
+		public static final TagKey<Block> NEEDS_WOOD_TOOL = MiningLevelManager.getBlockTag(Tiers.WOOD.getLevel());
+		public static final TagKey<Block> NEEDS_GOLD_TOOL = MiningLevelManager.getBlockTag(Tiers.GOLD.getLevel());
+		public static final TagKey<Block> NEEDS_NETHERITE_TOOL = MiningLevelManager.getBlockTag(Tiers.NETHERITE.getLevel());
 
 		private static TagKey<Block> tag(String name) {
 			return TagKey.create(Registries.BLOCK, new ResourceLocation("c", name));
