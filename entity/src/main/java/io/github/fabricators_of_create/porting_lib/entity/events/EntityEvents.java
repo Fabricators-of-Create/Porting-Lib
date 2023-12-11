@@ -87,6 +87,16 @@ public abstract class EntityEvents extends BaseEvent {
 			callback.onEntityStruckByLightning(event);
 	});
 
+	public static final Event<ProjectileImpact> PROJECTILE_IMPACT = EventFactory.createArrayBacked(ProjectileImpact.class, callbacks -> event -> {
+		for (ProjectileImpact callback : callbacks)
+			callback.onProjectileImpact(event);
+	});
+
+	@FunctionalInterface
+	public interface ProjectileImpact {
+		void onProjectileImpact(ProjectileImpactEvent event);
+	}
+
 	@FunctionalInterface
 	public interface EnteringSection {
 		void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos);
