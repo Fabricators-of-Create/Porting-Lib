@@ -71,6 +71,10 @@ public abstract class EntityEvents extends BaseEvent {
 			e.onEntityEnterSection(entity, packedOldPos, packedNewPos);
 	});
 
+	/**
+	 * Will be removed in 1.20.2 and the new method will be renamed back to "STRUCK_BY_LIGHTING"
+	 */
+	@Deprecated(forRemoval = true)
 	public static final Event<LightingStrike> STRUCK_BY_LIGHTING = EventFactory.createArrayBacked(LightingStrike.class, callbacks -> (entity, lightningBolt) -> {
 		for (LightingStrike callback : callbacks)
 			if (callback.onEntityStruckByLightning(entity, lightningBolt))
@@ -78,10 +82,10 @@ public abstract class EntityEvents extends BaseEvent {
 		return false;
 	});
 
-	@Override
-	public void sendEvent() {
-
-	}
+	public static final Event<NewLightingStrike> ENTITY_STRUCK_BY_LIGHTING = EventFactory.createArrayBacked(NewLightingStrike.class, callbacks -> event -> {
+		for (NewLightingStrike callback : callbacks)
+			callback.onEntityStruckByLightning(event);
+	});
 
 	@FunctionalInterface
 	public interface EnteringSection {
@@ -106,6 +110,11 @@ public abstract class EntityEvents extends BaseEvent {
 	@FunctionalInterface
 	public interface LightingStrike {
 		boolean onEntityStruckByLightning(Entity entity, LightningBolt bolt);
+	}
+
+	@FunctionalInterface
+	public interface NewLightingStrike {
+		void onEntityStruckByLightning(EntityStruckByLightningEvent event);
 	}
 
 	@FunctionalInterface
