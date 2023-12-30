@@ -60,18 +60,24 @@ public abstract class BlockEvents extends BaseEvent {
 		void afterPlace(BlockPlaceContext ctx);
 	}
 
-	private final LevelAccessor world;
+	private final LevelAccessor level;
 	private final BlockPos pos;
 	private final BlockState state;
 	public BlockEvents(LevelAccessor world, BlockPos pos, BlockState state) {
 		this.pos = pos;
-		this.world = world;
+		this.level = world;
 		this.state = state;
 	}
 
+	public LevelAccessor getLevel()
+	{
+		return level;
+	}
+
+	@Deprecated(forRemoval = true)
 	public LevelAccessor getWorld()
 	{
-		return world;
+		return level;
 	}
 
 	public BlockPos getPos()
