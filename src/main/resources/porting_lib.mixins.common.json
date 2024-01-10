@@ -161,7 +161,8 @@
     "accessor.SlotAccessor",
     "accessor.StairBlockAccessor",
     "accessor.StructureTemplateAccessor",
-    "accessor.TagValueAccessor"
+    "accessor.TagValueAccessor",
+    "hack.Tags$BlocksMixin"
   ],
   "injectors": {
     "defaultRequire": 1,

@@ -2,16 +2,9 @@ package io.github.fabricators_of_create.porting_lib;
 
 import io.github.fabricators_of_create.porting_lib.loot.LootModifierManager;
 import io.github.fabricators_of_create.porting_lib.loot.LootTableIdCondition;
-import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler;
 import io.github.fabricators_of_create.porting_lib.util.CanToolPerformAction;
 import io.github.fabricators_of_create.porting_lib.util.UsernameCache;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.Registry;
-
-import net.minecraft.world.item.ItemStack;
-
-import net.minecraft.world.item.Items;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +21,6 @@ import io.github.fabricators_of_create.porting_lib.util.TierSortingRegistry;
 import io.github.fabricators_of_create.porting_lib.util.TrueCondition;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.resources.ResourceLocation;
-
-import java.util.Arrays;
 
 public class PortingLib implements ModInitializer {
 	public static final String ID = "porting_lib";
