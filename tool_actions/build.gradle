@@ -3,5 +3,3 @@ processResources {
 }
 
 setupDatagen(project)
-
-mixinExtras(dependencies)

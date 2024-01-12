@@ -3,17 +3,6 @@ moduleDependencies(project, [
 		"asm"
 ])
 
-repositories {
-	maven {
-		url "https://maven.jamieswhiteshirt.com/libs-release"
-		content {
-			includeGroup "com.jamieswhiteshirt"
-		}
-	}
-}
-
-mixinExtras(dependencies)
-
 dependencies {
 	modImplementation(include("com.jamieswhiteshirt:reach-entity-attributes:2.4.0"))
 }

@@ -2,8 +2,6 @@ moduleDependencies(project, [
         "mixin_extensions"
 ])
 
-mixinExtras(dependencies)
-
 testMod(project)
 
 processResources {

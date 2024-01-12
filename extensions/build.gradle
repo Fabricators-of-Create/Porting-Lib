@@ -4,8 +4,6 @@ moduleDependencies(project, [
 		"common",
 ])
 
-mixinExtras(dependencies)
-
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }
