@@ -82,7 +82,7 @@ public abstract class LivingEntityMixin extends Entity {
 				if (!gravity.hasModifier(SLOW_FALLING)) gravity.addTransientModifier(SLOW_FALLING);
 				this.resetFallDistance();
 			} else if (gravity.hasModifier(SLOW_FALLING)) {
-				gravity.removeModifier(SLOW_FALLING);
+				gravity.removeModifier(SLOW_FALLING.getId());
 			}
 		}
 	}

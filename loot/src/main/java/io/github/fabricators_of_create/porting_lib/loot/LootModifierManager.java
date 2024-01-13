@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.GsonBuilder;
+
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 
@@ -31,13 +33,12 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.level.storage.loot.Deserializers;
 
 import org.jetbrains.annotations.NotNull;
 
 public class LootModifierManager extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener {
 	public static final Logger LOGGER = LogManager.getLogger();
-	public static final Gson GSON_INSTANCE = Deserializers.createFunctionSerializer().create();
+	public static final Gson GSON_INSTANCE = new GsonBuilder().create();
 
 	private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
 	private static final String folder = "loot_modifiers";

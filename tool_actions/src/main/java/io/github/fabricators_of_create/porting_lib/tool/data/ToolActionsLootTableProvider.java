@@ -16,7 +16,10 @@ import io.github.fabricators_of_create.porting_lib.tool.ToolAction;
 import io.github.fabricators_of_create.porting_lib.tool.ToolActions;
 import io.github.fabricators_of_create.porting_lib.tool.loot.CanToolPerformAction;
 import io.github.fabricators_of_create.porting_lib.tool.mixin.BuilderAccessor;
+import io.github.fabricators_of_create.porting_lib.tool.mixin.CompositeEntryBaseAccessor;
+import io.github.fabricators_of_create.porting_lib.tool.mixin.CompositeLootItemConditionAccessor;
 import io.github.fabricators_of_create.porting_lib.tool.mixin.InvertedLootItemConditionAccessor;
+import io.github.fabricators_of_create.porting_lib.tool.mixin.LootPoolEntryContainerAccessor;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.Util;
@@ -27,6 +30,7 @@ import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.data.loot.packs.VanillaLootTableProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.RandomSequence;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -37,9 +41,11 @@ import net.minecraft.world.level.storage.loot.LootDataType;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
+import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
 import net.minecraft.world.level.storage.loot.entries.CompositeEntryBase;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.predicates.AllOfCondition;
 import net.minecraft.world.level.storage.loot.predicates.CompositeLootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -73,7 +79,7 @@ public final class ToolActionsLootTableProvider extends LootTableProvider {
 	}
 
 	private boolean findAndReplaceInLootTableBuilder(LootTable.Builder builder, Item from, ToolAction toolAction) {
-		List<LootPool> lootPools = ((BuilderAccessor) builder).getPools();
+		List<LootPool> lootPools = ((BuilderAccessor) builder).getPools().build();
 		boolean found = false;
 
 		for (LootPool lootPool : lootPools) {
@@ -86,8 +92,8 @@ public final class ToolActionsLootTableProvider extends LootTableProvider {
 	}
 
 	private boolean findAndReplaceInLootPool(LootPool lootPool, Item from, ToolAction toolAction) {
-		LootPoolEntryContainer[] lootEntries = lootPool.entries;
-		LootItemCondition[] lootConditions = lootPool.conditions;
+		List<LootPoolEntryContainer> lootEntries = lootPool.entries;
+		List<LootItemCondition> lootConditions = lootPool.conditions;
 		boolean found = false;
 
 		if (lootEntries == null) {
@@ -109,16 +115,16 @@ public final class ToolActionsLootTableProvider extends LootTableProvider {
 			throw new IllegalStateException(LootPool.class.getName() + " is missing field f_7902" + "4_");
 		}
 
-		for (int i = 0; i < lootConditions.length; i++) {
-			LootItemCondition lootCondition = lootConditions[i];
+		for (int i = 0; i < lootConditions.size(); i++) {
+			LootItemCondition lootCondition = lootConditions.get(i);
 			if (lootCondition instanceof MatchTool && checkMatchTool((MatchTool) lootCondition, from)) {
-				lootConditions[i] = CanToolPerformAction.canToolPerformAction(toolAction).build();
+				lootConditions.set(i, CanToolPerformAction.canToolPerformAction(toolAction).build());
 				found = true;
 			} else if (lootCondition instanceof InvertedLootItemCondition) {
 				LootItemCondition invLootCondition = ((InvertedLootItemConditionAccessor) lootCondition).getTerm();
 
 				if (invLootCondition instanceof MatchTool && checkMatchTool((MatchTool) invLootCondition, from)) {
-					lootConditions[i] = InvertedLootItemCondition.invert(CanToolPerformAction.canToolPerformAction(toolAction)).build();
+					lootConditions.set(i, InvertedLootItemCondition.invert(CanToolPerformAction.canToolPerformAction(toolAction)).build());
 					found = true;
 				} else if (invLootCondition instanceof CompositeLootItemCondition compositeLootItemCondition && findAndReplaceInComposite(compositeLootItemCondition, from, toolAction)) {
 					found = true;
@@ -130,7 +136,7 @@ public final class ToolActionsLootTableProvider extends LootTableProvider {
 	}
 
 	private boolean findAndReplaceInParentedLootEntry(CompositeEntryBase entry, Item from, ToolAction toolAction) {
-		LootPoolEntryContainer[] lootEntries = entry.children;
+		List<LootPoolEntryContainer> lootEntries = ((CompositeEntryBaseAccessor) entry).getChildren();
 		boolean found = false;
 
 		if (lootEntries == null) {
@@ -147,18 +153,18 @@ public final class ToolActionsLootTableProvider extends LootTableProvider {
 	}
 
 	private boolean findAndReplaceInLootEntry(LootPoolEntryContainer entry, Item from, ToolAction toolAction) {
-		LootItemCondition[] lootConditions = entry.conditions;
+		List<LootItemCondition> lootConditions = ((LootPoolEntryContainerAccessor) entry).getConditions();
 		boolean found = false;
 
 		if (lootConditions == null) {
 			throw new IllegalStateException(LootPoolEntryContainer.class.getName() + " is missing field f_7963" + "6_");
 		}
 
-		for (int i = 0; i < lootConditions.length; i++) {
-			if (lootConditions[i] instanceof CompositeLootItemCondition composite && findAndReplaceInComposite(composite, from, toolAction)) {
+		for (int i = 0; i < lootConditions.size(); i++) {
+			if (lootConditions.get(i) instanceof CompositeLootItemCondition composite && findAndReplaceInComposite(composite, from, toolAction)) {
 				found = true;
-			} else if (lootConditions[i] instanceof MatchTool && checkMatchTool((MatchTool) lootConditions[i], from)) {
-				lootConditions[i] = CanToolPerformAction.canToolPerformAction(toolAction).build();
+			} else if (lootConditions.get(i) instanceof MatchTool matchTool && checkMatchTool(matchTool, from)) {
+				lootConditions.set(i, CanToolPerformAction.canToolPerformAction(toolAction).build());
 				found = true;
 			}
 		}
@@ -167,16 +173,16 @@ public final class ToolActionsLootTableProvider extends LootTableProvider {
 	}
 
 	private boolean findAndReplaceInComposite(CompositeLootItemCondition alternative, Item from, ToolAction toolAction) {
-		LootItemCondition[] lootConditions = alternative.terms;
+		List<LootItemCondition> lootConditions = ((CompositeLootItemConditionAccessor) alternative).getTerms();
 		boolean found = false;
 
 		if (lootConditions == null) {
 			throw new IllegalStateException(CompositeLootItemCondition.class.getName() + " is missing field f_28560" + "9_");
 		}
 
-		for (int i = 0; i < lootConditions.length; i++) {
-			if (lootConditions[i] instanceof MatchTool && checkMatchTool((MatchTool) lootConditions[i], from)) {
-				lootConditions[i] = CanToolPerformAction.canToolPerformAction(toolAction).build();
+		for (int i = 0; i < lootConditions.size(); i++) {
+			if (lootConditions.get(i) instanceof MatchTool matchTool && checkMatchTool(matchTool, from)) {
+				lootConditions.set(i, CanToolPerformAction.canToolPerformAction(toolAction).build());
 				found = true;
 			}
 		}
@@ -185,9 +191,7 @@ public final class ToolActionsLootTableProvider extends LootTableProvider {
 	}
 
 	private boolean checkMatchTool(MatchTool lootCondition, Item expected) {
-		ItemPredicate predicate = lootCondition.predicate;
-		Set<Item> items = predicate.items;
-		return items != null && items.contains(expected);
+		return lootCondition.predicate().flatMap(ItemPredicate::items).map(set -> set.contains(expected.builtInRegistryHolder())).orElse(false);
 	}
 
 	@Override
@@ -205,7 +209,8 @@ public final class ToolActionsLootTableProvider extends LootTableProvider {
 				throw new IllegalStateException("Duplicate loot table " + key);
 			}
 		}));
-		ValidationContext validationcontext = new ValidationContext(LootContextParamSets.ALL_PARAMS, new LootDataResolver() {
+		ProblemReporter.Collector collector = new ProblemReporter.Collector();
+		ValidationContext validationcontext = new ValidationContext(collector, LootContextParamSets.ALL_PARAMS, new LootDataResolver() {
 			@Nullable
 			public <T> T getElement(LootDataId<T> p_279283_) {
 				return (T) (p_279283_.type() == LootDataType.TABLE ? map.get(p_279283_.location()) : null);
@@ -214,7 +219,7 @@ public final class ToolActionsLootTableProvider extends LootTableProvider {
 
 		validate(map, validationcontext);
 
-		Multimap<String, String> multimap = validationcontext.getProblems();
+		Multimap<String, String> multimap = collector.get();
 		if (!multimap.isEmpty()) {
 			multimap.forEach((p_124446_, p_124447_) -> {
 				LOGGER.warn("Found validation problem in {}: {}", p_124446_, p_124447_);
@@ -225,7 +230,7 @@ public final class ToolActionsLootTableProvider extends LootTableProvider {
 				ResourceLocation lootTableId = lootTableEntry.getKey();
 				LootTable loottable = lootTableEntry.getValue();
 				Path path = this.pathProvider.json(lootTableId);
-				return DataProvider.saveStable(pOutput, LootDataType.TABLE.parser().toJsonTree(loottable), path);
+				return DataProvider.saveStable(pOutput, LootTable.CODEC, loottable, path);
 			}).toArray(CompletableFuture[]::new));
 		}
 	}

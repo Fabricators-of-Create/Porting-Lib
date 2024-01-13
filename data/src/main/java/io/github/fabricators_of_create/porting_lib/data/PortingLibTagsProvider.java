@@ -49,7 +49,11 @@ public abstract class PortingLibTagsProvider<T> extends FabricTagProvider<T> {
 		super(output, registryKey, registriesFuture);
 		this.existingFileHelper = existingFileHelper;
 		this.resourceType = new ExistingFileHelper.ResourceType(PackType.SERVER_DATA, ".json", TagManager.getTagDir(registryKey));
-		this.elementResourceType = new ExistingFileHelper.ResourceType(PackType.SERVER_DATA, ".json", DatapackBuiltinEntriesProvider.prefixNamespace(registryKey.location()));
+		this.elementResourceType = new ExistingFileHelper.ResourceType(PackType.SERVER_DATA, ".json", prefixNamespace(registryKey.location()));
+	}
+
+	private static String prefixNamespace(ResourceLocation id) {
+		return id.getNamespace().equals("minecraft") ? id.getPath() : id.getNamespace() + "/" + id.getPath();
 	}
 
 	@Nullable

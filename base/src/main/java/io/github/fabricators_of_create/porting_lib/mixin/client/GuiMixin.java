@@ -28,15 +28,13 @@ public abstract class GuiMixin {
 	@Shadow
 	@Final
 	private Minecraft minecraft;
-	@Shadow
-	@Final
-	private static ResourceLocation GUI_ICONS_LOCATION;
+
 	@Unique
-	public float port_lib$partialTicks;
+	public float partialTicks;
 
 	@Inject(method = "render", at = @At("HEAD"))
-	public void port_lib$render(GuiGraphics matrixStack, float f, CallbackInfo ci) {
-		port_lib$partialTicks = f;
+	public void render(GuiGraphics matrixStack, float f, CallbackInfo ci) {
+		partialTicks = f;
 	}
 
 	//This might be the wrong method to inject to
@@ -48,8 +46,8 @@ public abstract class GuiMixin {
 					target = "Lnet/minecraft/util/profiling/ProfilerFiller;pop()V"
 			),
 			cancellable = true)
-	private void port_lib$renderStatusBars(GuiGraphics guiGraphics, CallbackInfo ci) {
-		if (OverlayRenderCallback.EVENT.invoker().onOverlayRender(guiGraphics, port_lib$partialTicks, minecraft.getWindow(), OverlayRenderCallback.Types.AIR)) {
+	private void renderStatusBars(GuiGraphics guiGraphics, CallbackInfo ci) {
+		if (OverlayRenderCallback.EVENT.invoker().onOverlayRender(guiGraphics, partialTicks, minecraft.getWindow(), OverlayRenderCallback.Types.AIR)) {
 			ci.cancel();
 		}
 	}
@@ -61,21 +59,16 @@ public abstract class GuiMixin {
 			),
 			cancellable = true
 	)
-	private void port_lib$renderHealth(GuiGraphics guiGraphics, Player player, int i, int j, int k, int l, float f, int m, int n, int o, boolean bl, CallbackInfo ci) {
-		if (OverlayRenderCallback.EVENT.invoker().onOverlayRender(guiGraphics, port_lib$partialTicks, minecraft.getWindow(), OverlayRenderCallback.Types.PLAYER_HEALTH)) {
+	private void renderHealth(GuiGraphics guiGraphics, Player player, int i, int j, int k, int l, float f, int m, int n, int o, boolean bl, CallbackInfo ci) {
+		if (OverlayRenderCallback.EVENT.invoker().onOverlayRender(guiGraphics, partialTicks, minecraft.getWindow(), OverlayRenderCallback.Types.PLAYER_HEALTH)) {
 			ci.cancel();
 		}
 	}
 
 	@Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
-	private void port_lib$renderCrosshair(GuiGraphics guiGraphics, CallbackInfo ci) {
-		if (OverlayRenderCallback.EVENT.invoker().onOverlayRender(guiGraphics, port_lib$partialTicks, minecraft.getWindow(), OverlayRenderCallback.Types.CROSSHAIRS)) {
+	private void renderCrosshair(GuiGraphics guiGraphics, CallbackInfo ci) {
+		if (OverlayRenderCallback.EVENT.invoker().onOverlayRender(guiGraphics, partialTicks, minecraft.getWindow(), OverlayRenderCallback.Types.CROSSHAIRS)) {
 			ci.cancel();
-			return;
 		}
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderTexture(0, GUI_ICONS_LOCATION);
-		RenderSystem.enableBlend();
 	}
 }

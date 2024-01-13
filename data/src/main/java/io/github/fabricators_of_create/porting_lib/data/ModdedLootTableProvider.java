@@ -8,6 +8,8 @@ import java.util.concurrent.CompletableFuture;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.util.ProblemReporter;
+
 import org.slf4j.Logger;
 
 import com.google.common.collect.Maps;
@@ -57,7 +59,8 @@ public class ModdedLootTableProvider extends LootTableProvider {
 				throw new IllegalStateException("Duplicate loot table " + key);
 			}
 		}));
-		ValidationContext validationcontext = new ValidationContext(LootContextParamSets.ALL_PARAMS, new LootDataResolver() {
+		ProblemReporter.Collector collector = new ProblemReporter.Collector();
+		ValidationContext validationcontext = new ValidationContext(collector, LootContextParamSets.ALL_PARAMS, new LootDataResolver() {
 			@Nullable
 			public <T> T getElement(LootDataId<T> p_279283_) {
 				return (T)(p_279283_.type() == LootDataType.TABLE ? map.get(p_279283_.location()) : null);
@@ -66,7 +69,7 @@ public class ModdedLootTableProvider extends LootTableProvider {
 
 		validate(map, validationcontext);
 
-		Multimap<String, String> multimap = validationcontext.getProblems();
+		Multimap<String, String> multimap = collector.get();
 		if (!multimap.isEmpty()) {
 			multimap.forEach((p_124446_, p_124447_) -> {
 				LOGGER.warn("Found validation problem in {}: {}", p_124446_, p_124447_);
@@ -75,9 +78,9 @@ public class ModdedLootTableProvider extends LootTableProvider {
 		} else {
 			return CompletableFuture.allOf(map.entrySet().stream().map((lootTableEntry) -> {
 				ResourceLocation lootTableId = lootTableEntry.getKey();
-				LootTable loottable = lootTableEntry.getValue();
+				LootTable lootTable = lootTableEntry.getValue();
 				Path path = this.pathProvider.json(lootTableId);
-				return DataProvider.saveStable(pOutput, LootDataType.TABLE.parser().toJsonTree(loottable), path);
+				return DataProvider.saveStable(pOutput, LootTable.CODEC, lootTable, path);
 			}).toArray(CompletableFuture[]::new));
 		}
 	}

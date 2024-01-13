@@ -16,6 +16,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import io.github.fabricators_of_create.porting_lib.data.extensions.MinecraftExtension;
+import io.github.fabricators_of_create.porting_lib.data.mixin.accessor.FilePackResources$SharedZipFileAccessAccessor;
+import io.github.fabricators_of_create.porting_lib.data.mixin.accessor.FilePackResourcesAccessor;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.Minecraft;
@@ -145,7 +147,9 @@ public class ExistingFileHelper {
 		candidateServerResources.add(ServerPacksSource.createVanillaPackSource());
 		for (Path existing : existingPacks) {
 			File file = existing.toFile();
-			PackResources pack = file.isDirectory() ? new PathPackResources(file.getName(), file.toPath(), false) : new FilePackResources(file.getName(), file, false);
+			PackResources pack = file.isDirectory()
+					? new PathPackResources(file.getName(), file.toPath(), false)
+					: FilePackResourcesAccessor.callInit(file.getName(), FilePackResources$SharedZipFileAccessAccessor.callInit(file), false, "");
 			candidateClientResources.add(pack);
 			candidateServerResources.add(pack);
 		}

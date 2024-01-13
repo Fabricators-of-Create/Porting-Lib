@@ -13,8 +13,10 @@ import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundRespawnPacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
+import net.minecraft.network.protocol.game.CommonPlayerSpawnInfo;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -90,7 +92,7 @@ public abstract class ServerPlayerMixin extends Player {
 	protected abstract void createEndPlatform(ServerLevel world, BlockPos centerPos);
 
 	@Inject(method = "<init>", at = @At("RETURN"))
-	private void port_lib$init(MinecraftServer minecraftServer, ServerLevel serverLevel, GameProfile gameProfile, CallbackInfo ci) {
+	private void port_lib$init(MinecraftServer server, ServerLevel world, GameProfile gameProfile, ClientInformation clientInformation, CallbackInfo ci) {
 		ServerPlayerCreationCallback.EVENT.invoker().onCreate((ServerPlayer) (Object) this);
 	}
 
@@ -123,7 +125,12 @@ public abstract class ServerPlayerMixin extends Player {
 			return this;
 		} else {
 			LevelData leveldata = p_9180_.getLevelData();
-			this.connection.send(new ClientboundRespawnPacket(p_9180_.dimensionTypeId(), p_9180_.dimension(), BiomeManager.obfuscateSeed(p_9180_.getSeed()), this.gameMode.getGameModeForPlayer(), this.gameMode.getPreviousGameModeForPlayer(), p_9180_.isDebug(), p_9180_.isFlat(), (byte) 3, this.getLastDeathLocation(), getPortalCooldown()));
+			CommonPlayerSpawnInfo info = new CommonPlayerSpawnInfo(
+					p_9180_.dimensionTypeId(), p_9180_.dimension(), BiomeManager.obfuscateSeed(p_9180_.getSeed()),
+					this.gameMode.getGameModeForPlayer(), this.gameMode.getPreviousGameModeForPlayer(),
+					p_9180_.isDebug(), p_9180_.isFlat(),  this.getLastDeathLocation(), getPortalCooldown()
+			);
+			this.connection.send(new ClientboundRespawnPacket(info, ClientboundRespawnPacket.KEEP_ALL_DATA));
 			this.connection.send(new ClientboundChangeDifficultyPacket(leveldata.getDifficulty(), leveldata.isDifficultyLocked()));
 			PlayerList playerlist = this.server.getPlayerList();
 			playerlist.sendPlayerPermissionLevel((ServerPlayer) (Object) this);

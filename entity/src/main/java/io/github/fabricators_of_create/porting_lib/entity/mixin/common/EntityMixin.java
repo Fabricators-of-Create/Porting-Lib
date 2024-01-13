@@ -21,6 +21,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.common.ClientCommonPacketListener;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 
 import net.minecraft.network.protocol.game.ClientboundBundlePacket;
@@ -96,8 +97,10 @@ public abstract class EntityMixin implements EntityExtensions {
 		FriendlyByteBuf buf = PacketByteBufs.create();
 		buf.writeVarInt(getId());
 		extra.writeSpawnData(buf);
-		Packet<ClientGamePacketListener> extraPacket = ServerPlayNetworking.createS2CPacket(IEntityAdditionalSpawnData.EXTRA_DATA_PACKET, buf);
-		return new ClientboundBundlePacket(List.of(base, extraPacket));
+		Packet<ClientCommonPacketListener> extraPacket = ServerPlayNetworking.createS2CPacket(IEntityAdditionalSpawnData.EXTRA_DATA_PACKET, buf);
+		//noinspection unchecked - why?
+		Packet<ClientGamePacketListener> casted = (Packet<ClientGamePacketListener>) (Object) extraPacket;
+		return new ClientboundBundlePacket(List.of(base, casted));
 	}
 
 	// CAPTURE DROPS

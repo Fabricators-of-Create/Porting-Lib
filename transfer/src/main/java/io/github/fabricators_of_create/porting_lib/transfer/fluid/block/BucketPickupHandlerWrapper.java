@@ -27,7 +27,7 @@ public class BucketPickupHandlerWrapper implements SingleSlotStorage<FluidVarian
 		if (!resource.isBlank() && FluidConstants.BUCKET <= maxAmount) {
 			FluidState fluidState = world.getFluidState(blockPos);
 			if (!fluidState.isEmpty() && resource.getFluid() == fluidState.getType()) {
-				TransactionSuccessCallback.onSuccess(tx, () -> bucketPickupHandler.pickupBlock(world, blockPos, world.getBlockState(blockPos)));
+				TransactionSuccessCallback.onSuccess(tx, () -> bucketPickupHandler.pickupBlock(null, world, blockPos, world.getBlockState(blockPos)));
 				if (resource.equals(FluidVariant.of(fluidState.getType()))) {
 					return FluidConstants.BUCKET;
 				}

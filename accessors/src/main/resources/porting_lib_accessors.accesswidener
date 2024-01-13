@@ -57,7 +57,6 @@ transitive-accessible field net/minecraft/client/renderer/block/model/ItemTransf
 transitive-accessible field net/minecraft/client/renderer/block/model/ItemTransform$Deserializer DEFAULT_TRANSLATION Lorg/joml/Vector3f;
 transitive-accessible field net/minecraft/data/loot/EntityLootSubProvider SPECIAL_LOOT_TABLE_TYPES Ljava/util/Set;
 transitive-accessible field net/minecraft/data/loot/EntityLootSubProvider map Ljava/util/Map;
-transitive-accessible field net/minecraft/server/network/ServerGamePacketListenerImpl connection Lnet/minecraft/network/Connection;
 transitive-accessible field net/minecraft/world/entity/LivingEntity effectsDirty Z
 transitive-accessible field net/minecraft/world/item/AxeItem STRIPPABLES Ljava/util/Map;
 transitive-accessible field net/minecraft/world/item/ShovelItem FLATTENABLES Ljava/util/Map;

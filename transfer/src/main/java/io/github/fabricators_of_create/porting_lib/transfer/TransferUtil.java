@@ -214,7 +214,7 @@ public class TransferUtil {
 	 */
 	public static Optional<FluidStack> getFluidContained(ItemStack container) {
 		if (container != null && !container.isEmpty()) {
-			Storage<FluidVariant> storage = ContainerItemContext.withInitial(container).find(FluidStorage.ITEM);
+			Storage<FluidVariant> storage = ContainerItemContext.withConstant(container).find(FluidStorage.ITEM);
 			if (storage != null) {
 				FluidStack first = getFirstFluid(storage);
 				if (first != null) return Optional.of(first);
@@ -509,7 +509,7 @@ public class TransferUtil {
 	 * @return the filled bucket.
 	 */
 	public static ItemStack getFilledBucket(FluidVariant variant) {
-		ContainerItemContext context = ContainerItemContext.withInitial(Items.BUCKET.getDefaultInstance());
+		ContainerItemContext context = new MutableContainerItemContext(Items.BUCKET.getDefaultInstance());
 		try (Transaction tx = TransferUtil.getTransaction()) {
 			Storage<FluidVariant> storage = context.find(FluidStorage.ITEM);
 			if (storage != null) {
@@ -549,6 +549,13 @@ public class TransferUtil {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Creates a ContainerItemContext with a single mutable slot. This is useful for simulating interactions, such as filling a bucket to get the filled item.
+	 */
+	public ContainerItemContext mutableContext(ItemStack initial) {
+		return new MutableContainerItemContext(initial);
 	}
 
 	/**

@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import io.github.fabricators_of_create.porting_lib.command.ModIdArgument;
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
-import io.github.fabricators_of_create.porting_lib.data.ConditionalRecipe;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemItemStorages;
 import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import io.github.fabricators_of_create.porting_lib.util.TierSortingRegistry;
@@ -21,7 +20,6 @@ public class PortingLibBase implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		TierSortingRegistry.init();
-		ConditionalRecipe.init();
 		ItemItemStorages.init();
 		UsernameCache.load();
 		PortingHooks.init();

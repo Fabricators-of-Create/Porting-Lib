@@ -312,9 +312,7 @@ public class TierSortingRegistry {
 	}
 
 	private static void syncToPlayer(ServerPlayer serverPlayer) {
-		if (!serverPlayer.connection.connection.isMemoryConnection()) {
-			ServerPlayNetworking.send(serverPlayer, CHANNEL_NAME, new SyncPacket(sortedTiers.stream().map(TierSortingRegistry::getName).toList()).encode());
-		}
+		ServerPlayNetworking.send(serverPlayer, CHANNEL_NAME, new SyncPacket(sortedTiers.stream().map(TierSortingRegistry::getName).toList()).encode());
 	}
 
 	private static SyncPacket receive(FriendlyByteBuf buffer) {

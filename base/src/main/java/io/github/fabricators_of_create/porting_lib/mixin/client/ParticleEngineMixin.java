@@ -38,26 +38,23 @@ public abstract class ParticleEngineMixin {
 	private static List<ParticleRenderType> RENDER_ORDER;
 
 	@Unique
-	private static boolean port_lib$replacedRenderOrderList = false;
-
-	private static void port_lib$addRenderType(ParticleRenderType type) {
-		if (!port_lib$replacedRenderOrderList) {
+	private static void addRenderTypeSafe(ParticleRenderType type) {
+		if (!(RENDER_ORDER instanceof ArrayList)) {
 			List<ParticleRenderType> old = RENDER_ORDER;
 			RENDER_ORDER = new ArrayList<>(old);
-			port_lib$replacedRenderOrderList = true;
 		}
 		RENDER_ORDER.add(type);
 	}
 
-	@Inject(method = { "method_18125", "m_qcrhunhf", "lambda$tick$8" }, at = @At("RETURN"))
-	private static void port_lib$addCustomRenderTypes(ParticleRenderType particleRenderType, CallbackInfoReturnable<Queue<Particle>> cir) {
+	@Inject(method = "method_18125", at = @At("RETURN"))
+	private static void addCustomRenderTypes(ParticleRenderType particleRenderType, CallbackInfoReturnable<Queue<Particle>> cir) {
 		if (!RENDER_ORDER.contains(particleRenderType)) {
-			port_lib$addRenderType(particleRenderType);
+			addRenderTypeSafe(particleRenderType);
 		}
 	}
 
-	@ModifyExpressionValue(method = "destroy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;shouldSpawnParticlesOnBreak()Z"))
-	private boolean port_lib$customDestroyEffects(boolean original, BlockPos blockPos, BlockState blockState) {
+	@ModifyExpressionValue(method = "destroy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;shouldSpawnTerrainParticles()Z"))
+	private boolean customDestroyEffects(boolean original, BlockPos blockPos, BlockState blockState) {
 		if (blockState.getBlock() instanceof CustomDestroyEffectsBlock custom) {
 			if (!custom.addDestroyEffects(blockState, level, blockPos, (ParticleEngine) (Object) this)) {
 				return false;

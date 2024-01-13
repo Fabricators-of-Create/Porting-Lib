@@ -300,10 +300,11 @@ public class FluidStack {
 	 * @return true if the Fluids (IDs and NBT Tags) are the same
 	 */
 	public boolean isFluidEqual(@NotNull ItemStack other) {
-		Storage<FluidVariant> storage = FluidStorage.ITEM.find(other, ContainerItemContext.withInitial(other));;
+		Storage<FluidVariant> storage = FluidStorage.ITEM.find(other, ContainerItemContext.withConstant(other));
 		if (storage == null)
 			return false;
-		return new FluidStack(StorageUtil.findExtractableContent(storage, null)).isFluidEqual(this);
+		FluidVariant fluidFound = StorageUtil.findExtractableResource(storage, null);
+		return fluidFound != null && this.isFluidEqual(fluidFound);
 	}
 
 	@Override

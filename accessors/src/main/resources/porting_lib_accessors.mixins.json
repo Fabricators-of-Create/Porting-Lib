@@ -45,7 +45,6 @@
   "client": [
     "client.accessor.AbstractContainerScreenAccessor",
     "client.accessor.AbstractSelectionList$EntryAccessor",
-    "client.accessor.AbstractSelectionListAccessor",
     "client.accessor.AbstractWidgetAccessor",
     "client.accessor.AgeableListModelAccessor",
     "client.accessor.BlockModel$DeserializerAccessor",

@@ -88,14 +88,6 @@ public class ItemStackHandler implements SlottedStackStorage, INBTSerializable<C
 		return extracted;
 	}
 
-	@Override
-	@Nullable
-	public StorageView<ItemVariant> exactView(ItemVariant resource) {
-		StoragePreconditions.notBlank(resource);
-		SortedSet<ItemStackHandlerSlot> slots = getSlotsContaining(resource.getItem());
-		return slots.isEmpty() ? null : slots.first();
-	}
-
 	// iteration
 
 	@Override

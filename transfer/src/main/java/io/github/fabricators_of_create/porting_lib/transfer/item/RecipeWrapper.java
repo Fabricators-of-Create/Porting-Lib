@@ -158,16 +158,6 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
-	public long simulateInsert(ItemVariant resource, long maxAmount, @Nullable TransactionContext transaction) {
-		return handler.simulateInsert(resource, maxAmount, transaction);
-	}
-
-	@Override
-	public long simulateExtract(ItemVariant resource, long maxAmount, @Nullable TransactionContext transaction) {
-		return handler.simulateExtract(resource, maxAmount, transaction);
-	}
-
-	@Override
 	public boolean supportsExtraction() {
 		return handler.supportsExtraction();
 	}
@@ -180,11 +170,6 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	@Override
 	public long getVersion() {
 		return handler.getVersion();
-	}
-
-	@Override
-	public @Nullable StorageView<ItemVariant> exactView(ItemVariant resource) {
-		return handler.exactView(resource);
 	}
 
 	@Override

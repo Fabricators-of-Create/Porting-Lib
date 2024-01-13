@@ -5,6 +5,10 @@ moduleDependencies(project, [
 
 testMod(project)
 
+dependencies {
+	modCompileOnly("io.vram:frex-fabric:$frex_version")
+}
+
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }

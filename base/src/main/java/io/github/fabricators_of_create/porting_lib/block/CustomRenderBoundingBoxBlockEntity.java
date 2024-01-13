@@ -21,7 +21,7 @@ public interface CustomRenderBoundingBoxBlockEntity {
 				box = collisionShape.bounds().move(pos);
 			}
 		} catch (Exception e) {
-			box = new AABB(pos.offset(-1, 0, -1), pos.offset(1, 1, 1));
+			box = AABB.encapsulatingFullBlocks(pos.offset(-1, 0, -1), pos.offset(1, 1, 1));
 		}
 
 		return box;

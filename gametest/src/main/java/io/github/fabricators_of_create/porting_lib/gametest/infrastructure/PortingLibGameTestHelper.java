@@ -3,6 +3,8 @@ package io.github.fabricators_of_create.porting_lib.gametest.infrastructure;
 import java.util.Arrays;
 import java.util.List;
 
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -196,7 +198,7 @@ public class PortingLibGameTestHelper extends GameTestHelper {
 	public void assertAnyContained(BlockPos pos, Item... items) {
 		Storage<ItemVariant> storage = getItemStorage(pos);
 		for (Item item : items) {
-			long extracted = storage.simulateExtract(ItemVariant.of(item), 1, null);
+			long extracted = StorageUtil.simulateExtract(storage, ItemVariant.of(item), 1, null);
 			if (extracted != 0)
 				return; // found one
 		}
@@ -210,7 +212,7 @@ public class PortingLibGameTestHelper extends GameTestHelper {
 	public void assertContentPresent(Object2LongMap<Item> content, BlockPos pos) {
 		Storage<ItemVariant> storage = getItemStorage(pos);
 		content.forEach((item, expectedAmount) -> {
-			long extracted = storage.simulateExtract(ItemVariant.of(item), expectedAmount, null);
+			long extracted = StorageUtil.simulateExtract(storage, ItemVariant.of(item), expectedAmount, null);
 			if (extracted != expectedAmount)
 				fail("Storage missing " + item + ", only got " + extracted);
 		});
@@ -252,7 +254,7 @@ public class PortingLibGameTestHelper extends GameTestHelper {
 	public void assertContainerContains(BlockPos pos, ItemStack item) {
 		Storage<ItemVariant> storage = getItemStorage(pos);
 		int count = item.getCount();
-		long extracted = storage.simulateExtract(ItemVariant.of(item), count, null);
+		long extracted = StorageUtil.simulateExtract(storage, ItemVariant.of(item), count, null);
 		if (extracted != count)
 			fail("expected " + item + ", got " + extracted);
 	}

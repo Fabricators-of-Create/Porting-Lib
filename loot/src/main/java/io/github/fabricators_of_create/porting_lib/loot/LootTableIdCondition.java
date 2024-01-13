@@ -1,10 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.loot;
 
-import java.util.Objects;
-
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+
+import com.mojang.serialization.Codec;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 
@@ -15,8 +15,8 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 
 public class LootTableIdCondition implements LootItemCondition {
-	// TODO Forge Registry at some point?
-	public static final LootItemConditionType LOOT_TABLE_ID = new LootItemConditionType(new LootTableIdCondition.Serializer());
+	public static final Codec<LootTableIdCondition> CODEC = ResourceLocation.CODEC.xmap(LootTableIdCondition::new, condition -> condition.targetLootTableId);
+	public static final LootItemConditionType LOOT_TABLE_ID = new LootItemConditionType(CODEC);
 	public static final ResourceLocation UNKNOWN_LOOT_TABLE = PortingLib.id("unknown_loot_table");
 
 	private final ResourceLocation targetLootTableId;
@@ -50,18 +50,6 @@ public class LootTableIdCondition implements LootItemCondition {
 		@Override
 		public LootItemCondition build() {
 			return new LootTableIdCondition(this.targetLootTableId);
-		}
-	}
-
-	public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<LootTableIdCondition> {
-		@Override
-		public void serialize(JsonObject object, LootTableIdCondition instance, JsonSerializationContext ctx) {
-			object.addProperty("loot_table_id", instance.targetLootTableId.toString());
-		}
-
-		@Override
-		public LootTableIdCondition deserialize(JsonObject object, JsonDeserializationContext ctx) {
-			return new LootTableIdCondition(new ResourceLocation(GsonHelper.getAsString(object, "loot_table_id")));
 		}
 	}
 }
