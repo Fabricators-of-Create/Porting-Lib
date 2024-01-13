@@ -1,34 +1,28 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ChorusFruitItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ChorusFruitItem.class)
 public abstract class ChorusFruitItemMixin {
-	@Inject(
+	@WrapOperation(
 			method = "finishUsingItem",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;randomTeleport(DDDZ)Z"),
-			locals = LocalCapture.CAPTURE_FAILHARD,
-			cancellable = true
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;randomTeleport(DDDZ)Z")
 	)
-	private void port_lib$finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity, CallbackInfoReturnable<ItemStack> cir,
-										  ItemStack superResult,
-										  double d, double e, double f, // original x/y/z
-										  int i,
-										  double g, double h, double j) { // target x/y/z
-		EntityEvents.Teleport.EntityTeleportEvent event = new EntityEvents.Teleport.EntityTeleportEvent(livingEntity, g, h, j);
+	private boolean port_lib$finishUsingItem(LivingEntity instance, double x, double y, double z, boolean particleEffects, Operation<Boolean> original) {
+		EntityEvents.Teleport.EntityTeleportEvent event = new EntityEvents.Teleport.EntityTeleportEvent(instance, x, y, z);
 		event.sendEvent();
 		if (event.isCanceled()) {
-			cir.setReturnValue(superResult);
+			return false;
+		} else {
+			return original.call(instance, x, y, z, particleEffects);
 		}
 	}
 }

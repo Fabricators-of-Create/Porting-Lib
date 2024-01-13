@@ -187,7 +187,6 @@ allprojects {
 		})
 		modImplementation("net.fabricmc:fabric-loader:$loader_version")
 
-		modLocalRuntime("maven.modrinth:lazydfu:0.1.3")
 		modLocalRuntime("com.terraformersmc:modmenu:$modmenu_version") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
 
 		// common dependencies

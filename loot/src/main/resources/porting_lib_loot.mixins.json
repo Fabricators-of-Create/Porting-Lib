@@ -11,7 +11,6 @@
     "LootDataTypeMixin",
     "LootPoolMixin",
     "LootPoolMixin$LootPoolBuilderMixin",
-    "LootPoolMixin$LootPoolSerializerMixin",
     "LootTableMixin",
     "LootTableMixin$BuilderMixin"
   ]

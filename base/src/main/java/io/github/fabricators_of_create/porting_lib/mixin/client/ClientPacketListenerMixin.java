@@ -4,9 +4,8 @@ import io.github.fabricators_of_create.porting_lib.event.common.RecipesUpdatedCa
 import io.github.fabricators_of_create.porting_lib.event.common.TagsUpdatedCallback;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
-import net.minecraft.client.multiplayer.ClientRegistryLayer;
 import net.minecraft.client.multiplayer.CommonListenerCookie;
-import net.minecraft.core.LayeredRegistryAccess;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.protocol.common.ClientboundUpdateTagsPacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
 
@@ -37,7 +36,7 @@ public abstract class ClientPacketListenerMixin extends ClientCommonPacketListen
 
 	@Final
 	@Shadow
-	private LayeredRegistryAccess<ClientRegistryLayer> registryAccess;
+	private RegistryAccess.Frozen registryAccess;
 
 	protected ClientPacketListenerMixin(Minecraft client, Connection connection, CommonListenerCookie commonListenerCookie) {
 		super(client, connection, commonListenerCookie);
@@ -58,6 +57,6 @@ public abstract class ClientPacketListenerMixin extends ClientCommonPacketListen
 
 	@Inject(method = "handleUpdateTags", at = @At("TAIL"))
 	public void port_lib$updateTags(ClientboundUpdateTagsPacket packet, CallbackInfo ci) {
-		TagsUpdatedCallback.EVENT.invoker().onTagsUpdated(this.registryAccess.compositeAccess());
+		TagsUpdatedCallback.EVENT.invoker().onTagsUpdated(this.registryAccess);
 	}
 }
