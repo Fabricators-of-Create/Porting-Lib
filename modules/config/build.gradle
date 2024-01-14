@@ -2,8 +2,8 @@ dependencies {
 //	implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.2")
 	// TODO: use https://github.com/mwanji/toml4j/tree/master instead? night config is a little bloated
 
-	implementation(include("com.electronwill.night-config:toml:3.6.6"))
-	implementation(include("com.electronwill.night-config:core:3.6.6"))
+	api(include("com.electronwill.night-config:toml:3.6.6"))
+	api(include("com.electronwill.night-config:core:3.6.6"))
 }
 
 processResources {

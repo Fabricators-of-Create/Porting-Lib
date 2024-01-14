@@ -150,34 +150,16 @@ public class FmjExpander extends FilterReader {
 		return PortingLibBuildPlugin.jsonFromPath(templateFmj);
 	}
 
-	public static class Configurator extends Closure<Object> {
-		private final Project project;
-
-		public Configurator(Project project) {
-			super(project);
-			this.project = project;
-		}
-
-		public Object doCall(Object task) {
-			if (task instanceof ProcessResources processResources) {
-				processResources.eachFile(new Applicator(this.project));
-			}
-			return task;
-		}
-	}
-
 	public record Applicator(Project project) implements Action<FileCopyDetails> {
 		@Override
 		public void execute(FileCopyDetails details) {
-			if (details.getName().equals(FMJ)) {
-				Map<String, String> params = Map.of(
-						PROJECT_NAME_PARAM, this.project.getName(),
-						PROJECT_DIR_PARAM, getDir(this.project),
-						ROOT_PROJECT_DIR_PARAM, getDir(this.project.getRootProject())
-				);
+			Map<String, String> params = Map.of(
+					PROJECT_NAME_PARAM, this.project.getName(),
+					PROJECT_DIR_PARAM, getDir(this.project),
+					ROOT_PROJECT_DIR_PARAM, getDir(this.project.getRootProject())
+			);
 
-				details.filter(params, FmjExpander.class);
-			}
+			details.filter(params, FmjExpander.class);
 		}
 
 		private static String getDir(Project project) {

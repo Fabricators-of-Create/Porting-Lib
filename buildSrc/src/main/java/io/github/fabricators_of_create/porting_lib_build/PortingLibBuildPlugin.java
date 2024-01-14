@@ -22,11 +22,10 @@ public class PortingLibBuildPlugin implements Plugin<Project> {
 
 	@Override
 	public void apply(Project project) {
-		Config config = project.getExtensions().create("portingLib", Config.class);
 		Task validateModule = project.getTasks().create("validateModule", ValidateModuleTask.class);
 		project.afterEvaluate(p -> {
 			setupDeduplication(p);
-			setupResourceProcessing(p, config);
+			setupResourceProcessing(p);
 			setupValidation(p, validateModule);
 		});
 	}
@@ -50,17 +49,13 @@ public class PortingLibBuildPlugin implements Plugin<Project> {
 		deduplicateInclusions.getInputs().files(remapJar.getOutputs().getFiles());
 	}
 
-	public void setupResourceProcessing(Project project, Config config) {
+	public void setupResourceProcessing(Project project) {
 		TaskContainer tasks = project.getTasks();
 		tasks.create("sortAccessWidener", SortAccessWidenerTask.class);
 
 		Task processResources = tasks.findByName("processResources");
 		if (processResources == null) {
 			throw new IllegalStateException("No processResources task?");
-		}
-
-		if (config.getExpandFmj()) {
-			processResources.configure(new FmjExpander.Configurator(project));
 		}
 
 		Task addIcons = tasks.create("addMissingIcons", AddMissingIconsTask.class);

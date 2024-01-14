@@ -1,3 +1,4 @@
+import io.github.fabricators_of_create.porting_lib_build.FmjExpander
 import io.github.fabricators_of_create.porting_lib_build.PortingLibBuildPlugin
 
 //file:noinspection GroovyAssignabilityCheck
@@ -12,18 +13,6 @@ sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = "porting_lib"
-version = project.mod_version
-
-String buildNumber = System.getenv("GITHUB_RUN_NUMBER")
-String patch = buildNumber != null ? buildNumber : "99999"
-
-version = version.replace("<patch>", patch)
-
-if (grgit != null) {
-	version += "+${grgit.getBranch().current().name}"
-} else {
-	version += "+custom_unknown"
-}
 
 dependencies {
 	subprojects.forEach {
@@ -42,6 +31,19 @@ allprojects {
 	apply plugin: PortingLibBuildPlugin
 
 	group = "io.github.fabricators_of_create.Porting-Lib"
+
+	version = project.mod_version
+
+	String buildNumber = System.getenv("GITHUB_RUN_NUMBER")
+	String patch = buildNumber != null ? buildNumber : "99999"
+
+	version = version.replace("<patch>", patch)
+
+	if (grgit != null) {
+		version += "+${grgit.getBranch().current().name}"
+	} else {
+		version += "+custom_unknown"
+	}
 
 	repositories {
 		mavenCentral()
@@ -114,6 +116,10 @@ allprojects {
 
 		properties.forEach(inputs::property)
 
+		if (project != rootProject) { // expand subproject FMJs. Must be done here for proper ordering.
+			filesMatching("fabric.mod.json", new FmjExpander.Applicator(project))
+		}
+
 		filesMatching("fabric.mod.json") {
 			expand properties
 		}
@@ -139,7 +145,6 @@ allprojects {
 subprojects {
 	apply plugin: "maven-publish"
 
-	version = rootProject.version
 	archivesBaseName = "porting_lib_" + name
 
 	dependencies {
@@ -194,10 +199,6 @@ subprojects {
 			}
 		}
 	}
-}
-
-portingLib {
-	expandFmj = false
 }
 
 // utilities for modules
