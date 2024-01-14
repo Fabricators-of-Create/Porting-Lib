@@ -12,8 +12,7 @@ import java.io.IOException;
 
 public class AddMissingIconsTask extends DefaultTask {
 	public static final String PATH = "assets/porting_lib/icon.png";
-	// at src/main/resources/assets/porting_lib/icon.png, this is where it goes after processResources
-	public static final String DEFAULT_ICON = "build/resources/main/" + PATH;
+	public static final String DEFAULT_ICON = "src/main/resources/assets/porting_lib/icon.png";
 
 	@TaskAction
 	public void addMissingIcons() throws IOException {

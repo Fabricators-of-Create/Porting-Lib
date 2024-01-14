@@ -6,6 +6,7 @@
   "plugin": "io.github.fabricators_of_create.porting_lib.mixin.PortingLibMixinPlugin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "client.frex.EntityBlockRenderContextMixin",
     "common.AbstractMinecartMixin",
     "common.AnvilMenuMixin",
     "common.BambooStalkBlockMixin",

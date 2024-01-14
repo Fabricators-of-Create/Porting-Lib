@@ -9,6 +9,7 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.internal.impldep.bsh.commands.dir;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -62,7 +63,7 @@ public class DeduplicateInclusionsTask extends DefaultTask {
 				if (!hasJijs || !hasFmj)
 					return;
 
-				JsonObject json = JsonParser.parseString(Files.readString(fmj)).getAsJsonObject();
+				JsonObject json = PortingLibBuildPlugin.jsonFromPath(fmj).getAsJsonObject();
 				json.remove("jars");
 				Files.writeString(fmj, PortingLibBuildPlugin.GSON.toJson(json));
 
@@ -98,7 +99,7 @@ public class DeduplicateInclusionsTask extends DefaultTask {
 				Path jars = root.resolve("META-INF").resolve("jars");
 				Files.createDirectories(jars);
 
-				JsonObject json = JsonParser.parseString(Files.readString(fmj)).getAsJsonObject();
+				JsonObject json = PortingLibBuildPlugin.jsonFromPath(fmj).getAsJsonObject();
 				JsonArray jarsJson = new JsonArray();
 
 				try (Stream<Path> files = Files.list(dir)) {
