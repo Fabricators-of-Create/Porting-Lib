@@ -10,7 +10,11 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.file.FileCollection;
+import org.gradle.api.plugins.BasePlugin;
+import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.TaskContainer;
+import org.gradle.api.tasks.bundling.AbstractArchiveTask;
+import org.gradle.jvm.tasks.Jar;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,13 +44,29 @@ public class PortingLibBuildPlugin implements Plugin<Project> {
 	}
 
 	public void setupDeduplication(Project project) {
-		Task remapJar = project.getTasks().findByName("remapJar");
-		if (remapJar == null) {
-			throw new IllegalStateException("No remapJar task?");
-		}
-		Task deduplicateInclusions = project.getTasks().create("deduplicateInclusions", DeduplicateInclusionsTask.class);
-		remapJar.finalizedBy(deduplicateInclusions);
-		deduplicateInclusions.getInputs().files(remapJar.getOutputs().getFiles());
+		TaskContainer tasks = project.getTasks();
+		// mark standard output as non-deduplicated
+		tasks.named("remapJar", Jar.class).configure(remapJar -> remapJar.getArchiveClassifier().convention("duplicated"));
+
+		// based on loom remapJar setup
+		tasks.create("deduplicateInclusions", DeduplicateInclusionsTask.class, deduplicate -> {
+			Jar remapJar = tasks.named("remapJar", Jar.class).get();
+			deduplicate.dependsOn(remapJar);
+
+			deduplicate.getArchiveBaseName().convention(remapJar.getArchiveBaseName());
+			deduplicate.getArchiveAppendix().convention(remapJar.getArchiveAppendix());
+			deduplicate.getArchiveVersion().convention(remapJar.getArchiveVersion());
+			deduplicate.getArchiveExtension().convention(remapJar.getArchiveExtension());
+
+			deduplicate.getDuplicatedJar().convention(remapJar.getArchiveFile());
+			project.getArtifacts().add(JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME, deduplicate);
+			project.getArtifacts().add(JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME, deduplicate);
+		});
+
+		// make build use the deduplication
+		tasks.named(BasePlugin.ASSEMBLE_TASK_NAME).configure(
+				assemble -> assemble.dependsOn(tasks.named("deduplicateInclusions"))
+		);
 	}
 
 	public void setupResourceProcessing(Project project) {

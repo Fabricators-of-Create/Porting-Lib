@@ -125,6 +125,8 @@ allprojects {
 		}
 	}
 
+	jar.from(rootProject.file("LICENSE")) // copy license file into jar
+
 	tasks.register("buildOrPublish") {
 		group = "build"
 		String mavenUser = System.getenv("MAVEN_USER")
@@ -135,10 +137,6 @@ allprojects {
 			dependsOn(tasks.named("build"))
 			println "prepared for build"
 		}
-	}
-
-	tasks.withType(AbstractArchiveTask).configureEach {
-		reproducibleFileOrder = true
 	}
 }
 

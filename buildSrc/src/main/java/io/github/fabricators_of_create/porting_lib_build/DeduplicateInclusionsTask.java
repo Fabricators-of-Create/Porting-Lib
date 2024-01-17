@@ -6,10 +6,21 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.file.ProjectLayout;
+import org.gradle.api.file.RegularFile;
+import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.model.ObjectFactory;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputFile;
+import org.gradle.api.tasks.OutputFile;
+import org.gradle.api.tasks.OutputFiles;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.internal.impldep.bsh.commands.dir;
+import org.gradle.jvm.tasks.Jar;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -24,10 +35,24 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class DeduplicateInclusionsTask extends DefaultTask {
+public abstract class DeduplicateInclusionsTask extends Jar {
+	private final RegularFileProperty duplicatedJar = getProject().getObjects().fileProperty();
+
+	@InputFile
+	public RegularFileProperty getDuplicatedJar() {
+		return this.duplicatedJar;
+	}
+
 	@TaskAction
 	public void deduplicateInclusions() {
-		getInputs().getFiles().forEach(builtJar -> deduplicateInclusions(builtJar.toPath()));
+		Path input = this.duplicatedJar.get().getAsFile().toPath();
+		Path output = this.getArchiveFile().get().getAsFile().toPath();
+		try {
+			Files.copy(input, output);
+			deduplicateInclusions(output);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public void deduplicateInclusions(Path jar) {
