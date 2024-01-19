@@ -3,24 +3,12 @@ package io.github.fabricators_of_create.porting_lib_build;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import com.google.gson.JsonParser;
 
-import org.gradle.api.DefaultTask;
-import org.gradle.api.file.ProjectLayout;
-import org.gradle.api.file.RegularFile;
 import org.gradle.api.file.RegularFileProperty;
-import org.gradle.api.model.ObjectFactory;
-import org.gradle.api.provider.Provider;
-import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.OutputFile;
-import org.gradle.api.tasks.OutputFiles;
 import org.gradle.api.tasks.TaskAction;
-import org.gradle.internal.impldep.bsh.commands.dir;
 import org.gradle.jvm.tasks.Jar;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -29,10 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 
 public abstract class DeduplicateInclusionsTask extends Jar {
@@ -48,6 +33,7 @@ public abstract class DeduplicateInclusionsTask extends Jar {
 		Path input = this.duplicatedJar.get().getAsFile().toPath();
 		Path output = this.getArchiveFile().get().getAsFile().toPath();
 		try {
+			Files.deleteIfExists(output);
 			Files.copy(input, output);
 			deduplicateInclusions(output);
 		} catch (IOException e) {
@@ -99,6 +85,16 @@ public abstract class DeduplicateInclusionsTask extends Jar {
 						log("jij: " + jij.getFileName());
 						// move all of that jar's JiJs
 						moveInclusions(jij, target);
+						// hack: strip "-duplicated" from file name if present. Ideally we could simply use the subproject's
+						// deduplicated output instead of the remapJar output, but you can't do that currently. fabric-loom#1028
+						// this is fine because deduplication is recursive currently.
+						String fileName = jij.getFileName().toString();
+						if (fileName.endsWith("-duplicated.jar")) {
+							String strippedName = fileName.replace("-duplicated.jar", ".jar");
+							Path strippedPath = jij.getParent().resolve(strippedName);
+							Files.move(jij, strippedPath);
+							jij = strippedPath;
+						}
 						// and move the jar itself
 						tryMove(jij, target);
 					}
