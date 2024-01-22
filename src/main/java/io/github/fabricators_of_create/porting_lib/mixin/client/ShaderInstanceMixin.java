@@ -31,12 +31,5 @@ public abstract class ShaderInstanceMixin {
 		return split.getNamespace() + ":shaders/core/" + split.getPath() + ".json";
 	}
 
-	@ModifyVariable(method = "getOrCreate", at = @At("STORE"), ordinal = 1)
-	private static String fixPath(String path, ResourceProvider resourceProvider, Program.Type programType, String name) {
-		if (!name.contains(":")) {
-			return path;
-		}
-		ResourceLocation split = new ResourceLocation(name);
-		return split.getNamespace() + ":shaders/core/" + split.getPath() + programType.getExtension();
-	}
+	// note: do not need to modify getOrCreate as FAPI does it
 }
