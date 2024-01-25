@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
+import net.minecraft.resources.FileToIdConverter;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Maps;
@@ -35,6 +37,7 @@ import net.minecraft.util.GsonHelper;
  * {@link ObjMaterialLibrary material library} override.
  */
 public class ObjLoader implements ModelLoadingPlugin, IGeometryLoader<ObjModel> {
+	public static final FileToIdConverter OBJ_MODEL_LISTER = new FileToIdConverter("models", ".obj");
 	public static final ResourceLocation ID = PortingLib.id("obj");
 	public static final ObjLoader INSTANCE = new ObjLoader();
 	public static final String OBJ_MARKER = PortingLib.id("obj_marker").toString();
@@ -146,7 +149,7 @@ public class ObjLoader implements ModelLoadingPlugin, IGeometryLoader<ObjModel> 
 		@Nullable
 		public UnbakedModel resolveModel(Context context) {
 			ResourceLocation id = context.id();
-			ResourceLocation fileId = ModelBakery.MODEL_LISTER.idToFile(id);
+			ResourceLocation fileId = OBJ_MODEL_LISTER.idToFile(id);
 			return getResourceManager().getResource(fileId).map(resource -> {
 				JsonObject json = tryLoadModelJson(id, resource);
 				return json == null ? null : tryReadSettings(json).map(settings -> loadModel(resource, settings), exception -> {
