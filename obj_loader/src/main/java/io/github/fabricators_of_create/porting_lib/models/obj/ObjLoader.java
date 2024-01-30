@@ -21,7 +21,6 @@ import io.github.fabricators_of_create.porting_lib.models.obj.ObjModel.ModelSett
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelResolver;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -146,13 +145,23 @@ public class ObjLoader implements ModelLoadingPlugin, IGeometryLoader<ObjModel> 
 		@Nullable
 		public UnbakedModel resolveModel(Context context) {
 			ResourceLocation id = context.id();
-			ResourceLocation fileId = ModelBakery.MODEL_LISTER.idToFile(id);
-			return getResourceManager().getResource(fileId).map(resource -> {
+			var resourceManager = getResourceManager();
+			return resourceManager.getResource(id).map(resource -> {
 				JsonObject json = tryLoadModelJson(id, resource);
-				return json == null ? null : tryReadSettings(json).map(settings -> loadModel(resource, settings), exception -> {
-					PortingLib.LOGGER.error("Error loading obj model: " + id, exception);
-					return null;
-				});
+				if (json != null) {
+					return tryReadSettings(json).map(settings -> {
+						try {
+							return loadModel(resourceManager.getResourceOrThrow(new ResourceLocation(GsonHelper.getAsString(json, "model"))), settings);
+						} catch (FileNotFoundException e) {
+							throw new RuntimeException(e);
+						}
+					}, exception -> {
+						PortingLib.LOGGER.error("Error loading obj model: " + id, exception);
+						return null;
+					});
+
+				}
+				return null;
 			}).orElse(null);
 		}
 	}
