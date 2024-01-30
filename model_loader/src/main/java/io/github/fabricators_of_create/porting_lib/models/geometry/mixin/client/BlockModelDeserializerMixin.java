@@ -61,7 +61,8 @@ public abstract class BlockModelDeserializerMixin {
 	@Unique
 	@Nullable
 	private static IUnbakedGeometry<?> deserializeGeometry(JsonDeserializationContext deserializationContext, JsonObject object) throws JsonParseException {
-		if (!object.has("loader"))
+		String loaderId = GeometryLoaderManager.getModelLoader(object);
+		if (loaderId == null)
 			return null;
 
 		ResourceLocation name = new ResourceLocation(GsonHelper.getAsString(object, "loader"));
