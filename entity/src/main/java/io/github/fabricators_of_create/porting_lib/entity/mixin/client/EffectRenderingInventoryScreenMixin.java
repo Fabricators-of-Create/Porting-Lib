@@ -45,7 +45,7 @@ public class EffectRenderingInventoryScreenMixin {
 	}
 
 	@WrapOperation(method = "renderIcons", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(IIIIILnet/minecraft/client/renderer/texture/TextureAtlasSprite;)V"))
-	private void test(GuiGraphics graphics, int blitX, int blitY, int z, int width, int height, TextureAtlasSprite sprite, Operation<Void> original, @Local(index = 2) int x, @Local(index = 3) int offsetDelta, @Local(index = 5) boolean wide, @Local(index = 9) MobEffectInstance mobEffectInstance, @Local(index = 7) int i, @Share("offset") LocalRef<Integer> offset) {
+	private void handleCustomRenderers(GuiGraphics graphics, int blitX, int blitY, int z, int width, int height, TextureAtlasSprite sprite, Operation<Void> original, @Local(index = 2) int x, @Local(index = 3) int offsetDelta, @Local(index = 5) boolean wide, @Local(index = 9) MobEffectInstance mobEffectInstance, @Local(index = 7) int i, @Share("offset") LocalRef<Integer> offset) {
 		if (offset.get() == null)
 			offset.set(0);
 		MobEffectRenderer renderer = mobEffectInstance.getEffect().getRenderer();
