@@ -1,9 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.loot.mixin.loottable;
 
 import java.util.Objects;
-import java.util.function.Consumer;
 
-import io.github.fabricators_of_create.porting_lib.loot.LootCollector;
 import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableBuilderExtensions;
 import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableExtensions;
 
@@ -13,13 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 
 @Mixin(LootTable.class)
@@ -37,22 +29,6 @@ public class LootTableMixin implements LootTableExtensions {
 	@Override
 	public ResourceLocation getLootTableId() {
 		return this.lootTableId;
-	}
-
-	@ModifyVariable(
-			method = "getRandomItemsRaw(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V",
-			at = @At("HEAD"),
-			argsOnly = true
-	)
-	private Consumer<ItemStack> aaaaaa(Consumer<ItemStack> output) {
-		return output;
-	}
-
-	@Inject(
-			method = "getRandomItemsRaw(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V",
-			at = @At("RETURN")
-	)
-	private void bbbbbbbbb(LootContext context, Consumer<ItemStack> output, CallbackInfo ci) {
 	}
 
 	@Mixin(LootTable.Builder.class)
