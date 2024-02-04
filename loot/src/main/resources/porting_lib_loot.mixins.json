@@ -12,7 +12,9 @@
     "LootPoolMixin",
     "LootPoolMixin$LootPoolBuilderMixin",
     "LootPoolMixin$LootPoolSerializerMixin",
-    "LootTableMixin",
-    "LootTableMixin$BuilderMixin"
+    "loottable.LootTableMixin",
+    "loottable.LootTableMixin$BuilderMixin",
+    "loottable.LootTableMixin_Early",
+    "loottable.LootTableMixin_Late"
   ]
 }

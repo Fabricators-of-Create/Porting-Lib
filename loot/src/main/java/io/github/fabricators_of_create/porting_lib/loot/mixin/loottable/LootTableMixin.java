@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.loot.mixin;
+package io.github.fabricators_of_create.porting_lib.loot.mixin.loottable;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -44,17 +44,15 @@ public class LootTableMixin implements LootTableExtensions {
 			at = @At("HEAD"),
 			argsOnly = true
 	)
-	private Consumer<ItemStack> wrapConsumer(Consumer<ItemStack> output) {
-		return new LootCollector(output);
+	private Consumer<ItemStack> aaaaaa(Consumer<ItemStack> output) {
+		return output;
 	}
 
 	@Inject(
 			method = "getRandomItemsRaw(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V",
 			at = @At("RETURN")
 	)
-	private void finishCollectingLoot(LootContext context, Consumer<ItemStack> output, CallbackInfo ci) {
-		if (output instanceof LootCollector collector)
-			collector.finish(this.lootTableId, context);
+	private void bbbbbbbbb(LootContext context, Consumer<ItemStack> output, CallbackInfo ci) {
 	}
 
 	@Mixin(LootTable.Builder.class)
