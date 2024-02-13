@@ -50,7 +50,7 @@ public class ServerChunkCacheMixin implements ServerChunkCacheExtension {
 	}
 
 	@Inject(method = "tickChunks", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/chunk/LevelChunk;getPos()Lnet/minecraft/world/level/ChunkPos;"))
-	private void checkForcedTicks(CallbackInfo ci, @Local(index = 16) LevelChunk levelChunk, @Share("force_ticks") LocalRef<Boolean> forceTicks) {
+	private void checkForcedTicks(CallbackInfo ci, @Local(index = 14) LevelChunk levelChunk, @Share("force_ticks") LocalRef<Boolean> forceTicks) {
 		forceTicks.set(this.distanceManager.shouldForceTicks(levelChunk.getPos().toLong()));
 	}
 

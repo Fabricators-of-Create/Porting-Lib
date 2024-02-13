@@ -4,6 +4,7 @@ import io.github.fabricators_of_create.porting_lib.entity.events.OnDatapackSyncC
 import io.github.fabricators_of_create.porting_lib.entity.events.PlayerEvents;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.players.PlayerList;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,7 +19,7 @@ public abstract class PlayerListMixin {
 			method = "placeNewPlayer",
 			at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/network/protocol/game/ClientboundSetCarriedItemPacket;<init>(I)V")
 	)
-	private void port_lib$placeNewPlayer(Connection netManager, ServerPlayer player, CallbackInfo ci) {
+	private void port_lib$placeNewPlayer(Connection netManager, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo ci) {
 		OnDatapackSyncCallback.EVENT.invoker().onDatapackSync((PlayerList) (Object) this, player);
 	}
 
@@ -31,7 +32,7 @@ public abstract class PlayerListMixin {
 	}
 
 	@Inject(method = "placeNewPlayer", at = @At("TAIL"))
-	private void onPlayerLoggedIn(Connection connection, ServerPlayer serverPlayer, CallbackInfo ci) {
+	private void onPlayerLoggedIn(Connection connection, ServerPlayer serverPlayer, CommonListenerCookie cookie, CallbackInfo ci) {
 		PlayerEvents.LOGGED_IN.invoker().handleConnection(serverPlayer);
 	}
 
