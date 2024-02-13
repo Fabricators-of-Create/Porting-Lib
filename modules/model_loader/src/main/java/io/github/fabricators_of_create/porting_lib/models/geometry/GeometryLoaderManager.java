@@ -6,7 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.google.gson.JsonObject;
+
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
+
+import net.minecraft.util.GsonHelper;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -42,6 +46,20 @@ public final class GeometryLoaderManager {
 	 */
 	public static String getLoaderList() {
 		return LOADER_LIST;
+	}
+
+	/**
+	 * Get the ID of the model loader which should load the given JSON.
+	 */
+	@Nullable
+	public static String getModelLoader(JsonObject json) {
+		if (json.has("porting_lib:loader")) {
+			return GsonHelper.getAsString(json, "porting_lib:loader");
+		} else if (json.has("loader")) {
+			return GsonHelper.getAsString(json, "loader");
+		} else {
+			return null;
+		}
 	}
 
 	@ApiStatus.Internal
