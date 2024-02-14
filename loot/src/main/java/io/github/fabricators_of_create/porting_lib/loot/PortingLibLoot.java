@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.loot;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
@@ -40,6 +41,9 @@ public class PortingLibLoot implements ModInitializer {
 		LootTableEvents.MODIFY.register(
 				(resources, manager, id, builder, source) -> ((LootTableBuilderExtensions) builder).port_lib$setId(id)
 		);
+
+		if (!LootCollectorUnwrapper.test())
+			throw new RuntimeException("bad");
 	}
 
 	/**
