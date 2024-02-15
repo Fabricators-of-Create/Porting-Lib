@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib_build;
+package io.github.fabricators_of_create.porting_lib_build.tasks;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;

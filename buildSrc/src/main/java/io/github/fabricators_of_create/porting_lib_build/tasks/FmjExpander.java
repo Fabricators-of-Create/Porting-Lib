@@ -1,16 +1,16 @@
-package io.github.fabricators_of_create.porting_lib_build;
+package io.github.fabricators_of_create.porting_lib_build.tasks;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import groovy.lang.Closure;
+import io.github.fabricators_of_create.porting_lib_build.PortingLibBuildPlugin;
+import io.github.fabricators_of_create.porting_lib_build.Utils;
 
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.file.FileCopyDetails;
-import org.gradle.language.jvm.tasks.ProcessResources;
 
 import java.io.FilterReader;
 import java.io.IOException;
@@ -147,7 +147,7 @@ public class FmjExpander extends FilterReader {
 
 	public JsonObject makeDefaults() {
 		Path templateFmj = this.rootProjectDirPath.resolve(TEMPLATE_FMJ);
-		return PortingLibBuildPlugin.jsonFromPath(templateFmj);
+		return Utils.jsonFromPath(templateFmj);
 	}
 
 	public record Applicator(Project project) implements Action<FileCopyDetails> {

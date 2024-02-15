@@ -1,4 +1,4 @@
-import io.github.fabricators_of_create.porting_lib_build.FmjExpander
+import io.github.fabricators_of_create.porting_lib_build.tasks.FmjExpander
 import io.github.fabricators_of_create.porting_lib_build.PortingLibBuildPlugin
 
 //file:noinspection GroovyAssignabilityCheck
@@ -245,23 +245,6 @@ def moduleDependencies(Project project, List<String> depNames) {
 	project.dependencies {
 		deps.each {
 			annotationProcessor(api(include(it)))
-		}
-	}
-
-	project.publishing {
-		publications {
-			mavenJava(MavenPublication) {
-//				pom.withXml {
-//					def depsNode = asNode().appendNode("dependencies")
-//					deps.each {
-//						def depNode = depsNode.appendNode("dependency")
-//						depNode.appendNode("groupId", it.group)
-//						depNode.appendNode("artifactId", it.name)
-//						depNode.appendNode("version", it.version)
-//						depNode.appendNode("scope", "compile")
-//					}
-//				}
-			}
 		}
 	}
 }

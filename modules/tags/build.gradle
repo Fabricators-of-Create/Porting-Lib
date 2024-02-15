@@ -1,4 +1,6 @@
-setupDatagen(project)
+portingLib {
+	datagen = true
+}
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN

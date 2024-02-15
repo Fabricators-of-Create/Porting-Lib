@@ -1,8 +1,11 @@
-package io.github.fabricators_of_create.porting_lib_build;
+package io.github.fabricators_of_create.porting_lib_build.tasks;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+
+import io.github.fabricators_of_create.porting_lib_build.PortingLibBuildPlugin;
+import io.github.fabricators_of_create.porting_lib_build.Utils;
 
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.InputFile;
@@ -74,7 +77,7 @@ public abstract class DeduplicateInclusionsTask extends Jar {
 				if (!hasJijs || !hasFmj)
 					return;
 
-				JsonObject json = PortingLibBuildPlugin.jsonFromPath(fmj).getAsJsonObject();
+				JsonObject json = Utils.jsonFromPath(fmj).getAsJsonObject();
 				json.remove("jars");
 				Files.writeString(fmj, PortingLibBuildPlugin.GSON.toJson(json));
 
@@ -120,7 +123,7 @@ public abstract class DeduplicateInclusionsTask extends Jar {
 				Path jars = root.resolve("META-INF").resolve("jars");
 				Files.createDirectories(jars);
 
-				JsonObject json = PortingLibBuildPlugin.jsonFromPath(fmj).getAsJsonObject();
+				JsonObject json = Utils.jsonFromPath(fmj).getAsJsonObject();
 				JsonArray jarsJson = new JsonArray();
 
 				try (Stream<Path> files = Files.list(dir)) {
