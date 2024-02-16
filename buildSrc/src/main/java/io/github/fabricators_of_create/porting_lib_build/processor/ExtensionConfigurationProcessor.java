@@ -11,9 +11,6 @@ public class ExtensionConfigurationProcessor implements ProjectProcessor {
 	@Override
 	public void apply(Project project) {
 		PortingLibExtension extension = project.getExtensions().create("portingLib", PortingLibExtension.class);
-		extension.getFabricAsm().convention(false);
-		extension.getDatagen().convention(false);
-		extension.getTestMod().convention(false);
-		extension.getModuleDependencies().convention(List.of());
+		extension.getModuleDependencies().convention(List.of("core"));
 	}
 }

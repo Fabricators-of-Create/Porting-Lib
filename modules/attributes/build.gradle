@@ -1,7 +1,4 @@
-moduleDependencies(project, [
-		"core",
-		"asm"
-])
+portingLib.moduleDependencies.addAll("core", "asm")
 
 dependencies {
 	modApi(include("com.jamieswhiteshirt:reach-entity-attributes:$rea_version"))

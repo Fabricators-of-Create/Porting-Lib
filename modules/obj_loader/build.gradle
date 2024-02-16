@@ -1,8 +1,7 @@
-moduleDependencies(project, [
-		"model_loader"
-])
-
-testMod(project)
+portingLib {
+	moduleDependencies.add("model_loader")
+	enableTestMod()
+}
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN

@@ -1,6 +1,4 @@
-portingLib {
-	datagen = true
-}
+portingLib.enableDatagen()
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN

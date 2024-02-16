@@ -1,9 +1,7 @@
-moduleDependencies(project, [
-		"model_loader",
-		"transfer"
-])
-
-testMod(project)
+portingLib {
+	moduleDependencies.addAll("model_loader", "transfer")
+	enableTestMod()
+}
 
 dependencies {
 	modCompileOnly("io.vram:frex-fabric:$frex_version")

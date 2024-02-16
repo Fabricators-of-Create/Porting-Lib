@@ -1,8 +1,7 @@
-moduleDependencies(project, [
-        "mixin_extensions"
-])
-
-testMod(project)
+portingLib {
+	moduleDependencies.add("mixin_extensions")
+	enableTestMod()
+}
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN

@@ -1,5 +1,5 @@
+portingLib.enableDatagen()
+
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }
-
-setupDatagen(project)

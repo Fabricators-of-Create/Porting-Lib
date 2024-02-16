@@ -1,6 +1,4 @@
-moduleDependencies(project, [
-		"fluids"
-])
+portingLib.moduleDependencies.add("fluids")
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN

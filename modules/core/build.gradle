@@ -1,3 +1,5 @@
+portingLib.moduleDependencies.set(["gametest"]) // replaces default dependency on self
+
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }

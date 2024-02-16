@@ -1,7 +1,4 @@
-moduleDependencies(project, [
-		"model_generators",
-		"model_loader"
-])
+portingLib.moduleDependencies.addAll("model_generators", "model_loader")
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN

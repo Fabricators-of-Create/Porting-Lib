@@ -1,4 +1,4 @@
-moduleDependencies(project, [
+portingLib.moduleDependencies.addAll(
 		"lazy_registration",
 		"extensions",
 		"transfer",
@@ -6,7 +6,7 @@ moduleDependencies(project, [
 		"entity",
 		"common",
 		"tags"
-])
+)
 
 dependencies {
 	modCompileOnly("io.vram:frex-fabric:$frex_version")

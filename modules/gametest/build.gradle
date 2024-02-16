@@ -1,3 +1,7 @@
+// this is the only module with no dependencies.
+// All others depend on it and core.
+portingLib.moduleDependencies.set([])
+
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 }

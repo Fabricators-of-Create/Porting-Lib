@@ -1,7 +1,4 @@
-moduleDependencies(project, [
-		"model_materials",
-		"data"
-])
+portingLib.moduleDependencies.addAll("model_materials", "data")
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN

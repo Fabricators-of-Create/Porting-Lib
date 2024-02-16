@@ -1,7 +1,4 @@
-moduleDependencies(project, [
-		"lazy_registration",
-		"core"
-])
+portingLib.moduleDependencies.add("lazy_registration")
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN
