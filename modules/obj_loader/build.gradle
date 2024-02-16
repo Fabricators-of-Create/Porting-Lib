@@ -2,7 +2,3 @@ portingLib {
 	addModuleDependency("model_loader")
 	enableTestMod()
 }
-
-processResources {
-	duplicatesStrategy = DuplicatesStrategy.WARN
-}

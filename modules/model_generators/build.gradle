@@ -1,5 +1,1 @@
 portingLib.addModuleDependencies(["model_materials", "data"])
-
-processResources {
-	duplicatesStrategy = DuplicatesStrategy.WARN
-}

@@ -5,7 +5,3 @@ dependencies {
 	api(include("com.electronwill.night-config:toml:3.6.6"))
 	api(include("com.electronwill.night-config:core:3.6.6"))
 }
-
-processResources {
-	duplicatesStrategy = DuplicatesStrategy.WARN
-}

@@ -1,5 +1,1 @@
 portingLib.addModuleDependency("utility")
-
-processResources {
-	duplicatesStrategy = DuplicatesStrategy.WARN
-}

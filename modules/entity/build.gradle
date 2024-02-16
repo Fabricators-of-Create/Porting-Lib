@@ -2,7 +2,3 @@ portingLib {
 	addModuleDependency("mixin_extensions")
 	enableTestMod()
 }
-
-processResources {
-	duplicatesStrategy = DuplicatesStrategy.WARN
-}

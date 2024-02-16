@@ -1,5 +1,1 @@
 portingLib.addModuleDependency("fluids")
-
-processResources {
-	duplicatesStrategy = DuplicatesStrategy.WARN
-}

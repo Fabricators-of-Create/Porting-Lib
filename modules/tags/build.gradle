@@ -1,5 +1,1 @@
 portingLib.enableDatagen()
-
-processResources {
-	duplicatesStrategy = DuplicatesStrategy.WARN
-}

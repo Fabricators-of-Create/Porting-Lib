@@ -1,5 +1,1 @@
 portingLib.addModuleDependency("gametest")
-
-processResources {
-	duplicatesStrategy = DuplicatesStrategy.WARN
-}
