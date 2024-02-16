@@ -1,4 +1,4 @@
-portingLib.moduleDependencies.set(["gametest"]) // replaces default dependency on self
+portingLib.addModuleDependency("gametest")
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN

@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 
 import io.github.fabricators_of_create.porting_lib_build.processor.DeduplicationProcessor;
 import io.github.fabricators_of_create.porting_lib_build.processor.ExtensionConfigurationProcessor;
-import io.github.fabricators_of_create.porting_lib_build.processor.ModuleDependencyProcessor;
 import io.github.fabricators_of_create.porting_lib_build.processor.ResourceProcessingProcessor;
 import io.github.fabricators_of_create.porting_lib_build.processor.ValidationProcessor;
 
@@ -25,8 +24,7 @@ public class PortingLibBuildPlugin implements Plugin<Project> {
 	private final List<ProjectProcessor> lateProcessors = List.of(
 			new ValidationProcessor(),
 			new DeduplicationProcessor(),
-			new ResourceProcessingProcessor(),
-			new ModuleDependencyProcessor()
+			new ResourceProcessingProcessor()
 	);
 
 	@Override

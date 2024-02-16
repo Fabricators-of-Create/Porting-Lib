@@ -1,5 +1,5 @@
 portingLib {
-	moduleDependencies.add("model_loader")
+	addModuleDependency("model_loader")
 	enableTestMod()
 }
 

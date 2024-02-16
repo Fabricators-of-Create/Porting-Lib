@@ -10,7 +10,6 @@ import java.util.List;
 public class ExtensionConfigurationProcessor implements ProjectProcessor {
 	@Override
 	public void apply(Project project) {
-		PortingLibExtension extension = project.getExtensions().create("portingLib", PortingLibExtension.class);
-		extension.getModuleDependencies().convention(List.of("core"));
+		project.getExtensions().create("portingLib", PortingLibExtension.class);
 	}
 }

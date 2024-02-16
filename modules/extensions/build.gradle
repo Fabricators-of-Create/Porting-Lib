@@ -1,4 +1,4 @@
-portingLib.moduleDependencies.addAll("attributes", "accessors", "common")
+portingLib.addModuleDependencies(["attributes", "accessors", "common"])
 
 processResources {
 	duplicatesStrategy = DuplicatesStrategy.WARN

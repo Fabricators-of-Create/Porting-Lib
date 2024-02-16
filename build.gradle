@@ -160,24 +160,32 @@ subprojects {
 			accessWidenerPath.set(aw)
 	}
 
+	// these two modules are used by all others automatically.
+	if (name != "core" && name != "gametest") {
+		portingLib {
+			addModuleDependency("core") // core depends on gametest
+		}
+	}
+
 	java.withSourcesJar()
 
 	publishing {
 		repositories {
 			maven {
+				name = "devOS"
 				url = "https://mvn.devos.one/snapshots/"
 				credentials {
 					username = System.getenv("MAVEN_USER")
 					password = System.getenv("MAVEN_PASS")
 				}
 				authentication {
-					basic(BasicAuthentication)
+					register("basic", BasicAuthentication)
 				}
 			}
 		}
 
 		publications {
-			mavenJava(MavenPublication) {
+			register("mavenJava", MavenPublication) {
 				artifact(remapJar) {
 					builtBy(remapJar)
 				}

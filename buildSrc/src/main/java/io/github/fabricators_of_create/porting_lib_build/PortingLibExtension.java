@@ -3,21 +3,43 @@ package io.github.fabricators_of_create.porting_lib_build;
 import net.fabricmc.loom.api.LoomGradleExtensionAPI;
 
 import org.gradle.api.Project;
-import org.gradle.api.file.DuplicatesStrategy;
+import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.file.FileCollection;
-import org.gradle.api.provider.ListProperty;
-import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 
 import javax.inject.Inject;
 
+import java.util.List;
+import java.util.Map;
+
 public abstract class PortingLibExtension {
 	@Inject
 	protected abstract Project getProject();
 
-	// no implementation, this is handled by ModuleDependencyProcessor in afterEvaluate
-	public abstract ListProperty<String> getModuleDependencies();
+	public void addModuleDependencies(List<String> names) {
+		names.forEach(this::addModuleDependency);
+	}
+
+	public void addModuleDependency(String name) {
+		Project project = this.getProject();
+		DependencyHandler dependencies = project.getDependencies();
+
+		Dependency dependency = dependencies.project(Map.of(
+				"path", ":" + name,
+				"configuration", "namedElements"
+		));
+		dependencies.add("api", dependency);
+		dependencies.add("include", dependency);
+
+		LoomGradleExtensionAPI loom = project.getExtensions().getByType(LoomGradleExtensionAPI.class);
+		loom.mods(mods -> mods.register("porting_lib_" + name, settings -> {
+			Project depProject = project.project(":" + name);
+			SourceSetContainer sourceSets = depProject.getExtensions().getByType(SourceSetContainer.class);
+			settings.sourceSet(sourceSets.getByName("main"));
+		}));
+	}
 
 	public void enableDatagen() {
 		Project project = this.getProject();
