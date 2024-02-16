@@ -18,11 +18,11 @@ public class PortingLibBuildPlugin implements Plugin<Project> {
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	private final List<ProjectProcessor> processors = List.of(
-			new ExtensionConfigurationProcessor()
+			new ExtensionConfigurationProcessor(),
+			new ValidationProcessor()
 	);
 
 	private final List<ProjectProcessor> lateProcessors = List.of(
-			new ValidationProcessor(),
 			new DeduplicationProcessor(),
 			new ResourceProcessingProcessor()
 	);

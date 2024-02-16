@@ -12,9 +12,10 @@ public class ValidationProcessor implements ProjectProcessor {
 	@Override
 	public void apply(Project project) {
 		TaskContainer tasks = project.getTasks();
-		Task validateModule = tasks.create("validateModule", ValidateModuleTask.class);
-		Task assemble = tasks.getByName("assemble");
-		Task validateAw = tasks.getByName("validateAccessWidener");
-		assemble.dependsOn(validateAw, validateModule);
+		tasks.register("validateModule", ValidateModuleTask.class, validate -> {
+			Task assemble = tasks.getByName("assemble");
+			Task validateAw = tasks.getByName("validateAccessWidener");
+			assemble.dependsOn(validateAw, validate);
+		});
 	}
 }
