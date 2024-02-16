@@ -125,6 +125,9 @@ allprojects {
 		filesMatching("fabric.mod.json") {
 			expand properties
 		}
+
+		// include icon
+		from(rootProject.file("src/main/resources/assets/porting_lib/icon.png"))
 	}
 
 	jar.from(rootProject.file("LICENSE")) // copy license file into jar

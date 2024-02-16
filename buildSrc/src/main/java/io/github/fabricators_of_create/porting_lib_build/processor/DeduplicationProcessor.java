@@ -1,40 +1,169 @@
 package io.github.fabricators_of_create.porting_lib_build.processor;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import io.github.fabricators_of_create.porting_lib_build.PortingLibBuildPlugin;
 import io.github.fabricators_of_create.porting_lib_build.ProjectProcessor;
 
-import io.github.fabricators_of_create.porting_lib_build.tasks.DeduplicateInclusionsTask;
+import io.github.fabricators_of_create.porting_lib_build.Utils;
+import net.fabricmc.loom.task.RemapJarTask;
 
 import org.gradle.api.Project;
-import org.gradle.api.plugins.BasePlugin;
-import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.tasks.TaskContainer;
-import org.gradle.jvm.tasks.Jar;
+
+import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Iterator;
+import java.util.stream.Stream;
 
 public class DeduplicationProcessor implements ProjectProcessor {
 	@Override
 	public void apply(Project project) {
-		TaskContainer tasks = project.getTasks();
-		// mark standard output as non-deduplicated
-		tasks.named("remapJar", Jar.class).configure(remapJar -> remapJar.getArchiveClassifier().convention("duplicated"));
+		project.getTasks().named("remapJar", RemapJarTask.class).configure(task -> task.doLast($ -> {
+			Path path = task.getArchiveFile().get().getAsFile().toPath();
+			this.deduplicateInclusions(path);
+		}));
+	}
 
-		// based on loom remapJar setup
-		tasks.create("deduplicateInclusions", DeduplicateInclusionsTask.class, deduplicate -> {
-			Jar remapJar = tasks.named("remapJar", Jar.class).get();
-			deduplicate.dependsOn(remapJar);
+	public void deduplicateInclusions(Path jar) {
+		String name = jar.getFileName().toString();
+		// temp dir for storage of extracted JiJs
+		Path movedJars = jar.resolveSibling(name + "_extractedJars");
+		try {
+			deleteDir(movedJars);
+			Files.createDirectory(movedJars);
+			moveInclusions(jar, movedJars);
+			reAddInclusions(jar, movedJars);
+			deleteDir(movedJars);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-			deduplicate.getArchiveBaseName().convention(remapJar.getArchiveBaseName());
-			deduplicate.getArchiveAppendix().convention(remapJar.getArchiveAppendix());
-			deduplicate.getArchiveVersion().convention(remapJar.getArchiveVersion());
-			deduplicate.getArchiveExtension().convention(remapJar.getArchiveExtension());
+	/**
+	 * Recursively grab all JiJs of the given jar, and move them into the target dir.
+	 * Also removes all FMJ JiJ entries.
+	 */
+	public void moveInclusions(Path jar, Path target) throws IOException {
+		log("Moving inclusions for " + jar.toUri());
+		try (FileSystem jarFileSystem = FileSystems.newFileSystem(jar)) {
+			for (Path root : jarFileSystem.getRootDirectories()) {
+				Path jars = root.resolve("META-INF").resolve("jars");
+				boolean hasJijs = Files.exists(jars);
+				Path fmj = root.resolve("fabric.mod.json");
+				boolean hasFmj = Files.exists(fmj);
+				if (!hasJijs)
+					log("No JiJs");
+				if (!hasFmj)
+					log("No FMJ");
+				if (!hasJijs || !hasFmj)
+					return;
 
-			deduplicate.getDuplicatedJar().convention(remapJar.getArchiveFile());
-			project.getArtifacts().add(JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME, deduplicate);
-			project.getArtifacts().add(JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME, deduplicate);
+				JsonObject json = Utils.jsonFromPath(fmj).getAsJsonObject();
+				json.remove("jars");
+				Files.writeString(fmj, PortingLibBuildPlugin.GSON.toJson(json));
+
+				// remove the files
+				try (Stream<Path> files = Files.list(jars)) {
+					for (Iterator<Path> itr = files.iterator(); itr.hasNext();) {
+						Path jij = itr.next();
+						log("jij: " + jij.getFileName());
+						// move all of that jar's JiJs
+						moveInclusions(jij, target);
+						// and move the jar itself
+						tryMove(jij, target);
+					}
+				}
+				log("deleting " + jars.toUri());
+				Files.delete(jars);
+			}
+		}
+	}
+
+	/**
+	 * Re-add all JiJs in the given directory to the given jar.
+	 */
+	public void reAddInclusions(Path jar, Path dir) throws IOException {
+		// "jars": [
+		//    {
+		//      "file": "META-INF/jars/serialization-hooks-0.3.23.jar"
+		//    }
+		// ]
+		try (FileSystem jarFileSystem = FileSystems.newFileSystem(jar)) {
+			for (Path root : jarFileSystem.getRootDirectories()) {
+				Path fmj = root.resolve("fabric.mod.json");
+				Path jars = root.resolve("META-INF").resolve("jars");
+				Files.createDirectories(jars);
+
+				JsonObject json = Utils.jsonFromPath(fmj).getAsJsonObject();
+				JsonArray jarsJson = new JsonArray();
+
+				try (Stream<Path> files = Files.list(dir)) {
+					for (Iterator<Path> itr = files.iterator(); itr.hasNext();) {
+						Path jij = itr.next();
+						String name = jij.getFileName().toString();
+						// add to the FMJ
+						JsonObject obj = new JsonObject();
+						obj.addProperty("file", "META-INF/jars/" + name);
+						jarsJson.add(obj);
+						// move the file
+						tryMove(jij, jars);
+					}
+				}
+				// add the jars array to the FMJ
+				json.add("jars", jarsJson);
+				// write new FMJ content
+				Files.writeString(fmj, PortingLibBuildPlugin.GSON.toJson(json));
+			}
+		}
+	}
+
+	/**
+	 * Move the given file into the given directory.
+	 * If the directory already contains a file with the same name, it is unchanged, but the original is deleted.
+	 */
+	public void tryMove(Path file, Path target) throws IOException {
+		String name = file.getFileName().toString();
+		Path newPath = target.resolve(name);
+		if (Files.exists(newPath)) {
+			log(newPath.getFileName() + " already exists in target");
+			Files.delete(file);
+			return;
+		}
+		log("moving " + name + " to " + newPath);
+		Files.move(file, newPath);
+	}
+
+	/**
+	 * Delete the given directory and everything inside it.
+	 */
+	public void deleteDir(Path dir) throws IOException {
+		if (!Files.exists(dir))
+			return;
+		Files.walkFileTree(dir, new SimpleFileVisitor<>() {
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+				Files.delete(file);
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+				if (exc != null)
+					throw exc;
+				Files.delete(dir);
+				return FileVisitResult.CONTINUE;
+			}
 		});
+	}
 
-		// make build use the deduplication
-		tasks.named(BasePlugin.ASSEMBLE_TASK_NAME).configure(
-				assemble -> assemble.dependsOn(tasks.named("deduplicateInclusions"))
-		);
+	public static void log(String data) {
+//		log(data);
 	}
 }
