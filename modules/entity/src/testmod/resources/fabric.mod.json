@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "porting_lib_entity_testmod",
-  "version": "${version}",
+  "version": "1.0.0",
   "name": "Porting Lib Entity Testmod",
   "description": "Tests the entity module",
   "authors": [

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "porting_lib_obj_loader_testmod",
-  "version": "${version}",
+  "version": "1.0.0",
   "name": "Porting Lib Obj Loader Testmod",
   "description": "Tests the Obj Loader module",
   "authors": [

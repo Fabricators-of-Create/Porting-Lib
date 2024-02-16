@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "porting_lib_models_testmod",
-  "version": "${version}",
+  "version": "1.0.0",
   "name": "Porting Lib Models Testmod",
   "description": "Tests the models module",
   "authors": [
