@@ -10,6 +10,7 @@ import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.crafting.Recipe;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,7 +26,7 @@ import java.util.Map;
 @Mixin(ClientRecipeBook.class)
 public class ClientRecipeBookMixin {
 	@Inject(method = "setupCollections", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap;copyOf(Ljava/util/Map;)Lcom/google/common/collect/ImmutableMap;"), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void setupModdedAggregateCategories(Iterable<Recipe<?>> iterable, RegistryAccess registryAccess, CallbackInfo ci, Map<RecipeBookCategories, List<List<Recipe<?>>>> categorizeAndGroupRecipes, Map<RecipeBookCategories, List<RecipeCollection>> aggregateCategories) {
+	private void setupModdedAggregateCategories(Iterable<Recipe<?>> iterable, RegistryAccess registryAccess, CallbackInfo ci, Map<RecipeBookCategories, List<List<RecipeHolder<?>>>> categorizeAndGroupRecipes, Map<RecipeBookCategories, List<RecipeCollection>> aggregateCategories) {
 		RecipeBookRegistry.AGGREGATE_CATEGORIES.forEach((recipeBookCategories, list) -> {
 			aggregateCategories.put(recipeBookCategories, list.stream().flatMap((recipeBookCategoriesx) -> {
 				return aggregateCategories.getOrDefault(recipeBookCategoriesx, ImmutableList.of()).stream();
@@ -34,8 +35,8 @@ public class ClientRecipeBookMixin {
 	}
 
 	@Inject(method = "getCategory", at = @At(value = "INVOKE", target = "Lcom/mojang/logging/LogUtils;defer(Ljava/util/function/Supplier;)Ljava/lang/Object;", ordinal = 0), cancellable = true)
-	private static void getCustomRecipeCategory(Recipe<?> recipe, CallbackInfoReturnable<RecipeBookCategories> cir) {
-		RecipeBookCategories categories = RecipeBookRegistry.findCategories((RecipeType) recipe.getType(), recipe);
+	private static void getCustomRecipeCategory(RecipeHolder<?> recipe, CallbackInfoReturnable<RecipeBookCategories> cir) {
+		RecipeBookCategories categories = RecipeBookRegistry.findCategories((RecipeType) recipe.value().getType(), recipe);
 		if (categories != null)
 			cir.setReturnValue(categories);
 	}

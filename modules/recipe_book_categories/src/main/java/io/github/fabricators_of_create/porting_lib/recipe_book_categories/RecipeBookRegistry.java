@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -24,13 +26,13 @@ public class RecipeBookRegistry {
 	// Not using ConcurrentHashMap here because it's slower for lookups, so we only use it during init
 	public static final Map<RecipeBookCategories, List<RecipeBookCategories>> AGGREGATE_CATEGORIES = new HashMap<>();
 	private static final Map<RecipeBookType, List<RecipeBookCategories>> TYPE_CATEGORIES = new HashMap<>();
-	private static final Map<RecipeType<?>, Function<Recipe<?>, RecipeBookCategories>> RECIPE_CATEGORY_LOOKUPS = new HashMap<>();
+	private static final Map<RecipeType<?>, Function<RecipeHolder<?>, RecipeBookCategories>> RECIPE_CATEGORY_LOOKUPS = new HashMap<>();
 
 	/**
 	 * Finds the category the specified recipe should display in, or null if none.
 	 */
 	@Nullable
-	public static <T extends Recipe<?>> RecipeBookCategories findCategories(RecipeType<T> type, T recipe) {
+	public static <T extends Recipe<?>> RecipeBookCategories findCategories(RecipeType<T> type, RecipeHolder<T> recipe) {
 		var lookup = RECIPE_CATEGORY_LOOKUPS.get(type);
 		return lookup != null ? lookup.apply(recipe) : null;
 	}
@@ -57,7 +59,7 @@ public class RecipeBookRegistry {
 	/**
 	 * Registers a category lookup for a certain recipe type.
 	 */
-	public static void registerRecipeCategoryFinder(RecipeType<?> type, Function<Recipe<?>, RecipeBookCategories> lookup) {
+	public static void registerRecipeCategoryFinder(RecipeType<?> type, Function<RecipeHolder<?>, RecipeBookCategories> lookup) {
 		RECIPE_CATEGORY_LOOKUPS.put(type, lookup);
 	}
 }

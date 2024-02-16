@@ -5,12 +5,13 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 public interface ChunkTrackingCallback {
 
-	Event<Watch> WATCH = EventFactory.createArrayBacked(Watch.class, callbacks -> (entity, chunkpos, level) -> {
+	Event<Watch> WATCH = EventFactory.createArrayBacked(Watch.class, callbacks -> (entity, chunk, level) -> {
 		for (Watch e : callbacks)
-			e.onChunkWatch(entity, chunkpos, level);
+			e.onChunkWatch(entity, chunk, level);
 	});
 
 	Event<Unwatch> UNWATCH = EventFactory.createArrayBacked(Unwatch.class, callbacks -> (entity, chunkpos, level) -> {
@@ -20,7 +21,7 @@ public interface ChunkTrackingCallback {
 
 	@FunctionalInterface
 	interface Watch {
-		void onChunkWatch(ServerPlayer entity, ChunkPos chunkpos, ServerLevel level);
+		void onChunkWatch(ServerPlayer entity, LevelChunk chunk, ServerLevel level);
 	}
 
 	@FunctionalInterface

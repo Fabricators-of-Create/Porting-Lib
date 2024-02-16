@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import net.minecraft.server.network.CommonListenerCookie;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -13,7 +15,7 @@ import net.minecraft.server.players.PlayerList;
 @Mixin(PlayerList.class)
 public abstract class PlayerListMixin {
 	@Inject(method = "placeNewPlayer", at = @At("TAIL"))
-	private void setPlayerUsername(Connection netManager, ServerPlayer player, CallbackInfo ci) {
+	private void setPlayerUsername(Connection netManager, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo ci) {
 		UsernameCache.setUsername(player.getUUID(), player.getGameProfile().getName());
 	}
 }
