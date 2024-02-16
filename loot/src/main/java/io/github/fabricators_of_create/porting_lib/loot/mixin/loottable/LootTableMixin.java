@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.loot.mixin.loottable;
 
 import java.util.Objects;
 
+import io.github.fabricators_of_create.porting_lib.loot.LootCollector;
 import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableBuilderExtensions;
 import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableExtensions;
 
@@ -18,6 +19,14 @@ import net.minecraft.world.level.storage.loot.LootTable;
 public class LootTableMixin implements LootTableExtensions {
 	@Unique
 	private ResourceLocation lootTableId;
+
+	@Unique
+	private static final ThreadLocal<LootCollector> lootCollector = new ThreadLocal<>();
+
+	@Override
+	public ThreadLocal<LootCollector> port_lib$lootCollector() {
+		return lootCollector;
+	}
 
 	@Override
 	public void setLootTableId(final ResourceLocation id) {

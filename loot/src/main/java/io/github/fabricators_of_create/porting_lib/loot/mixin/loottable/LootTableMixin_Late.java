@@ -2,7 +2,7 @@ package io.github.fabricators_of_create.porting_lib.loot.mixin.loottable;
 
 import java.util.function.Consumer;
 
-import io.github.fabricators_of_create.porting_lib.loot.LootCollectorUnwrapper;
+import io.github.fabricators_of_create.porting_lib.loot.LootCollector;
 import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableExtensions;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,7 +15,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 
 @Mixin(value = LootTable.class, priority = 50_000)
-public class LootTableMixin_Late implements LootTableExtensions {
+public abstract class LootTableMixin_Late implements LootTableExtensions {
 	@Inject(
 			method = "getRandomItemsRaw(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V",
 			at = @At("RETURN")
@@ -23,6 +23,8 @@ public class LootTableMixin_Late implements LootTableExtensions {
 	private void finishCollectingLoot(LootContext context, Consumer<ItemStack> output, CallbackInfo ci) {
 		// this needs to be done really late to catch all uses of the consumer before finishing.
 		// Higher integer priority is invoked last.
-		LootCollectorUnwrapper.unwrap(output).finish(this.getLootTableId(), context);
+		ThreadLocal<LootCollector> threadLocal = this.port_lib$lootCollector();
+		threadLocal.get().finish(this.getLootTableId(), context);
+        threadLocal.remove();
 	}
 }

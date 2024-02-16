@@ -41,9 +41,6 @@ public class PortingLibLoot implements ModInitializer {
 		LootTableEvents.MODIFY.register(
 				(resources, manager, id, builder, source) -> ((LootTableBuilderExtensions) builder).port_lib$setId(id)
 		);
-
-		if (!LootCollectorUnwrapper.test())
-			throw new RuntimeException("bad");
 	}
 
 	/**
