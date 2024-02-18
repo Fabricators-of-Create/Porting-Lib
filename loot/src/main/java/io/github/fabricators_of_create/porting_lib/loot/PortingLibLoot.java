@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.loot;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.annotation.Nullable;

@@ -18,7 +18,7 @@ public class ItemStackHandlerSlot extends SingleStackStorage {
 	public ItemStackHandlerSlot(int index, ItemStackHandler handler, ItemStack initial) {
 		this.index = index;
 		this.handler = handler;
-		this.lastStack = initial;
+		this.lastStack = initial.copy();
 		this.setStack(initial);
 		handler.initSlot(this);
 	}
@@ -69,7 +69,7 @@ public class ItemStackHandlerSlot extends SingleStackStorage {
 
 	protected void onStackChange() {
 		handler.onStackChange(this, lastStack, stack);
-		this.lastStack = stack;
+		this.lastStack = stack.copy();
 	}
 
 	protected void notifyHandlerOfChange() {
