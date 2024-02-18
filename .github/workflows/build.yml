@@ -39,7 +39,8 @@ jobs:
           path: build/libs/
 
       - name: publish to Modrinth and Curseforge
-        uses: Kir-Antipov/mc-publish@v3.2
+        uses: Kir-Antipov/mc-publish@v3.3
+        if: github.event_name != 'pull_request'
         with:
           modrinth-id: tEJPA4Ty
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
