@@ -56,7 +56,7 @@ public class ObjBakedModel implements BakedModel {
 	@NotNull
 	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction direction, @NotNull RandomSource random) {
 		ArrayList<BakedQuad> quads = new ArrayList<>();
-		meshes.forEach(mesh -> quads.addAll(ModelHelper.toQuadLists(mesh)[direction == null ? ModelHelper.NULL_FACE_ID : direction.get3DDataValue()]));
+		meshes.forEach(mesh -> quads.addAll(ModelHelper.toQuadLists(mesh)[ModelHelper.toFaceIndex(direction)]));
 		return quads;
 	}
 
