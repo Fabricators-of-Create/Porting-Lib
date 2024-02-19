@@ -170,6 +170,18 @@ subprojects {
 		}
 	}
 
+	validateModule {
+		projectName = project.name
+		readMe.set(rootProject.file("README.md"))
+		resources.set(project.file("src/main/resources"))
+	}
+
+	sortAccessWidener {
+		File awFile = project.file("src/main/resources/${project.name}.accesswidener")
+		if (awFile.exists())
+			aw.set(awFile)
+	}
+
 	java.withSourcesJar()
 
 	publishing {

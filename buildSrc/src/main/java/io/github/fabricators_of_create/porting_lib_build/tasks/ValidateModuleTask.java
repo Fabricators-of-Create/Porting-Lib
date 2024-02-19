@@ -3,10 +3,15 @@ package io.github.fabricators_of_create.porting_lib_build.tasks;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import io.github.fabricators_of_create.porting_lib_build.Utils;
+
 import org.gradle.api.DefaultTask;
-import org.gradle.api.Project;
+import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputDirectory;
+import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 
@@ -20,52 +25,60 @@ import java.util.stream.StreamSupport;
 
 public abstract class ValidateModuleTask extends DefaultTask {
 	@Input
+	public abstract Property<String> getProjectName();
+
+	@Input
 	@Optional
 	public abstract Property<Boolean> getIgnoreName();
 
+	@InputFile
+	public abstract RegularFileProperty getReadMe();
+
+	@InputDirectory
+	public abstract DirectoryProperty getResources();
+
 	@TaskAction
 	public void validateModule() throws IOException {
-		Project project = getProject();
-		Project rootProject = project.getRootProject();
-		if (project == rootProject)
-			return;
-		boolean ignoreName = getIgnoreName().getOrElse(Boolean.FALSE);
-		String name = project.getName();
-		Path resources = project.file("src/main/resources").toPath();
+		String name = this.getProjectName().get();
+		boolean ignoreName = this.getIgnoreName().getOrElse(Boolean.FALSE);
+		Path resources = this.getResources().get().getAsFile().toPath();
+		Path readme = this.getReadMe().get().getAsFile().toPath();
+
 		Path fmj = resources.resolve("fabric.mod.json");
 		if (!Files.exists(fmj))
 			throw new IllegalStateException(name + " does not have a fabric.mod.json");
-		String content = Files.readString(fmj);
-		JsonObject json = JsonParser.parseString(content).getAsJsonObject();
+		JsonObject json = Utils.jsonFromPath(fmj);
+
 		if (!ignoreName) {
 			checkName(name);
 			checkModId(name, json);
 		}
+
 		checkDescription(json);
 		checkAw(name, resources, json);
 		checkMixins(name, resources, json);
-		checkReadMe(rootProject, name);
+		checkReadMe(readme, name);
 	}
 
 	private void checkName(String name) {
-		assertTrue(!name.contains("-"), "Module $module should not have a '-' in its name");
+		assertTrue(!name.contains("-"), "Module names should not contain '-'");
 		String lowerCase = name.toLowerCase(Locale.ROOT);
-		assertTrue(lowerCase.equals(name), "Module $module should not contain capital letters");
+		assertTrue(lowerCase.equals(name), "Module names should not contain capital letters");
 	}
 
 	private void checkModId(String projectName, JsonObject fmj) {
 		String id = fmj.get("id").getAsString();
-		assertTrue(id.equals("porting_lib_" + projectName), "Module mod IDs should be in the format 'porting_lib_<name>");
+		assertTrue(id.equals("porting_lib_" + projectName), "Module mod IDs should be in the format 'porting_lib_<name>'");
 	}
 
 	private void checkDescription(JsonObject fmj) {
-		assertTrue(fmj.has("description"), "Module $module does not have a description");
+		assertTrue(fmj.has("description"), "FMJ description is not present");
 		String desc = fmj.get("description").getAsString();
-		assertTrue(!desc.isEmpty(), "Module $module has an empty description");
+		assertTrue(!desc.isEmpty(), "FMJ description is empty");
 	}
 
 	private void checkAw(String moduleName, Path resources, JsonObject fmj) throws IOException {
-		assertTrue(!fmj.has("accessWidener"), "Module $module specifies an access widener, despite it being automatic");
+		assertTrue(!fmj.has("accessWidener"), "An access widener is specified, despite it being automatic");
 		String expectedName = "porting_lib_" + moduleName + ".accesswidener";
 		try (Stream<Path> files = Files.list(resources)) {
 			files.filter(file -> file.toString().endsWith(".accesswidener"))
@@ -78,7 +91,7 @@ public abstract class ValidateModuleTask extends DefaultTask {
 	}
 
 	private void checkMixins(String moduleName, Path resources, JsonObject fmj) throws IOException {
-		assertTrue(!fmj.has("mixins"), "Module $module specifies mixins, despite it being automatic");
+		assertTrue(!fmj.has("mixins"), "Mixins are specified, despite it being automatic");
 		String expectedName = "porting_lib_" + moduleName + ".mixins.json";
 		try (Stream<Path> files = Files.list(resources)) {
 			files.filter(file -> file.toString().endsWith(".mixins.json"))
@@ -103,14 +116,13 @@ public abstract class ValidateModuleTask extends DefaultTask {
 				String name = mixin.getFileName().toString();
 				name = name.substring(0, name.length() - ".java".length());
 				boolean present = common.contains(name) || client.contains(name);
-				assertTrue(present, mixin + " of $module was not found in the mixins.json");
+				assertTrue(present, mixin + " was not found in the mixins.json");
 			});
 		}
 	}
 
-	private void checkReadMe(Project rootProject, String name) throws IOException {
+	private void checkReadMe(Path readMe, String name) throws IOException {
 		String formatted = '`' + name + '`'; // `module_name`
-		Path readMe = rootProject.file("README.md").toPath();
 		String content = Files.readString(readMe);
 		String table = content.split("### Modules")[1].split("### Contributing")[0];
 		String[] lines = table.split("\n");
@@ -123,7 +135,7 @@ public abstract class ValidateModuleTask extends DefaultTask {
 			if (module.equals(formatted))
 				return; // found it
 		}
-		assertTrue(false, "Module $module does not have an entry in the README table");
+		assertTrue(false, "Module does not have an entry in the README table");
 	}
 
 	private static List<String> getMixinFilenames(JsonObject mixins, String side) {
@@ -139,8 +151,7 @@ public abstract class ValidateModuleTask extends DefaultTask {
 
 	private void assertTrue(boolean value, String message) {
 		if (!value) {
-			String filledMessage = message.replace("$module", getProject().getName());
-			throw new IllegalStateException(filledMessage);
+			throw new IllegalStateException(message);
 		}
 	}
 }

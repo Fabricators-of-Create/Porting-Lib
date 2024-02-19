@@ -11,6 +11,8 @@ import org.gradle.api.tasks.TaskContainer;
 public class ValidationProcessor implements ProjectProcessor {
 	@Override
 	public void apply(Project project) {
+		if (project == project.getRootProject())
+			return; // only apply to modules
 		TaskContainer tasks = project.getTasks();
 		tasks.register("validateModule", ValidateModuleTask.class, validate -> {
 			Task assemble = tasks.getByName("assemble");

@@ -1,7 +1,8 @@
 package io.github.fabricators_of_create.porting_lib_build.tasks;
 
 import org.gradle.api.DefaultTask;
-import org.gradle.api.Project;
+import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.IOException;
@@ -12,18 +13,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class SortAccessWidenerTask extends DefaultTask {
-	public static final String PATH = "src/main/resources/";
+public abstract class SortAccessWidenerTask extends DefaultTask {
 	public static final String HEADER = "accessWidener v2 named\n";
+
+	@InputFile
+	public abstract RegularFileProperty getAw();
 
 	@TaskAction
 	public void sortAccessWidener() throws IOException {
-		Project project = getProject();
-		String fileName = "porting_lib_" + project.getName() + ".accesswidener";
-		Path aw = project.file(PATH + fileName).toPath();
-		if (!Files.exists(aw))
-			return;
-		System.out.println("sorting " + fileName);
+		Path aw = this.getAw().get().getAsFile().toPath();
 
 		List<String> transitiveClasses = new ArrayList<>();
 		List<String> transitiveMethods = new ArrayList<>();
