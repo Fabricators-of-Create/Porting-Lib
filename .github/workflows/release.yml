@@ -2,19 +2,14 @@ name: release
 on: workflow_dispatch
 
 jobs:
-  build:
+  setup: # sets up repo, gradle, and version
     strategy:
       matrix:
         java: [ 17 ]
     runs-on: ubuntu-latest
-    env:
-      MAVEN_TYPE: releases
-      MAVEN_USER: ${{ secrets.MAVEN_USER }}
-      MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
     outputs:
       version: ${{ steps.publish.outputs.version }}
     steps:
-
       - name: checkout repository
         uses: actions/checkout@v3
 
@@ -28,9 +23,24 @@ jobs:
           java-version: 17
           cache: gradle
 
+      # stores the version in a special file that GitHub will read for outputs
+      - name: store version
+        run: ./gradlew grabVersion
+
+  build:
+    strategy:
+      matrix:
+        java: [ 17 ]
+    runs-on: ubuntu-latest
+    env:
+      MAVEN_TYPE: releases
+      MAVEN_USER: ${{ secrets.MAVEN_USER }}
+      MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
+    needs: [ setup ]
+    steps:
       - name: publish
         id: publish
-        run: ./gradlew publish grabVersion # grabVersion stores the version in a special file that GitHub will read
+        run: ./gradlew publish
 
       - name: capture build artifacts
         uses: actions/upload-artifact@v3
