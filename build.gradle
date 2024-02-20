@@ -25,6 +25,15 @@ processResources {
 	exclude("template.fabric.mod.json")
 }
 
+tasks.register("grabVersion") {
+	File output = project.file("\$GITHUB_OUTPUT")
+	String version = project.version
+
+	doFirst {
+		output.setText("version=$version")
+	}
+}
+
 allprojects {
 	if (name == "buildSrc") return
 
@@ -34,11 +43,6 @@ allprojects {
 	group = "io.github.fabricators_of_create.Porting-Lib"
 
 	version = project.mod_version
-
-	String buildNumber = System.getenv("GITHUB_RUN_NUMBER")
-	String patch = buildNumber != null ? buildNumber : "99999"
-
-	version = version.replace("<patch>", patch)
 
 	if (grgit != null) {
 		version += "+${grgit.getBranch().current().name}"
@@ -188,7 +192,7 @@ subprojects {
 		repositories {
 			maven {
 				name = "devOS"
-				url = "https://mvn.devos.one/snapshots/"
+				url = "https://mvn.devos.one/${System.getenv("MAVEN_TYPE")}/"
 				credentials {
 					username = System.getenv("MAVEN_USER")
 					password = System.getenv("MAVEN_PASS")
