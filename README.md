@@ -4,14 +4,17 @@
 ## Use
 Porting Lib is split into modules. All modules are available on this maven:
 ```groovy
-maven { url = "https://mvn.devos.one/snapshots/" }
+maven { url = "https://mvn.devos.one/<type>/" }
 ```
+Where `<type>` is either `releases` or `snapshots`.
+
+You can depend on Porting Lib like this once you add the maven:
 ```groovy
 modImplementation(include("io.github.fabricators_of_create.Porting-Lib:<module>:<version>"))
 ```
 
-The latest major and minor versions can be found in the `gradle.properties` file as `mod_version`.
-The latest patch can be found from GitHub Actions as the build number.
+You can find the latest version on [Modrinth](https://modrinth.com/mod/porting_lib/versions).
+Just choose a version and use its version number.
 
 ### Modules
 | Module                   | Description                                                                          |
