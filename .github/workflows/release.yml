@@ -2,14 +2,19 @@ name: release
 on: workflow_dispatch
 
 jobs:
-  setup: # sets up repo, gradle, and version
+  build:
     strategy:
       matrix:
         java: [ 17 ]
     runs-on: ubuntu-latest
+    env:
+      MAVEN_TYPE: releases
+      MAVEN_USER: ${{ secrets.MAVEN_USER }}
+      MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
     outputs:
       version: ${{ steps.publish.outputs.version }}
     steps:
+
       - name: checkout repository
         uses: actions/checkout@v3
 
@@ -23,24 +28,9 @@ jobs:
           java-version: 17
           cache: gradle
 
-      # stores the version in a special file that GitHub will read for outputs
-      - name: store version
-        run: ./gradlew grabVersion
-
-  build:
-    strategy:
-      matrix:
-        java: [ 17 ]
-    runs-on: ubuntu-latest
-    env:
-      MAVEN_TYPE: releases
-      MAVEN_USER: ${{ secrets.MAVEN_USER }}
-      MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
-    needs: [ setup ]
-    steps:
       - name: publish
         id: publish
-        run: ./gradlew publish
+        run: ./gradlew publish grabVersion # grabVersion stores the version in a special file that GitHub will read
 
       - name: capture build artifacts
         uses: actions/upload-artifact@v3
@@ -59,8 +49,8 @@ jobs:
 
           modrinth-featured: false # leave it to auto featuring
 
-          name: ${{ needs.setup.outputs.version }}
-          version: ${{ needs.setup.outputs.version }}
+          name: ${{ steps.publish.outputs.version }}
+          version: ${{ steps.publish.outputs.version }}
 
           loaders: |
             fabric
