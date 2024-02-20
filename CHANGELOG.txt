@@ -1,0 +1,2 @@
+- Updated to 1.20.4. View the migration guide here: https://github.com/Fabricators-of-Create/Porting-Lib/wiki/1.20.1-to-1.20.4
+- Completely refactored how releases are done
