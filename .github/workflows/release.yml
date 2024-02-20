@@ -30,10 +30,9 @@ jobs:
 
       - name: publish
         id: publish
-        # build to create artifacts for upload to GitHub
+        # build to create artifacts for upload to GitHub, MR, and CF
         # publish publishes to maven
-        # grabVersion stores the version as an output
-        run: ./gradlew build publish grabVersion
+        run: ./gradlew build publish
 
       - name: capture build artifacts
         uses: actions/upload-artifact@v3
@@ -51,9 +50,6 @@ jobs:
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
           modrinth-featured: false # leave it to auto featuring
-
-          name: ${{ steps.publish.outputs.version }}
-          version: ${{ steps.publish.outputs.version }}
 
           loaders: |
             fabric

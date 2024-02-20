@@ -25,15 +25,6 @@ processResources {
 	exclude("template.fabric.mod.json")
 }
 
-tasks.register("grabVersion") {
-	File output = project.file("\$GITHUB_OUTPUT")
-	String version = project.version
-
-	doFirst {
-		output.setText("version=$version")
-	}
-}
-
 allprojects {
 	if (name == "buildSrc") return
 
