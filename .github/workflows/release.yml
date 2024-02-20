@@ -30,7 +30,10 @@ jobs:
 
       - name: publish
         id: publish
-        run: ./gradlew publish grabVersion # grabVersion stores the version in a special file that GitHub will read
+        # build to create artifacts for upload to GitHub
+        # publish publishes to maven
+        # grabVersion stores the version as an output
+        run: ./gradlew build publish grabVersion
 
       - name: capture build artifacts
         uses: actions/upload-artifact@v3
