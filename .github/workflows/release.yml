@@ -59,8 +59,8 @@ jobs:
 
           modrinth-featured: false # leave it to auto featuring
 
-          name: ${{ needs.jobs.setup.outputs.version }}
-          version: ${{ needs.jobs.setup.outputs.version }}
+          name: ${{ needs.setup.outputs.version }}
+          version: ${{ needs.setup.outputs.version }}
 
           loaders: |
             fabric
