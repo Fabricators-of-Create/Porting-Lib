@@ -37,7 +37,7 @@ public abstract class PortingLibExtension {
 		loom.mods(mods -> mods.register("porting_lib_" + name, settings -> {
 			Project depProject = project.project(":" + name);
 			SourceSetContainer sourceSets = depProject.getExtensions().getByType(SourceSetContainer.class);
-			settings.sourceSet(sourceSets.getByName("main"));
+			settings.sourceSet(sourceSets.getByName("main"), depProject);
 		}));
 	}
 

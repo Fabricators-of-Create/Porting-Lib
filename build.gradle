@@ -5,7 +5,6 @@ import io.github.fabricators_of_create.porting_lib_build.PortingLibBuildPlugin
 //file:noinspection GroovyAccessibility
 plugins {
 	id "fabric-loom"
-	id "org.ajoberstar.grgit" version "4.1.1"
 	id "maven-publish"
 }
 
@@ -13,6 +12,12 @@ sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = "porting_lib"
+
+String branch = providers.exec {
+	it.setCommandLine("git", "branch", "--show-current")
+}.standardOutput.asText.map {
+	it.contains("not a git repository") ? "unknown" : it
+}.get().trim()
 
 dependencies {
 	subprojects.forEach {
@@ -33,13 +38,7 @@ allprojects {
 
 	group = "io.github.fabricators_of_create.Porting-Lib"
 
-	version = project.mod_version
-
-	if (grgit != null) {
-		version += "+${grgit.getBranch().current().name}"
-	} else {
-		version += "+custom_unknown"
-	}
+	version = mod_version + "+" + branch
 
 	repositories {
 		mavenCentral()
