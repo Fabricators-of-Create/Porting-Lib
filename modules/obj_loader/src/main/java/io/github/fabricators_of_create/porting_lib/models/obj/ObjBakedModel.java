@@ -4,25 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import net.fabricmc.fabric.api.renderer.v1.model.SpriteFinder;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
+import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.texture.AbstractTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -60,17 +55,9 @@ public class ObjBakedModel implements BakedModel {
 	@Override
 	@NotNull
 	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction direction, @NotNull RandomSource random) {
-		AbstractTexture atlasTexture = Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS);
-		if (atlasTexture instanceof TextureAtlas atlas) {
-			ArrayList<BakedQuad> quads = new ArrayList<>();
-			SpriteFinder finder = SpriteFinder.get(atlas);
-			meshes.forEach(mesh -> mesh.forEach(quad -> {
-				TextureAtlasSprite sprite = finder.find(quad);
-				quads.add(quad.toBakedQuad(sprite));
-			}));
-			return quads;
-		}
-		return List.of();
+		ArrayList<BakedQuad> quads = new ArrayList<>();
+		meshes.forEach(mesh -> quads.addAll(ModelHelper.toQuadLists(mesh)[ModelHelper.toFaceIndex(direction)]));
+		return quads;
 	}
 
 	@Override
