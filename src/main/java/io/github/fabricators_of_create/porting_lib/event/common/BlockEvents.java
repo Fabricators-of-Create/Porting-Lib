@@ -61,6 +61,20 @@ public abstract class BlockEvents extends BaseEvent {
 	}
 
 	/**
+	 * Invoked during block placement from {@link BlockItem#place(BlockPlaceContext)}.
+	 * Called on both client and server.
+	 * Passes along the placement state of the block.
+	 */
+	public static final Event<DuringPlace> DURING_PLACE = EventFactory.createArrayBacked(DuringPlace.class, callbacks -> (context, state) -> {
+		for (DuringPlace callback : callbacks)
+			callback.duringPlace(context, state);
+	});
+
+	public interface DuringPlace {
+		void duringPlace(BlockPlaceContext ctx, BlockState state);
+	}
+
+	/**
 	 * Invoked after a block is placed, from {@link BlockItem#useOn(UseOnContext)}. Called on both client and server.
 	 */
 	public static final Event<AfterPlace> AFTER_PLACE = EventFactory.createArrayBacked(AfterPlace.class, callbacks -> context -> {
