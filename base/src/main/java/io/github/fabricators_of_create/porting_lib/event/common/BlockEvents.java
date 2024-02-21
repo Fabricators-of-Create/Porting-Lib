@@ -63,6 +63,7 @@ public abstract class BlockEvents extends BaseEvent {
 
 	/**
 	 * Invoked after a block is placed, from {@link BlockItem#useOn(UseOnContext)}. Called on both client and server.
+	 * @deprecated Use {@link BlockEvents#POST_PROCESS_PLACE} instead.
 	 */
 	@Deprecated
 	public static final Event<AfterPlace> AFTER_PLACE = EventFactory.createArrayBacked(AfterPlace.class, callbacks -> context -> {
