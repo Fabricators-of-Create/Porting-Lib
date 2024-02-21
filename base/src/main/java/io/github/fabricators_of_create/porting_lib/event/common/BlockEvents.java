@@ -64,6 +64,7 @@ public abstract class BlockEvents extends BaseEvent {
 	/**
 	 * Invoked after a block is placed, from {@link BlockItem#useOn(UseOnContext)}. Called on both client and server.
 	 */
+	@Deprecated
 	public static final Event<AfterPlace> AFTER_PLACE = EventFactory.createArrayBacked(AfterPlace.class, callbacks -> context -> {
 		for (AfterPlace callback : callbacks)
 			callback.afterPlace(context);
@@ -71,6 +72,20 @@ public abstract class BlockEvents extends BaseEvent {
 
 	public interface AfterPlace {
 		void afterPlace(BlockPlaceContext ctx);
+	}
+
+	/**
+	 * Invoked after a block is placed, from the TAIL of {@link BlockItem#place(BlockPlaceContext)}.
+	 * Called on both client and server.
+	 * Provides the block's Position and BlockState as well.
+	 */
+	public static final Event<PostProcessPlace> POST_PROCESS_PLACE = EventFactory.createArrayBacked(PostProcessPlace.class, callbacks -> (context, blockPos, blockState) -> {
+		for (PostProcessPlace callback : callbacks)
+			callback.postProcessPlace(context, blockPos, blockState);
+	});
+
+	public interface PostProcessPlace {
+		void postProcessPlace(BlockPlaceContext ctx, BlockPos blockPos, BlockState blockState);
 	}
 
 	private final LevelAccessor world;
