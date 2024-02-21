@@ -43,7 +43,7 @@ public abstract class BlockItemMixin implements BlockItemExtensions {
 		return placeResult;
 	}
 
-	@Inject(method = "place", at = @At(value = "TAIL"))
+	@Inject(method = "place", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/InteractionResult;sidedSuccess(Z)Lnet/minecraft/world/InteractionResult;"))
 	private void port_lib$postProcessPlace(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> cir, @Local BlockPos blockPos, @Local BlockState blockState) {
 		BlockEvents.POST_PROCESS_PLACE.invoker().postProcessPlace(context, blockPos, blockState);
 	}
