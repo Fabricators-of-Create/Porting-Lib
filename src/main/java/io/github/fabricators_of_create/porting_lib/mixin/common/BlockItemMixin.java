@@ -2,10 +2,11 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 
 import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
+
+import net.minecraft.core.BlockPos;
 
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -29,19 +30,6 @@ public abstract class BlockItemMixin implements BlockItemExtensions {
 			cir.setReturnValue(result);
 	}
 
-	@WrapOperation(
-			method = "place",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/world/item/BlockItem;getPlacementState(Lnet/minecraft/world/item/context/BlockPlaceContext;)Lnet/minecraft/world/level/block/state/BlockState;"
-			)
-	)
-	private BlockState create$afterPlace(BlockItem instance, BlockPlaceContext context, Operation<BlockState> original) {
-		BlockState state = original.call(instance, context);
-		BlockEvents.DURING_PLACE.invoker().duringPlace(context, state);
-		return state;
-	}
-
 	@ModifyExpressionValue(
 			method = "useOn",
 			at = @At(
@@ -53,5 +41,10 @@ public abstract class BlockItemMixin implements BlockItemExtensions {
 		if (placeResult.consumesAction())
 			BlockEvents.AFTER_PLACE.invoker().afterPlace(new BlockPlaceContext(context));
 		return placeResult;
+	}
+
+	@Inject(method = "place", at = @At(value = "TAIL"))
+	private void port_lib$postProcessPlace(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> cir, @Local BlockPos blockPos, @Local BlockState blockState) {
+		BlockEvents.POST_PROCESS_PLACE.invoker().postProcessPlace(context, blockPos, blockState);
 	}
 }
