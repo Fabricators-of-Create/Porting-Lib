@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import com.llamalad7.mixinextras.sugar.Share;
@@ -42,22 +44,16 @@ public class EffectRenderingInventoryScreenMixin {
 		}).collect(Collectors.toList());
 	}
 
-	@WrapWithCondition(method = "renderIcons", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(IIIIILnet/minecraft/client/renderer/texture/TextureAtlasSprite;)V"))
-	private boolean renderCustomIcon(GuiGraphics graphics, int blitX, int blitY, int z, int width, int height, TextureAtlasSprite sprite, @Local(index = 2) int x, @Local(index = 3) int offsetDelta, @Local(index = 5) boolean wide, @Local(index = 9) MobEffectInstance mobEffectInstance, @Local(index = 7) int i, @Share("offset") LocalRef<Integer> offset) {
+	@WrapOperation(method = "renderIcons", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(IIIIILnet/minecraft/client/renderer/texture/TextureAtlasSprite;)V"))
+	private void handleCustomRenderers(GuiGraphics graphics, int blitX, int blitY, int z, int width, int height, TextureAtlasSprite sprite, Operation<Void> original, @Local(index = 2) int x, @Local(index = 3) int offsetDelta, @Local(index = 5) boolean wide, @Local(index = 9) MobEffectInstance mobEffectInstance, @Local(index = 7) int i, @Share("offset") LocalRef<Integer> offset) {
 		if (offset.get() == null)
 			offset.set(0);
 		MobEffectRenderer renderer = mobEffectInstance.getEffect().getRenderer();
 		if (renderer != null && renderer.renderInventoryIcon(mobEffectInstance, (EffectRenderingInventoryScreen) (Object) this, graphics, x + (wide ? 6 : 7), offset.get() + i, 0)) {
 			offset.set(offset.get() + offsetDelta);
-			return false;
+			return;
 		}
-
-		return true;
-	}
-
-	@ModifyArg(method = "renderIcons", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(IIIIILnet/minecraft/client/renderer/texture/TextureAtlasSprite;)V"), index = 1)
-	private int addOffset(int y, @Share("offset") LocalRef<Integer> offset) {
-		return y + offset.get();
+		original.call(graphics, blitX, blitY + offset.get(), z, width, height, sprite);
 	}
 
 	@Inject(method = "renderLabels", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/EffectRenderingInventoryScreen;getEffectName(Lnet/minecraft/world/effect/MobEffectInstance;)Lnet/minecraft/network/chat/Component;"))
