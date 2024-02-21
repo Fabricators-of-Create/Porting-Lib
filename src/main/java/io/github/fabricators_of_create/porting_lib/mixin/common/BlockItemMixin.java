@@ -2,7 +2,13 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.world.level.block.state.BlockState;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,5 +41,10 @@ public abstract class BlockItemMixin implements BlockItemExtensions {
 		if (placeResult.consumesAction())
 			BlockEvents.AFTER_PLACE.invoker().afterPlace(new BlockPlaceContext(context));
 		return placeResult;
+	}
+
+	@Inject(method = "place", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/InteractionResult;sidedSuccess(Z)Lnet/minecraft/world/InteractionResult;"))
+	private void port_lib$postProcessPlace(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> cir, @Local BlockPos blockPos, @Local BlockState blockState) {
+		BlockEvents.POST_PROCESS_PLACE.invoker().postProcessPlace(context, blockPos, blockState);
 	}
 }
