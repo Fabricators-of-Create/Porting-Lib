@@ -8,10 +8,20 @@ moduleDependencies(project, [
 		"tags"
 ])
 
+repositories {
+	maven {
+		url "https://maven.jamieswhiteshirt.com/libs-release"
+		content {
+			includeGroup "com.jamieswhiteshirt"
+		}
+	}
+}
+
 mixinExtras(dependencies)
 
 dependencies {
 	modCompileOnly("io.vram:frex-fabric:$frex_version")
+	modRuntimeOnly("com.jamieswhiteshirt:reach-entity-attributes:2.4.0") // Not sure whats up with this but I don't feel like spending hours to figure it out
 }
 
 processResources {
