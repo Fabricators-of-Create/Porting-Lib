@@ -1,9 +1,0 @@
-moduleDependencies(project, [
-		"core"
-])
-
-mixinExtras(dependencies)
-
-processResources {
-	duplicatesStrategy = DuplicatesStrategy.WARN
-}

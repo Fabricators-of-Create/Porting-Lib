@@ -1,0 +1,5 @@
+portingLib.addModuleDependencies([
+		"attributes",
+		"accessors",
+		"common",
+])

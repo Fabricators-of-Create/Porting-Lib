@@ -1,0 +1,1 @@
+portingLib.addModuleDependency("lazy_registration")

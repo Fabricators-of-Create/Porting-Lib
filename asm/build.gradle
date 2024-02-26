@@ -1,7 +1,0 @@
-dependencies {
-	modImplementation(include("com.github.Chocohead:Fabric-ASM:v2.3"))
-}
-
-processResources {
-	duplicatesStrategy = DuplicatesStrategy.WARN
-}

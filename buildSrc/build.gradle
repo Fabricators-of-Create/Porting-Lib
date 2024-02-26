@@ -1,7 +1,17 @@
 repositories {
 	mavenCentral()
+	maven { url = "https://maven.fabricmc.net/" }
 }
 
 dependencies {
-	implementation("com.google.code.gson:gson:2.9.1")
+	implementation("com.google.code.gson:gson:2.10.1")
+	implementation("net.fabricmc:fabric-loom:${readLoomVersion()}")
+}
+
+def readLoomVersion() {
+	// cannot access directly during buildSrc configuration
+	Properties properties = new Properties()
+	// also can't use rootProject, it's buildSrc some reason
+	properties.load(project.file("../gradle.properties").newReader())
+	return properties.get("loom_version")
 }

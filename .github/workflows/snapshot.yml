@@ -1,5 +1,5 @@
-name: build
-on: [ pull_request, push, workflow_dispatch ]
+name: snapshot
+on: workflow_dispatch
 
 jobs:
   build:
@@ -7,6 +7,10 @@ jobs:
       matrix:
         java: [ 17 ]
     runs-on: ubuntu-latest
+    env:
+      MAVEN_TYPE: snapshots
+      MAVEN_USER: ${{ secrets.MAVEN_USER }}
+      MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
     steps:
 
       - name: checkout repository
@@ -20,15 +24,10 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+          cache: gradle
 
-      - name: setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          cache-read-only: false
-          cache-write-only: false
-
-      - name: build
-        run: ./gradlew build
+      - name: publish
+        run: ./gradlew publish
 
       - name: capture build artifacts
         uses: actions/upload-artifact@v3

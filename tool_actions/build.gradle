@@ -1,7 +1,0 @@
-processResources {
-	duplicatesStrategy = DuplicatesStrategy.WARN
-}
-
-setupDatagen(project)
-
-mixinExtras(dependencies)

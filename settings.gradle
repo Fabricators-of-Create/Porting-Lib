@@ -8,35 +8,30 @@ pluginManagement {
 }
 rootProject.name = "Porting-Lib"
 
-include("accessors")
-include("attributes")
-include("asm")
-include("base")
-include("brewing")
-include("chunk_loading")
-include("config")
-include("common")
-include("core")
-include("data")
-include("entity")
-include("extensions")
-include("networking")
-include("tags")
-include("transfer")
-include("tool_actions")
-include("gametest")
-include("items")
-include("lazy_registration")
-include("loot")
-include("model_loader")
-include("models")
-include("obj_loader")
-include("mixin_extensions")
-include("model_builders")
-include("model_generators")
-include("model_materials")
-include("client_events")
-include("utility")
-include("fluids")
-include("registries")
-include("recipe_book_categories")
+for (File file in getFile("modules").listFiles()) {
+	if (isModuleDir(file)) {
+		String name = file.name
+		include(name)
+		ProjectDescriptor project = project(":" + name)
+		project.projectDir = getFile("modules/" + name)
+	}
+}
+
+// jank! why is this needed??
+def getFile(String name) {
+	return file(name)
+}
+
+static def isModuleDir(File file) {
+	if (file.isDirectory()) {
+		File[] files = file.listFiles()
+		if (files != null) {
+			for (File subFile in files) {
+				if (subFile.name == "build.gradle") {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}

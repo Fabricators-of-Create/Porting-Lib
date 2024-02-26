@@ -1,149 +1,47 @@
+import io.github.fabricators_of_create.porting_lib_build.tasks.FmjExpander
 import io.github.fabricators_of_create.porting_lib_build.PortingLibBuildPlugin
 
 //file:noinspection GroovyAssignabilityCheck
 //file:noinspection GroovyAccessibility
 plugins {
-	id "fabric-loom" version "1.1.+"
-	id "io.github.juuxel.loom-quiltflower" version "1.+" // Quiltflower, a better decompiler
-	id "io.github.p03w.machete" version "1.+" // automatic jar compressing on build
-	id "org.ajoberstar.grgit" version "4.1.1"
+	id "fabric-loom"
 	id "maven-publish"
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
-archivesBaseName = project.archives_base_name
-version = project.mod_version
-group = project.maven_group
+archivesBaseName = "porting_lib"
 
-String buildNumber = System.getenv("GITHUB_RUN_NUMBER")
-String patch = buildNumber != null ? buildNumber : "99999"
+String branch = providers.exec {
+	it.setCommandLine("git", "branch", "--show-current")
+}.standardOutput.asText.map {
+	it.contains("not a git repository") ? "unknown" : it
+}.get().trim()
 
-version = version.replace("<patch>", patch)
-
-if (grgit != null) {
-	version += "+${grgit.getBranch().current().name}"
-} else {
-	version += "+custom_unknown"
-}
-
-@SuppressWarnings("unused") // for subprojects
-def mixinExtras(DependencyHandler deps) {
-	deps.api(deps.include("com.github.llamalad7.mixinextras:mixinextras-fabric:$mixin_extras_version"))
-	deps.annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:$mixin_extras_version")
-}
-
-@SuppressWarnings("unused") // for subprojects
-def fabricAsm(DependencyHandler deps) {
-	deps.modImplementation(deps.include("me.shedaniel:mm:2.4.1"))
-}
-
-@SuppressWarnings("unused") // for subprojects
-def testMod(Project project) {
-	project.sourceSets {
-		testmod {
-			compileClasspath += main.compileClasspath
-			compileClasspath += main.output
-			runtimeClasspath += main.runtimeClasspath
-			runtimeClasspath += main.output
-		}
-	}
-
-	project.loom.runs {
-		testmodClient {
-			client()
-			name "Testmod Client"
-			source project.sourceSets.testmod
-			runDir "run/test"
-		}
-		testmodServer {
-			server()
-			name "Testmod Server"
-			source project.sourceSets.testmod
-			runDir "run/test_server"
-		}
+dependencies {
+	subprojects.forEach {
+		api(include(project(path: ":$it.name", configuration: "namedElements")))
 	}
 }
 
-def moduleDependencies(Project project, List<String> depNames) {
-	def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: "namedElements") }
-
-	depNames.iterator().forEachRemaining {
-		Project dependProject = findProject(":$it")
-		project.loom {
-			interfaceInjection {
-				interfaceInjectionSourceSets.add(dependProject.sourceSets.main)
-			}
-		}
-	}
-	project.dependencies {
-		deps.each {
-			annotationProcessor(api(include(it))) {
-				// prevent accidentally using MixinExtras without applying the AP
-				exclude(group: "com.github.llamalad7.mixinextras")
-			}
-		}
-	}
-
-	project.publishing {
-		publications {
-			mavenJava(MavenPublication) {
-//				pom.withXml {
-//					def depsNode = asNode().appendNode("dependencies")
-//					deps.each {
-//						def depNode = depsNode.appendNode("dependency")
-//						depNode.appendNode("groupId", it.group)
-//						depNode.appendNode("artifactId", it.name)
-//						depNode.appendNode("version", it.version)
-//						depNode.appendNode("scope", "compile")
-//					}
-//				}
-			}
-		}
-	}
-}
-
-@SuppressWarnings("unused") // for subprojects
-def setupDatagen(Project module) {
-	setupDatagen(module, "porting_lib_" + module.name)
-}
-
-@SuppressWarnings("unused") // for subprojects
-def setupDatagen(Project module, String modId) {
-	module.loom {
-		runs {
-			datagen {
-				client()
-				name = "Data Generation"
-				source module.sourceSets.main
-				vmArg "-Dfabric-api.datagen"
-				vmArg "-Dfabric-api.datagen.output-dir=${module.file("src/generated/resources")}"
-				vmArg "-Dfabric-api.datagen.modid=$modId"
-				runDir "build/datagen"
-				ideConfigGenerated true // loom will only make run configs for the root project by default
-			}
-		}
-	}
-	module.sourceSets.main.resources {
-		srcDir("src/generated/resources")
-		exclude("src/generated/resources/.cache")
-	}
-	module.sourcesJar {
-		// don't know why stuff is copied twice but it's harmless and way too much work to debug
-		duplicatesStrategy = DuplicatesStrategy.EXCLUDE // exclude - ignore duplicates
-	}
+processResources {
+	// exclude the template from the fat jar
+	exclude("template.fabric.mod.json")
 }
 
 allprojects {
 	if (name == "buildSrc") return
 
 	apply plugin: "fabric-loom"
-	apply plugin: "maven-publish"
 	apply plugin: PortingLibBuildPlugin
+
 	group = "io.github.fabricators_of_create.Porting-Lib"
 
+	version = mod_version + "+" + branch
+
 	repositories {
+		mavenCentral()
 		maven { url = "https://maven.quiltmc.org/repository/release" }
 		maven { url = "https://hephaestus.dev/release" }
 		maven { url = "https://api.modrinth.com/maven" }
@@ -160,27 +58,15 @@ allprojects {
 			url = "https://jitpack.io"
 			content {
 				includeGroup("com.github.Chocohead")
-				includeGroup("com.github.LlamaLad7")
-				includeGroup("com.github.llamalad7.mixinextras")
 			}
 		}
-		mavenCentral()
-	}
-
-	java {
-		withSourcesJar()
-	}
-
-	loom {
-		runs.configureEach {
-			vmArg("-Dmixin.debug.export=true")
-			ideConfigGenerated = true
+		maven {
+			url = "https://maven.jamieswhiteshirt.com/libs-release"
+			content {
+				includeGroup "com.jamieswhiteshirt"
+			}
 		}
-		File aw = file("src/main/resources/porting_lib_${name}.accesswidener")
-		if (aw.exists())
-			accessWidenerPath.set(aw)
 	}
-
 
 	dependencies {
 		// dev environment
@@ -193,35 +79,27 @@ allprojects {
 		})
 		modImplementation("net.fabricmc:fabric-loader:$loader_version")
 
-		modLocalRuntime("maven.modrinth:lazydfu:0.1.3")
 		modLocalRuntime("com.terraformersmc:modmenu:$modmenu_version") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
 
 		// common dependencies
 		// each module can also specify additional ones
 		modImplementation("net.fabricmc.fabric-api:fabric-api:$fabric_version")
 
-		// Make sure we don't break canvas
-//		modLocalRuntime("io.vram:frex-fabric:$frex_version")
-
 		implementation("javax.annotation:javax.annotation-api:1.3.2")
 		implementation("com.google.code.findbugs:jsr305:3.0.2")
 	}
 
-	allprojects.each { p ->
-		loom.mods.register(p.name) {
-			sourceSet p.sourceSets.main
+	loom {
+		// make all runs export mixins, and generate even though they're in subprojects.
+		runs.configureEach {
+			vmArg("-Dmixin.debug.export=true")
+			ideConfigGenerated = true
 		}
 	}
 
-	[jar, sourcesJar].each {
-		it.from(rootProject.file("LICENSE")) {
-			rename { "${it}-${project.archivesBaseName}"}
-		}
-	}
-
-	tasks.withType(ProcessResources).configureEach {
+	processResources {
 		Map<String, ?> properties = [
-		        version: version,
+				version: version,
 				loader_version: loader_version,
 				fabric_version: fabric_version,
 				minecraft_version: minecraft_semantic_version,
@@ -232,160 +110,85 @@ allprojects {
 				class_56: "\$class_56"
 		]
 
-		properties.forEach((k, v) -> inputs.property(k, v))
+		properties.forEach(inputs::property)
 
-		filesMatching("*fabric.mod.json") {
+		if (project != rootProject) { // expand subproject FMJs. Must be done here for proper ordering.
+			filesMatching("fabric.mod.json", new FmjExpander.Applicator(project))
+		}
+
+		filesMatching("fabric.mod.json") {
 			expand properties
 		}
+
+		// include icon
+		from(rootProject.file("src/main/resources/assets/porting_lib/icon.png"))
 	}
 
-	tasks.register("buildOrPublish") {
-		group = "build"
-		String mavenUser = System.getenv("MAVEN_USER")
-		if (mavenUser != null && !mavenUser.isEmpty()) {
-			dependsOn(tasks.named("publish"))
-			println "prepared for publish"
-		} else {
-			dependsOn(tasks.named("build"))
-			println "prepared for build"
+	jar.from(rootProject.file("LICENSE")) // copy license file into jar
+}
+
+subprojects {
+	apply plugin: "maven-publish"
+
+	archivesBaseName = "porting_lib_" + name
+
+	loom {
+		runs.configureEach {
+			File output = file("src/main/resources/data/porting_lib_$name/structures/gametest")
+			property("porting_lib.gametest.quickexport.output", output.absolutePath)
+		}
+		mods.register("porting_lib_" + name) {
+			sourceSet sourceSets.main
+		}
+		File aw = file("src/main/resources/porting_lib_${name}.accesswidener")
+		if (aw.exists())
+			accessWidenerPath.set(aw)
+	}
+
+	// these two modules are used by all others automatically.
+	if (name != "core" && name != "gametest") {
+		portingLib {
+			addModuleDependency("core") // core depends on gametest
 		}
 	}
 
-	machete {
-		if (buildNumber == null) {
-			enabled = false
-		}
+	validateModule {
+		projectName = project.name
+		readMe.set(rootProject.file("README.md"))
+		resources.set(project.file("src/main/resources"))
 	}
 
-	tasks.withType(AbstractArchiveTask).configureEach {
-		reproducibleFileOrder = true
+	sortAccessWidener {
+		File awFile = project.file("src/main/resources/${project.name}.accesswidener")
+		if (awFile.exists())
+			aw.set(awFile)
 	}
 
-	jar {
-		from("LICENSE") {
-			rename { "${it}_${project.archivesBaseName}" }
-		}
-	}
+	java.withSourcesJar()
 
 	publishing {
 		repositories {
 			maven {
-				url = "https://mvn.devos.one/snapshots/"
+				name = "devOS"
+				url = "https://mvn.devos.one/${System.getenv("MAVEN_TYPE")}/"
 				credentials {
 					username = System.getenv("MAVEN_USER")
 					password = System.getenv("MAVEN_PASS")
 				}
 				authentication {
-					basic(BasicAuthentication)
+					register("basic", BasicAuthentication)
 				}
 			}
 		}
-	}
-}
 
-dependencies {
-	afterEvaluate {
-		// fat jar depends on and includes all modules
-		for (Project module : subprojects) {
-			api(include(module))
-		}
-	}
-}
-
-subprojects.forEach { Project proj ->
-	// everything has the same version
-	proj.version = version
-	proj.tasks.named("processResources").configure {
-		// make subprojects depend on root processResources, needed for values to be properly filled
-		dependsOn(processResources)
-		// make them always run, because if they don't, extreme weirdness with caching occurs with every other task
-		outputs.upToDateWhen { false }
-	}
-	// archive base name is porting_lib_<subproject name>
-	proj.extensions.findByType(BasePluginExtension.class).archivesName = "${archivesBaseName}_${proj.name}"
-	// set the gametest quickexport to go directly to the right place
-	proj.loom.runs.configureEach {
-		File output = proj.file("src/main/resources/data/porting_lib_${proj.name}/structures/gametest")
-		property("porting_lib.gametest.quickexport.output", output.absolutePath)
-	}
-	// give every module core, which includes gametest
-	if (proj.name != "gametest" && proj.name != "core")
-		moduleDependencies(proj, List.of("core"))
-}
-
-sourceSets {
-	allModules {
-		for (Project p : subprojects) {
-			def main = p.sourceSets.main
-			compileClasspath += main.compileClasspath + main.output
-			runtimeClasspath += main.runtimeClasspath + main.output
-		}
-	}
-}
-
-loom {
-	runs {
-		// make default run configs run all modules
-		client {
-			client()
-			name "Minecraft Client (all modules)"
-			source sourceSets.allModules
-		}
-		server {
-			server()
-			name "Minecraft Server (all modules)"
-			source sourceSets.allModules
-		}
-	}
-}
-
-subprojects.each {
-	remapJar.dependsOn("${it.path}:remapJar")
-}
-
-remapJar {
-	afterEvaluate {
-		subprojects.each {
-			nestedJars.from project("${it.path}").tasks.named("remapJar")
-		}
-	}
-}
-
-subprojects {
-	publishing {
 		publications {
-			mavenJava(MavenPublication) {
+			register("mavenJava", MavenPublication) {
 				artifact(remapJar) {
 					builtBy(remapJar)
 				}
 
 				artifact(remapSourcesJar) {
 					builtBy remapSourcesJar
-				}
-			}
-		}
-	}
-}
-
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			artifact(remapJar) {
-				builtBy(remapJar)
-			}
-
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
-
-			pom.withXml {
-				def depsNode = asNode().appendNode("dependencies")
-				subprojects.each {
-					def depNode = depsNode.appendNode("dependency")
-					depNode.appendNode("groupId", it.group)
-					depNode.appendNode("artifactId", it.name)
-					depNode.appendNode("version", it.version)
-					depNode.appendNode("scope", "compile")
 				}
 			}
 		}

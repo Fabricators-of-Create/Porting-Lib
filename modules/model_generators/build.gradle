@@ -1,0 +1,4 @@
+portingLib.addModuleDependencies([
+		"model_materials",
+		"data"
+])

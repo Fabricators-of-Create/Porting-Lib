@@ -1,7 +1,0 @@
-moduleDependencies(project, [
-		"fluids"
-])
-
-processResources {
-	duplicatesStrategy = DuplicatesStrategy.WARN
-}

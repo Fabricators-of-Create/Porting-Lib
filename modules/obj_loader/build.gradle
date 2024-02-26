@@ -1,0 +1,4 @@
+portingLib {
+	addModuleDependency("model_loader")
+	enableTestMod()
+}
