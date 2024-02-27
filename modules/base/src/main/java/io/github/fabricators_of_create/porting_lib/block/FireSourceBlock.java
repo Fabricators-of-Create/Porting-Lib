@@ -5,7 +5,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 
-// TODO: implement (ASM)
 public interface FireSourceBlock {
 	/**
 	 * Currently only called by fire when it is on top of this block.
