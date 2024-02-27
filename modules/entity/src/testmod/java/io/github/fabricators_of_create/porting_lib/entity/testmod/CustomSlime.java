@@ -1,5 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.entity.testmod;
 
+import io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+
 import org.jetbrains.annotations.NotNull;
 
 import io.github.fabricators_of_create.porting_lib.entity.IEntityAdditionalSpawnData;
@@ -36,6 +40,11 @@ public class CustomSlime extends Slime implements IEntityAdditionalSpawnData, Mu
 	@Override
 	public void readSpawnData(FriendlyByteBuf buf) {
 		item.stack = buf.readItem();
+	}
+
+	@Override
+	public Packet<ClientGamePacketListener> getAddEntityPacket() {
+		return PortingLibEntity.getEntitySpawningPacket(this);
 	}
 
 	@Override

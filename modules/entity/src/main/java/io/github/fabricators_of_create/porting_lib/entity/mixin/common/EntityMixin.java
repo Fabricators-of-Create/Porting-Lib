@@ -1,34 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
 import java.util.Collection;
-import java.util.List;
-
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-
-import com.llamalad7.mixinextras.sugar.Local;
-
-import com.llamalad7.mixinextras.sugar.Share;
-
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-
-import io.github.fabricators_of_create.porting_lib.entity.IEntityAdditionalSpawnData;
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityDataEvents;
-
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.common.ClientCommonPacketListener;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-
-import net.minecraft.network.protocol.game.ClientboundBundlePacket;
-
-import net.minecraft.world.entity.EntityDimensions;
-
-import net.minecraft.world.entity.Pose;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,7 +12,6 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -48,17 +19,13 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
-import io.github.fabricators_of_create.porting_lib.entity.IEntityAdditionalSpawnData;
 import io.github.fabricators_of_create.porting_lib.entity.ITeleporter;
-import io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityDataEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityMountEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.MinecartEvents;
 import io.github.fabricators_of_create.porting_lib.entity.extensions.EntityExtensions;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -99,16 +66,6 @@ public abstract class EntityMixin implements EntityExtensions {
 	@ModifyVariable(method = "refreshDimensions", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;reapplyPosition()V"), index = 3)
 	private EntityDimensions modifyDimensions(EntityDimensions value, @Share("size") LocalRef<EntityEvents.Size> event) {
 		return event.get().getNewSize();
-	}
-
-	// custom spawn packets
-
-	@ModifyReturnValue(method = "getAddEntityPacket", at = @At("RETURN"))
-	private Packet<ClientGamePacketListener> useExtendedSpawnPacket(Packet<ClientGamePacketListener> base) {
-		if (!(this instanceof IEntityAdditionalSpawnData))
-			return base;
-		PortingLibEntity.LOGGER.warn(getClass().getSimpleName() + " is using IEntityAdditionalSpawnData without a custom packet. Please migrate to using PortingLibEntity.getEntitySpawningPacket. This functionality will be removed in 1.20.4!");
-		return PortingLibEntity.getEntitySpawningPacket((Entity) (Object) this, base);
 	}
 
 	// CAPTURE DROPS

@@ -49,11 +49,7 @@ public class PortingLibEntity implements ModInitializer {
 	}
 
 	public static Packet<ClientGamePacketListener> getEntitySpawningPacket(Entity entity) {
-		return getEntitySpawningPacket(entity, new ClientboundAddEntityPacket(entity));
-	}
-
-	@ApiStatus.Internal
-	public static Packet<ClientGamePacketListener> getEntitySpawningPacket(Entity entity, Packet<ClientGamePacketListener> base) {
+		Packet<ClientGamePacketListener> base = new ClientboundAddEntityPacket(entity);
 		if (entity instanceof IEntityAdditionalSpawnData extra) {
 			FriendlyByteBuf buf = PacketByteBufs.create();
 			buf.writeVarInt(entity.getId());
