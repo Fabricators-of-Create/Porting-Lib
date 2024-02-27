@@ -17,6 +17,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 
+import java.util.Optional;
+
 @Mixin(LootPool.class)
 public class LootPoolMixin implements LootPoolExtensions {
 	@Unique
@@ -38,14 +40,13 @@ public class LootPoolMixin implements LootPoolExtensions {
 	)
 	private static Codec<LootPool> modifyCodec(Codec<LootPool> original) {
 		// TODO: test this
-		return Codec.pair(original, Codec.STRING).xmap(pair -> {
-			String name = pair.getSecond();
+		return Codec.pair(original, Codec.STRING.optionalFieldOf("name").codec()).xmap(pair -> {
 			LootPool pool = pair.getFirst();
-			pool.setName(name);
+			pool.setName(pair.getSecond().filter(name -> !name.startsWith("custom#")).orElse(null));
 			return pool;
 		}, pool -> {
 			String name = pool.getName();
-			return Pair.of(pool, name);
+			return Pair.of(pool, Optional.ofNullable(name));
 		});
 	}
 

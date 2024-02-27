@@ -64,7 +64,7 @@ public abstract class LevelRendererMixin {
 		slice = @Slice(
 				from = @At(
 						value = "INVOKE",
-						target = "Lnet/minecraft/client/renderer/chunk/ChunkRenderDispatcher$CompiledChunk;getRenderableBlockEntities()Ljava/util/List;"
+						target = "Lnet/minecraft/client/renderer/chunk/SectionRenderDispatcher$CompiledSection;getRenderableBlockEntities()Ljava/util/List;"
 				),
 				to = @At(
 						value = "INVOKE",
