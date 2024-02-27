@@ -11,8 +11,8 @@
               "type": "minecraft:item",
               "conditions": [
                 {
-                  "action": "shears_dig",
-                  "condition": "porting_lib:can_tool_perform_action"
+                  "condition": "porting_lib:can_tool_perform_action",
+                  "value": "shears_dig"
                 }
               ],
               "name": "minecraft:dead_bush"

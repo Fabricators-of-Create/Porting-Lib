@@ -11,11 +11,11 @@
               "type": "minecraft:item",
               "conditions": [
                 {
-                  "action": "shears_dig",
-                  "condition": "porting_lib:can_tool_perform_action"
+                  "condition": "porting_lib:can_tool_perform_action",
+                  "value": "shears_dig"
                 }
               ],
-              "name": "minecraft:grass"
+              "name": "minecraft:short_grass"
             },
             {
               "type": "minecraft:item",
@@ -46,5 +46,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "minecraft:blocks/grass"
+  "random_sequence": "minecraft:blocks/short_grass"
 }
