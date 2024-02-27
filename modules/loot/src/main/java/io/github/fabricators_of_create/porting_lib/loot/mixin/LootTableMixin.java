@@ -1,7 +1,6 @@
-package io.github.fabricators_of_create.porting_lib.loot.mixin;
+package io.github.fabricators_of_create.porting_lib.loot.mixin.loottable;
 
 import java.util.Objects;
-import java.util.function.Consumer;
 
 import io.github.fabricators_of_create.porting_lib.loot.LootCollector;
 import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableBuilderExtensions;
@@ -13,19 +12,21 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 
 @Mixin(LootTable.class)
 public class LootTableMixin implements LootTableExtensions {
 	@Unique
 	private ResourceLocation lootTableId;
+
+	@Unique
+	private static final ThreadLocal<LootCollector> lootCollector = new ThreadLocal<>();
+
+	@Override
+	public ThreadLocal<LootCollector> port_lib$lootCollector() {
+		return lootCollector;
+	}
 
 	@Override
 	public void setLootTableId(final ResourceLocation id) {
@@ -37,24 +38,6 @@ public class LootTableMixin implements LootTableExtensions {
 	@Override
 	public ResourceLocation getLootTableId() {
 		return this.lootTableId;
-	}
-
-	@ModifyVariable(
-			method = "getRandomItemsRaw(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V",
-			at = @At("HEAD"),
-			argsOnly = true
-	)
-	private Consumer<ItemStack> wrapConsumer(Consumer<ItemStack> output) {
-		return new LootCollector(output);
-	}
-
-	@Inject(
-			method = "getRandomItemsRaw(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V",
-			at = @At("RETURN")
-	)
-	private void finishCollectingLoot(LootContext context, Consumer<ItemStack> output, CallbackInfo ci) {
-		if (output instanceof LootCollector collector)
-			collector.finish(this.lootTableId, context);
 	}
 
 	@Mixin(LootTable.Builder.class)
@@ -69,7 +52,8 @@ public class LootTableMixin implements LootTableExtensions {
 
 		@ModifyReturnValue(method = "build", at = @At("RETURN"))
 		private LootTable addId(LootTable table) {
-			table.setLootTableId(this.id);
+			if (this.id != null)
+				table.setLootTableId(this.id);
 			return table;
 		}
 	}

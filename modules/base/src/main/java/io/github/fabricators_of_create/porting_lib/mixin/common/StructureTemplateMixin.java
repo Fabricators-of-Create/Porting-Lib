@@ -53,7 +53,7 @@ public abstract class StructureTemplateMixin implements StructureTemplateExtensi
 			),
 			cancellable = true
 	)
-	public void port_lib$place(ServerLevelAccessor iServerWorld, BlockPos blockPos, BlockPos pivot, StructurePlaceSettings placementSettings, RandomSource random, int flags, CallbackInfoReturnable<Boolean> cir) {
+	public void place(ServerLevelAccessor iServerWorld, BlockPos blockPos, BlockPos pivot, StructurePlaceSettings placementSettings, RandomSource random, int flags, CallbackInfoReturnable<Boolean> cir) {
 		PIVOT_SAVED.set(pivot);
 		addEntitiesToWorld(iServerWorld, blockPos, placementSettings);
 		PIVOT_SAVED.remove();

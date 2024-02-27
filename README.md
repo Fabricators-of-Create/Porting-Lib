@@ -19,7 +19,6 @@ Just choose a version and use its version number.
 ### Modules
 | Module                   | Description                                                                          |
 |--------------------------|--------------------------------------------------------------------------------------|
-| `Porting-Lib`            | Fat jar including all modules                                                        |
 | `asm`                    | Utils for doing asm                                                                  |
 | `accessors`              | Accessor mixins aplenty                                                              |
 | `attributes`             | Additional Entity Attributes; step height, gravity, swim speed                       |
@@ -68,5 +67,4 @@ Some APIs (some in-house) we've found to also be useful with porting mods.
 | [Cardinal Components API](https://github.com/OnyxStudios/Cardinal-Components-API)           | Provides Components, which can replace Capabilities                  |
 | [Trinkets](https://github.com/emilyploszaj/trinkets)                                        | Accessories, replacing Curios                                        |
 | [Here be no Dragons](https://github.com/Parzivail-Modding-Team/HereBeNoDragons)             | Hides the Experimental World Settings screen                         |
-| [Mixin Extras](https://github.com/LlamaLad7/MixinExtras)                                    | For when Mixin just isn't enough                                     |
 | [Fabric ASM](https://github.com/Chocohead/Fabric-ASM)                                       | For when Mixin Extras just isn't enough                              |

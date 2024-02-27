@@ -1,8 +1,6 @@
 import io.github.fabricators_of_create.porting_lib_build.tasks.FmjExpander
 import io.github.fabricators_of_create.porting_lib_build.PortingLibBuildPlugin
 
-//file:noinspection GroovyAssignabilityCheck
-//file:noinspection GroovyAccessibility
 plugins {
 	id "fabric-loom"
 	id "maven-publish"

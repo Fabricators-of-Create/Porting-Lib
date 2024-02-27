@@ -60,6 +60,8 @@
     "common.NaturalSpawnerMixin",
     "common.PackRepositoryMixin",
     "common.PiglinAiMixin",
+    "common.PistonMovingBlockEntityMixin",
+    "common.PistonStructureResolverMixin",
     "common.PlayerAdvancementsMixin",
     "common.PlayerListMixin",
     "common.PlayerMixin",

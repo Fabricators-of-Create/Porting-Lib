@@ -40,17 +40,30 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
+import io.github.fabricators_of_create.porting_lib.entity.IEntityAdditionalSpawnData;
 import io.github.fabricators_of_create.porting_lib.entity.ITeleporter;
+import io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity;
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityDataEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityMountEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.MinecartEvents;
 import io.github.fabricators_of_create.porting_lib.entity.extensions.EntityExtensions;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.Level;
@@ -92,15 +105,10 @@ public abstract class EntityMixin implements EntityExtensions {
 
 	@ModifyReturnValue(method = "getAddEntityPacket", at = @At("RETURN"))
 	private Packet<ClientGamePacketListener> useExtendedSpawnPacket(Packet<ClientGamePacketListener> base) {
-		if (!(this instanceof IEntityAdditionalSpawnData extra))
+		if (!(this instanceof IEntityAdditionalSpawnData))
 			return base;
-		FriendlyByteBuf buf = PacketByteBufs.create();
-		buf.writeVarInt(getId());
-		extra.writeSpawnData(buf);
-		Packet<ClientCommonPacketListener> extraPacket = ServerPlayNetworking.createS2CPacket(IEntityAdditionalSpawnData.EXTRA_DATA_PACKET, buf);
-		//noinspection unchecked - why?
-		Packet<ClientGamePacketListener> casted = (Packet<ClientGamePacketListener>) (Object) extraPacket;
-		return new ClientboundBundlePacket(List.of(base, casted));
+		PortingLibEntity.LOGGER.warn(getClass().getSimpleName() + " is using IEntityAdditionalSpawnData without a custom packet. Please migrate to using PortingLibEntity.getEntitySpawningPacket. This functionality will be removed in 1.20.4!");
+		return PortingLibEntity.getEntitySpawningPacket((Entity) (Object) this, base);
 	}
 
 	// CAPTURE DROPS
