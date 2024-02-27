@@ -52,7 +52,8 @@ public class LootTableMixin implements LootTableExtensions {
 
 		@ModifyReturnValue(method = "build", at = @At("RETURN"))
 		private LootTable addId(LootTable table) {
-			table.setLootTableId(this.id);
+			if (this.id != null)
+				table.setLootTableId(this.id);
 			return table;
 		}
 	}

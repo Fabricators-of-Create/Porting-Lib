@@ -13,6 +13,7 @@ import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableBuil
 import io.github.fabricators_of_create.porting_lib.util.LazyRegistrar;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.core.Registry;
@@ -31,6 +32,7 @@ public class PortingLibLoot implements ModInitializer {
 	public static final ResourceKey<Registry<Codec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS_KEY = ResourceKey.createRegistryKey(PortingLib.id("global_loot_modifier_serializers"));
 	static final LazyRegistrar<Codec<? extends IGlobalLootModifier>> DEFERRED_GLOBAL_LOOT_MODIFIER_SERIALIZERS = LazyRegistrar.create(GLOBAL_LOOT_MODIFIER_SERIALIZERS_KEY, GLOBAL_LOOT_MODIFIER_SERIALIZERS_KEY.location().getNamespace());
 	public static final Supplier<Registry<Codec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS = DEFERRED_GLOBAL_LOOT_MODIFIER_SERIALIZERS.makeRegistry();
+	public static final ResourceLocation LAST = PortingLib.id("last");
 
 	@Override
 	public void onInitialize() {
@@ -38,7 +40,8 @@ public class PortingLibLoot implements ModInitializer {
 		DEFERRED_GLOBAL_LOOT_MODIFIER_SERIALIZERS.register();
 		Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, PortingLib.id("loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
 
-		LootTableEvents.MODIFY.register(
+		LootTableEvents.MODIFY.addPhaseOrdering(Event.DEFAULT_PHASE, LAST);
+		LootTableEvents.MODIFY.register(LAST,
 				(resources, manager, id, builder, source) -> ((LootTableBuilderExtensions) builder).port_lib$setId(id)
 		);
 	}
