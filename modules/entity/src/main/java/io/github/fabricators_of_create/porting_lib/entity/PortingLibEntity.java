@@ -45,7 +45,7 @@ public class PortingLibEntity implements ModInitializer {
 		});
 	}
 
-	public static Packet<?> getEntitySpawningPacket(Entity entity) {
+	public static Packet<ClientGamePacketListener> getEntitySpawningPacket(Entity entity) {
 		return getEntitySpawningPacket(entity, new ClientboundAddEntityPacket(entity));
 	}
 
