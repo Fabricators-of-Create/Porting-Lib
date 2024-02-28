@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Share;
 
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
@@ -32,7 +33,7 @@ import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(value = Player.class, priority = 500)
+@Mixin(Player.class)
 public abstract class PlayerMixin extends LivingEntity {
 	protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level level) {
 		super(entityType, level);
@@ -89,7 +90,7 @@ public abstract class PlayerMixin extends LivingEntity {
 		return vanilla.get();
 	}
 
-	@ModifyConstant(method = "attack", constant = @Constant(floatValue = 1.5F))
+	@ModifyExpressionValue(method = "attack", at = @At(value = "CONSTANT", args = "floatValue=1.5F"))
 	private float getCriticalDamageMultiplier(float original, Entity target, @Share("original") LocalBooleanRef vanilla) {
 		boolean vanillaCritical = vanilla.get();
 		CriticalHitEvent hitResult = new CriticalHitEvent((Player) (Object) this, target, original, vanillaCritical);
