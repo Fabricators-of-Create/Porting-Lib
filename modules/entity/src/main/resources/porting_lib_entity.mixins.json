@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "common.AbstractArrowMixin",
+    "common.AbstractHorseMixin",
     "common.AbstractHurtingProjectileMixin",
     "common.AbstractMinecartMixin",
     "common.BlockBehaviourMixin",
@@ -22,6 +23,7 @@
     "common.LightningBoltMixin",
     "common.LivingEntityMixin",
     "common.LlamaSpitMixin",
+    "common.MagmaCubeMixin",
     "common.MobEffectMixin",
     "common.MobMixin",
     "common.NaturalSpawnerMixin",

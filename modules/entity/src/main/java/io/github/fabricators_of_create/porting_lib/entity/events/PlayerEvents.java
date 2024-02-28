@@ -7,7 +7,7 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class PlayerEvents extends EntityEvents {
+public abstract class PlayerEvents extends LivingEntityEvents {
 
 	public static final Event<PlayerBreakSpeed> BREAK_SPEED = EventFactory.createArrayBacked(PlayerBreakSpeed.class, callbacks -> event -> {
 		for(PlayerBreakSpeed e : callbacks)

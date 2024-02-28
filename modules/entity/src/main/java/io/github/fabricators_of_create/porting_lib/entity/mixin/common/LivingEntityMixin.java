@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
 import io.github.fabricators_of_create.porting_lib.entity.events.LivingEntityEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.LivingEntityEvents.Fall.FallEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.LivingEntityUseItemEvents;
@@ -148,8 +150,8 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 	}
 
 	@Inject(method = "jumpFromGround", at = @At("TAIL"))
-	public void port_lib$onJump(CallbackInfo ci) {
-		LivingEntityEvents.JUMP.invoker().onLivingEntityJump((LivingEntity) (Object) this);
+	public void onJump(CallbackInfo ci) {
+		new LivingEntityEvents.LivingJumpEvent((LivingEntity) (Object) this).sendEvent();
 	}
 
 	@Inject(method = "completeUsingItem", at = @At(value = "INVOKE", shift = At.Shift.BY, by = 2, target = "Lnet/minecraft/world/item/ItemStack;finishUsingItem(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/item/ItemStack;"),
@@ -160,6 +162,14 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 
 	@Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
 	public void port_lib$attackEvent(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-		if(LivingEntityEvents.ATTACK.invoker().onAttack((LivingEntity) (Object) this, source, amount)) cir.setReturnValue(false);
+		if (LivingEntityEvents.ATTACK.invoker().onAttack((LivingEntity) (Object) this, source, amount))
+			cir.setReturnValue(false);
+	}
+
+	@ModifyReturnValue(method = "getVisibilityPercent", at = @At("RETURN"))
+	private double modifyVisibility(double original, @javax.annotation.Nullable Entity pLookingEntity) {
+		LivingEntityEvents.LivingVisibilityEvent event = new LivingEntityEvents.LivingVisibilityEvent((LivingEntity) (Object) this, pLookingEntity, original);
+		event.sendEvent();
+		return Math.max(0, event.getVisibilityModifier());
 	}
 }
