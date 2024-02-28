@@ -3,6 +3,7 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 import com.mojang.authlib.GameProfile;
 
 import io.github.fabricators_of_create.porting_lib.entity.ITeleporter;
+import io.github.fabricators_of_create.porting_lib.entity.events.LivingDeathEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.PlayerTickEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.ServerPlayerCreationCallback;
 import net.minecraft.core.BlockPos;
@@ -21,6 +22,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -178,5 +180,13 @@ public abstract class ServerPlayerMixin extends Player {
 			CompoundTag thisData = this.getCustomData();
 			thisData.put("PlayerPersisted", persistent);
 		}
+	}
+
+	@Inject(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;gameEvent(Lnet/minecraft/world/level/gameevent/GameEvent;)V", shift = At.Shift.AFTER), cancellable = true)
+	private void onPlayerDie(DamageSource cause, CallbackInfo ci) {
+		LivingDeathEvent event = new LivingDeathEvent((ServerPlayer) (Object) this, cause);
+		event.sendEvent();
+		if (event.isCanceled())
+			ci.cancel();
 	}
 }

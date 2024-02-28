@@ -7,6 +7,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.CriticalHitEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityInteractCallback;
+import io.github.fabricators_of_create.porting_lib.entity.events.LivingDeathEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.LivingEntityEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.PlayerEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.PlayerTickEvents;
@@ -98,5 +99,13 @@ public abstract class PlayerMixin extends LivingEntity {
 			return hitResult.getDamageModifier();
 		}
 		return 1.0F;
+	}
+
+	@Inject(method = "die", at = @At("HEAD"), cancellable = true)
+	private void onLivingDeath(DamageSource cause, CallbackInfo ci) {
+		LivingDeathEvent event = new LivingDeathEvent(this, cause);
+		event.sendEvent();
+		if (event.isCanceled())
+			ci.cancel();
 	}
 }
