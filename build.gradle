@@ -122,6 +122,12 @@ allprojects {
 	}
 
 	jar.from(rootProject.file("LICENSE")) // copy license file into jar
+
+	configurations.all {
+		resolutionStrategy {
+			force("net.fabricmc:fabric-loader:$loader_version")
+		}
+	}
 }
 
 subprojects {
