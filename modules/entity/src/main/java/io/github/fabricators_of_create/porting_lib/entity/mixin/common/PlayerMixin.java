@@ -1,5 +1,11 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
+import com.llamalad7.mixinextras.sugar.Share;
+
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
+
+import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.CriticalHitEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityInteractCallback;
 import io.github.fabricators_of_create.porting_lib.entity.events.LivingEntityEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.PlayerEvents;
@@ -14,14 +20,18 @@ import net.minecraft.world.entity.player.Player;
 
 import net.minecraft.world.level.Level;
 
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(Player.class)
+@Mixin(value = Player.class, priority = 500)
 public abstract class PlayerMixin extends LivingEntity {
 	protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level level) {
 		super(entityType, level);
@@ -45,7 +55,7 @@ public abstract class PlayerMixin extends LivingEntity {
 
 	@Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
 	public void port_lib$attackEvent(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-		if(LivingEntityEvents.ATTACK.invoker().onAttack(this, source, amount)) cir.setReturnValue(false);
+		if (LivingEntityEvents.ATTACK.invoker().onAttack(this, source, amount)) cir.setReturnValue(false);
 	}
 
 	@ModifyVariable(method = "hurt", at = @At("HEAD"), argsOnly = true)
@@ -58,5 +68,35 @@ public abstract class PlayerMixin extends LivingEntity {
 		PlayerEvents.XpChange xpChange = new PlayerEvents.XpChange((Player) (Object) this, experience);
 		xpChange.sendEvent();
 		return xpChange.getAmount();
+	}
+
+	@ModifyVariable(
+			method = "attack",
+			slice = @Slice(
+				from = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;isSprinting()Z", ordinal = 1),
+				to = @At(value = "CONSTANT", args = "floatValue=1.5F")
+			),
+			at = @At(value = "STORE", opcode = Opcodes.ISTORE), index = 8
+	)
+	private boolean modifyResult(boolean value, @Share("original") LocalBooleanRef vanilla) {
+		vanilla.set(value);
+		return true;
+	}
+
+	@ModifyVariable(method = "attack", at = @At(value = "CONSTANT", args = "floatValue=1.5F"), index = 8)
+	private boolean modifyVanillaResult(boolean value, @Share("original") LocalBooleanRef vanilla) {
+		return vanilla.get();
+	}
+
+	@ModifyConstant(method = "attack", constant = @Constant(floatValue = 1.5F))
+	private float getCriticalDamageMultiplier(float original, Entity target, @Share("original") LocalBooleanRef vanilla) {
+		boolean vanillaCritical = vanilla.get();
+		CriticalHitEvent hitResult = new CriticalHitEvent((Player) (Object) this, target, original, vanillaCritical);
+		hitResult.sendEvent();
+		if (hitResult.getResult() == BaseEvent.Result.ALLOW || (vanillaCritical && hitResult.getResult() == BaseEvent.Result.DEFAULT)) {
+			vanilla.set(true);
+			return hitResult.getDamageModifier();
+		}
+		return 1.0F;
 	}
 }
