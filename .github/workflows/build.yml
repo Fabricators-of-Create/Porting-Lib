@@ -10,7 +10,6 @@ jobs:
     env:
       RELEASE: ${{ startsWith(github.event.commits[0].message, '[release]') }}
       SNAPSHOT: ${{ startsWith(github.event.commits[0].message, '[snapshot]') }}
-      MAVEN_TYPE: ${{ env.RELEASE && 'releases' || 'snapshots'  }} # this is a ternary?? Who designed this syntax
       MAVEN_USER: ${{ secrets.MAVEN_USER }}
       MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
     steps:

@@ -206,7 +206,8 @@ subprojects {
 		repositories {
 			maven {
 				name = "devOS"
-				url = "https://mvn.devos.one/${System.getenv("MAVEN_TYPE")}/"
+				String mavenType = System.getenv("RELEASE") == "true" ? "releases" : "snapshots"
+				url = "https://mvn.devos.one/$mavenType/"
 				credentials {
 					username = System.getenv("MAVEN_USER")
 					password = System.getenv("MAVEN_PASS")
