@@ -29,12 +29,12 @@ jobs:
 
       - name: build
         # only run when not a release or snapshot
-        if: ${{ !env.SNAPSHOT && !env.RELEASE }}
+        if: ${{ !(env.SNAPSHOT == 'true' || env.RELEASE == 'true') }}
         run: ./gradlew build
 
       - name: publish
         # when publishing a release or snapshot, do this instead of build.
-        if: ${{ env.SNAPSHOT || env.RELEASE }}
+        if: ${{ env.SNAPSHOT == 'true' || env.RELEASE == 'true' }}
         # build task creates artifacts for capture and upload, then publish publishes to maven
         run: ./gradlew build publish
 
@@ -46,7 +46,7 @@ jobs:
 
       - name: publish to Modrinth and Curseforge
         # only publish to MR and CF when releasing
-        if: ${{ env.RELEASE }}
+        if: ${{ env.RELEASE == 'true' }}
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           modrinth-id: tEJPA4Ty
@@ -67,11 +67,11 @@ jobs:
             fabric-api(required){modrinth:P7dR8mSH}{curseforge:306612}
 
       - name: prepare for next release
-        if: ${{ env.RELEASE }}
+        if: ${{ env.RELEASE == 'true' }}
         run: ./gradlew postRelease
 
       - name: push updated version and changelog
-        if: ${{ env.RELEASE }}
+        if: ${{ env.RELEASE == 'true' }}
         run: |
           git add .
           git commit -m "Clean changelog and bump version"
