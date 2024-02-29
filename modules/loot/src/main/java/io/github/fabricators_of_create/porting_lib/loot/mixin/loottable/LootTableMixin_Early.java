@@ -26,7 +26,8 @@ public abstract class LootTableMixin_Early implements LootTableExtensions {
 		LootCollector lootCollector = new LootCollector(output);
 		// store the collector in a ThreadLocal for retrieval at tail.
 		// This strategy is needed to handle the consumer being re-wrapped.
-		this.port_lib$lootCollector().set(lootCollector);
+		// a Stack is used to handle recursion.
+		this.port_lib$lootCollectorStack().get().push(lootCollector);
 		return lootCollector;
 	}
 }
