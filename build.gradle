@@ -32,13 +32,13 @@ processResources {
 tasks.register("postRelease") {
 	File changelog = rootProject.file("CHANGELOG.txt")
 	File props = rootProject.file("gradle.properties")
-	String currentVersion = project.version
+	String currentVersion = mod_version
 	String nextVersion = "error"
 	// choosing next version
-	String[] sections = currentVersion.split("[-+]") // "1.0.0", "beta.1", "1.20.1"
+	String[] sections = currentVersion.split("-") // "1.0.0", "beta.1"
 	if (currentVersion.contains("alpha") || currentVersion.contains("beta")) {
 		// for alphas and betas, increment the number
-		int number = sections[1].split("beta|alpha")[1].toInteger()
+		int number = sections[1].split("beta\\.|alpha\\.")[1].toInteger()
 		nextVersion = currentVersion.replace("beta.$number", "beta.${number + 1}")
 				.replace("alpha.$number", "alpha.${number + 1}")
 	} else {
