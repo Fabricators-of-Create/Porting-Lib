@@ -94,6 +94,11 @@ allprojects {
 		}
 	}
 
+	configurations.configureEach {
+		// fixes loom using a loader version from a dependency
+		resolutionStrategy.force("net.fabricmc:fabric-loader:$loader_version")
+	}
+
 	processResources {
 		Map<String, ?> properties = [
 				version: version,
@@ -122,12 +127,6 @@ allprojects {
 	}
 
 	jar.from(rootProject.file("LICENSE")) // copy license file into jar
-
-	configurations.all {
-		resolutionStrategy {
-			force("net.fabricmc:fabric-loader:$loader_version")
-		}
-	}
 }
 
 subprojects {
@@ -186,13 +185,7 @@ subprojects {
 
 		publications {
 			register("mavenJava", MavenPublication) {
-				artifact(remapJar) {
-					builtBy(remapJar)
-				}
-
-				artifact(remapSourcesJar) {
-					builtBy remapSourcesJar
-				}
+				from((SoftwareComponent) components["java"])
 			}
 		}
 	}
