@@ -33,6 +33,11 @@ public abstract class PortingLibExtension {
 		dependencies.add("api", dependency);
 		dependencies.add("include", dependency);
 
+		if (name.equals("mixin_extensions")) {
+			// special case, also an AP
+			dependencies.add("annotationProcessor", dependency);
+		}
+
 		LoomGradleExtensionAPI loom = project.getExtensions().getByType(LoomGradleExtensionAPI.class);
 		loom.mods(mods -> mods.register("porting_lib_" + name, settings -> {
 			Project depProject = project.project(":" + name);
