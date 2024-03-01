@@ -14,9 +14,8 @@ public class PortingLib {
 	public static final String ID = "porting_lib";
 	public static final String NAME = "Porting Lib";
 	public static final Logger LOGGER = LoggerFactory.getLogger(NAME);
-	// enables some extra safety checks.
-	public static final boolean STRICT_VALIDATION = FabricLoader.getInstance().isDevelopmentEnvironment()
-			|| Boolean.getBoolean("portingLib.strictValidation");
+	public static final boolean DEBUG = FabricLoader.getInstance().isDevelopmentEnvironment()
+			|| Boolean.getBoolean("portingLib.debug");
 
 	public static ResourceLocation id(String path) {
 		return new ResourceLocation(ID, path);

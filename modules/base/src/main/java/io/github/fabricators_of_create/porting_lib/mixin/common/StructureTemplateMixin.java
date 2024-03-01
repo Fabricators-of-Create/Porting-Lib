@@ -70,7 +70,7 @@ public abstract class StructureTemplateMixin implements StructureTemplateExtensi
 														 BlockPos pivot, @Nullable BoundingBox bounds, boolean finalizeMobs) {
 		StructurePlaceSettings settings = currentSettings.get();
 
-		if (PortingLib.STRICT_VALIDATION)
+		if (PortingLib.DEBUG)
 			Objects.requireNonNull(settings);
 
 		if (settings == null)
