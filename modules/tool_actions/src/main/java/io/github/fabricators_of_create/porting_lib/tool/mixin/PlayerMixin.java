@@ -1,5 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.tool.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReceiver;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.SwordItem;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -24,5 +31,16 @@ public abstract class PlayerMixin extends LivingEntity {
 			return this.useItem.canPerformAction(ToolActions.SHIELD_BLOCK);
 		}
 		return original;
+	}
+
+	@ModifyReceiver(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;"))
+	private ItemStack canSwordSweep(ItemStack instance) {
+		if (instance.getItem() instanceof ToolActionItem) {
+			if (instance.canPerformAction(ToolActions.SWORD_SWEEP)) {
+				return instance.getItem() instanceof SwordItem ? instance : Items.IRON_SWORD.getDefaultInstance();
+			}
+			return Items.AIR.getDefaultInstance();
+		}
+		return instance;
 	}
 }
