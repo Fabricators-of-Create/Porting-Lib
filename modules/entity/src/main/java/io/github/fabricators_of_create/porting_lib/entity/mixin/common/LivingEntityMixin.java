@@ -3,6 +3,15 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.sugar.Share;
+
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+
+import io.github.fabricators_of_create.porting_lib.entity.events.ShieldBlockEvent;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -178,5 +187,33 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 		event.sendEvent();
 		if (event.isCanceled())
 			ci.cancel();
+	}
+
+	@ModifyExpressionValue(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isDamageSourceBlocked(Lnet/minecraft/world/damagesource/DamageSource;)Z"))
+	private boolean shieldBlockEvent(boolean original, DamageSource pSource, float pAmount, @Share("shield_block") LocalRef<ShieldBlockEvent> eventRef) {
+		if (original) {
+			ShieldBlockEvent event = new ShieldBlockEvent((LivingEntity) (Object) this, pSource, pAmount);
+			event.sendEvent();
+			eventRef.set(event);
+			return !event.isCanceled();
+		}
+		return original;
+	}
+
+	@WrapWithCondition(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;hurtCurrentlyUsedShield(F)V"))
+	private boolean shieldTakesDamage(LivingEntity entity, float damage, @Share("shield_block") LocalRef<ShieldBlockEvent> eventRef) {
+		return eventRef.get().shieldTakesDamage();
+	}
+
+	@ModifyVariable(method = "hurt", at = @At(value = "STORE", ordinal = 1), index = 5)
+	private float modifyBlockedDamage(float value, @Share("shield_block") LocalRef<ShieldBlockEvent> eventRef) {
+		return eventRef.get().getBlockedDamage();
+	}
+
+	@ModifyExpressionValue(method = "hurt", at = @At(value = "CONSTANT", args = {
+			"floatValue=0"
+	}, ordinal = 2))
+	private float modifyActualDamage(float value, DamageSource pSource, float pAmount, @Share("shield_block") LocalRef<ShieldBlockEvent> eventRef) {
+		return pAmount - eventRef.get().getBlockedDamage();
 	}
 }
