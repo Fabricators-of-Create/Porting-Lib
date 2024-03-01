@@ -28,6 +28,40 @@ processResources {
 	exclude("template.fabric.mod.json")
 }
 
+// resets the changelog and bumps the version after an automated release.
+tasks.register("postRelease") {
+	File changelog = rootProject.file("CHANGELOG.txt")
+	File props = rootProject.file("gradle.properties")
+	String currentVersion = mod_version
+	String nextVersion = "error"
+	// choosing next version
+	String[] sections = currentVersion.split("-") // "1.0.0", "beta.1"
+	if (currentVersion.contains("alpha") || currentVersion.contains("beta")) {
+		// for alphas and betas, increment the number
+		int number = sections[1].split("beta\\.|alpha\\.")[1].toInteger()
+		nextVersion = currentVersion.replace("beta.$number", "beta.${number + 1}")
+				.replace("alpha.$number", "alpha.${number + 1}")
+	} else {
+		// otherwise increment patch
+		String mainVersion = sections[0]
+		String[] components = mainVersion.split("[.]")
+		int patch = components[2].toInteger()
+		nextVersion = currentVersion.replace(mainVersion, "${components[0]}.${components[1]}.${patch + 1}")
+	}
+
+	doFirst {
+		if (nextVersion == "error") {
+			throw new RuntimeException("Could not automatically increment version $currentVersion")
+		}
+
+		changelog.setText("")
+
+		String properties = props.getText()
+		properties = properties.replace(currentVersion, nextVersion)
+		props.setText(properties)
+	}
+}
+
 allprojects {
 	if (name == "buildSrc") return
 
@@ -94,12 +128,17 @@ allprojects {
 		}
 	}
 
+	configurations.configureEach {
+		// fixes loom using a loader version from a dependency
+		resolutionStrategy.force("net.fabricmc:fabric-loader:$loader_version")
+	}
+
 	processResources {
 		Map<String, ?> properties = [
 				version: version,
 				loader_version: loader_version,
 				fabric_version: fabric_version,
-				minecraft_version: minecraft_semantic_version,
+				minecraft_dependency: minecraft_dependency,
 				java_version: sourceCompatibility,
 
 				// property replacement is a bit too eager
@@ -122,12 +161,6 @@ allprojects {
 	}
 
 	jar.from(rootProject.file("LICENSE")) // copy license file into jar
-
-	configurations.all {
-		resolutionStrategy {
-			force("net.fabricmc:fabric-loader:$loader_version")
-		}
-	}
 }
 
 subprojects {
@@ -173,7 +206,8 @@ subprojects {
 		repositories {
 			maven {
 				name = "devOS"
-				url = "https://mvn.devos.one/${System.getenv("MAVEN_TYPE")}/"
+				String mavenType = System.getenv("RELEASE") == "true" ? "releases" : "snapshots"
+				url = "https://mvn.devos.one/$mavenType/"
 				credentials {
 					username = System.getenv("MAVEN_USER")
 					password = System.getenv("MAVEN_PASS")
@@ -186,13 +220,7 @@ subprojects {
 
 		publications {
 			register("mavenJava", MavenPublication) {
-				artifact(remapJar) {
-					builtBy(remapJar)
-				}
-
-				artifact(remapSourcesJar) {
-					builtBy remapSourcesJar
-				}
+				from((SoftwareComponent) components["java"])
 			}
 		}
 	}

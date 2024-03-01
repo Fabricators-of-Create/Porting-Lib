@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.loot.mixin.loottable;
 
 import java.util.Objects;
+import java.util.Stack;
 
 import io.github.fabricators_of_create.porting_lib.loot.LootCollector;
 import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableBuilderExtensions;
@@ -21,11 +22,11 @@ public class LootTableMixin implements LootTableExtensions {
 	private ResourceLocation lootTableId;
 
 	@Unique
-	private static final ThreadLocal<LootCollector> lootCollector = new ThreadLocal<>();
+	private static final ThreadLocal<Stack<LootCollector>> lootCollectorStack = ThreadLocal.withInitial(Stack::new);
 
 	@Override
-	public ThreadLocal<LootCollector> port_lib$lootCollector() {
-		return lootCollector;
+	public ThreadLocal<Stack<LootCollector>> port_lib$lootCollectorStack() {
+		return lootCollectorStack;
 	}
 
 	@Override
