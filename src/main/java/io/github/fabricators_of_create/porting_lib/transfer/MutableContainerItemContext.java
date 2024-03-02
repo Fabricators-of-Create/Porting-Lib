@@ -2,10 +2,11 @@ package io.github.fabricators_of_create.porting_lib.transfer;
 
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.item.base.SingleItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
 import org.jetbrains.annotations.UnmodifiableView;
@@ -35,10 +36,15 @@ public class MutableContainerItemContext implements ContainerItemContext {
 		return List.of();
 	}
 
-	private static class Slot extends SingleItemStorage {
+	private static class Slot extends SingleVariantStorage<ItemVariant> {
 		public Slot(ItemStack initial) {
 			this.variant = ItemVariant.of(initial);
 			this.amount = initial.getCount();
+		}
+
+		@Override
+		protected final ItemVariant getBlankVariant() {
+			return ItemVariant.blank();
 		}
 
 		@Override
