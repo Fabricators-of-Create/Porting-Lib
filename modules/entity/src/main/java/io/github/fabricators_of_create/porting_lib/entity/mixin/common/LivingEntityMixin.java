@@ -10,6 +10,7 @@ import com.llamalad7.mixinextras.sugar.Share;
 
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.LivingAttackEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.ShieldBlockEvent;
 
 import org.jetbrains.annotations.Nullable;
@@ -139,9 +140,12 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 		if (amount != newAmount) args.set(2, newAmount);
 	}
 
-	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"))
-	private void port_lib$tick(CallbackInfo ci) {
-		LivingEntityEvents.TICK.invoker().onLivingEntityTick((LivingEntity) (Object) this);
+	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"), cancellable = true)
+	private void tick(CallbackInfo ci) {
+		LivingEntityEvents.LivingTickEvent event = new LivingEntityEvents.LivingTickEvent((LivingEntity) (Object) this);
+		event.sendEvent();
+		if (event.isCanceled())
+			ci.cancel();
 	}
 
 	@ModifyVariable(method = "knockback", at = @At("STORE"), ordinal = 0, argsOnly = true)
@@ -170,8 +174,12 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 
 	@Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
 	public void port_lib$attackEvent(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-		if (LivingEntityEvents.ATTACK.invoker().onAttack((LivingEntity) (Object) this, source, amount))
-			cir.setReturnValue(false);
+		if (!((Object) this instanceof Player)) {
+			LivingAttackEvent event = new LivingAttackEvent((LivingEntity) (Object) this, source, amount);
+			event.sendEvent();
+			if (event.isCanceled())
+				cir.setReturnValue(false);
+		}
 	}
 
 	@ModifyReturnValue(method = "getVisibilityPercent", at = @At("RETURN"))

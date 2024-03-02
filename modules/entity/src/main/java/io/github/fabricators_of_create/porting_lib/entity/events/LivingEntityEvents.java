@@ -69,6 +69,7 @@ public abstract class LivingEntityEvents extends EntityEvents {
 		return level;
 	});
 
+	@Deprecated(forRemoval = true)
 	public static final Event<Tick> TICK = EventFactory.createArrayBacked(Tick.class, callbacks -> (entity) -> {
 		for (Tick callback : callbacks) {
 			callback.onLivingEntityTick(entity);
@@ -98,6 +99,7 @@ public abstract class LivingEntityEvents extends EntityEvents {
 		}
 	});
 
+	@Deprecated(forRemoval = true)
 	public static final Event<Attack> ATTACK = EventFactory.createArrayBacked(Attack.class, callbacks -> (entity, source, amount) -> {
 		for (Attack callback : callbacks) {
 			if (callback.onAttack(entity, source, amount)) {
@@ -136,6 +138,31 @@ public abstract class LivingEntityEvents extends EntityEvents {
 	@Override
 	public LivingEntity getEntity() {
 		return livingEntity;
+	}
+
+	/**
+	 * LivingUpdateEvent is fired when a LivingEntity is ticked in {@link LivingEntity#tick()}. <br>
+	 * <br>
+	 * This event is cancelable.<br>
+	 * If this event is canceled, the Entity does not update.<br>
+	 * <br>
+	 * This event does not have a result.<br>
+	 * <br>
+	 **/
+	public static class LivingTickEvent extends LivingEntityEvents {
+		public static final Event<NewTick> TICK = EventFactory.createArrayBacked(NewTick.class, callbacks -> (event) -> {
+			for (NewTick callback : callbacks)
+				callback.onLivingTick(event);
+		});
+
+		public LivingTickEvent(LivingEntity e) {
+			super(e);
+		}
+
+		@Override
+		public void sendEvent() {
+			TICK.invoker().onLivingTick(this);
+		}
 	}
 
 	/**
@@ -303,6 +330,11 @@ public abstract class LivingEntityEvents extends EntityEvents {
 	@FunctionalInterface
 	public interface Jump {
 		void onLivingEntityJump(LivingEntity entity);
+	}
+
+	@FunctionalInterface
+	public interface NewTick {
+		void onLivingTick(LivingTickEvent event);
 	}
 
 	@FunctionalInterface
