@@ -33,6 +33,7 @@
     "common.PhantomSpawnerMixin",
     "common.PlayerListMixin",
     "common.PlayerMixin",
+    "common.PortalForcerMixin",
     "common.ProjectileMixin",
     "common.ProjectileUtilMixin",
     "common.ServerEntityMixin",
