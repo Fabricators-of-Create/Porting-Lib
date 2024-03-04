@@ -32,7 +32,7 @@ public abstract class GuiMixin {
 	@Final
 	private static ResourceLocation GUI_ICONS_LOCATION;
 	@Unique
-	public float port_lib$partialTicks;
+	private float port_lib$partialTicks;
 
 	@Inject(method = "render", at = @At("HEAD"))
 	public void port_lib$render(GuiGraphics matrixStack, float f, CallbackInfo ci) {

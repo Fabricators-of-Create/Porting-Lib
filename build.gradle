@@ -121,10 +121,10 @@ allprojects {
 	}
 
 	loom {
-		// make all runs export mixins, and generate even though they're in subprojects.
 		runs.configureEach {
-			vmArg("-Dmixin.debug.export=true")
-			ideConfigGenerated = true
+			ideConfigGenerated = true // loom doesn't gen runs for subprojects, unless this is set to true.
+			vmArg("-Dmixin.debug.export=true") // export all mixins
+			vmArg("-Dmixin.debug.strict.unique=true") // strictly enforce that @Unique things are private
 		}
 	}
 
