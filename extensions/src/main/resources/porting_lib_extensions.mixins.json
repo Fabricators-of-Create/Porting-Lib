@@ -7,6 +7,7 @@
     "common.BlockMixin",
     "common.ItemMixin",
     "common.Matrix4fMixin",
+    "common.PortalForcerMixin",
     "common.TransformationMixin"
   ],
   "client": [
