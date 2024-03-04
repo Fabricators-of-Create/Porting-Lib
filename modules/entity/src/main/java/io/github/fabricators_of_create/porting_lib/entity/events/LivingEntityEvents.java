@@ -76,6 +76,7 @@ public abstract class LivingEntityEvents extends EntityEvents {
 		}
 	});
 
+	@Deprecated(forRemoval = true)
 	public static final Event<ActuallyHurt> HURT = EventFactory.createArrayBacked(ActuallyHurt.class, callbacks -> (source, damaged, amount) -> {
 		for (ActuallyHurt callback : callbacks) {
 			float newAmount = callback.onHurt(source, damaged, amount);
@@ -84,7 +85,10 @@ public abstract class LivingEntityEvents extends EntityEvents {
 		return amount;
 	});
 
-	// TOOD: Fully implement with asm
+	/**
+	 * Modders should individually mixin into the entity spawns they want to change
+	 */
+	@Deprecated(forRemoval = true)
 	public static final Event<CheckSpawn> CHECK_SPAWN = EventFactory.createArrayBacked(CheckSpawn.class, callbacks -> ((entity, world, x, y, z, spawner, spawnReason) -> {
 		for (CheckSpawn callback : callbacks)
 			if (!callback.onCheckSpawn(entity, world, x, y, z, spawner, spawnReason))

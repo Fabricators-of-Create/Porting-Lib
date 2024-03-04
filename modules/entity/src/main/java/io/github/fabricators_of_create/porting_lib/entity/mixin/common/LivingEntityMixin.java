@@ -13,6 +13,10 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import io.github.fabricators_of_create.porting_lib.entity.events.LivingAttackEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.ShieldBlockEvent;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingDamageEvent;
+
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingHurtEvent;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -223,5 +227,30 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 	}, ordinal = 2))
 	private float modifyActualDamage(float value, DamageSource pSource, float pAmount, @Share("shield_block") LocalRef<ShieldBlockEvent> eventRef) {
 		return pAmount - eventRef.get().getBlockedDamage();
+	}
+
+	@ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 0), index = 2)
+	private float livingHurtEvent(float value, DamageSource pDamageSource, @Share("hurt") LocalRef<LivingHurtEvent> eventRef) {
+		LivingHurtEvent event = new LivingHurtEvent((LivingEntity) (Object) this, pDamageSource, value);
+		eventRef.set(event);
+		event.sendEvent();
+		if (event.isCanceled())
+			return 0;
+		return event.getAmount();
+	}
+
+	@Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getDamageAfterArmorAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"), cancellable = true)
+	private void shouldCancelHurt(DamageSource damageSource, float f, CallbackInfo ci, @Share("hurt") LocalRef<LivingHurtEvent> eventRef) {
+		if (eventRef.get().getAmount() <= 0)
+			ci.cancel();
+	}
+
+	@ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 6), index = 2)
+	private float livingDamageEvent(float value, DamageSource pDamageSource) {
+		LivingDamageEvent event = new LivingDamageEvent((LivingEntity) (Object) this, pDamageSource, value);
+		event.sendEvent();
+		if (event.isCanceled())
+			return 0;
+		return event.getAmount();
 	}
 }

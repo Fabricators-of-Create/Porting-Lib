@@ -5,6 +5,8 @@ import com.llamalad7.mixinextras.sugar.Share;
 
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+
 import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.CriticalHitEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityInteractCallback;
@@ -13,6 +15,8 @@ import io.github.fabricators_of_create.porting_lib.entity.events.LivingDeathEven
 import io.github.fabricators_of_create.porting_lib.entity.events.LivingEntityEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.PlayerEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.PlayerTickEvents;
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingDamageEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingHurtEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -112,5 +116,30 @@ public abstract class PlayerMixin extends LivingEntity {
 		event.sendEvent();
 		if (event.isCanceled())
 			ci.cancel();
+	}
+
+	@ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 0), index = 2)
+	private float livingHurtEvent(float value, DamageSource pDamageSource, @Share("hurt") LocalRef<LivingHurtEvent> eventRef) {
+		LivingHurtEvent event = new LivingHurtEvent(this, pDamageSource, value);
+		eventRef.set(event);
+		event.sendEvent();
+		if (event.isCanceled())
+			return 0;
+		return event.getAmount();
+	}
+
+	@Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getDamageAfterArmorAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"), cancellable = true)
+	private void shouldCancelHurt(DamageSource damageSource, float f, CallbackInfo ci, @Share("hurt") LocalRef<LivingHurtEvent> eventRef) {
+		if (eventRef.get().getAmount() <= 0)
+			ci.cancel();
+	}
+
+	@ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 5), index = 2)
+	private float livingDamageEvent(float value, DamageSource pDamageSource) {
+		LivingDamageEvent event = new LivingDamageEvent(this, pDamageSource, value);
+		event.sendEvent();
+		if (event.isCanceled())
+			return 0;
+		return event.getAmount();
 	}
 }
