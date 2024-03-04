@@ -16,3 +16,7 @@ accessible field net/minecraft/world/level/storage/loot/predicates/CompositeLoot
 accessible field net/minecraft/world/level/storage/loot/predicates/MatchTool predicate Lnet/minecraft/advancements/critereon/ItemPredicate;
 
 accessible field net/minecraft/advancements/critereon/ItemPredicate items Ljava/util/Set;
+
+accessible field net/minecraft/world/level/storage/loot/LootPool$Builder entries Ljava/util/List;
+accessible field net/minecraft/world/level/storage/loot/LootPool$Builder conditions Ljava/util/List;
+accessible field net/minecraft/world/level/storage/loot/LootPool$Builder functions Ljava/util/List;

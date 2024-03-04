@@ -6,7 +6,8 @@
   "description": "Utilities for tool interactions.",
   "entrypoints": {
     "main": [
-      "io.github.fabricators_of_create.porting_lib.tool.loot.CanToolPerformAction::init"
+      "io.github.fabricators_of_create.porting_lib.tool.loot.CanToolPerformAction::init",
+      "io.github.fabricators_of_create.porting_lib.tool.PortingLibToolActions"
     ],
     "fabric-datagen": [
       "io.github.fabricators_of_create.porting_lib.tool.data.ToolActionsData"
