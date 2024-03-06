@@ -17,6 +17,7 @@ import io.github.fabricators_of_create.porting_lib.entity.events.PlayerEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.PlayerTickEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingDamageEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingHurtEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.player.AttackEntityEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -25,6 +26,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import org.objectweb.asm.Opcodes;
@@ -108,6 +110,14 @@ public abstract class PlayerMixin extends LivingEntity {
 			return hitResult.getDamageModifier();
 		}
 		return 1.0F;
+	}
+
+	@Inject(method = "attack", at = @At("HEAD"), cancellable = true)
+	private void playerAttackEntityEvent(Entity target, CallbackInfo ci) {
+		AttackEntityEvent event = new AttackEntityEvent((Player) (Object) this, target);
+		event.sendEvent();
+		if (event.isCanceled())
+			ci.cancel();
 	}
 
 	@Inject(method = "die", at = @At("HEAD"), cancellable = true)

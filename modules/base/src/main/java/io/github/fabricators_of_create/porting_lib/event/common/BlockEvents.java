@@ -6,6 +6,7 @@ import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -19,15 +20,27 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
+
 public abstract class BlockEvents extends BaseEvent {
 
 	public static final Event<BlockBreak> BLOCK_BREAK = EventFactory.createArrayBacked(BlockBreak.class, callbacks -> event -> {
-		for(BlockBreak e : callbacks)
+		for (BlockBreak e : callbacks)
 			e.onBlockBreak(event);
 	});
+	public static final Event<NotifyNeighbors> NEIGHBORS_NOTIFY = EventFactory.createArrayBacked(NotifyNeighbors.class, callbacks -> event -> {
+		for (NotifyNeighbors e : callbacks)
+			e.onNotifyNeighbors(event);
+	});
 
+	@FunctionalInterface
 	public interface BlockBreak {
 		void onBlockBreak(BreakEvent event);
+	}
+
+	@FunctionalInterface
+	public interface NotifyNeighbors {
+		void onNotifyNeighbors(NeighborNotifyEvent event);
 	}
 
 	/**
@@ -50,6 +63,7 @@ public abstract class BlockEvents extends BaseEvent {
 
 	/**
 	 * Invoked after a block is placed, from {@link BlockItem#useOn(UseOnContext)}. Called on both client and server.
+	 *
 	 * @deprecated Use {@link BlockEvents#POST_PROCESS_PLACE} instead.
 	 */
 	@Deprecated
@@ -79,35 +93,34 @@ public abstract class BlockEvents extends BaseEvent {
 	private final LevelAccessor level;
 	private final BlockPos pos;
 	private final BlockState state;
+
 	public BlockEvents(LevelAccessor world, BlockPos pos, BlockState state) {
 		this.pos = pos;
 		this.level = world;
 		this.state = state;
 	}
 
-	public LevelAccessor getLevel()
-	{
+	public LevelAccessor getLevel() {
 		return level;
 	}
 
 	@Deprecated(forRemoval = true)
-	public LevelAccessor getWorld()
-	{
+	public LevelAccessor getWorld() {
 		return level;
 	}
 
-	public BlockPos getPos()
-	{
+	public BlockPos getPos() {
 		return pos;
 	}
 
-	public BlockState getState()
-	{
+	public BlockState getState() {
 		return state;
 	}
 
 	public static class BreakEvent extends BlockEvents {
-		/** Reference to the Player who broke the block. If no player is available, use a EntityFakePlayer */
+		/**
+		 * Reference to the Player who broke the block. If no player is available, use a EntityFakePlayer
+		 */
 		private final Player player;
 		private int exp;
 
@@ -117,15 +130,14 @@ public abstract class BlockEvents extends BaseEvent {
 
 			if (state == null || !PortingHooks.isCorrectToolForDrops(state, player)) { // Handle empty block or player unable to break block scenario
 				this.exp = 0;
-			} else{
+			} else {
 				int bonusLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, player.getMainHandItem());
 				int silklevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getMainHandItem());
 				this.exp = state.getBlock() instanceof CustomExpBlock exp ? exp.getExpDrop(state, world, world.getRandom(), pos, bonusLevel, silklevel) : 0;
 			}
 		}
 
-		public Player getPlayer()
-		{
+		public Player getPlayer() {
 			return player;
 		}
 
@@ -134,8 +146,7 @@ public abstract class BlockEvents extends BaseEvent {
 		 *
 		 * @return The experience to drop or 0 if the event was canceled
 		 */
-		public int getExpToDrop()
-		{
+		public int getExpToDrop() {
 			return this.isCanceled() ? 0 : exp;
 		}
 
@@ -144,14 +155,52 @@ public abstract class BlockEvents extends BaseEvent {
 		 *
 		 * @param exp 1 or higher to drop experience, else nothing will drop
 		 */
-		public void setExpToDrop(int exp)
-		{
+		public void setExpToDrop(int exp) {
 			this.exp = exp;
 		}
 
 		@Override
 		public void sendEvent() {
 			BLOCK_BREAK.invoker().onBlockBreak(this);
+		}
+	}
+
+	/**
+	 * Fired when a physics update occurs on a block. This event acts as
+	 * a way for mods to detect physics updates, in the same way a BUD switch
+	 * does. This event is only called on the server.
+	 */
+	public static class NeighborNotifyEvent extends BlockEvents {
+		private final EnumSet<Direction> notifiedSides;
+		private final boolean forceRedstoneUpdate;
+
+		public NeighborNotifyEvent(Level level, BlockPos pos, BlockState state, EnumSet<Direction> notifiedSides, boolean forceRedstoneUpdate) {
+			super(level, pos, state);
+			this.notifiedSides = notifiedSides;
+			this.forceRedstoneUpdate = forceRedstoneUpdate;
+		}
+
+		/**
+		 * Gets a list of directions from the base block that updates will occur upon.
+		 *
+		 * @return list of notified directions
+		 */
+		public EnumSet<Direction> getNotifiedSides() {
+			return notifiedSides;
+		}
+
+		/**
+		 * Get if redstone update was forced during setBlock call (0x16 to flags)
+		 *
+		 * @return if the flag was set
+		 */
+		public boolean getForceRedstoneUpdate() {
+			return forceRedstoneUpdate;
+		}
+
+		@Override
+		public void sendEvent() {
+			NEIGHBORS_NOTIFY.invoker().onNotifyNeighbors(this);
 		}
 	}
 }
