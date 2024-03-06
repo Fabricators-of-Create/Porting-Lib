@@ -24,9 +24,9 @@ public abstract class TerrainParticleMixin extends TextureSheetParticle implemen
 	public TerrainParticle updateSprite(BlockState state, BlockPos pos) {
 		Minecraft mc = Minecraft.getInstance();
 		BakedModel model = mc.getModelManager().getBlockModelShaper().getBlockModel(state);
-		if (model instanceof CustomParticleIconModel custom && mc.level instanceof RenderAttachedBlockView view) {
-			Object data = view.getBlockEntityRenderAttachment(pos);
-			setSprite(custom.getParticleIcon(data));
+		if (model instanceof CustomParticleIconModel custom && mc.level != null) {
+			Object data = mc.level.getBlockEntityRenderData(pos);
+			this.setSprite(custom.getParticleIcon(data));
 		}
 		return (TerrainParticle) (Object) this;
 	}

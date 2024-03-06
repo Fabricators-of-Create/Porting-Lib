@@ -30,7 +30,7 @@ public class ParticleEngineMixin {
 	}
 
 	@ModifyArgs(
-			method = { "method_34020", "lambda$destroy$11", "m_ckteflwv" },
+			method = "method_34020",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/particle/ParticleEngine;add(Lnet/minecraft/client/particle/Particle;)V"

@@ -1,1 +1,1 @@
-- This is the first release with changelog tracking. Future releases will have more information.
+- cleanup of code around CustomParticleIconModel, fix wrong source pos being set for sprint particles
