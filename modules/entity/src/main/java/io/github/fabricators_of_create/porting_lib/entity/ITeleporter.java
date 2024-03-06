@@ -66,7 +66,7 @@ public interface ITeleporter {
 	 * Is this teleporter the vanilla instance.
 	 */
 	default boolean isVanilla() {
-		return false;
+		return this.getClass() == PortalForcer.class;
 	}
 
 	/**
