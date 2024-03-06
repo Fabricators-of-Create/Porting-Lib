@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.extensions;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.Nullable;
@@ -66,7 +67,8 @@ public interface ITeleporter {
 	 * Is this teleporter the vanilla instance.
 	 */
 	default boolean isVanilla() {
-		return this.getClass() == PortalForcer.class;
+		// Ignore the warning, this is fine at runtime
+		return Objects.equals(this.getClass(), PortalForcer.class);
 	}
 
 	/**
