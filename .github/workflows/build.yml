@@ -66,13 +66,13 @@ jobs:
           dependencies: |
             fabric-api(required){modrinth:P7dR8mSH}{curseforge:306612}
 
-      - name: prepare for next release
-        if: ${{ env.RELEASE == 'true' }}
-        run: ./gradlew postRelease
-
-      - name: push updated version and changelog
-        if: ${{ env.RELEASE == 'true' }}
-        run: |
-          git add .
-          git commit -m "Clean changelog and bump version"
-          git push
+#      - name: prepare for next release
+#        if: ${{ env.RELEASE == 'true' }}
+#        run: ./gradlew postRelease
+#
+#      - name: push updated version and changelog
+#        if: ${{ env.RELEASE == 'true' }}
+#        run: |
+#          git add .
+#          git commit -m "Clean changelog and bump version"
+#          git push
