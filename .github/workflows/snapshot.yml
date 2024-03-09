@@ -1,5 +1,5 @@
-name: build
-on: [ push, pull_request ]
+name: snapshot
+on: workflow_dispatch
 
 jobs:
   build:
@@ -7,6 +7,10 @@ jobs:
       matrix:
         java: [ 17 ]
     runs-on: ubuntu-latest
+    env:
+      SNAPSHOT: 'true'
+      MAVEN_USER: ${{ secrets.MAVEN_USER }}
+      MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
     steps:
 
       - name: checkout repository
@@ -22,8 +26,9 @@ jobs:
           java-version: 17
           cache: gradle
 
-      - name: build
-        run: ./gradlew build
+      - name: publish
+        # build task creates artifacts for capture and upload, then publish publishes to maven
+        run: ./gradlew build publish
 
       - name: capture build artifacts
         uses: actions/upload-artifact@v4

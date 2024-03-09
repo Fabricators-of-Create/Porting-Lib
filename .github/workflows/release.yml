@@ -1,0 +1,72 @@
+name: release
+on:
+  workflow_dispatch:
+    inputs:
+      nextVersion:
+        type: string
+        required: true
+        description: 'The next version in development'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        java: [ 17 ]
+    runs-on: ubuntu-latest
+    env:
+      MAVEN_USER: ${{ secrets.MAVEN_USER }}
+      MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
+    steps:
+
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: make gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+
+      - name: publish
+        # build task creates artifacts for capture and upload, then publish publishes to maven
+        run: ./gradlew build publish
+
+      - name: capture build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Artifacts
+          path: build/libs/
+
+      - name: publish to Modrinth and Curseforge
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: tEJPA4Ty
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+          curseforge-id: 696251
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+          modrinth-featured: false # leave it to auto featuring
+
+          changelog-file: CHANGELOG.txt
+
+          loaders: |
+            fabric
+            quilt
+
+          dependencies: |
+            fabric-api(required){modrinth:P7dR8mSH}{curseforge:306612}
+
+      - name: prepare for next release
+        run: './gradlew postRelease -PnextVersion="${{ inputs.nextVersion }}"'
+
+      - name: push updated version and changelog
+        run: |
+          git add CHANGELOG.txt
+          git add gradle.properties
+          git commit -m "Reset changelog and bump version"
+          git push

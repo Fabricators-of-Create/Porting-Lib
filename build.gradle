@@ -11,11 +11,19 @@ targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = "porting_lib"
 
-String branch = providers.exec {
+Provider<String> branchProvider = providers.exec {
 	it.setCommandLine("git", "branch", "--show-current")
 }.standardOutput.asText.map {
 	it.contains("not a git repository") ? "unknown" : it
-}.get().trim()
+}
+
+String versionNumber = providers.provider {
+	if (System.getenv("SNAPSHOT") == "true") {
+		return System.getenv("GITHUB_RUN_NUMBER")
+	} else {
+		return mod_version + "+" + branchProvider.get()
+	}
+}.get()
 
 dependencies {
 	subprojects.forEach {
@@ -30,28 +38,14 @@ processResources {
 
 // resets the changelog and bumps the version after an automated release.
 tasks.register("postRelease") {
+	String nextVersion = project.hasProperty("nextVersion") ? project.property("nextVersion") : null
 	File changelog = rootProject.file("CHANGELOG.txt")
 	File props = rootProject.file("gradle.properties")
 	String currentVersion = mod_version
-	String nextVersion = "error"
-	// choosing next version
-	String[] sections = currentVersion.split("-") // "1.0.0", "beta.1"
-	if (currentVersion.contains("alpha") || currentVersion.contains("beta")) {
-		// for alphas and betas, increment the number
-		int number = sections[1].split("beta\\.|alpha\\.")[1].toInteger()
-		nextVersion = currentVersion.replace("beta.$number", "beta.${number + 1}")
-				.replace("alpha.$number", "alpha.${number + 1}")
-	} else {
-		// otherwise increment patch
-		String mainVersion = sections[0]
-		String[] components = mainVersion.split("[.]")
-		int patch = components[2].toInteger()
-		nextVersion = currentVersion.replace(mainVersion, "${components[0]}.${components[1]}.${patch + 1}")
-	}
 
 	doFirst {
-		if (nextVersion == "error") {
-			throw new RuntimeException("Could not automatically increment version $currentVersion")
+		if (nextVersion == null) {
+			throw new RuntimeException("nextVersion property is not defined")
 		}
 
 		changelog.setText("")
@@ -70,7 +64,7 @@ allprojects {
 
 	group = "io.github.fabricators_of_create.Porting-Lib"
 
-	version = mod_version + "+" + branch
+	version = versionNumber
 
 	repositories {
 		mavenCentral()
