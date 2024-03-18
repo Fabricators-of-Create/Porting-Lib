@@ -25,7 +25,9 @@ public interface BlockParticleOptionExtensions {
 
 	/**
 	 * Helper to set the source to the block an entity is standing on.
+	 * @deprecated as of 1.20 this does not work as intended and is unused.
 	 */
+	@Deprecated(forRemoval = true)
 	static ParticleOptions setSourceFromEntity(ParticleOptions options, Entity entity) {
 		if (options instanceof BlockParticleOption block) {
 			BlockPos posBelow = BlockPos.containing(entity.position().subtract(0, 0.2, 0));

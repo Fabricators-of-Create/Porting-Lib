@@ -13,7 +13,10 @@ import net.minecraft.core.particles.BlockParticleOption;
 
 @Mixin(TerrainParticle.Provider.class)
 public class TerrainParticle$ProviderMixin {
-	@ModifyReturnValue(method = "createParticle", at = @At("RETURN"))
+	@ModifyReturnValue(
+			method = "createParticle(Lnet/minecraft/core/particles/BlockParticleOption;Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDD)Lnet/minecraft/client/particle/Particle;",
+			at = @At("RETURN")
+	)
 	private Particle updateSprite(Particle particle,
 								  BlockParticleOption type, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
 		BlockPos source = type.getSourcePos();
