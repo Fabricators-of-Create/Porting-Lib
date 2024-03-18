@@ -5,6 +5,7 @@ portingLib.addModuleDependencies([
 		"utility",
 		"entity",
 		"common",
+		"config",
 		"tags"
 ])
 

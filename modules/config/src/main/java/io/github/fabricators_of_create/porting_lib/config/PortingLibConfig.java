@@ -60,9 +60,6 @@ public class PortingLibConfig implements ModInitializer {
 				});
 			}));
 		});
-		ServerLoginNetworking.registerGlobalReceiver(CONFIG_SYNC, (server, handler, understood, buf, synchronizer, responseSender) -> {
-
-		});
 	}
 
 	private static Path getOrCreateDirectory(Path dirPath, String dirLabel) {

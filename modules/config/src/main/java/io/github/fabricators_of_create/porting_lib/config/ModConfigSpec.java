@@ -20,6 +20,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import net.fabricmc.loader.api.FabricLoader;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -768,12 +770,14 @@ public class ModConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfig>
 		@Override
 		public T get() {
 			Preconditions.checkNotNull(spec, "Cannot get config value before spec is built");
-			// When the above if-check is removed, change message to "Cannot get config value before config is loaded"
-			Preconditions.checkState(spec.childConfig != null, """
-					Cannot get config value before config is loaded.
-					This error is currently only thrown in the development environment, to avoid breaking published mods.
-					In a future version, this will also throw in the production environment.
-					""");
+			if (FabricLoader.getInstance().isDevelopmentEnvironment()) { // Apparently kube js can load config from another thread and that causes issue?
+				// When the above if-check is removed, change message to "Cannot get config value before config is loaded"
+				Preconditions.checkState(spec.childConfig != null, """
+						Cannot get config value before config is loaded.
+						This error is currently only thrown in the development environment, to avoid breaking published mods.
+						In a future version, this will also throw in the production environment.
+						""");
+			}
 
 			if (spec.childConfig == null)
 				return defaultSupplier.get();
