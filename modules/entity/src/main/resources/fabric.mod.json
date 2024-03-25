@@ -17,6 +17,7 @@
       "net/minecraft/class_1291": ["io/github/fabricators_of_create/porting_lib/entity/extensions/MobEffectExtensions"],
       "net/minecraft/class_1297": ["io/github/fabricators_of_create/porting_lib/entity/extensions/EntityExtensions"],
       "net/minecraft/class_1621": ["io/github/fabricators_of_create/porting_lib/entity/extensions/SlimeExtension"],
+      "net/minecraft/class_1657": ["io/github/fabricators_of_create/porting_lib/entity/extensions/PlayerExtension"],
       "net/minecraft/class_1688": ["io/github/fabricators_of_create/porting_lib/entity/extensions/AbstractMinecartExtensions"],
       "net/minecraft/class_1792": ["io/github/fabricators_of_create/porting_lib/entity/extensions/ItemExtensions"],
       "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/entity/extensions/LevelExtensions"]

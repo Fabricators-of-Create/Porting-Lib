@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Share;
 
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
@@ -18,6 +19,8 @@ import io.github.fabricators_of_create.porting_lib.entity.events.PlayerTickEvent
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingDamageEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingHurtEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.player.AttackEntityEvent;
+import io.github.fabricators_of_create.porting_lib.entity.extensions.PlayerExtension;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -26,22 +29,22 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
+import net.minecraft.world.level.block.state.BlockState;
+
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = Player.class, priority = 500)
-public abstract class PlayerMixin extends LivingEntity {
+public abstract class PlayerMixin extends LivingEntity implements PlayerExtension {
 	protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level level) {
 		super(entityType, level);
 	}
@@ -151,5 +154,20 @@ public abstract class PlayerMixin extends LivingEntity {
 		if (event.isCanceled())
 			return 0;
 		return event.getAmount();
+	}
+
+	private final ThreadLocal<BlockPos> pl$destroySpeedContext = new ThreadLocal<>();
+
+	@Override
+	public void setDigSpeedContext(@Nullable BlockPos pos) {
+		pl$destroySpeedContext.set(pos);
+	}
+
+	@ModifyReturnValue(method = "getDestroySpeed", at = @At("RETURN"))
+	private float breakspeedEvent(float original, BlockState state) {
+		PlayerEvents.BreakSpeed breakSpeed = new PlayerEvents.BreakSpeed((Player) (Object) this, state, original, pl$destroySpeedContext.get());
+		breakSpeed.sendEvent();
+		pl$destroySpeedContext.remove();
+		return breakSpeed.getNewSpeed();
 	}
 }

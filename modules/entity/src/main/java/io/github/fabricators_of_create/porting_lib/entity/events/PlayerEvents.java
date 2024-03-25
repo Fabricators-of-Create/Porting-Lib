@@ -97,7 +97,7 @@ public abstract class PlayerEvents extends LivingEntityEvents {
 	/**
 	 * BreakSpeed is fired when a player attempts to harvest a block.<br>
 	 * This event is fired whenever a player attempts to harvest a block in
-	 * {@link Player#getDestroySpeed(BlockState)}.<br>
+	 * {@link Player#getDigSpeed(BlockState, BlockPos)}.<br>
 	 * <br>
 	 * {@link #state} contains the block being broken. <br>
 	 * {@link #originalSpeed} contains the original speed at which the player broke the block. <br>
