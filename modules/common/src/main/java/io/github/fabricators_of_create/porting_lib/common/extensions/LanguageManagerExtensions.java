@@ -7,6 +7,7 @@ import java.util.Locale;
 
 @Environment(EnvType.CLIENT)
 public interface LanguageManagerExtensions {
+	@Deprecated(forRemoval = true)
 	default Locale getJavaLocale(String code) {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
