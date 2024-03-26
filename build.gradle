@@ -149,9 +149,6 @@ allprojects {
 		filesMatching("fabric.mod.json") {
 			expand properties
 		}
-
-		// include icon
-		from(rootProject.file("src/main/resources/assets/porting_lib/icon.png"))
 	}
 
 	jar.from(rootProject.file("LICENSE")) // copy license file into jar
@@ -192,6 +189,13 @@ subprojects {
 		File awFile = project.file("src/main/resources/${project.name}.accesswidener")
 		if (awFile.exists())
 			aw.set(awFile)
+	}
+
+	processResources {
+		// include icon
+		into("assets/porting_lib") {
+			from(rootProject.file("src/main/resources/assets/porting_lib/icon.png"))
+		}
 	}
 
 	java.withSourcesJar()
