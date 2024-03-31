@@ -87,6 +87,7 @@
     "common.SignalGetterMixin",
     "common.SnowGolemMixin",
     "common.SpawnerBlockMixin",
+    "common.StartAttackingMixin",
     "common.StemBlockMixin",
     "common.StructureProcessorMixin",
     "common.StructureTemplateMixin",
