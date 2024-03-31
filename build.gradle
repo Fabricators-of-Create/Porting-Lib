@@ -1,10 +1,7 @@
 //file:noinspection GroovyAssignabilityCheck
 //file:noinspection GroovyAccessibility
 plugins {
-	id "fabric-loom" version "1.1.+"
-	id "io.github.juuxel.loom-quiltflower" version "1.+" // Quiltflower, a better decompiler
-	id "org.quiltmc.quilt-mappings-on-loom" version "4.2.0" // Quilt Mappings, for parameters and javadoc. Also hashed mojmap.
-//	id "io.github.p03w.machete" version "1.+" // automatic jar compressing on build
+	id "fabric-loom" version "1.5.+"
 	id "org.ajoberstar.grgit" version "4.1.1"
 	id "maven-publish"
 }
@@ -29,31 +26,24 @@ if (grgit != null) {
 
 repositories {
 	mavenLocal()
-	maven { url = "https://hephaestus.dev/release" }
-	maven { url = "https://api.modrinth.com/maven" }
-	maven { url = "https://maven.bai.lol" }
-	maven { url = "https://maven.terraformersmc.com/releases/" }
-	maven { url = "https://maven.parchmentmc.org" }
-	maven { url = "https://maven.shedaniel.me/" }
-	maven { url = "https://mvn.devos.one/releases/" }
-	maven { url = "https://mvn.devos.one/snapshots/" }
-	maven { url = "https://maven.wispforest.io" }
-	maven { url = "https://cursemaven.com" }
+	maven { url = "https://maven.quiltmc.org/repository/release" } // Quilt Mappings
+	maven { url = "https://maven.parchmentmc.org" } // Parchment
+	maven { url = "https://mvn.devos.one/snapshots/" } // Serialization Hooks, ForgeTags
+	maven { url = "https://maven.terraformersmc.com/releases/" } // Mod Menu
+	maven { url = "https://api.modrinth.com/maven" } // all mods pulled from Modrinth
+//	maven { url = "https://hephaestus.dev/release" } // Myron
 	maven {
 		url = "https://jitpack.io"
 		content {
-			includeGroup("com.github.Chocohead")
-			includeGroup("com.github.LlamaLad7")
-			includeGroup("com.github.llamalad7.mixinextras")
+			includeGroup("com.github.Chocohead") // FabricASM
+			includeGroup("com.github.LlamaLad7") // old Mixin Extras, for Serialization Hooks
 		}
 	}
 }
 
 configurations.configureEach {
-	resolutionStrategy.eachDependency {
-		if (requested.module.name == "fabric-loader") {
-			useVersion(loader_version)
-		}
+	resolutionStrategy {
+		force("net.fabricmc:fabric-loader:$loader_version")
 	}
 }
 
@@ -61,7 +51,8 @@ dependencies {
     // dev environment
 	minecraft("com.mojang:minecraft:${project.minecraft_version}")
 	mappings(loom.layered {
-		it.addLayer(quiltMappings.mappings("org.quiltmc:quilt-mappings:${project.minecraft_version}+build.${project.qm_version}:v2"))
+		// disabled, hashed is somehow leaking through.
+//		it.mappings("org.quiltmc:quilt-mappings:$minecraft_version+build.$qm_version:intermediary-v2")
 		it.parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${project.parchment_version}@zip")
 		it.officialMojangMappings { nameSyntheticMembers = false }
 	})
@@ -79,8 +70,6 @@ dependencies {
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
 	modImplementation(include("io.github.tropheusj:serialization-hooks:${project.serialization_hooks_version}"))
 	modApi(include("me.alphamode:ForgeTags:${project.forge_tags_version}"))
-	api(include("com.github.llamalad7.mixinextras:mixinextras-fabric:0.2.0-beta.6"))
-	annotationProcessor(include("com.github.llamalad7.mixinextras:mixinextras-fabric:0.2.0-beta.6"))
 
 	modApi(include("com.github.Chocohead:Fabric-ASM:v2.3"))
 }
@@ -88,38 +77,42 @@ dependencies {
 loom {
 	accessWidenerPath = file("src/main/resources/porting_lib.accesswidener")
 
-	sourceSets {
-            main {
-                resources {
-                    srcDir("src/generated/resources")
-                    exclude("src/generated/resources/.cache")
-                }
-            }
-        }
+	runs {
+		datagen {
+			client()
 
-        runs {
-            datagen {
-                client()
+			name "Data Generation"
+			vmArg "-Dfabric-api.datagen"
+			vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
+			vmArg "-Dfabric-api.datagen.modid=porting_lib"
+			// from ae2
 
-                name "Data Generation"
-                vmArg "-Dfabric-api.datagen"
-                vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
-                vmArg "-Dfabric-api.datagen.modid=porting_lib"
-                // from ae2
+			runDir "build/datagen"
+		}
 
-                runDir "build/datagen"
-            }
-        }
+		configureEach {
+			vmArg("-Dmixin.debug.export=true")
+		}
+	}
 }
 
-task buildOrPublish {
+sourceSets {
+	main {
+		resources {
+			srcDir("src/generated/resources")
+			exclude("src/generated/resources/.cache")
+		}
+	}
+}
+
+tasks.register("buildOrPublish") {
 	group = "build"
 	String mavenUser = System.getenv().MAVEN_USER
 	if (mavenUser != null && !mavenUser.isEmpty()) {
-		dependsOn(tasks.getByName("publish"))
+		dependsOn(tasks.named("publish"))
 		println "prepared for publish"
 	} else {
-		dependsOn(tasks.getByName("build"))
+		dependsOn(tasks.named("build"))
 		println "prepared for build"
 	}
 }
