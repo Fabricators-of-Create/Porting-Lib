@@ -159,6 +159,14 @@ public class LivingEntityEvents {
 		return originalMultiplier;
 	});
 
+	public static final Event<ChangeTarget> CHANGE_TARGET = EventFactory.createArrayBacked(ChangeTarget.class, callbacks -> (event) -> {
+		for (ChangeTarget e : callbacks) {
+			e.onChangeTarget(event);
+			if (event.isCanceled())
+				return;
+		}
+	});
+
 	@FunctionalInterface
 	public interface EquipmentChange {
 		void onEquipmentChange(LivingEntity entity, EquipmentSlot slot, @Nonnull ItemStack from, @Nonnull ItemStack to);
@@ -255,5 +263,35 @@ public class LivingEntityEvents {
 	@FunctionalInterface
 	public interface Visibility {
 		double getEntityVisibilityMultiplier(LivingEntity entity, Entity lookingEntity, double originalMultiplier);
+	}
+
+	@FunctionalInterface
+	public interface ChangeTarget {
+		void onChangeTarget(ChangeTargetEvent event);
+
+		final class ChangeTargetEvent extends EntityEvent {
+			private final LivingTargetType targetType;
+			private final LivingEntity originalTarget;
+			private LivingEntity newTarget;
+
+			public ChangeTargetEvent(LivingEntity entity, LivingEntity originalTarget, LivingTargetType targetType) {
+				super(entity);
+				this.originalTarget = originalTarget;
+				this.newTarget = originalTarget;
+				this.targetType = targetType;
+			}
+
+			@Override
+			public void sendEvent() {
+				CHANGE_TARGET.invoker().onChangeTarget(this);
+			}
+
+			public LivingEntity getNewTarget() { return newTarget; }
+			public void setNewTarget(LivingEntity newTarget) { this.newTarget = newTarget; }
+			public LivingTargetType getTargetType() { return targetType; }
+			public LivingEntity getOriginalTarget() { return originalTarget; }
+
+			public enum LivingTargetType { MOB_TARGET, BEHAVIOR_TARGET }
+		}
 	}
 }

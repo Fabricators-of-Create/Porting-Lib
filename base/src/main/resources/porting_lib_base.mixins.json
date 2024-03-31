@@ -109,6 +109,7 @@
     "common.SnowGolemMixin",
     "common.SpawnerBlockMixin",
     "common.SpreadPlayersCommandMixin",
+    "common.StartAttackingMixin",
     "common.StemBlockMixin",
     "common.StructureProcessorMixin",
     "common.StructureTemplateMixin",
