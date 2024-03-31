@@ -8,7 +8,11 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.github.fabricators_of_create.porting_lib.client.RenderTypeGroup;
+import io.github.fabricators_of_create.porting_lib.model.RenderMaterialModel;
+import net.fabricmc.fabric.api.renderer.v1.Renderer;
+import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
+import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
+import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +23,7 @@ import com.mojang.math.Vector3f;
 import io.github.fabricators_of_create.porting_lib.model.IModelBuilder;
 import io.github.fabricators_of_create.porting_lib.model.SimpleModelState;
 import net.minecraft.Util;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockElementFace;
@@ -100,9 +105,21 @@ public class UnbakedGeometryHelper {
 		if (blockModel.getRootModel() == ModelBakery.GENERATION_MARKER)
 			return ITEM_MODEL_GENERATOR.generateBlockModel(spriteGetter, blockModel).bake(modelBakery, blockModel, spriteGetter, modelState, modelLocation, guiLight3d);
 
-		var renderTypeHint = blockModel.getGeometry().getRenderTypeHint();
-		var renderTypes = renderTypeHint != null ? blockModel.getGeometry().getRenderType(renderTypeHint) : RenderTypeGroup.EMPTY;
-		return blockModel.bake(modelBakery, owner, spriteGetter, modelState, modelLocation, guiLight3d);
+		BakedModel baked = blockModel.bake(modelBakery, owner, spriteGetter, modelState, modelLocation, guiLight3d);
+
+		ResourceLocation renderTypeHint = blockModel.getGeometry().getRenderTypeHint();
+		if (renderTypeHint != null) {
+			RenderType type = blockModel.getGeometry().getRenderType(renderTypeHint).block();
+			if (type != null) {
+				Renderer renderer = RendererAccess.INSTANCE.getRenderer();
+				if (renderer != null) {
+					RenderMaterial material = renderer.materialFinder().blendMode(0, BlendMode.fromRenderLayer(type)).find();
+					baked = new RenderMaterialModel(baked, material);
+				}
+			}
+		}
+
+		return baked;
 	}
 
 	/**
