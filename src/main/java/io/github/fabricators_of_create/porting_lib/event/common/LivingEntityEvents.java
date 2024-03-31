@@ -10,6 +10,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.behavior.StartAttacking;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -144,6 +145,14 @@ public class LivingEntityEvents {
 		return originalMultiplier;
 	});
 
+	public static final Event<ChangeTarget> CHANGE_TARGET = EventFactory.createArrayBacked(ChangeTarget.class, callbacks -> (event) -> {
+		for (ChangeTarget e : callbacks) {
+			e.onChangeTarget(event);
+			if (event.isCanceled())
+				return;
+		}
+	});
+
 	@FunctionalInterface
 	public interface EquipmentChange {
 		void onEquipmentChange(LivingEntity entity, EquipmentSlot slot, @NotNull ItemStack from, @NotNull ItemStack to);
@@ -235,5 +244,49 @@ public class LivingEntityEvents {
 	@FunctionalInterface
 	public interface Visibility {
 		double getEntityVisibilityMultiplier(LivingEntity entity, Entity lookingEntity, double originalMultiplier);
+	}
+
+	@FunctionalInterface
+	public interface ChangeTarget {
+		void onChangeTarget(ChangeTargetEvent event);
+
+		final class ChangeTargetEvent extends EntityEvent {
+			private final ILivingTargetType targetType;
+			private final LivingEntity originalTarget;
+			private LivingEntity newTarget;
+
+			public ChangeTargetEvent(LivingEntity entity, LivingEntity originalTarget, ILivingTargetType targetType) {
+				super(entity);
+				this.originalTarget = originalTarget;
+				this.newTarget = originalTarget;
+				this.targetType = targetType;
+			}
+
+			@Override
+			public void sendEvent() {
+				CHANGE_TARGET.invoker().onChangeTarget(this);
+			}
+
+			public LivingEntity getNewTarget() { return newTarget; }
+			public void setNewTarget(LivingEntity newTarget) { this.newTarget = newTarget; }
+			public ILivingTargetType getTargetType() { return targetType; }
+			public LivingEntity getOriginalTarget() { return originalTarget; }
+
+			public interface ILivingTargetType { }
+
+			/**
+			 * This enum contains two default living target types.
+			 */
+			public enum LivingTargetType implements ILivingTargetType {
+				/**
+				 * This target type indicates that the target has been set by calling {@link Mob#setTarget(LivingEntity)}.
+				 */
+				MOB_TARGET,
+				/**
+				 * This target type indicates that the target has been set by the {@link StartAttacking} behavior.
+				 */
+				BEHAVIOR_TARGET;
+			}
+		}
 	}
 }

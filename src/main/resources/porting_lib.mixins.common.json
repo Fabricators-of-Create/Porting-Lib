@@ -105,6 +105,7 @@
     "SnowGolemMixin",
     "SpawnerBlockMixin",
     "SpreadPlayersCommandMixin",
+    "StartAttackingMixin",
     "StemBlockMixin",
     "StructureProcessorMixin",
     "StructureTemplateMixin",
