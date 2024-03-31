@@ -3,6 +3,9 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+
 import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEvents.ChangeTarget.ChangeTargetEvent;
 import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEvents.ChangeTarget.ChangeTargetEvent.LivingTargetType;
@@ -22,25 +25,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(StartAttacking.class)
 public class StartAttackingMixin<E extends Mob> {
-	@Unique private ChangeTargetEvent port_lib$changeTargetEvent = null;
-
 	@Inject(method = "setAttackTarget",at = @At("HEAD"), cancellable = true)
-	private void port_lib$onChangeTarget(E attackTarget, LivingEntity owner, CallbackInfo ci) {
-		port_lib$changeTargetEvent = new LivingEntityEvents.ChangeTarget.ChangeTargetEvent(attackTarget, owner, LivingTargetType.BEHAVIOR_TARGET);
-		port_lib$changeTargetEvent.sendEvent();
-		if (port_lib$changeTargetEvent.isCanceled()) {
+	private void port_lib$onChangeTarget(E attackTarget, LivingEntity owner, CallbackInfo ci, @Share("changeTargetEvent") LocalRef<ChangeTargetEvent> changeTargetEvent) {
+		changeTargetEvent.set(new LivingEntityEvents.ChangeTarget.ChangeTargetEvent(attackTarget, owner, LivingTargetType.BEHAVIOR_TARGET));
+		changeTargetEvent.get().sendEvent();
+		if (changeTargetEvent.get().isCanceled())
 			ci.cancel();
-		}
 	}
 
 	@WrapOperation(method = "setAttackTarget",at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/Brain;setMemory(Lnet/minecraft/world/entity/ai/memory/MemoryModuleType;Ljava/lang/Object;)V"))
-	private <U> void port_lib$wrapToChangeTarget(Brain<?> instance, MemoryModuleType<U> memoryType, U memory, Operation<Void> original) {
+	private <U> void port_lib$wrapToChangeTarget(Brain<?> instance, MemoryModuleType<U> memoryType, U memory, Operation<Void> original, @Share("changeTargetEvent") LocalRef<ChangeTargetEvent> changeTargetEvent) {
 		// Ignore the warning, it's fine just that mcdev can't handle generics
-		original.call(instance, memoryType, port_lib$changeTargetEvent.getNewTarget());
+		original.call(instance, memoryType, changeTargetEvent.get().getNewTarget());
 	}
 
 	@Inject(method = "setAttackTarget", at = @At("TAIL"))
-	private void port_lib$onAfterChangeTarget(E attackTarget, LivingEntity owner, CallbackInfo ci) {
-		MobEntitySetTargetCallback.EVENT.invoker().onMobEntitySetTarget(owner, port_lib$changeTargetEvent.getNewTarget());
+	private void port_lib$onAfterChangeTarget(E attackTarget, LivingEntity owner, CallbackInfo ci, @Share("changeTargetEvent") LocalRef<ChangeTargetEvent> changeTargetEvent) {
+		MobEntitySetTargetCallback.EVENT.invoker().onMobEntitySetTarget(owner, changeTargetEvent.get().getNewTarget());
 	}
 }
