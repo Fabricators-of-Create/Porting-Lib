@@ -3,6 +3,10 @@ package io.github.fabricators_of_create.porting_lib.entity.events;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.HitResult;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+
 /**
  * This event is fired when a projectile entity impacts something.<br>
  * This event is fired for all vanilla projectiles by Porting Lib,
@@ -13,6 +17,8 @@ import net.minecraft.world.phys.HitResult;
 public class ProjectileImpactEvent extends EntityEvents {
 	private final HitResult ray;
 	private final Projectile projectile;
+
+	private ImpactResult result = ImpactResult.DEFAULT;
 
 	public ProjectileImpactEvent(Projectile projectile, HitResult ray) {
 		super(projectile);
@@ -28,9 +34,45 @@ public class ProjectileImpactEvent extends EntityEvents {
 		return projectile;
 	}
 
+	public void setImpactResult(ImpactResult result) {
+		this.result = Objects.requireNonNull(result);
+	}
+
+	public ImpactResult getImpactResult() {
+		return this.isCanceled() ? ImpactResult.SKIP_ENTITY : result;
+	}
+
+	/**
+	 * This event will no longer be directly cancellable in the future.
+	 * Instead, use {@link #setImpactResult(ImpactResult)}.
+	 */
+	@Deprecated(forRemoval = true)
+	@Override
+	public void setCanceled(boolean cancelled) {
+		super.setCanceled(cancelled);
+	}
+
 	@Override
 	public void sendEvent() {
-//		setCanceled(ProjectileImpactCallback.EVENT.invoker().onImpact(getProjectile(), getRayTraceResult())); ProjectileImpactCallback fires for all projectiles including none vanilla
 		PROJECTILE_IMPACT.invoker().onProjectileImpact(this);
+	}
+
+	public enum ImpactResult {
+		/**
+		 * The default behaviour, the projectile will be destroyed and the hit will be processed.
+		 */
+		DEFAULT,
+		/**
+		 * The projectile will pass through the current entity as if it wasn't there. This will return default behaviour if there is no entity.
+		 */
+		SKIP_ENTITY,
+		/**
+		 * Damage the entity and stop the projectile here, the projectile will not pierce.
+		 */
+		STOP_AT_CURRENT,
+		/**
+		 * Cancel the piercing aspect of the projectile, and do not damage the entity.
+		 */
+		STOP_AT_CURRENT_NO_DAMAGE
 	}
 }
