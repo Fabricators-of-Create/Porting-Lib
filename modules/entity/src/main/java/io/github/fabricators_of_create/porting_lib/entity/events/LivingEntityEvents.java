@@ -5,7 +5,6 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.damagesource.DamageSource;
@@ -130,6 +129,14 @@ public abstract class LivingEntityEvents extends EntityEvents {
 				return newMultiplier;
 		}
 		return originalMultiplier;
+	});
+
+	public static final Event<ChangeTarget> CHANGE_TARGET = EventFactory.createArrayBacked(ChangeTarget.class, callbacks -> (event) -> {
+		for (ChangeTarget e : callbacks) {
+			e.onChangeTarget(event);
+			if (event.isCanceled())
+				return;
+		}
 	});
 
 	private final LivingEntity livingEntity;
@@ -354,5 +361,35 @@ public abstract class LivingEntityEvents extends EntityEvents {
 	@FunctionalInterface
 	public interface NewVisibility {
 		void getEntityVisibilityMultiplier(LivingVisibilityEvent event);
+	}
+
+	@FunctionalInterface
+	public interface ChangeTarget {
+		void onChangeTarget(ChangeTargetEvent event);
+
+		final class ChangeTargetEvent extends EntityEvents {
+			private final LivingTargetType targetType;
+			private final LivingEntity originalTarget;
+			private LivingEntity newTarget;
+
+			public ChangeTargetEvent(LivingEntity entity, LivingEntity originalTarget, LivingTargetType targetType) {
+				super(entity);
+				this.originalTarget = originalTarget;
+				this.newTarget = originalTarget;
+				this.targetType = targetType;
+			}
+
+			@Override
+			public void sendEvent() {
+				CHANGE_TARGET.invoker().onChangeTarget(this);
+			}
+
+			public LivingEntity getNewTarget() { return newTarget; }
+			public void setNewTarget(LivingEntity newTarget) { this.newTarget = newTarget; }
+			public LivingTargetType getTargetType() { return targetType; }
+			public LivingEntity getOriginalTarget() { return originalTarget; }
+
+			public enum LivingTargetType { MOB_TARGET, BEHAVIOR_TARGET }
+		}
 	}
 }

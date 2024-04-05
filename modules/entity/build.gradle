@@ -1,1 +1,4 @@
-portingLib.addModuleDependency("mixin_extensions")
+portingLib {
+	addModuleDependency("mixin_extensions")
+	enableTestMod()
+}
