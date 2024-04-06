@@ -34,22 +34,20 @@ public class ProjectileImpactEvent extends EntityEvents {
 		return projectile;
 	}
 
+	/**
+	 * This method only exists in lex forge and are here for compatibility
+	 */
+	@Deprecated()
 	public void setImpactResult(ImpactResult result) {
 		this.result = Objects.requireNonNull(result);
 	}
 
+	/**
+	 * This method only exists in lex forge and are here for compatibility
+	 */
+	@Deprecated()
 	public ImpactResult getImpactResult() {
 		return this.isCanceled() ? ImpactResult.SKIP_ENTITY : result;
-	}
-
-	/**
-	 * This event will no longer be directly cancellable in the future.
-	 * Instead, use {@link #setImpactResult(ImpactResult)}.
-	 */
-	@Deprecated(forRemoval = true)
-	@Override
-	public void setCanceled(boolean cancelled) {
-		super.setCanceled(cancelled);
 	}
 
 	@Override
