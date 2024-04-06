@@ -35,7 +35,7 @@ public class ProjectileImpactEvent extends EntityEvents {
 	}
 
 	/**
-	 * This method only exists in lex forge and are here for compatibility
+	 * This method only exists in lex forge and is here for compatibility
 	 */
 	@Deprecated()
 	public void setImpactResult(ImpactResult result) {
@@ -43,7 +43,7 @@ public class ProjectileImpactEvent extends EntityEvents {
 	}
 
 	/**
-	 * This method only exists in lex forge and are here for compatibility
+	 * This method only exists in lex forge and is here for compatibility
 	 */
 	@Deprecated()
 	public ImpactResult getImpactResult() {
