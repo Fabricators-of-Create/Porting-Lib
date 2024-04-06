@@ -18,11 +18,11 @@ Provider<String> branchProvider = providers.exec {
 }
 
 String versionNumber = providers.provider {
+	String version = mod_version // 2.3.1
 	if (System.getenv("SNAPSHOT") == "true") {
-		return System.getenv("GITHUB_RUN_NUMBER")
-	} else {
-		return mod_version + "+" + branchProvider.get()
+		version += "-beta." + System.getenv("GITHUB_RUN_NUMBER") // 2.3.1-beta.1000
 	}
+	return version + "+" + branchProvider.get() // 2.3.1-beta.1000+1.20.1
 }.get()
 
 dependencies {
