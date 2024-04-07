@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_gui_utils",
+  "version": "${version}",
+  "name": "Porting Lib Gui Utils",
+  "description": "Adds additional utility classes and methods for screens and guis."
+}

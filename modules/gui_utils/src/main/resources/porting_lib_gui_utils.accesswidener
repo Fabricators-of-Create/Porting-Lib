@@ -1,0 +1,9 @@
+accessWidener v2 named
+accessible field net/minecraft/client/gui/components/Button$Builder message Lnet/minecraft/network/chat/Component;
+accessible field net/minecraft/client/gui/components/Button$Builder onPress Lnet/minecraft/client/gui/components/Button$OnPress;
+accessible field net/minecraft/client/gui/components/Button$Builder tooltip Lnet/minecraft/client/gui/components/Tooltip;
+accessible field net/minecraft/client/gui/components/Button$Builder x I
+accessible field net/minecraft/client/gui/components/Button$Builder y I
+accessible field net/minecraft/client/gui/components/Button$Builder width I
+accessible field net/minecraft/client/gui/components/Button$Builder height I
+accessible field net/minecraft/client/gui/components/Button$Builder createNarration Lnet/minecraft/client/gui/components/Button$CreateNarration;

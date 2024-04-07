@@ -23,6 +23,7 @@ Just choose a version and use its version number.
 | `accessors`              | Accessor mixins aplenty                                                              |
 | `attributes`             | Additional Entity Attributes; step height, gravity, swim speed                       |
 | `base`                   | Code that has not yet been split into modules                                        |
+| `blocks`                 | Adds extra block extensions.                                                         |
 | `brewing`                | A potion recipe api                                                                  |
 | `client_events`          | Useful client-side events                                                            |
 | `common`                 | Miscellaneous utilities for other modules                                            |
@@ -34,6 +35,7 @@ Just choose a version and use its version number.
 | `extensions`             | Extensions to vanilla classes for additional functionality                           |
 | `fluids`                 | Api that provides additional fluid attributes for fluids                             |
 | `gametest`               | Tools to make GameTest creation as easy as possible                                  |
+| `gui_utils`              | Adds additional utility classes and methods for screens and guis                     |
 | `items`                  | Adds extra item extensions                                                           |
 | `lazy_registration`      | A implementation of forge's DeferredRegister system rewritten for fabric             |
 | `level_events`           | Provides common level events for mods.                                               |
