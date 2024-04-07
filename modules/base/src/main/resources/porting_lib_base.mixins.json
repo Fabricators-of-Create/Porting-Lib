@@ -11,6 +11,7 @@
     "common.BambooStalkBlockMixin",
     "common.BaseRailBlockMixin",
     "common.BeaconBlockEntityMixin",
+    "common.BeardifierMixin",
     "common.BlockBehavior$PropertiesMixin",
     "common.BlockBehaviour$BlockStateBaseMixin",
     "common.BlockEntityMixin",
@@ -110,7 +111,6 @@
     "client.ClientLevelMixin",
     "client.ClientPacketListenerMixin",
     "client.EntityRenderDispatcherMixin",
-    "client.frex.EntityBlockRenderContextMixin",
     "client.FogRendererMixin",
     "client.GameRendererMixin",
     "client.GuiGraphicsMixin",
@@ -136,7 +136,8 @@
     "client.PostChainMixin",
     "client.RenderTargetMixin",
     "client.SkullBlockRendererMixin",
-    "client.TextureAtlasMixin"
+    "client.TextureAtlasMixin",
+    "client.frex.EntityBlockRenderContextMixin"
   ],
   "injectors": {
     "defaultRequire": 1,
