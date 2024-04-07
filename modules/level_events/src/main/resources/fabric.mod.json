@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_level_events",
+  "version": "${version}",
+  "name": "Porting Lib Level Events",
+  "description": "Provides common level events for mods."
+}
