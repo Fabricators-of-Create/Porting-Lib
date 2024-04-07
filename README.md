@@ -36,6 +36,7 @@ Just choose a version and use its version number.
 | `gametest`               | Tools to make GameTest creation as easy as possible                                  |
 | `items`                  | Adds extra item extensions                                                           |
 | `lazy_registration`      | A implementation of forge's DeferredRegister system rewritten for fabric             |
+| `level_events`           | Provides common level events for mods.                                               |
 | `loot`                   | A small library to modify mob loot                                                   |
 | `mixin_extensions`       | More features for Mixins                                                             |
 | `model_builders`         | Additional model builders for data generation                                        |
