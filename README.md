@@ -4,9 +4,8 @@
 ## Use
 Porting Lib is split into modules. All modules are available on this maven:
 ```groovy
-maven { url = "https://mvn.devos.one/<type>/" }
+maven { url = "https://mvn.devos.one/releases/" }
 ```
-Where `<type>` is either `releases` or `snapshots`.
 
 You can depend on Porting Lib like this once you add the maven:
 ```groovy
