@@ -1,1 +1,0 @@
-- fixed releases being published to the snapshot maven
