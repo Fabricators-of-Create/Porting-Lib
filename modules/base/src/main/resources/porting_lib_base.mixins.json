@@ -141,7 +141,7 @@
     "client.frex.EntityBlockRenderContextMixin"
   ],
   "injectors": {
-    "defaultRequire": 1,
+    "defaultRequire": 4,
     "maxShiftBy": 5
   }
 }
