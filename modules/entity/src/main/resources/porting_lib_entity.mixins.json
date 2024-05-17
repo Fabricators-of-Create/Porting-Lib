@@ -50,7 +50,8 @@
     "common.TransientEntitySectionManager$CallbackMixin"
   ],
   "injectors": {
-    "defaultRequire": 1
+    "defaultRequire": 1,
+    "maxShiftBy": 5
   },
   "client": [
     "client.ClientLevel$EntityCallbacksMixin",
