@@ -7,6 +7,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "client.BoatRendererMixin",
+    "client.CreateWorldScreenMixin",
     "common.AbstractMinecartMixin",
     "common.AnvilMenuMixin",
     "common.BambooStalkBlockMixin",
@@ -82,6 +83,7 @@
     "common.SculkShriekerBlockMixin",
     "common.SeagrassBlockMixin",
     "common.ServerLevelMixin",
+    "common.ServerPacksSourceMixin",
     "common.ServerPlayerGameModeMixin",
     "common.ShapedRecipeMixin",
     "common.ShapelessRecipe$SerializerMixin",

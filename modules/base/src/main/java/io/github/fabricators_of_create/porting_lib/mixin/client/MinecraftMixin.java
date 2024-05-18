@@ -3,13 +3,17 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomHitEffectsBlock;
+import io.github.fabricators_of_create.porting_lib.event.common.AddPackFindersEvent;
 import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.world.item.ItemStack;
 
 import net.minecraft.world.level.block.state.BlockState;
 
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -56,6 +60,10 @@ public abstract class MinecraftMixin {
 	@Nullable
 	public HitResult hitResult;
 
+	@Shadow
+	@Final
+	private PackRepository resourcePackRepository;
+
 	@Inject(
 			method = "<init>",
 			at = @At(
@@ -77,6 +85,11 @@ public abstract class MinecraftMixin {
 	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Ljava/lang/Thread;currentThread()Ljava/lang/Thread;"))
 	public void port_lib$modsLoaded(GameConfig gameConfig, CallbackInfo ci) {
 		ModsLoadedCallback.EVENT.invoker().onAllModsLoaded(EnvType.CLIENT);
+	}
+
+	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;reload()V"))
+	private void addClientResources(GameConfig gameConfig, CallbackInfo ci) {
+		new AddPackFindersEvent(PackType.CLIENT_RESOURCES, this.resourcePackRepository::pl$addPackFinder).sendEvent();
 	}
 
 	@Inject(method = "setLevel", at = @At("HEAD"))
