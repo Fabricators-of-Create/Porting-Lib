@@ -64,20 +64,6 @@ public abstract class GuiGraphicsMixin {
 		port_lib$cachedStack = ItemStack.EMPTY;
 	}
 
-	@ModifyArgs(method = "renderTooltip(Lnet/minecraft/client/gui/Font;Ljava/util/List;Ljava/util/Optional;II)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;renderTooltipInternal(Lnet/minecraft/client/gui/Font;Ljava/util/List;IILnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipPositioner;)V"))
-	private void port_lib$wrapTooltip(Args args, Font font, List<Component> lines, Optional<TooltipComponent> data, int x, int y) {
-		if (ClientHooks.MODS_TO_WRAP.contains(BuiltInRegistries.ITEM.getKey(port_lib$cachedStack.getItem()).getNamespace())) {
-			args.set(1, ClientHooks.gatherTooltipComponents(port_lib$cachedStack, lines, data, x, guiWidth(), guiHeight(), font));
-		}
-	}
-
-	@ModifyArgs(method = "renderComponentTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;renderTooltip(Lnet/minecraft/client/gui/Font;Ljava/util/List;II)V"))
-	private void port_lib$wrapTooltipComponent(Args args, Font font, List<Component> lines, int x, int y) {
-		if (ClientHooks.MODS_TO_WRAP.contains(BuiltInRegistries.ITEM.getKey(port_lib$cachedStack.getItem()).getNamespace())) {
-			args.set(1, ClientHooks.gatherTooltipComponents(port_lib$cachedStack, lines, Optional.empty(), x, guiWidth(), guiHeight(), font));
-		}
-	}
-
 	@Inject(method = "renderTooltipInternal", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack$Pose;pose()Lorg/joml/Matrix4f;"))
 	private void port_lib$cacheBorderColors(Font font, List<ClientTooltipComponent> list, int i, int j, ClientTooltipPositioner clientTooltipPositioner, CallbackInfo ci) {
 		ScreenHelper.CURRENT_COLOR = RenderTooltipBorderColorCallback.EVENT.invoker()
