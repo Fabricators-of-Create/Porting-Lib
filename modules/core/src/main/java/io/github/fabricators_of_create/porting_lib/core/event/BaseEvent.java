@@ -46,4 +46,9 @@ public abstract class BaseEvent {
 	}
 
 	public abstract void sendEvent();
+
+	public boolean post() {
+		sendEvent();
+		return isCanceled();
+	}
 }

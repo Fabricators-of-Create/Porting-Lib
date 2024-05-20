@@ -43,6 +43,7 @@
     "common.ServerPlayerMixin",
     "common.ShulkerBulletMixin",
     "common.SlimeMixin",
+    "common.SpiderMixin",
     "common.SpreadPlayersCommandMixin",
     "common.TeleportCommandMixin",
     "common.ThrowableProjectileMixin",

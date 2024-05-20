@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.event.common;
 
 import javax.annotation.Nullable;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.living.MobEffectEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.InteractionResult;
@@ -9,6 +10,10 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
+/**
+ * Use {@link MobEffectEvent}
+ */
+@Deprecated(forRemoval = true)
 public class PotionEvents {
 	public static Event<PotionAdded> POTION_ADDED = EventFactory.createArrayBacked(PotionAdded.class, callbacks -> (entity, newEffect, oldEffect, source) -> {
 		for (PotionAdded e : callbacks)

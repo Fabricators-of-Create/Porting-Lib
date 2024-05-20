@@ -2,14 +2,17 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
+import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.LivingAttackEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.ShieldBlockEvent;
 
@@ -17,7 +20,13 @@ import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingDa
 
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingHurtEvent;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.living.MobEffectEvent;
+import net.minecraft.world.effect.MobEffect;
+
+import net.minecraft.world.effect.MobEffectInstance;
+
 import org.jetbrains.annotations.Nullable;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -252,5 +261,42 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 		if (event.isCanceled())
 			return 0;
 		return event.getAmount();
+	}
+
+	@Inject(method = "removeEffect", at = @At("HEAD"), cancellable = true)
+	private void onRemoveEffect(MobEffect effect, CallbackInfoReturnable<Boolean> cir) {
+		var event = new MobEffectEvent.Remove((LivingEntity) (Object) this, effect);
+		event.sendEvent();
+		if (event.isCanceled()) cir.setReturnValue(false);
+	}
+
+	@WrapWithCondition(method = "removeAllEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;onEffectRemoved(Lnet/minecraft/world/effect/MobEffectInstance;)V"))
+	private boolean onRemoveAllEffectEvent(LivingEntity instance, MobEffectInstance effect, @Share("event") LocalRef<MobEffectEvent.Remove> eventRef) {
+		var event = new MobEffectEvent.Remove(instance, effect);
+		eventRef.set(event);
+		event.sendEvent();
+		return !event.isCanceled();
+	}
+
+	@WrapWithCondition(method = "removeAllEffects", at = @At(value = "INVOKE", target = "Ljava/util/Iterator;remove()V"))
+	private boolean skipRemove(Iterator<MobEffectInstance> iterator,  @Share("event") LocalRef<MobEffectEvent.Remove> eventRef) {
+		return !eventRef.get().isCanceled();
+	}
+
+	@Inject(method = "canBeAffected", at = @At("HEAD"), cancellable = true)
+	private void isEffectApplicable(MobEffectInstance effectInstance, CallbackInfoReturnable<Boolean> cir) {
+		MobEffectEvent.Applicable event = new MobEffectEvent.Applicable((LivingEntity) (Object) this, effectInstance);
+		event.sendEvent();
+		if (event.getResult() != BaseEvent.Result.DEFAULT) cir.setReturnValue(event.getResult() == BaseEvent.Result.ALLOW);
+	}
+
+	@Inject(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", at = @At(value = "JUMP", opcode = Opcodes.IFNONNULL))
+	private void onEffectAdded(MobEffectInstance newEffect, Entity entity, CallbackInfoReturnable<Boolean> cir, @Local(index = 3) MobEffectInstance oldEffect) {
+		new MobEffectEvent.Added((LivingEntity) (Object) this, oldEffect, newEffect, entity).sendEvent();
+	}
+
+	@ModifyExpressionValue(method = "tickEffects", at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/Level;isClientSide:Z", ordinal = 0))
+	private boolean onEffectExpired(boolean original, @Local(index = 3) MobEffectInstance effect) {
+		return !(!original && !new MobEffectEvent.Expired((LivingEntity) (Object) this, effect).post());
 	}
 }
