@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_fluids_testmod",
+  "version": "${version}",
+  "name": "Porting Lib Fluids Testmod",
+  "description": "Tests the fluids module",
+  "authors": [
+    "The Create Fabric Team"
+  ],
+  "license": "LGPL",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.fluids.testmod.PortingLibFluidsTestmod"
+    ]
+  }
+}
