@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "priority": 951,
+  "package": "io.github.fabricators_of_create.porting_lib.chunk.loading.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "DistanceManagerMixin",
+    "ForcedChunksSavedDataMixin",
+    "MinecraftServerMixin",
+    "ServerChunkCacheMixin",
+    "ServerLevelMixin",
+    "TicketMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1,
+    "maxShiftBy": 5
+  }
+}

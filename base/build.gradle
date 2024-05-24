@@ -10,7 +10,8 @@ moduleDependencies(project, [
 		"common",
 		"models",
 		"loot",
-		"tags"
+		"tags",
+		"chunk_loading"
 ])
 
 mixinExtras(dependencies)
