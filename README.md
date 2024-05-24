@@ -22,6 +22,7 @@ The latest patch can be found from GitHub Actions as the build number.
 | `base`              | Code that has not yet been split into modules                                         |
 | `common`            | Miscellaneous utilities for other modules                                             |
 | `constants`         | Internal constants used by Porting Lib                                                |
+| `chunk_loading`     | Custom chunk loading api                                                              |
 | `entity`            | Multipart entities, extra spawn data, removal listening                               |
 | `extensions`        | Extensions to vanilla classes for additional functionality                            |
 | `fake_players`      | A basic fake server player implementation that can be used to simulate player actions |
