@@ -33,17 +33,21 @@ public class MergingFluidAttributeFluidType extends FluidType {
 	private final FluidVariantAttributeHandler handler;
 	private final FluidType superType;
 	public MergingFluidAttributeFluidType(FluidType superType, FluidVariant variant, FluidVariantAttributeHandler handler) {
-		super(Properties.create()
-				.viscosity(handler.getViscosity(variant, null))
-				.temperature(handler.getTemperature(variant))
-				.lightLevel(handler.getLuminance(variant))
-				.sound(SoundActions.BUCKET_FILL, handler.getFillSound(variant).get())
-				.sound(SoundActions.BUCKET_EMPTY, handler.getEmptySound(variant).get())
-				.density(handler.isLighterThanAir(variant) ? -1 : 1)
-		);
+		super(createProperties(variant, handler));
 		this.variant = variant;
 		this.handler = handler;
 		this.superType = superType;
+	}
+
+	public static Properties createProperties(FluidVariant variant, FluidVariantAttributeHandler handler) {
+		Properties properties = Properties.create()
+				.viscosity(handler.getViscosity(variant, null))
+				.temperature(handler.getTemperature(variant))
+				.lightLevel(handler.getLuminance(variant))
+				.density(handler.isLighterThanAir(variant) ? -1 : 1);
+		handler.getFillSound(variant).ifPresent(soundEvent -> properties.sound(SoundActions.BUCKET_FILL, soundEvent));
+		handler.getEmptySound(variant).ifPresent(soundEvent -> properties.sound(SoundActions.BUCKET_EMPTY, soundEvent));
+		return properties;
 	}
 
 	@Override

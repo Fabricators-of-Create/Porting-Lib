@@ -19,18 +19,14 @@ public class FluidMixin implements FluidExtension {
 	@Override
 	public FluidType getFluidType() {
 		var fluid = (Fluid) (Object) this;
-		var handler = FluidVariantAttributes.getHandler(fluid);
-		if (portingLibFluidType == null && handler == null) {
+		if (portingLibFluidType == null) {
 			if (fluid == Fluids.EMPTY)
-				portingLibFluidType = new MergingFluidAttributeFluidType(PortingLibFluids.EMPTY_TYPE, FluidVariant.of(fluid), handler);
+				portingLibFluidType = PortingLibFluids.EMPTY_TYPE;
 			if (fluid == Fluids.WATER || fluid == Fluids.FLOWING_WATER)
-				portingLibFluidType = new MergingFluidAttributeFluidType(PortingLibFluids.WATER_TYPE, FluidVariant.of(fluid), handler);
+				portingLibFluidType = PortingLibFluids.WATER_TYPE;//new MergingFluidAttributeFluidType(PortingLibFluids.WATER_TYPE, FluidVariant.of(fluid), FluidVariantAttributes.getHandler(Fluids.WATER));
 			if (fluid == Fluids.LAVA || fluid == Fluids.FLOWING_LAVA)
-				return new MergingFluidAttributeFluidType(PortingLibFluids.LAVA_TYPE, FluidVariant.of(fluid), handler);
-			portingLibFluidType = new FluidAttributeFluidType(FluidVariant.of(fluid), handler);
+				portingLibFluidType = PortingLibFluids.LAVA_TYPE;//new MergingFluidAttributeFluidType(PortingLibFluids.LAVA_TYPE, FluidVariant.of(fluid), FluidVariantAttributes.getHandler(Fluids.LAVA));
 		}
-		if (portingLibFluidType == null)
-			throw new RuntimeException("Mod fluids must override getFluidType.");
 		return this.portingLibFluidType;
 	}
 }

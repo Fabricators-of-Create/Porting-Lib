@@ -6,6 +6,10 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.server.packs.repository.RepositorySource;
 
+/**
+ * Use {@link AddPackFindersEvent}
+ */
+@Deprecated(forRemoval = true)
 public interface AddPackFindersCallback {
 	Event<AddPackFindersCallback> EVENT = EventFactory.createArrayBacked(AddPackFindersCallback.class, callbacks -> (sources) -> {
 		for (AddPackFindersCallback e : callbacks) {

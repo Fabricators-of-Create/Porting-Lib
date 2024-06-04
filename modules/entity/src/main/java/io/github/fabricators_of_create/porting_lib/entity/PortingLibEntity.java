@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.entity;
 
 import com.mojang.logging.LogUtils;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.LivingAttackEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.LivingEntityEvents;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 
@@ -45,6 +47,22 @@ public class PortingLibEntity implements ModInitializer {
 					}
 				}
 			}
+		});
+		ServerEntityEvents.EQUIPMENT_CHANGE.register((livingEntity, equipmentSlot, previousStack, currentStack) -> {
+			LivingEntityEvents.EQUIPMENT_CHANGE.invoker().onEquipmentChange(livingEntity, equipmentSlot, previousStack, currentStack);
+		});
+		LivingEntityEvents.LivingJumpEvent.JUMP.register(event -> {
+			LivingEntityEvents.JUMP.invoker().onLivingEntityJump(event.getEntity());
+		});
+		LivingEntityEvents.LivingVisibilityEvent.VISIBILITY.register(event -> {
+			LivingEntityEvents.VISIBILITY.invoker().getEntityVisibilityMultiplier(event.getEntity(), event.getLookingEntity(), event.getVisibilityModifier());
+		});
+		LivingEntityEvents.LivingTickEvent.TICK.register(event -> {
+			if (!event.isCanceled())
+				LivingEntityEvents.TICK.invoker().onLivingEntityTick(event.getEntity());
+		});
+		LivingAttackEvent.ATTACK.register(event -> {
+			LivingEntityEvents.ATTACK.invoker().onAttack(event.getEntity(), event.getSource(), event.getAmount());
 		});
 	}
 

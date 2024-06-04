@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_blocks",
+  "version": "${version}",
+  "name": "Porting Lib Blocks",
+  "description": "Adds extra block extensions."
+}

@@ -5,8 +5,10 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "common.AbstractArrowMixin",
+    "common.AbstractHorseMixin",
     "common.AbstractHurtingProjectileMixin",
     "common.AbstractMinecartMixin",
+    "common.BlockableEventLoopAccessor",
     "common.BlockBehaviourMixin",
     "common.BundlePacketMixin",
     "common.CatSpawnerMixin",
@@ -22,6 +24,7 @@
     "common.LightningBoltMixin",
     "common.LivingEntityMixin",
     "common.LlamaSpitMixin",
+    "common.MagmaCubeMixin",
     "common.MobEffectMixin",
     "common.MobMixin",
     "common.NaturalSpawnerMixin",
@@ -31,6 +34,7 @@
     "common.PhantomSpawnerMixin",
     "common.PlayerListMixin",
     "common.PlayerMixin",
+    "common.PortalForcerMixin",
     "common.ProjectileMixin",
     "common.ProjectileUtilMixin",
     "common.ServerEntityMixin",
@@ -39,6 +43,7 @@
     "common.ServerPlayerMixin",
     "common.ShulkerBulletMixin",
     "common.SlimeMixin",
+    "common.SpiderMixin",
     "common.SpreadPlayersCommandMixin",
     "common.TeleportCommandMixin",
     "common.ThrowableProjectileMixin",
@@ -46,7 +51,8 @@
     "common.TransientEntitySectionManager$CallbackMixin"
   ],
   "injectors": {
-    "defaultRequire": 1
+    "defaultRequire": 1,
+    "maxShiftBy": 5
   },
   "client": [
     "client.ClientLevel$EntityCallbacksMixin",

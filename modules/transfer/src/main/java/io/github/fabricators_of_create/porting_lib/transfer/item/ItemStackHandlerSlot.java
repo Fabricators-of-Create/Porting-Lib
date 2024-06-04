@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.base.SingleStackStorage;
 
@@ -69,7 +70,7 @@ public class ItemStackHandlerSlot extends SingleStackStorage {
 
 	protected void onStackChange() {
 		handler.onStackChange(this, lastStack, stack);
-		this.lastStack = stack.copy();
+		this.lastStack = PortingLib.DEBUG ? stack : stack.copy();
 	}
 
 	protected void notifyHandlerOfChange() {

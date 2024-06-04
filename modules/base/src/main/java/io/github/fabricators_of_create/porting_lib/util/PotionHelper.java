@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.util;
 
 import java.util.Iterator;
 
+import io.github.fabricators_of_create.porting_lib.entity.events.living.MobEffectEvent;
 import io.github.fabricators_of_create.porting_lib.mixin.accessors.common.accessor.LivingEntityAccessor;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,7 +20,7 @@ public class PotionHelper {
 		Iterator<MobEffectInstance> itr = livingEntity.getActiveEffects().iterator();
 		while (itr.hasNext()) {
 			MobEffectInstance effect = itr.next();
-			if (effect.isCurativeItem(curativeItem) /*&& !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionRemoveEvent(this, effect))*/) {
+			if (effect.isCurativeItem(curativeItem) && !new MobEffectEvent.Remove(livingEntity, effect).post()) {
 				((LivingEntityAccessor)livingEntity).port_lib$onEffectRemoved(effect);
 				itr.remove();
 				ret = true;

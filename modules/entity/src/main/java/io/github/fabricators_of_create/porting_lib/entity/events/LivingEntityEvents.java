@@ -14,12 +14,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.MagmaCube;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.LevelAccessor;
 
-public class LivingEntityEvents {
+// TODO: Rename to LivingEvent in 1.20.4 to avoid confusing modders
+public abstract class LivingEntityEvents extends EntityEvents {
 	public static final Event<ExperienceDrop> EXPERIENCE_DROP = EventFactory.createArrayBacked(ExperienceDrop.class, callbacks -> (i, attackingPlayer, entity) -> {
 		for (ExperienceDrop callback : callbacks) {
 			return callback.onLivingEntityExperienceDrop(i, attackingPlayer, entity);
@@ -47,7 +49,7 @@ public class LivingEntityEvents {
 	});
 
 	public static final Event<Fall> FALL = EventFactory.createArrayBacked(Fall.class, callbacks -> (info) -> {
-		for(Fall e : callbacks) {
+		for (Fall e : callbacks) {
 			e.onFall(info);
 			if (info.isCanceled()) {
 				return;
@@ -66,12 +68,14 @@ public class LivingEntityEvents {
 		return level;
 	});
 
+	@Deprecated(forRemoval = true)
 	public static final Event<Tick> TICK = EventFactory.createArrayBacked(Tick.class, callbacks -> (entity) -> {
 		for (Tick callback : callbacks) {
 			callback.onLivingEntityTick(entity);
 		}
 	});
 
+	@Deprecated(forRemoval = true)
 	public static final Event<ActuallyHurt> HURT = EventFactory.createArrayBacked(ActuallyHurt.class, callbacks -> (source, damaged, amount) -> {
 		for (ActuallyHurt callback : callbacks) {
 			float newAmount = callback.onHurt(source, damaged, amount);
@@ -80,7 +84,10 @@ public class LivingEntityEvents {
 		return amount;
 	});
 
-	// TOOD: Fully implement with asm
+	/**
+	 * Modders should individually mixin into the entity spawns they want to change
+	 */
+	@Deprecated(forRemoval = true)
 	public static final Event<CheckSpawn> CHECK_SPAWN = EventFactory.createArrayBacked(CheckSpawn.class, callbacks -> ((entity, world, x, y, z, spawner, spawnReason) -> {
 		for (CheckSpawn callback : callbacks)
 			if (!callback.onCheckSpawn(entity, world, x, y, z, spawner, spawnReason))
@@ -88,12 +95,14 @@ public class LivingEntityEvents {
 		return false;
 	}));
 
+	@Deprecated(forRemoval = true)
 	public static final Event<Jump> JUMP = EventFactory.createArrayBacked(Jump.class, callbacks -> (entity) -> {
 		for (Jump callback : callbacks) {
 			callback.onLivingEntityJump(entity);
 		}
 	});
 
+	@Deprecated(forRemoval = true)
 	public static final Event<Attack> ATTACK = EventFactory.createArrayBacked(Attack.class, callbacks -> (entity, source, amount) -> {
 		for (Attack callback : callbacks) {
 			if (callback.onAttack(entity, source, amount)) {
@@ -103,11 +112,16 @@ public class LivingEntityEvents {
 		return false;
 	});
 
+	/**
+	 * Use fabric apis event {@link net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents#EQUIPMENT_CHANGE}
+	 */
+	@Deprecated(forRemoval = true)
 	public static final Event<EquipmentChange> EQUIPMENT_CHANGE = EventFactory.createArrayBacked(EquipmentChange.class, callbacks -> ((entity, slot, from, to) -> {
 		for (EquipmentChange callback : callbacks)
 			callback.onEquipmentChange(entity, slot, from, to);
 	}));
 
+	@Deprecated(forRemoval = true)
 	public static final Event<Visibility> VISIBILITY = EventFactory.createArrayBacked(Visibility.class, callbacks -> (entity, lookingEntity, originalMultiplier) -> {
 		for (Visibility e : callbacks) {
 			double newMultiplier = e.getEntityVisibilityMultiplier(entity, lookingEntity, originalMultiplier);
@@ -116,6 +130,121 @@ public class LivingEntityEvents {
 		}
 		return originalMultiplier;
 	});
+
+	public static final Event<ChangeTarget> CHANGE_TARGET = EventFactory.createArrayBacked(ChangeTarget.class, callbacks -> (event) -> {
+		for (ChangeTarget e : callbacks) {
+			e.onChangeTarget(event);
+			if (event.isCanceled())
+				return;
+		}
+	});
+
+	private final LivingEntity livingEntity;
+
+	public LivingEntityEvents(LivingEntity entity) {
+		super(entity);
+		livingEntity = entity;
+	}
+
+	@Override
+	public LivingEntity getEntity() {
+		return livingEntity;
+	}
+
+	/**
+	 * LivingUpdateEvent is fired when a LivingEntity is ticked in {@link LivingEntity#tick()}. <br>
+	 * <br>
+	 * This event is cancelable.<br>
+	 * If this event is canceled, the Entity does not update.<br>
+	 * <br>
+	 * This event does not have a result.<br>
+	 * <br>
+	 **/
+	public static class LivingTickEvent extends LivingEntityEvents {
+		public static final Event<NewTick> TICK = EventFactory.createArrayBacked(NewTick.class, callbacks -> (event) -> {
+			for (NewTick callback : callbacks)
+				callback.onLivingTick(event);
+		});
+
+		public LivingTickEvent(LivingEntity e) {
+			super(e);
+		}
+
+		@Override
+		public void sendEvent() {
+			TICK.invoker().onLivingTick(this);
+		}
+	}
+
+	/**
+	 * LivingJumpEvent is fired when an Entity jumps.<br>
+	 * This event is fired whenever an Entity jumps in
+	 * {@link LivingEntity#jumpFromGround()}, {@link  MagmaCube#jumpFromGround()},
+	 * and {@code Horse#jumpFromGround()}.<br>
+	 * <br>
+	 * This event is not cancelable.<br>
+	 * <br>
+	 * This event does not have a result.}<br>
+	 * <br>
+	 **/
+	public static class LivingJumpEvent extends LivingEntityEvents {
+		public static final Event<NewJump> JUMP = EventFactory.createArrayBacked(NewJump.class, callbacks -> (event) -> {
+			for (NewJump callback : callbacks)
+				callback.onLivingEntityJump(event);
+		});
+
+		public LivingJumpEvent(LivingEntity e) {
+			super(e);
+		}
+
+		@Override
+		public void sendEvent() {
+			JUMP.invoker().onLivingEntityJump(this);
+		}
+	}
+
+	public static class LivingVisibilityEvent extends LivingEntityEvents {
+		public static final Event<NewVisibility> VISIBILITY = EventFactory.createArrayBacked(NewVisibility.class, callbacks -> event -> {
+			for (NewVisibility e : callbacks)
+				e.getEntityVisibilityMultiplier(event);
+		});
+		private double visibilityModifier;
+		@Nullable
+		private final Entity lookingEntity;
+
+		public LivingVisibilityEvent(LivingEntity livingEntity, @Nullable Entity lookingEntity, double originalMultiplier) {
+			super(livingEntity);
+			this.visibilityModifier = originalMultiplier;
+			this.lookingEntity = lookingEntity;
+		}
+
+		/**
+		 * @param mod Is multiplied with the current modifier
+		 */
+		public void modifyVisibility(double mod) {
+			visibilityModifier *= mod;
+		}
+
+		/**
+		 * @return The current modifier
+		 */
+		public double getVisibilityModifier() {
+			return visibilityModifier;
+		}
+
+		/**
+		 * @return The entity trying to see this LivingEntity, if available
+		 */
+		@Nullable
+		public Entity getLookingEntity() {
+			return lookingEntity;
+		}
+
+		@Override
+		public void sendEvent() {
+			VISIBILITY.invoker().getEntityVisibilityMultiplier(this);
+		}
+	}
 
 	@FunctionalInterface
 	public interface EquipmentChange {
@@ -162,11 +291,25 @@ public class LivingEntityEvents {
 				FALL.invoker().onFall(this);
 			}
 
-			public DamageSource getSource() { return source; }
-			public float getDistance() { return distance; }
-			public float getDamageMultiplier() { return damageMultiplier; }
-			public void setDamageMultiplier(float damageMultiplier) { this.damageMultiplier = damageMultiplier; }
-			public void setDistance(float distance) { this.distance = distance; }
+			public DamageSource getSource() {
+				return source;
+			}
+
+			public float getDistance() {
+				return distance;
+			}
+
+			public float getDamageMultiplier() {
+				return damageMultiplier;
+			}
+
+			public void setDamageMultiplier(float damageMultiplier) {
+				this.damageMultiplier = damageMultiplier;
+			}
+
+			public void setDistance(float distance) {
+				this.distance = distance;
+			}
 		}
 	}
 
@@ -201,7 +344,52 @@ public class LivingEntityEvents {
 	}
 
 	@FunctionalInterface
+	public interface NewTick {
+		void onLivingTick(LivingTickEvent event);
+	}
+
+	@FunctionalInterface
+	public interface NewJump {
+		void onLivingEntityJump(LivingJumpEvent event);
+	}
+
+	@FunctionalInterface
 	public interface Visibility {
 		double getEntityVisibilityMultiplier(LivingEntity entity, Entity lookingEntity, double originalMultiplier);
+	}
+
+	@FunctionalInterface
+	public interface NewVisibility {
+		void getEntityVisibilityMultiplier(LivingVisibilityEvent event);
+	}
+
+	@FunctionalInterface
+	public interface ChangeTarget {
+		void onChangeTarget(ChangeTargetEvent event);
+
+		final class ChangeTargetEvent extends EntityEvents {
+			private final LivingTargetType targetType;
+			private final LivingEntity originalTarget;
+			private LivingEntity newTarget;
+
+			public ChangeTargetEvent(LivingEntity entity, LivingEntity originalTarget, LivingTargetType targetType) {
+				super(entity);
+				this.originalTarget = originalTarget;
+				this.newTarget = originalTarget;
+				this.targetType = targetType;
+			}
+
+			@Override
+			public void sendEvent() {
+				CHANGE_TARGET.invoker().onChangeTarget(this);
+			}
+
+			public LivingEntity getNewTarget() { return newTarget; }
+			public void setNewTarget(LivingEntity newTarget) { this.newTarget = newTarget; }
+			public LivingTargetType getTargetType() { return targetType; }
+			public LivingEntity getOriginalTarget() { return originalTarget; }
+
+			public enum LivingTargetType { MOB_TARGET, BEHAVIOR_TARGET }
+		}
 	}
 }

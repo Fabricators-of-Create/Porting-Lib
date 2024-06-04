@@ -23,7 +23,7 @@ public class TripWireBlockMixin {
 	private boolean supportsToolAction(boolean original, Level world, BlockPos pos, BlockState state, Player player) {
 		ItemStack stack = player.getMainHandItem();
 		if (stack.getItem() instanceof ToolActionItem toolActionItem)
-			return toolActionItem.canPerformAction(stack, ToolActions.SHEARS_CARVE);
+			return toolActionItem.canPerformAction(stack, ToolActions.SHEARS_DISARM);
 		return original;
 	}
 }

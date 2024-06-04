@@ -30,7 +30,7 @@ public abstract class GuiMixin {
 	private Minecraft minecraft;
 
 	@Unique
-	public float partialTicks;
+	private float partialTicks;
 
 	@Inject(method = "render", at = @At("HEAD"))
 	public void render(GuiGraphics matrixStack, float f, CallbackInfo ci) {

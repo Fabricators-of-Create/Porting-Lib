@@ -20,6 +20,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
+// TODO: Re-evaluate how to make this work
+@Deprecated(forRemoval = true)
 public interface BlockExtensions {
 	/**
 	 * Returns the state that this block should transform into when right-clicked by a tool.

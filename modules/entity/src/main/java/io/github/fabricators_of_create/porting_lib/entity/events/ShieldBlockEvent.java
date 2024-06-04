@@ -14,7 +14,6 @@ import net.minecraft.world.entity.LivingEntity;
  * at least for players.
  */
 public class ShieldBlockEvent extends EntityEvents {
-	// TODO: This hooks is not implemented yet.. it requires asm
 	public static Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
 		for (Callback e : callbacks)
 			e.onShieldBlock(event);

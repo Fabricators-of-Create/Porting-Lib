@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_gui_utils",
+  "version": "${version}",
+  "name": "Porting Lib Gui Utils",
+  "description": "Adds additional utility classes and methods for screens and guis.",
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_332": [
+        "io/github/fabricators_of_create/porting_lib/gui/extensions/GuiGraphicsExtension"
+      ]
+    }
+  }
+}

@@ -15,6 +15,8 @@
   "environment": "*",
   "depends": {
     "fabricloader": ">=${loader_version}",
+    "fabric": ">=${fabric_version}",
+    "minecraft": "${minecraft_dependency}",
     "java": ">=${java_version}"
   },
   "custom": {

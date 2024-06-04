@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 @SuppressWarnings("CanBeRecord")
 public final class RegistryObject<T> implements Supplier<T> {
 
+	private Supplier<? extends T> getter;
 	private final ResourceLocation id;
 	private T value;
 	@Nullable
@@ -50,13 +51,19 @@ public final class RegistryObject<T> implements Supplier<T> {
 		this.value = value;
 	}
 
+	void setGetter(Supplier<? extends T> getter) {
+		this.getter = getter;
+	}
+
 	public ResourceLocation getId() {
 		return id;
 	}
 
 	@Override
 	public T get() {
-		return Objects.requireNonNull(this.value, () -> "Registry Object not present: " + this.id);
+		if (this.value == null)
+			this.value = getter.get();
+		return this.value;
 	}
 
 	@Nullable

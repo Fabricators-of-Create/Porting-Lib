@@ -7,7 +7,7 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class PlayerEvents extends EntityEvents {
+public abstract class PlayerEvents extends LivingEntityEvents {
 
 	public static final Event<PlayerBreakSpeed> BREAK_SPEED = EventFactory.createArrayBacked(PlayerBreakSpeed.class, callbacks -> event -> {
 		for(PlayerBreakSpeed e : callbacks)
@@ -97,7 +97,7 @@ public abstract class PlayerEvents extends EntityEvents {
 	/**
 	 * BreakSpeed is fired when a player attempts to harvest a block.<br>
 	 * This event is fired whenever a player attempts to harvest a block in
-	 * {@link Player#getDestroySpeed(BlockState)}.<br>
+	 * {@link Player#getDigSpeed(BlockState, BlockPos)}.<br>
 	 * <br>
 	 * {@link #state} contains the block being broken. <br>
 	 * {@link #originalSpeed} contains the original speed at which the player broke the block. <br>

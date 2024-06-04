@@ -1,22 +1,32 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.LivingEntityEvents;
-import io.github.fabricators_of_create.porting_lib.entity.events.LivingEntityEvents.Fall.FallEvent;
-import io.github.fabricators_of_create.porting_lib.entity.events.LivingEntityUseItemEvents;
-import io.github.fabricators_of_create.porting_lib.entity.extensions.EntityExtensions;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
-import net.minecraft.world.entity.item.ItemEntity;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.Share;
+
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+
+import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.LivingAttackEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.ShieldBlockEvent;
+
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingDamageEvent;
+
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingHurtEvent;
+
+import io.github.fabricators_of_create.porting_lib.entity.events.living.MobEffectEvent;
+import net.minecraft.world.effect.MobEffect;
+
+import net.minecraft.world.effect.MobEffectInstance;
 
 import org.jetbrains.annotations.Nullable;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -29,8 +39,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
+import io.github.fabricators_of_create.porting_lib.entity.events.LivingDeathEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.LivingEntityEvents;
+import io.github.fabricators_of_create.porting_lib.entity.events.LivingEntityEvents.Fall.FallEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.LivingEntityUseItemEvents;
+import io.github.fabricators_of_create.porting_lib.entity.extensions.EntityExtensions;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements EntityExtensions {
@@ -129,9 +153,12 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 		if (amount != newAmount) args.set(2, newAmount);
 	}
 
-	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"))
-	private void port_lib$tick(CallbackInfo ci) {
-		LivingEntityEvents.TICK.invoker().onLivingEntityTick((LivingEntity) (Object) this);
+	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"), cancellable = true)
+	private void tick(CallbackInfo ci) {
+		LivingEntityEvents.LivingTickEvent event = new LivingEntityEvents.LivingTickEvent((LivingEntity) (Object) this);
+		event.sendEvent();
+		if (event.isCanceled())
+			ci.cancel();
 	}
 
 	@ModifyVariable(method = "knockback", at = @At("STORE"), ordinal = 0, argsOnly = true)
@@ -148,8 +175,8 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 	}
 
 	@Inject(method = "jumpFromGround", at = @At("TAIL"))
-	public void port_lib$onJump(CallbackInfo ci) {
-		LivingEntityEvents.JUMP.invoker().onLivingEntityJump((LivingEntity) (Object) this);
+	public void onJump(CallbackInfo ci) {
+		new LivingEntityEvents.LivingJumpEvent((LivingEntity) (Object) this).sendEvent();
 	}
 
 	@Inject(method = "completeUsingItem", at = @At(value = "INVOKE", shift = At.Shift.BY, by = 2, target = "Lnet/minecraft/world/item/ItemStack;finishUsingItem(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/item/ItemStack;"),
@@ -160,6 +187,116 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 
 	@Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
 	public void port_lib$attackEvent(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-		if(LivingEntityEvents.ATTACK.invoker().onAttack((LivingEntity) (Object) this, source, amount)) cir.setReturnValue(false);
+		if (!((Object) this instanceof Player)) {
+			LivingAttackEvent event = new LivingAttackEvent((LivingEntity) (Object) this, source, amount);
+			event.sendEvent();
+			if (event.isCanceled())
+				cir.setReturnValue(false);
+		}
+	}
+
+	@ModifyReturnValue(method = "getVisibilityPercent", at = @At("RETURN"))
+	private double modifyVisibility(double original, @javax.annotation.Nullable Entity pLookingEntity) {
+		LivingEntityEvents.LivingVisibilityEvent event = new LivingEntityEvents.LivingVisibilityEvent((LivingEntity) (Object) this, pLookingEntity, original);
+		event.sendEvent();
+		return Math.max(0, event.getVisibilityModifier());
+	}
+
+	@Inject(method = "die", at = @At("HEAD"), cancellable = true)
+	private void onLivingDeath(DamageSource cause, CallbackInfo ci) {
+		LivingDeathEvent event = new LivingDeathEvent((LivingEntity) (Object) this, cause);
+		event.sendEvent();
+		if (event.isCanceled())
+			ci.cancel();
+	}
+
+	@ModifyExpressionValue(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isDamageSourceBlocked(Lnet/minecraft/world/damagesource/DamageSource;)Z"))
+	private boolean shieldBlockEvent(boolean original, DamageSource pSource, float pAmount, @Share("shield_block") LocalRef<ShieldBlockEvent> eventRef) {
+		if (original) {
+			ShieldBlockEvent event = new ShieldBlockEvent((LivingEntity) (Object) this, pSource, pAmount);
+			event.sendEvent();
+			eventRef.set(event);
+			return !event.isCanceled();
+		}
+		return original;
+	}
+
+	@WrapWithCondition(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;hurtCurrentlyUsedShield(F)V"))
+	private boolean shieldTakesDamage(LivingEntity entity, float damage, @Share("shield_block") LocalRef<ShieldBlockEvent> eventRef) {
+		return eventRef.get().shieldTakesDamage();
+	}
+
+	@ModifyVariable(method = "hurt", at = @At(value = "STORE", ordinal = 1), index = 5)
+	private float modifyBlockedDamage(float value, @Share("shield_block") LocalRef<ShieldBlockEvent> eventRef) {
+		return eventRef.get().getBlockedDamage();
+	}
+
+	@ModifyExpressionValue(method = "hurt", at = @At(value = "CONSTANT", args = {
+			"floatValue=0"
+	}, ordinal = 2))
+	private float modifyActualDamage(float value, DamageSource pSource, float pAmount, @Share("shield_block") LocalRef<ShieldBlockEvent> eventRef) {
+		return pAmount - eventRef.get().getBlockedDamage();
+	}
+
+	@ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 0), index = 2)
+	private float livingHurtEvent(float value, DamageSource pDamageSource, @Share("hurt") LocalRef<LivingHurtEvent> eventRef) {
+		LivingHurtEvent event = new LivingHurtEvent((LivingEntity) (Object) this, pDamageSource, value);
+		eventRef.set(event);
+		event.sendEvent();
+		if (event.isCanceled())
+			return 0;
+		return event.getAmount();
+	}
+
+	@Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getDamageAfterArmorAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"), cancellable = true)
+	private void shouldCancelHurt(DamageSource damageSource, float f, CallbackInfo ci, @Share("hurt") LocalRef<LivingHurtEvent> eventRef) {
+		if (eventRef.get().getAmount() <= 0)
+			ci.cancel();
+	}
+
+	@ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 6), index = 2)
+	private float livingDamageEvent(float value, DamageSource pDamageSource) {
+		LivingDamageEvent event = new LivingDamageEvent((LivingEntity) (Object) this, pDamageSource, value);
+		event.sendEvent();
+		if (event.isCanceled())
+			return 0;
+		return event.getAmount();
+	}
+
+	@Inject(method = "removeEffect", at = @At("HEAD"), cancellable = true)
+	private void onRemoveEffect(MobEffect effect, CallbackInfoReturnable<Boolean> cir) {
+		var event = new MobEffectEvent.Remove((LivingEntity) (Object) this, effect);
+		event.sendEvent();
+		if (event.isCanceled()) cir.setReturnValue(false);
+	}
+
+	@WrapWithCondition(method = "removeAllEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;onEffectRemoved(Lnet/minecraft/world/effect/MobEffectInstance;)V"))
+	private boolean onRemoveAllEffectEvent(LivingEntity instance, MobEffectInstance effect, @Share("event") LocalRef<MobEffectEvent.Remove> eventRef) {
+		var event = new MobEffectEvent.Remove(instance, effect);
+		eventRef.set(event);
+		event.sendEvent();
+		return !event.isCanceled();
+	}
+
+	@WrapWithCondition(method = "removeAllEffects", at = @At(value = "INVOKE", target = "Ljava/util/Iterator;remove()V"))
+	private boolean skipRemove(Iterator<MobEffectInstance> iterator,  @Share("event") LocalRef<MobEffectEvent.Remove> eventRef) {
+		return !eventRef.get().isCanceled();
+	}
+
+	@Inject(method = "canBeAffected", at = @At("HEAD"), cancellable = true)
+	private void isEffectApplicable(MobEffectInstance effectInstance, CallbackInfoReturnable<Boolean> cir) {
+		MobEffectEvent.Applicable event = new MobEffectEvent.Applicable((LivingEntity) (Object) this, effectInstance);
+		event.sendEvent();
+		if (event.getResult() != BaseEvent.Result.DEFAULT) cir.setReturnValue(event.getResult() == BaseEvent.Result.ALLOW);
+	}
+
+	@Inject(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", at = @At(value = "JUMP", opcode = Opcodes.IFNONNULL))
+	private void onEffectAdded(MobEffectInstance newEffect, Entity entity, CallbackInfoReturnable<Boolean> cir, @Local(index = 3) MobEffectInstance oldEffect) {
+		new MobEffectEvent.Added((LivingEntity) (Object) this, oldEffect, newEffect, entity).sendEvent();
+	}
+
+	@ModifyExpressionValue(method = "tickEffects", at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/Level;isClientSide:Z", ordinal = 0))
+	private boolean onEffectExpired(boolean original, @Local(index = 3) MobEffectInstance effect) {
+		return !(!original && !new MobEffectEvent.Expired((LivingEntity) (Object) this, effect).post());
 	}
 }

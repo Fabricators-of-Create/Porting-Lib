@@ -1,5 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.core.event;
 
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
+
+import java.util.function.Consumer;
+
 /**
  * The base of an event that may be cancelled.
  */
@@ -41,4 +46,9 @@ public abstract class BaseEvent {
 	}
 
 	public abstract void sendEvent();
+
+	public boolean post() {
+		sendEvent();
+		return isCanceled();
+	}
 }

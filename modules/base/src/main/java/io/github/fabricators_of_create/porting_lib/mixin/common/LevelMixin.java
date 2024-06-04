@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +14,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
+import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockEntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.LevelExtensions;
@@ -254,5 +256,11 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 				}
 			}
 		}
+	}
+
+	@Inject(method = "updateNeighborsAt", at = @At("HEAD"))
+	private void neighborNotify(BlockPos pPos, Block block, CallbackInfo ci) {
+		BlockEvents.NeighborNotifyEvent event = new BlockEvents.NeighborNotifyEvent((Level) (Object) this, pPos, this.getBlockState(pPos), EnumSet.allOf(Direction.class), false);
+		event.sendEvent();
 	}
 }

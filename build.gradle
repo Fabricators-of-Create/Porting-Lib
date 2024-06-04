@@ -11,11 +11,19 @@ targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = "porting_lib"
 
-String branch = providers.exec {
+Provider<String> branchProvider = providers.exec {
 	it.setCommandLine("git", "branch", "--show-current")
 }.standardOutput.asText.map {
-	it.contains("not a git repository") ? "unknown" : it
-}.get().trim()
+	it.contains("not a git repository") ? "unknown" : it.trim()
+}
+
+String versionNumber = providers.provider {
+	String version = mod_version // 2.3.1
+	if (System.getenv("SNAPSHOT") == "true") {
+		version += "-beta." + System.getenv("GITHUB_RUN_NUMBER") // 2.3.1-beta.1000
+	}
+	return version + "+" + branchProvider.get() // 2.3.1-beta.1000+1.20.1
+}.get()
 
 dependencies {
 	subprojects.forEach {
@@ -28,6 +36,26 @@ processResources {
 	exclude("template.fabric.mod.json")
 }
 
+// resets the changelog and bumps the version after an automated release.
+tasks.register("postRelease") {
+	String nextVersion = project.hasProperty("nextVersion") ? project.property("nextVersion") : null
+	File changelog = rootProject.file("CHANGELOG.txt")
+	File props = rootProject.file("gradle.properties")
+	String currentVersion = mod_version
+
+	doFirst {
+		if (nextVersion == null) {
+			throw new RuntimeException("nextVersion property is not defined")
+		}
+
+		changelog.setText("")
+
+		String properties = props.getText()
+		properties = properties.replace(currentVersion, nextVersion)
+		props.setText(properties)
+	}
+}
+
 allprojects {
 	if (name == "buildSrc") return
 
@@ -36,7 +64,7 @@ allprojects {
 
 	group = "io.github.fabricators_of_create.Porting-Lib"
 
-	version = mod_version + "+" + branch
+	version = versionNumber
 
 	repositories {
 		mavenCentral()
@@ -70,7 +98,6 @@ allprojects {
 		// dev environment
 		minecraft("com.mojang:minecraft:$minecraft_version")
 		mappings(loom.layered {
-			it.mappings("org.quiltmc:quilt-mappings:$minecraft_version+build.$qm_version:intermediary-v2")
 			if (parchment_version != "none")
 				it.parchment("org.parchmentmc.data:parchment-$minecraft_version:$parchment_version@zip")
 			it.officialMojangMappings { nameSyntheticMembers = false }
@@ -88,11 +115,16 @@ allprojects {
 	}
 
 	loom {
-		// make all runs export mixins, and generate even though they're in subprojects.
 		runs.configureEach {
-			vmArg("-Dmixin.debug.export=true")
-			ideConfigGenerated = true
+			ideConfigGenerated = true // loom doesn't gen runs for subprojects, unless this is set to true.
+			vmArg("-Dmixin.debug.export=true") // export all mixins
+			vmArg("-Dmixin.debug.strict.unique=true") // strictly enforce that @Unique things are private
 		}
+	}
+
+	configurations.configureEach {
+		// fixes loom using a loader version from a dependency
+		resolutionStrategy.force("net.fabricmc:fabric-loader:$loader_version")
 	}
 
 	processResources {
@@ -100,7 +132,7 @@ allprojects {
 				version: version,
 				loader_version: loader_version,
 				fabric_version: fabric_version,
-				minecraft_version: minecraft_semantic_version,
+				minecraft_dependency: minecraft_dependency,
 				java_version: sourceCompatibility,
 
 				// property replacement is a bit too eager
@@ -117,9 +149,6 @@ allprojects {
 		filesMatching("fabric.mod.json") {
 			expand properties
 		}
-
-		// include icon
-		from(rootProject.file("src/main/resources/assets/porting_lib/icon.png"))
 	}
 
 	jar.from(rootProject.file("LICENSE")) // copy license file into jar
@@ -162,13 +191,21 @@ subprojects {
 			aw.set(awFile)
 	}
 
+	processResources {
+		// include icon
+		into("assets/porting_lib") {
+			from(rootProject.file("src/main/resources/assets/porting_lib/icon.png"))
+		}
+	}
+
 	java.withSourcesJar()
 
 	publishing {
 		repositories {
 			maven {
 				name = "devOS"
-				url = "https://mvn.devos.one/${System.getenv("MAVEN_TYPE")}/"
+				String mavenType = System.getenv("RELEASE") == "true" ? "releases" : "snapshots"
+				url = "https://mvn.devos.one/$mavenType/"
 				credentials {
 					username = System.getenv("MAVEN_USER")
 					password = System.getenv("MAVEN_PASS")
@@ -181,13 +218,7 @@ subprojects {
 
 		publications {
 			register("mavenJava", MavenPublication) {
-				artifact(remapJar) {
-					builtBy(remapJar)
-				}
-
-				artifact(remapSourcesJar) {
-					builtBy remapSourcesJar
-				}
+				from((SoftwareComponent) components["java"])
 			}
 		}
 	}

@@ -23,8 +23,7 @@ public abstract class LootTableMixin_Late implements LootTableExtensions {
 	private void finishCollectingLoot(LootContext context, Consumer<ItemStack> output, CallbackInfo ci) {
 		// this needs to be done really late to catch all uses of the consumer before finishing.
 		// Higher integer priority is invoked last.
-		ThreadLocal<LootCollector> threadLocal = this.port_lib$lootCollector();
-		threadLocal.get().finish(this.getLootTableId(), context);
-        threadLocal.remove();
+		this.port_lib$lootCollectorStack().get().pop()
+				.finish(this.getLootTableId(), context);
 	}
 }

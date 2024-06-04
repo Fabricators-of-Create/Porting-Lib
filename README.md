@@ -4,9 +4,8 @@
 ## Use
 Porting Lib is split into modules. All modules are available on this maven:
 ```groovy
-maven { url = "https://mvn.devos.one/<type>/" }
+maven { url = "https://mvn.devos.one/releases/" }
 ```
-Where `<type>` is either `releases` or `snapshots`.
 
 You can depend on Porting Lib like this once you add the maven:
 ```groovy
@@ -23,6 +22,7 @@ Just choose a version and use its version number.
 | `accessors`              | Accessor mixins aplenty                                                              |
 | `attributes`             | Additional Entity Attributes; step height, gravity, swim speed                       |
 | `base`                   | Code that has not yet been split into modules                                        |
+| `blocks`                 | Adds extra block extensions.                                                         |
 | `brewing`                | A potion recipe api                                                                  |
 | `client_events`          | Useful client-side events                                                            |
 | `common`                 | Miscellaneous utilities for other modules                                            |
@@ -34,8 +34,10 @@ Just choose a version and use its version number.
 | `extensions`             | Extensions to vanilla classes for additional functionality                           |
 | `fluids`                 | Api that provides additional fluid attributes for fluids                             |
 | `gametest`               | Tools to make GameTest creation as easy as possible                                  |
+| `gui_utils`              | Adds additional utility classes and methods for screens and guis                     |
 | `items`                  | Adds extra item extensions                                                           |
 | `lazy_registration`      | A implementation of forge's DeferredRegister system rewritten for fabric             |
+| `level_events`           | Provides common level events for mods.                                               |
 | `loot`                   | A small library to modify mob loot                                                   |
 | `mixin_extensions`       | More features for Mixins                                                             |
 | `model_builders`         | Additional model builders for data generation                                        |

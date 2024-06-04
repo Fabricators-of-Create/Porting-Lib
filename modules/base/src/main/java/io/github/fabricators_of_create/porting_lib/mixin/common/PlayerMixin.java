@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -39,8 +41,8 @@ public abstract class PlayerMixin extends LivingEntity {
 		if(getMainHandItem().getItem().onLeftClickEntity(getMainHandItem(), (Player) (Object) this, targetEntity)) ci.cancel();
 	}
 
-	@Inject(method = "createAttributes", at = @At("RETURN"))
-	private static void port_lib$addKnockback(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
-		cir.getReturnValue().add(Attributes.ATTACK_KNOCKBACK);
+	@ModifyReturnValue(method = "createAttributes", at = @At("RETURN"))
+	private static AttributeSupplier.Builder port_lib$addKnockback(AttributeSupplier.Builder original) {
+		return original.add(Attributes.ATTACK_KNOCKBACK);
 	}
 }

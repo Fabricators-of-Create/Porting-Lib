@@ -38,8 +38,8 @@ public class DualSortedSetIterator<T> extends AbstractIterator<T> {
 			} else { // second is available
 				return consume(secondNext);
 			}
-		} else if (secondNext == null) { // both null, again
-			return endOfData();
+		} else if (secondNext == null) { // second null, first is not
+			return consume(firstNext);
 		} else { // neither null
 			int compared = comparator.compare(firstNext, secondNext);
 			// <0: firstNext < secondNext, or firstNext.getIndex() < secondNext.getIndex()

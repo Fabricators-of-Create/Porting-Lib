@@ -1,5 +1,11 @@
 name: release
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      nextVersion:
+        type: string
+        required: true
+        description: 'The next version in development'
 
 jobs:
   build:
@@ -8,34 +14,30 @@ jobs:
         java: [ 17 ]
     runs-on: ubuntu-latest
     env:
-      MAVEN_TYPE: releases
       MAVEN_USER: ${{ secrets.MAVEN_USER }}
       MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
-    outputs:
-      version: ${{ steps.publish.outputs.version }}
+      RELEASE: true
     steps:
 
       - name: checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
 
       - name: setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
           cache: gradle
 
       - name: publish
-        id: publish
-        # build to create artifacts for upload to GitHub, MR, and CF
-        # publish publishes to maven
+        # build task creates artifacts for capture and upload, then publish publishes to maven
         run: ./gradlew build publish
 
       - name: capture build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Artifacts
           path: build/libs/
@@ -59,3 +61,15 @@ jobs:
 
           dependencies: |
             fabric-api(required){modrinth:P7dR8mSH}{curseforge:306612}
+
+      - name: prepare for next release
+        run: './gradlew postRelease -PnextVersion="${{ inputs.nextVersion }}"'
+
+      - name: push updated version and changelog
+        run: |
+          git config --global user.name github-actions-bot
+          git config --global user.email github-actions[bot]@users.noreply.github.com
+          git add CHANGELOG.txt
+          git add gradle.properties
+          git commit -m "Reset changelog and bump version"
+          git push

@@ -1,0 +1,6 @@
+{
+  "commands.porting_lib.arguments.enum.invalid": "Enum constant must be one of {0}, found {1}",
+
+  "commands.config.getwithtype": "Config for %s of type %s found at %s",
+  "commands.config.noconfig": "Config for %s of type %s not found"
+}

@@ -8,6 +8,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 
+import net.fabricmc.fabric.api.renderer.v1.model.WrapperBakedModel;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -49,6 +51,12 @@ public abstract class ScreenEffectRendererMixin {
 		if (viewBlockingPos == null || !(mc.level instanceof RenderAttachedBlockView view))
 			return original.call(shaper, state);
 		BakedModel model = shaper.getBlockModel(state);
+
+		while (model instanceof WrapperBakedModel wrapped) {
+			if (model instanceof CustomParticleIconModel) break;
+			model = wrapped.getWrappedModel();
+		}
+
 		if (model instanceof CustomParticleIconModel custom) {
 			Object data = view.getBlockEntityRenderAttachment(viewBlockingPos);
 			return custom.getParticleIcon(data);

@@ -5,10 +5,12 @@ import net.minecraft.resources.ResourceLocation;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.Stack;
+
 public interface LootTableExtensions {
 	// hack to access a field defined in one mixin in another.
 	@ApiStatus.Internal
-	default ThreadLocal<LootCollector> port_lib$lootCollector() {
+	default ThreadLocal<Stack<LootCollector>> port_lib$lootCollectorStack() {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 
