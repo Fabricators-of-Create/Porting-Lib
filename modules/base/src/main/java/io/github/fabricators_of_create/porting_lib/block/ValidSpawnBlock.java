@@ -2,7 +2,7 @@ package io.github.fabricators_of_create.porting_lib.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.SpawnPlacementType;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -17,7 +17,7 @@ public interface ValidSpawnBlock {
 	 * @param type The Mob Category Type
 	 * @return True to allow a mob of the specified category to spawn, false to prevent it.
 	 */
-	default boolean isValidSpawn(BlockState state, BlockGetter level, BlockPos pos, SpawnPlacements.Type type, EntityType<?> entityType) {
+	default boolean isValidSpawn(BlockState state, BlockGetter level, BlockPos pos, SpawnPlacementType type, EntityType<?> entityType) {
 		return state.isValidSpawn(level, pos, entityType);
 	}
 }

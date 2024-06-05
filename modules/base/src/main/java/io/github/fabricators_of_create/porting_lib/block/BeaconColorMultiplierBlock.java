@@ -15,10 +15,9 @@ public interface BeaconColorMultiplierBlock {
 	 * @param beaconPos The position of the beacon
 	 * @return A float RGB [0.0, 1.0] array to be averaged with a beacon's existing beam color, or null to do nothing to the beam
 	 */
-	@Nullable
-	default float[] getBeaconColorMultiplier(BlockState state, LevelReader level, BlockPos pos, BlockPos beaconPos) {
+	default int getBeaconColorMultiplier(BlockState state, LevelReader level, BlockPos pos, BlockPos beaconPos, int original) {
 		if (this instanceof BeaconBeamBlock beamBlock)
-			return beamBlock.getColor().getTextureDiffuseColors();
-		return null;
+			return beamBlock.getColor().getTextureDiffuseColor();
+		return original;
 	}
 }

@@ -1,7 +1,13 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
+import net.minecraft.world.entity.SpawnPlacementType;
+
+import net.minecraft.world.entity.SpawnPlacementTypes;
+
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -9,21 +15,13 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import io.github.fabricators_of_create.porting_lib.block.ValidSpawnBlock;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
 
-@Mixin(NaturalSpawner.class)
-public abstract class NaturalSpawnerMixin {
-	@Shadow
-	protected static boolean isValidPositionForMob(ServerLevel serverLevel, Mob mob, double d) {
-		throw new RuntimeException();
-	}
+@Mixin(targets = "net/minecraft/world/entity/SpawnPlacementTypes$1")
+public abstract class SpawnPlacementsMixin {
+
 
 	@Inject(
 			method = "isSpawnPositionOk",
@@ -34,8 +32,8 @@ public abstract class NaturalSpawnerMixin {
 			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
-	private static void port_lib$validSpawnBlock(SpawnPlacements.Type placeType, LevelReader level, BlockPos pos, EntityType<?> entityType, CallbackInfoReturnable<Boolean> cir, BlockState blockState, FluidState fluidState, BlockPos blockPos, BlockPos blockPos2, BlockState blockState2) {
-		if (blockState2.getBlock() instanceof ValidSpawnBlock validSpawnBlock)
-			cir.setReturnValue(validSpawnBlock.isValidSpawn(blockState2, level, blockPos2, placeType, entityType));
+	private void port_lib$validSpawnBlock(LevelReader levelReader, BlockPos blockPos, @Nullable EntityType<?> entityType, CallbackInfoReturnable<Boolean> cir, BlockPos blockPos2, BlockPos blockPos3, BlockState blockState) {
+		if (blockState.getBlock() instanceof ValidSpawnBlock validSpawnBlock)
+			cir.setReturnValue(validSpawnBlock.isValidSpawn(blockState, levelReader, blockPos2, SpawnPlacementTypes.ON_GROUND, entityType));
 	}
 }

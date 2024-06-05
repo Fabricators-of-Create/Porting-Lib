@@ -101,7 +101,7 @@ public abstract class LivingEntityMixin extends Entity {
 	}
 
 	@Inject(method = "getEquipmentSlotForItem", at = @At("HEAD"), cancellable = true)
-	private static void port_lib$getSlotForItemStack(ItemStack itemStack, CallbackInfoReturnable<EquipmentSlot> cir) {
+	private void port_lib$getSlotForItemStack(ItemStack itemStack, CallbackInfoReturnable<EquipmentSlot> cir) {
 		if (itemStack.getItem() instanceof EquipmentItem equipment) {
 			cir.setReturnValue(equipment.getEquipmentSlot(itemStack));
 		}
@@ -161,7 +161,7 @@ public abstract class LivingEntityMixin extends Entity {
 			)
 	)
 	private boolean customScaffoldingMovement(boolean original) {
-		BlockState state = getFeetBlockState();
+		BlockState state = getInBlockState();
 		if (state.getBlock() instanceof CustomScaffoldingBlock custom)
 			return custom.isScaffolding(state, level(), blockPosition(), (LivingEntity) (Object) this);
 		return original;

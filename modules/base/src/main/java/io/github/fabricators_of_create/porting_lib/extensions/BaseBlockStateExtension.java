@@ -35,16 +35,16 @@ public interface BaseBlockStateExtension {
 	 * @param level  The level
 	 * @param pos    The position of this state
 	 * @param beacon The position of the beacon
-	 * @return A float RGB [0.0, 1.0] array to be averaged with a beacon's existing beam color, or null to do nothing to the beam
+	 * @return An int RGB to be averaged with a beacon's existing beam color, or original to do nothing to the beam
 	 */
-	@Nullable
-	default float[] getBeaconColorMultiplier(LevelReader level, BlockPos pos, BlockPos beacon) {
+
+	default int getBeaconColorMultiplier(LevelReader level, BlockPos pos, BlockPos beacon, int original) {
 		Block block = ((BlockState) this).getBlock();
 		if (block instanceof BeaconColorMultiplierBlock beaconColorMultiplierBlock)
-			return beaconColorMultiplierBlock.getBeaconColorMultiplier((BlockState) this, level, pos, beacon);
+			return beaconColorMultiplierBlock.getBeaconColorMultiplier((BlockState) this, level, pos, beacon, original);
 		if (block instanceof BeaconBeamBlock beamBlock)
-			return beamBlock.getColor().getTextureDiffuseColors();
-		return null;
+			return beamBlock.getColor().getTextureDiffuseColor();
+		return original;
 	}
 
 	/**

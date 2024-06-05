@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.MobEffectInstanceExtensions;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -10,15 +11,17 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(MobEffectInstance.class)
 public abstract class MobEffectInstanceMixin implements MobEffectInstanceExtensions {
+
+
 	@Shadow
-	public abstract MobEffect getEffect();
+	public abstract Holder<MobEffect> getEffect();
 
 	private java.util.List<net.minecraft.world.item.ItemStack> curativeItems;
 
 	@Override
 	public java.util.List<net.minecraft.world.item.ItemStack> getCurativeItems() {
 		if (this.curativeItems == null) //Lazy load this so that we don't create a circular dep on Items.
-			this.curativeItems = getEffect().getCurativeItems();
+			this.curativeItems = getEffect().value().getCurativeItems();
 		return this.curativeItems;
 	}
 	@Override

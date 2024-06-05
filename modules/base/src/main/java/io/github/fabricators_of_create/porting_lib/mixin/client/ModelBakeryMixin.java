@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.resources.model.BlockStateModelLoader;
 import net.minecraft.resources.ResourceLocation;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,7 +20,7 @@ import java.util.Map;
 @Mixin(ModelBakery.class)
 public abstract class ModelBakeryMixin {
 	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;push(Ljava/lang/String;)V"))
-	public void onModelLoad(BlockColors colors, ProfilerFiller profiler, Map<ResourceLocation, BlockModel> modelResources, Map<ResourceLocation, List<ModelBakery.LoadedJson>> blockStateResources, CallbackInfo ci) {
+	public void onModelLoad(BlockColors colors, ProfilerFiller profiler, Map<ResourceLocation, BlockModel> modelResources, Map<ResourceLocation, List<BlockStateModelLoader.LoadedJson>> blockStateResources, CallbackInfo ci) {
 		ModelLoadCallback.EVENT.invoker().onModelsStartLoading(colors, profiler, modelResources, blockStateResources);
 	}
 }
