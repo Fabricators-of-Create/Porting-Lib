@@ -28,8 +28,8 @@ public class AreaSelection {
 	}
 
 	public static AreaSelection fromNbt(CompoundTag tag) {
-		BlockPos first = tag.contains("first", Tag.TAG_COMPOUND) ? NbtUtils.readBlockPos(tag.getCompound("first")) : null;
-		BlockPos second = tag.contains("second", Tag.TAG_COMPOUND) ? NbtUtils.readBlockPos(tag.getCompound("second")) : null;
+		BlockPos first = tag.contains("first", Tag.TAG_COMPOUND) ? NbtUtils.readBlockPos(tag, "first").orElse(null) : null;
+		BlockPos second = tag.contains("second", Tag.TAG_COMPOUND) ? NbtUtils.readBlockPos(tag, "second").orElse(null) : null;
 		return new AreaSelection(first, second);
 	}
 }

@@ -143,7 +143,7 @@ public class ItemStackHandler implements SlottedStackStorage, INBTSerializable<C
 	 * Determines the maximum amount of an item that can be stored in the given slot.
 	 */
 	protected int getStackLimit(int slot, ItemVariant resource) {
-		return Math.min(getSlotLimit(slot), resource.getItem().getMaxStackSize());
+		return Math.min(getSlotLimit(slot), resource.getItem().getDefaultMaxStackSize());
 	}
 
 	/**

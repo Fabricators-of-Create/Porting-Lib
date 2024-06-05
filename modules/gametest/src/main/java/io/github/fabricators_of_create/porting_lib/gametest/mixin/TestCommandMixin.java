@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.gametest.mixin;
 
+import io.github.fabricators_of_create.porting_lib.gametest.infrastructure.ExtendedTestFunction;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -9,7 +11,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import io.github.fabricators_of_create.porting_lib.gametest.extensions.StructureBlockEntityExtensions;
-import io.github.fabricators_of_create.porting_lib.gametest.infrastructure.ExtendedTestFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.MultipleTestTracker;
 import net.minecraft.gametest.framework.TestCommand;

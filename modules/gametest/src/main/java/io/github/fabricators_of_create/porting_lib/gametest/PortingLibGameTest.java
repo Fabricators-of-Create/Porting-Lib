@@ -23,7 +23,6 @@ import io.github.fabricators_of_create.porting_lib.gametest.infrastructure.GameT
 import io.github.fabricators_of_create.porting_lib.gametest.quickexport.AreaSelectorItem;
 import io.github.fabricators_of_create.porting_lib.gametest.quickexport.QuickExportCommand;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -34,12 +33,12 @@ import net.minecraft.world.item.Item;
 public class PortingLibGameTest implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("Porting Lib GameTest");
 	public static final boolean AREA_SELECTOR_ENABLED = checkEnabled();
-	public static final Item AREA_SELECTOR = AREA_SELECTOR_ENABLED ? new AreaSelectorItem(new FabricItemSettings()) : null;
+	public static final Item AREA_SELECTOR = AREA_SELECTOR_ENABLED ? new AreaSelectorItem(new Item.Properties()) : null;
 
 	@Override
 	public void onInitialize() {
 		if (AREA_SELECTOR_ENABLED) {
-			Registry.register(BuiltInRegistries.ITEM, new ResourceLocation("porting_lib", "area_selector"), AREA_SELECTOR);
+			Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath("porting_lib", "area_selector"), AREA_SELECTOR);
 			QuickExportCommand.register();
 		} else {
 			LOGGER.info("Porting Lib GameTest: Area Selector and quickexport disabled.");
@@ -56,7 +55,7 @@ public class PortingLibGameTest implements ModInitializer {
 				.flatMap(Stream::of)
 				.map(ExtendedTestFunction::of)
 				.filter(Objects::nonNull)
-				.sorted(Comparator.comparing(TestFunction::getTestName))
+				.sorted(Comparator.comparing(TestFunction::testName))
 				.toList();
 	}
 

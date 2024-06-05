@@ -122,7 +122,7 @@ public class PortingLibGameTestHelper extends GameTestHelper {
 	 */
 	public void spawnItems(BlockPos pos, Item item, int amount) {
 		while (amount > 0) {
-			int toSpawn = Math.min(amount, item.getMaxStackSize());
+			int toSpawn = Math.min(amount, item.getDefaultMaxStackSize());
 			amount -= toSpawn;
 			ItemStack stack = new ItemStack(item, toSpawn);
 			spawnItem(pos, stack);

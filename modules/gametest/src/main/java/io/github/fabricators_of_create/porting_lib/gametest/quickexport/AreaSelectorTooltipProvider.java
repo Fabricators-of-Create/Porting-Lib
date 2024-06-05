@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -15,7 +16,7 @@ public enum AreaSelectorTooltipProvider implements ItemTooltipCallback {
 	INSTANCE;
 
 	@Override
-	public void getTooltip(ItemStack stack, TooltipFlag context, List<Component> lines) {
+	public void getTooltip(ItemStack stack, Item.TooltipContext tooltipContext, TooltipFlag tooltipType, List<Component> lines) {
 		if (!stack.is(PortingLibGameTest.AREA_SELECTOR))
 			return;
 		AreaSelection area = AreaSelectorItem.getArea(stack);

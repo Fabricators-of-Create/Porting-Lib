@@ -1,5 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.gametest.quickexport;
 
+import net.minecraft.core.component.DataComponents;
+
+import net.minecraft.network.chat.contents.NbtContents;
+import net.minecraft.world.item.component.CustomData;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,7 +73,7 @@ public class AreaSelectorItem extends Item {
 			return InteractionResult.PASS;
 		}
 		if (player.isShiftKeyDown()) {
-			held.removeTagKey(AREA_KEY);
+			held.remove(DataComponents.CUSTOM_DATA);
 			player.sendSystemMessage(RESET, true);
 			return InteractionResult.SUCCESS;
 		}
@@ -99,16 +104,16 @@ public class AreaSelectorItem extends Item {
 	}
 
 	public static AreaSelection getArea(ItemStack stack) {
-		CompoundTag tag = stack.getTag();
-		if (tag != null && tag.contains(AREA_KEY, Tag.TAG_COMPOUND)) {
-			AreaSelection area = AreaSelection.fromNbt(tag.getCompound(AREA_KEY));
+		CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+		if (data != null && data.copyTag().contains(AREA_KEY, Tag.TAG_COMPOUND)) {
+			AreaSelection area = AreaSelection.fromNbt(data.copyTag().getCompound(AREA_KEY));
 			return area.first != null ? area : null; // safety from broken data
 		}
 		return null;
 	}
 
 	public static void setArea(ItemStack stack, AreaSelection area) {
-		stack.addTagElement(AREA_KEY, area.toNbt());
+		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(area.toNbt()));
 	}
 
 	public static BlockPos getLookTarget(Player player) {
