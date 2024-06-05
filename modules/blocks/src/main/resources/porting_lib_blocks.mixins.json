@@ -7,6 +7,6 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "ExplosionMixin"
+    "BlockBehaviourMixin"
   ]
 }
