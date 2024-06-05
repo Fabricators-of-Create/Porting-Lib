@@ -65,12 +65,12 @@ public abstract class ServerPlayerGameModeMixin {
 			UseOnContext ctx = new UseOnContext(player, hand, hit);
 			BlockPos pos = ctx.getClickedPos();
 			BlockInWorld block = new BlockInWorld(ctx.getLevel(), pos, false);
-			if (!player.getAbilities().mayBuild && !heldItem.hasAdventureModePlaceTagForBlock(BuiltInRegistries.BLOCK, block)) {
+			if (!player.getAbilities().mayBuild && !heldItem.canPlaceOnBlockInAdventureMode(block)) {
 				cir.setReturnValue(InteractionResult.PASS);
 			} else {
 				Item item = heldItem.getItem();
 				InteractionResult result = useFirst.onItemUseFirst(heldItem, ctx);
-				if (result.shouldAwardStats()) {
+				if (result.indicateItemUse()) {
 					player.awardStat(Stats.ITEM_USED.get(item));
 				}
 

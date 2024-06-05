@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import io.github.fabricators_of_create.porting_lib.event.client.OverlayRenderCallback;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -33,8 +34,8 @@ public abstract class GuiMixin {
 	private float partialTicks;
 
 	@Inject(method = "render", at = @At("HEAD"))
-	public void render(GuiGraphics matrixStack, float f, CallbackInfo ci) {
-		partialTicks = f;
+	public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+		partialTicks = deltaTracker.getGameTimeDeltaTicks();
 	}
 
 	//This might be the wrong method to inject to
@@ -66,7 +67,7 @@ public abstract class GuiMixin {
 	}
 
 	@Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
-	private void renderCrosshair(GuiGraphics guiGraphics, CallbackInfo ci) {
+	private void renderCrosshair(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
 		if (OverlayRenderCallback.EVENT.invoker().onOverlayRender(guiGraphics, partialTicks, minecraft.getWindow(), OverlayRenderCallback.Types.CROSSHAIRS)) {
 			ci.cancel();
 		}

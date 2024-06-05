@@ -47,22 +47,20 @@ public abstract class ExperienceOrbMixin extends Entity {
 			method = "repairPlayerItems",
 			at = @At(
 					value = "INVOKE",
-					target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;",
+					target = "Lnet/minecraft/world/item/enchantment/EnchantedItemInUse;itemStack()Lnet/minecraft/world/item/ItemStack;",
 					remap = false
 			)
 	)
-	private Object port_lib$grabStackToMend(Object value) {
-		if (value instanceof ItemStack stack) {
-			this.port_lib$stackToMend = stack;
-		}
-		return value;
+	private ItemStack port_lib$grabStackToMend(ItemStack original) {
+		this.port_lib$stackToMend = original;
+		return original;
 	}
 
 	@ModifyExpressionValue(
 			method = "repairPlayerItems",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/world/entity/ExperienceOrb;xpToDurability(I)I"
+					target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;modifyDurabilityToRepairFromXp(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;I)I"
 			)
 	)
 	private int port_lib$modifyRepairAmount(int durability) {

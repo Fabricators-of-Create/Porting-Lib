@@ -14,11 +14,11 @@ import net.minecraft.world.level.block.state.BlockState;
 
 @Mixin(BeaconBlockEntity.class)
 public class BeaconBlockEntityMixin {
-	@ModifyExpressionValue(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/DyeColor;getTextureDiffuseColors()[F"))
-	private static float[] modifyBeaconColor(float[] original, Level level, BlockPos beaconPos, BlockState beaconState, BeaconBlockEntity beaconBlockEntity, @Local(index = 7) BlockPos blockPos) {
+	@ModifyExpressionValue(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/DyeColor;getTextureDiffuseColor()I"))
+	private static int modifyBeaconColor(int original, Level level, BlockPos beaconPos, BlockState beaconState, BeaconBlockEntity beaconBlockEntity, @Local(index = 7) BlockPos blockPos) {
 		BlockState blockState = level.getBlockState(beaconPos);
 		if (blockState.getBlock() instanceof BeaconColorMultiplierBlock colorMultiplierBlock)
-			return colorMultiplierBlock.getBeaconColorMultiplier(blockState, level, beaconPos, beaconPos);
+			return colorMultiplierBlock.getBeaconColorMultiplier(blockState, level, beaconPos, beaconPos, original);
 		return original;
 	}
 }

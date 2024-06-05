@@ -60,7 +60,7 @@
     "common.MapItemMixin",
     "common.MobEffectInstanceMixin",
     "common.MushroomCowMixin",
-    "common.NaturalSpawnerMixin",
+    "common.SpawnPlacementsMixin",
     "common.PackRepositoryMixin",
     "common.PiglinAiMixin",
     "common.PistonMovingBlockEntityMixin",

@@ -29,6 +29,6 @@ public interface CustomEnchantingBehaviorItem {
 	 * @return true if the enchantment can be applied to this item
 	 */
 	default boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-		return enchantment.category.canEnchant(stack.getItem());
+		return enchantment.canEnchant(stack);
 	}
 }

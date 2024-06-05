@@ -44,8 +44,8 @@ public abstract class MultiPlayerGameModeMixin {
 	@Final
 	private Minecraft minecraft;
 
-	@ModifyReceiver(method = "performUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;use(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/InteractionResult;"))
-	public BlockState port_lib$bypassBlockUse(BlockState result, Level level, Player player, InteractionHand hand, BlockHitResult blockHitResult) {
+	@ModifyReceiver(method = "performUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;useItemOn(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/ItemInteractionResult;"))
+	public BlockState port_lib$bypassBlockUse(BlockState instance, ItemStack itemStack, Level level, Player player, InteractionHand hand, BlockHitResult blockHitResult) {
 		Item held = player.getItemInHand(hand).getItem();
 		if (held instanceof BlockUseBypassingItem bypassing) {
 			if (bypassing.shouldBypass(level.getBlockState(blockHitResult.getBlockPos()), blockHitResult.getBlockPos(), level, player, hand))
@@ -53,7 +53,7 @@ public abstract class MultiPlayerGameModeMixin {
 		} else if (held instanceof BlockItem blockItem && blockItem.getBlock() instanceof BlockUseBypassingItem bypassing) {
 			if (bypassing.shouldBypass(level.getBlockState(blockHitResult.getBlockPos()), blockHitResult.getBlockPos(), level, player, hand)) return Blocks.BARRIER.defaultBlockState();
 		}
-		return result;
+		return instance;
 	}
 
 	@Inject(method = "performUseItemOn",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getMainHandItem()Lnet/minecraft/world/item/ItemStack;"), cancellable = true)
@@ -63,12 +63,12 @@ public abstract class MultiPlayerGameModeMixin {
 			UseOnContext ctx = new UseOnContext(player, hand, hit);
 			BlockPos pos = ctx.getClickedPos();
 			BlockInWorld block = new BlockInWorld(ctx.getLevel(), pos, false);
-			if (!player.getAbilities().mayBuild && !heldItem.hasAdventureModePlaceTagForBlock(BuiltInRegistries.BLOCK, block)) {
+			if (!player.getAbilities().mayBuild && !heldItem.canPlaceOnBlockInAdventureMode(block)) {
 				cir.setReturnValue(InteractionResult.PASS);
 			} else {
 				Item item = heldItem.getItem();
 				InteractionResult result = useFirst.onItemUseFirst(heldItem, ctx);
-				if (result.shouldAwardStats()) {
+				if (result.indicateItemUse()) {
 					player.awardStat(Stats.ITEM_USED.get(item));
 				}
 
