@@ -6,7 +6,6 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "common.accessor.AbstractMinecartAccessor",
-    "common.accessor.AbstractProjectileDispenseBehaviorAccessor",
     "common.accessor.AdvancementProviderAccessor",
     "common.accessor.ArrayVoxelShapeAccessor",
     "common.accessor.AxeItemAccessor",
