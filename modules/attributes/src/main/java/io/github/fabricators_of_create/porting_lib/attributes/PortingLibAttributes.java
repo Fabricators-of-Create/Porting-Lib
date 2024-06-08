@@ -6,6 +6,7 @@ import io.github.fabricators_of_create.porting_lib.attributes.extensions.PlayerA
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.Entity;
@@ -14,16 +15,14 @@ import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.phys.Vec3;
 
 public class PortingLibAttributes implements ModInitializer {
-	public static final Attribute STEP_HEIGHT_ADDITION = new RangedAttribute("porting_lib.step_height", 0.0D, -512.0D, 512.0D).setSyncable(true);
 	/**
 	 * Reach Distance represents the distance at which a player may interact with the world.  The default is 4.5 blocks.  Players in creative mode have an additional 0.5 blocks of block reach.
 	 * @see PlayerAttributesExtensions#getBlockReach()
 	 * @see PlayerAttributesExtensions#canReach(BlockPos, double)
 	 */
-	public static final Attribute BLOCK_REACH = ReachEntityAttributes.REACH;
+	public static final Holder<Attribute> BLOCK_REACH = Holder.direct(ReachEntityAttributes.REACH);
 
-	public static final Attribute ENTITY_GRAVITY = new RangedAttribute("porting_lib.entity_gravity", 0.08D, -8.0D, 8.0D).setSyncable(true);
-	public static final Attribute SWIM_SPEED = new RangedAttribute("porting_lib.swim_speed", 1.0D, 0.0D, 1024.0D).setSyncable(true);
+	public static final Holder<Attribute> SWIM_SPEED = register("swim_speed", new RangedAttribute("porting_lib.swim_speed", 1.0D, 0.0D, 1024.0D).setSyncable(true));
 
 	/**
 	 * Attack Range represents the distance at which a player may attack an entity.  The default is 3 blocks.  Players in creative mode have an additional 3 blocks of entity reach.
@@ -32,12 +31,12 @@ public class PortingLibAttributes implements ModInitializer {
 	 * @see PlayerAttributesExtensions#canReach(Entity, double)
 	 * @see PlayerAttributesExtensions#canReach(Vec3, double)
 	 */
-	public static final Attribute ENTITY_REACH = ReachEntityAttributes.ATTACK_RANGE;
+	public static final Holder<Attribute> ENTITY_REACH = Holder.direct(ReachEntityAttributes.ATTACK_RANGE);
+
+	public static Holder<Attribute> register(String id, Attribute attribute) {
+		return Registry.registerForHolder(BuiltInRegistries.ATTRIBUTE, PortingLib.id(id), attribute);
+	}
 
 	@Override
-	public void onInitialize() {
-		Registry.register(BuiltInRegistries.ATTRIBUTE, PortingLib.id("step_height_addition"), STEP_HEIGHT_ADDITION);
-		Registry.register(BuiltInRegistries.ATTRIBUTE, PortingLib.id("entity_gravity"), ENTITY_GRAVITY);
-		Registry.register(BuiltInRegistries.ATTRIBUTE, PortingLib.id("swim_speed"), SWIM_SPEED);
-	}
+	public void onInitialize() {}
 }

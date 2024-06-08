@@ -27,6 +27,6 @@ public class EntityStruckByLightningEvent extends EntityEvents {
 
 	@Override
 	public void sendEvent() {
-		ENTITY_STRUCK_BY_LIGHTING.invoker().onEntityStruckByLightning(this);
+		STRUCK_BY_LIGHTING.invoker().onEntityStruckByLightning(this);
 	}
 }

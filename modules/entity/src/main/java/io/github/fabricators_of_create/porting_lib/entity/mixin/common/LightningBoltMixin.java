@@ -16,7 +16,6 @@ public class LightningBoltMixin {
 	@WrapWithCondition(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;thunderHit(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LightningBolt;)V"))
 	private boolean shouldStrikeEntity(Entity entity, ServerLevel level, LightningBolt lightningBolt) {
 		var event = new EntityStruckByLightningEvent(entity, lightningBolt);
-		event.setCanceled(EntityEvents.STRUCK_BY_LIGHTING.invoker().onEntityStruckByLightning(entity, lightningBolt));
 		event.sendEvent();
 		return !event.isCanceled();
 	}

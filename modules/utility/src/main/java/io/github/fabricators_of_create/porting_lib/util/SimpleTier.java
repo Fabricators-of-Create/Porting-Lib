@@ -12,9 +12,8 @@ import java.util.function.Supplier;
 /**
  * Helper class to define a custom tier
  */
-@SuppressWarnings("ClassCanBeRecord") // can't make it a record because the method names will be obfuscated
-public final class LazyTier implements Tier {
-	private final int level;
+public final class SimpleTier implements Tier {
+	private final TagKey<Block> incorrectBlocksForDrops;
 	private final int uses;
 	private final float speed;
 	private final float attackDamageBonus;
@@ -24,9 +23,9 @@ public final class LazyTier implements Tier {
 	@Nonnull
 	private final Supplier<Ingredient> repairIngredient;
 
-	public LazyTier(int level, int uses, float speed, float attackDamageBonus, int enchantmentValue,
-					@Nonnull TagKey<Block> tag, @Nonnull Supplier<Ingredient> repairIngredient) {
-		this.level = level;
+	public SimpleTier(TagKey<Block> incorrectBlocksForDrops, int uses, float speed, float attackDamageBonus, int enchantmentValue,
+					  @Nonnull TagKey<Block> tag, @Nonnull Supplier<Ingredient> repairIngredient) {
+		this.incorrectBlocksForDrops = incorrectBlocksForDrops;
 		this.uses = uses;
 		this.speed = speed;
 		this.attackDamageBonus = attackDamageBonus;
@@ -51,8 +50,8 @@ public final class LazyTier implements Tier {
 	}
 
 	@Override
-	public int getLevel() {
-		return this.level;
+	public TagKey<Block> getIncorrectBlocksForDrops() {
+		return this.incorrectBlocksForDrops;
 	}
 
 	@Override
@@ -73,8 +72,8 @@ public final class LazyTier implements Tier {
 
 	@Override
 	public String toString() {
-		return "DefaultTier[" +
-				"level=" + level + ", " +
+		return "SimpleTier[" +
+				"incorrectBlocksForDrops=" + incorrectBlocksForDrops + ", " +
 				"uses=" + uses + ", " +
 				"speed=" + speed + ", " +
 				"attackDamageBonus=" + attackDamageBonus + ", " +

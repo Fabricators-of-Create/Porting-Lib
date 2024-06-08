@@ -3,8 +3,6 @@ package io.github.fabricators_of_create.porting_lib.fluids;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
-
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableMap;
@@ -36,7 +34,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -62,7 +60,7 @@ public class FluidType {
 	private final boolean canConvertToSource;
 	private final boolean supportsBoating;
 	@Nullable
-	private final BlockPathTypes pathType, adjacentPathType;
+	private final PathType pathType, adjacentPathType;
 	private final boolean canHydrate;
 	private final int lightLevel;
 	private final int density;
@@ -397,7 +395,7 @@ public class FluidType {
 	 * @return the path type of this fluid
 	 */
 	@Nullable
-	public BlockPathTypes getBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, boolean canFluidLog) {
+	public PathType getBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, boolean canFluidLog) {
 		return this.pathType;
 	}
 
@@ -415,7 +413,7 @@ public class FluidType {
 	 * @return the path type of this fluid
 	 */
 	@Nullable
-	public BlockPathTypes getAdjacentBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, BlockPathTypes originalType) {
+	public PathType getAdjacentBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, PathType originalType) {
 		return this.adjacentPathType;
 	}
 
@@ -824,8 +822,8 @@ public class FluidType {
 		private boolean canConvertToSource = false;
 		private boolean supportsBoating = false;
 		@Nullable
-		private BlockPathTypes pathType = BlockPathTypes.WATER,
-				adjacentPathType = BlockPathTypes.WATER_BORDER;
+		private PathType pathType = PathType.WATER,
+				adjacentPathType = PathType.WATER_BORDER;
 		private final Map<SoundAction, SoundEvent> sounds = new HashMap<>();
 		private boolean canHydrate = false;
 		private int lightLevel = 0,
@@ -951,7 +949,7 @@ public class FluidType {
 		 * @param pathType the path type of this fluid
 		 * @return the property holder instance
 		 */
-		public Properties pathType(@Nullable BlockPathTypes pathType) {
+		public Properties pathType(@Nullable PathType pathType) {
 			this.pathType = pathType;
 			return this;
 		}
@@ -964,7 +962,7 @@ public class FluidType {
 		 * @param adjacentPathType the path type of this fluid
 		 * @return the property holder instance
 		 */
-		public Properties adjacentPathType(@Nullable BlockPathTypes adjacentPathType) {
+		public Properties adjacentPathType(@Nullable PathType adjacentPathType) {
 			this.adjacentPathType = adjacentPathType;
 			return this;
 		}

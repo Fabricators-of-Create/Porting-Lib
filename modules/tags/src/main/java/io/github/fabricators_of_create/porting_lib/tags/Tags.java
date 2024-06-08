@@ -180,7 +180,7 @@ public class Tags implements ModInitializer {
 		public static final TagKey<Block> NEEDS_NETHERITE_TOOL = MiningLevelManager.getBlockTag(Tiers.NETHERITE.getLevel());
 
 		private static TagKey<Block> tag(String name) {
-			return TagKey.create(Registries.BLOCK, new ResourceLocation("c", name));
+			return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("c", name));
 		}
 	}
 

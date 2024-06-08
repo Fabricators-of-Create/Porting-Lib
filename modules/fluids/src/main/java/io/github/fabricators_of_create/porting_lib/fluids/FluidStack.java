@@ -1,332 +1,475 @@
 package io.github.fabricators_of_create.porting_lib.fluids;
 
-import java.util.Objects;
-import java.util.Optional;
-
-import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
-import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
-import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
-import net.minecraft.world.item.ItemStack;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
+import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
-import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
+import io.github.fabricators_of_create.porting_lib.core.util.MutableDataComponentHolder;
+import io.github.fabricators_of_create.porting_lib.fluids.mixin.PatchedDataComponentMapAccessor;
+import io.netty.handler.codec.DecoderException;
+import io.netty.handler.codec.EncoderException;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+// TODO: PORT Integrate FluidVariant
+/**
+ * {@link ItemStack} equivalent for fluids.
+ * The main difference is that a fluid stack is always required to have an amount, while an item stack defaults to 1.
+ * Another difference is that the component prototype of a fluid stack is currently always empty, while an item stack gets its component prototype from the item.
+ *
+ * <p>Most methods in this class are adapted from {@link ItemStack}.
+ */
+public final class FluidStack implements MutableDataComponentHolder {
+	public static final Codec<Holder<Fluid>> FLUID_NON_EMPTY_CODEC = BuiltInRegistries.FLUID.holderByNameCodec().validate(holder -> {
+		return holder.is(Fluids.EMPTY.builtInRegistryHolder()) ? DataResult.error(() -> {
+			return "Fluid must not be minecraft:empty";
+		}) : DataResult.success(holder);
+	});
+	/**
+	 * A standard codec for fluid stacks that does not accept empty stacks.
+	 */
+	public static final Codec<FluidStack> CODEC = Codec.lazyInitialized(
+			() -> RecordCodecBuilder.create(
+					instance -> instance.group(
+									FLUID_NON_EMPTY_CODEC.fieldOf("id").forGetter(FluidStack::getFluidHolder),
+									ExtraCodecs.POSITIVE_INT.fieldOf("amount").forGetter(FluidStack::getAmount), // note: no .orElse(1) compared to ItemStack
+									DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY)
+											.forGetter(stack -> stack.components.asPatch()))
+							.apply(instance, FluidStack::new)));
 
-@SuppressWarnings({"UnstableApiUsage"})
-public class FluidStack {
-	public static final Codec<FluidStack> CODEC = RecordCodecBuilder.create(
-			instance -> instance.group(
-					BuiltInRegistries.FLUID.byNameCodec().fieldOf("FluidName").forGetter(FluidStack::getFluid),
-					Codec.LONG.fieldOf("Amount").forGetter(FluidStack::getAmount),
-					CompoundTag.CODEC.optionalFieldOf("VariantTag", null).forGetter(fluidStack -> fluidStack.getType().copyNbt()),
-					CompoundTag.CODEC.optionalFieldOf("Tag").forGetter(stack -> Optional.ofNullable(stack.getTag()))
-			).apply(instance, (fluid, amount, variantTag, tag) -> {
-				FluidStack stack = new FluidStack(fluid, amount, variantTag);
-				tag.ifPresent(stack::setTag);
-				return stack;
-			})
-	);
+	/**
+	 * A standard codec for fluid stacks that always deserializes with a fixed amount,
+	 * and does not accept empty stacks.
+	 *
+	 * <p>Fluid equivalent of {@link ItemStack#SINGLE_ITEM_CODEC}.
+	 */
+	public static Codec<FluidStack> fixedAmountCodec(int amount) {
+		return Codec.lazyInitialized(
+				() -> RecordCodecBuilder.create(
+						instance -> instance.group(
+										FLUID_NON_EMPTY_CODEC.fieldOf("id").forGetter(FluidStack::getFluidHolder),
+										DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY)
+												.forGetter(stack -> stack.components.asPatch()))
+								.apply(instance, (holder, patch) -> new FluidStack(holder, amount, patch))));
+	}
 
-	public static final FluidStack EMPTY = new FluidStack(FluidVariant.blank(), 0) {
+	/**
+	 * A standard codec for fluid stacks that accepts empty stacks, serializing them as {@code {}}.
+	 */
+	public static final Codec<FluidStack> OPTIONAL_CODEC = ExtraCodecs.optionalEmptyMap(CODEC)
+			.xmap(optional -> optional.orElse(FluidStack.EMPTY), stack -> stack.isEmpty() ? Optional.empty() : Optional.of(stack));
+	/**
+	 * A stream codec for fluid stacks that accepts empty stacks.
+	 */
+	public static final StreamCodec<RegistryFriendlyByteBuf, FluidStack> OPTIONAL_STREAM_CODEC = new StreamCodec<>() {
+		private static final StreamCodec<RegistryFriendlyByteBuf, Holder<Fluid>> FLUID_STREAM_CODEC = ByteBufCodecs.holderRegistry(Registries.FLUID);
+
 		@Override
-		public FluidStack setAmount(long amount) {
-			return this;
+		public FluidStack decode(RegistryFriendlyByteBuf buf) {
+			int amount = buf.readVarInt();
+			if (amount <= 0) {
+				return FluidStack.EMPTY;
+			} else {
+				Holder<Fluid> holder = FLUID_STREAM_CODEC.decode(buf);
+				DataComponentPatch patch = DataComponentPatch.STREAM_CODEC.decode(buf);
+				return new FluidStack(holder, amount, patch);
+			}
 		}
 
 		@Override
-		public void shrink(int amount) {
-		}
-
-		@Override
-		public void shrink(long amount) {
-		}
-
-		@Override
-		public void grow(long amount) {
-		}
-
-		@Override
-		public void setTag(CompoundTag tag) {
-		}
-
-		@Override
-		public boolean isEmpty() {
-			return true;
-		}
-
-		@Override
-		public FluidStack copy() {
-			return this;
+		public void encode(RegistryFriendlyByteBuf buf, FluidStack stack) {
+			if (stack.isEmpty()) {
+				buf.writeVarInt(0);
+			} else {
+				buf.writeVarInt(stack.getAmount());
+				FLUID_STREAM_CODEC.encode(buf, stack.getFluidHolder());
+				DataComponentPatch.STREAM_CODEC.encode(buf, stack.components.asPatch());
+			}
 		}
 	};
-
-	private final FluidVariant type;
-	@Nullable
-	private CompoundTag tag;
-	private long amount;
-
-	public FluidStack(FluidVariant type, long amount) {
-		this.type = type;
-		this.amount = amount;
-		this.tag = type.copyNbt();
-	}
-
-	public FluidStack(FluidVariant type, long amount, @Nullable CompoundTag tag) {
-		this(type, amount);
-		this.tag = tag;
-	}
-
-	public FluidStack(StorageView<FluidVariant> view) {
-		this(view.getResource(), view.getAmount());
-	}
-
-	public FluidStack(ResourceAmount<FluidVariant> resource) {
-		this(resource.resource(), resource.amount());
-	}
-
 	/**
-	 * Avoid this constructor when possible, may result in NBT loss
+	 * A stream codec for fluid stacks that does not accept empty stacks.
 	 */
-	public FluidStack(Fluid type, long amount) {
-		this(FluidVariant.of(type instanceof FlowingFluid flowing ? flowing.getSource() : type), amount);
-	}
-
-	public FluidStack(Fluid type, long amount, @Nullable CompoundTag nbt) {
-		this(FluidVariant.of(type instanceof FlowingFluid flowing ? flowing.getSource() : type, nbt), amount);
-		this.tag = nbt;
-	}
-
-	public FluidStack(FluidStack copy, long amount) {
-		this(copy.getType(), amount);
-		if (copy.hasTag()) tag = copy.getTag().copy();
-	}
-
-	public FluidStack setAmount(long amount) {
-		this.amount = amount;
-		return this;
-	}
-
-	public void grow(long amount) {
-		setAmount(getAmount() + amount);
-	}
-
-	public FluidVariant getType() {
-		return type;
-	}
-
-	public Fluid getFluid() {
-		return getType().getFluid();
-	}
-
-	public long getAmount() {
-		return amount;
-	}
-
-	public boolean isEmpty() {
-		return amount <= 0 || getType().isBlank();
-	}
-
-	public void shrink(int amount) {
-		setAmount(getAmount() - amount);
-	}
-
-	public void shrink(long amount) {
-		setAmount(getAmount() - amount);
-	}
-
-	/**
-	 * Determines if the FluidIDs and NBT Tags are equal. This does not check amounts.
-	 *
-	 * @param other
-	 *            The FluidStack for comparison
-	 * @return true if the Fluids (IDs and NBT Tags) are the same
-	 */
-	public boolean isFluidEqual(FluidStack other) {
-		if (this == other) return true;
-		return isFluidEqual(other.getType());
-	}
-
-	public boolean isFluidEqual(FluidVariant other) {
-		return isFluidEqual(getType(), other);
-	}
-
-	public static boolean isFluidEqual(FluidVariant mine, FluidVariant other) {
-		if (mine == other) return true;
-		if (other == null) return false;
-
-		boolean fluidsEqual = mine.isOf(other.getFluid());
-
-		CompoundTag myTag = mine.getNbt();
-		CompoundTag theirTag = other.getNbt();
-		boolean tagsEqual = Objects.equals(myTag, theirTag);
-
-		return fluidsEqual && tagsEqual;
-	}
-
-	public boolean canFill(FluidVariant var) {
-		return isEmpty() || var.isOf(getFluid()) && Objects.equals(var.getNbt(), getType().getNbt());
-	}
-
-	public CompoundTag writeToNBT(CompoundTag nbt) {
-		nbt.put("Variant", getType().toNbt());
-		nbt.putLong("Amount", getAmount());
-		if (tag != null)
-			nbt.put("Tag", tag);
-		return nbt;
-	}
-
-	public static FluidStack loadFluidStackFromNBT(CompoundTag tag) {
-		FluidStack stack;
-		if (tag.contains("FluidName")) { // legacy forge loading
-			Fluid fluid = BuiltInRegistries.FLUID.get(new ResourceLocation(tag.getString("FluidName")));
-			int amount = tag.getInt("Amount");
-			if (tag.contains("Tag")) {
-				stack = new FluidStack(fluid, amount, tag.getCompound("Tag"));
+	public static final StreamCodec<RegistryFriendlyByteBuf, FluidStack> STREAM_CODEC = new StreamCodec<>() {
+		@Override
+		public FluidStack decode(RegistryFriendlyByteBuf buf) {
+			FluidStack stack = FluidStack.OPTIONAL_STREAM_CODEC.decode(buf);
+			if (stack.isEmpty()) {
+				throw new DecoderException("Empty FluidStack not allowed");
 			} else {
-				stack = new FluidStack(fluid, amount);
+				return stack;
 			}
+		}
+
+		@Override
+		public void encode(RegistryFriendlyByteBuf buf, FluidStack stack) {
+			if (stack.isEmpty()) {
+				throw new EncoderException("Empty FluidStack not allowed");
+			} else {
+				FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, stack);
+			}
+		}
+	};
+	private static final Logger LOGGER = LogUtils.getLogger();
+	public static final FluidStack EMPTY = new FluidStack(null);
+	private int amount;
+	private final Fluid fluid;
+	private final PatchedDataComponentMap components;
+
+	@Override
+	public PatchedDataComponentMap getComponents() {
+		return components;
+	}
+
+	public DataComponentPatch getComponentsPatch() {
+		return !this.isEmpty() ? this.components.asPatch() : DataComponentPatch.EMPTY;
+	}
+
+	public boolean isComponentsPatchEmpty() {
+		return !this.isEmpty() ? ((PatchedDataComponentMapAccessor) (Object) this.components).getPatch().isEmpty() : true;
+	}
+
+	public FluidStack(Holder<Fluid> fluid, int amount, DataComponentPatch patch) {
+		this(fluid.value(), amount, PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, patch));
+	}
+
+	public FluidStack(Holder<Fluid> fluid, int amount) {
+		this(fluid.value(), amount);
+	}
+
+	public FluidStack(Fluid fluid, int amount) {
+		this(fluid, amount, new PatchedDataComponentMap(DataComponentMap.EMPTY));
+	}
+
+	private FluidStack(Fluid fluid, int amount, PatchedDataComponentMap components) {
+		this.fluid = fluid;
+		this.amount = amount;
+		this.components = components;
+	}
+
+	private FluidStack(@Nullable Void unused) {
+		this.fluid = null;
+		this.components = new PatchedDataComponentMap(DataComponentMap.EMPTY);
+	}
+
+	/**
+	 * Tries to parse a fluid stack. Empty stacks cannot be parsed with this method.
+	 */
+	public static Optional<FluidStack> parse(HolderLookup.Provider lookupProvider, Tag tag) {
+		return CODEC.parse(lookupProvider.createSerializationContext(NbtOps.INSTANCE), tag)
+				.resultOrPartial(error -> LOGGER.error("Tried to load invalid fluid: '{}'", error));
+	}
+
+	/**
+	 * Tries to parse a fluid stack, defaulting to {@link #EMPTY} on parsing failure.
+	 */
+	public static FluidStack parseOptional(HolderLookup.Provider lookupProvider, CompoundTag tag) {
+		return tag.isEmpty() ? EMPTY : parse(lookupProvider, tag).orElse(EMPTY);
+	}
+
+	/**
+	 * Checks if this fluid stack is empty.
+	 */
+	public boolean isEmpty() {
+		return this == EMPTY || this.fluid == Fluids.EMPTY || this.amount <= 0;
+	}
+
+	/**
+	 * Splits off a stack of the given amount of this stack and reduces this stack by the amount.
+	 */
+	public FluidStack split(int amount) {
+		int i = Math.min(amount, this.amount);
+		FluidStack fluidStack = this.copyWithAmount(i);
+		this.shrink(i);
+		return fluidStack;
+	}
+
+	/**
+	 * Creates a copy of this stack with {@code 0} amount.
+	 */
+	public FluidStack copyAndClear() {
+		if (this.isEmpty()) {
+			return EMPTY;
 		} else {
-			CompoundTag fluidTag = tag.getCompound("Variant");
-			FluidVariant fluid = FluidVariant.fromNbt(fluidTag);
-			stack = new FluidStack(fluid, tag.getLong("Amount"));
-			if(tag.contains("Tag", Tag.TAG_COMPOUND))
-				stack.tag = tag.getCompound("Tag");
+			FluidStack fluidStack = this.copy();
+			this.setAmount(0);
+			return fluidStack;
 		}
-
-		return stack;
 	}
 
-	public void setTag(CompoundTag tag) {
-		this.tag = tag;
+	/**
+	 * Returns the fluid in this stack, or {@link Fluids#EMPTY} if this stack is empty.
+	 */
+	public Fluid getFluid() {
+		return this.isEmpty() ? Fluids.EMPTY : this.fluid;
 	}
 
-	@Nullable
-	public CompoundTag getTag() {
-		return tag;
+	public Holder<Fluid> getFluidHolder() {
+		return this.getFluid().builtInRegistryHolder();
 	}
 
-	public CompoundTag getOrCreateTag() {
-		if (tag == null) tag = new CompoundTag();
-		return tag;
+	public boolean is(TagKey<Fluid> tag) {
+		return this.getFluid().builtInRegistryHolder().is(tag);
 	}
 
-	public void removeChildTag(String key) {
-		if (getTag() == null) return;
-		getTag().remove(key);
+	public boolean is(Fluid fluid) {
+		return this.getFluid() == fluid;
 	}
 
-	public Component getDisplayName() {
-		return FluidVariantAttributes.getName(this.type);
+	public boolean is(Predicate<Holder<Fluid>> holderPredicate) {
+		return holderPredicate.test(this.getFluidHolder());
 	}
 
-	public boolean hasTag() {
-		return tag != null;
+	public boolean is(Holder<Fluid> holder) {
+		return is(holder.value());
 	}
 
-	public static FluidStack readFromPacket(FriendlyByteBuf buffer) {
-		FluidVariant fluid = FluidVariant.fromPacket(buffer);
-		long amount = buffer.readVarLong();
-		CompoundTag tag = buffer.readNbt();
-		if (fluid.isBlank()) return EMPTY;
-		return new FluidStack(fluid, amount, tag);
+	public boolean is(HolderSet<Fluid> holderSet) {
+		return holderSet.contains(this.getFluidHolder());
 	}
 
-	public FriendlyByteBuf writeToPacket(FriendlyByteBuf buffer) {
-		getType().toPacket(buffer);
-		buffer.writeVarLong(getAmount());
-		buffer.writeNbt(getTag());
-		return buffer;
+	public Stream<TagKey<Fluid>> getTags() {
+		return this.getFluid().builtInRegistryHolder().tags();
 	}
 
+	/**
+	 * Saves this stack to a tag, directly writing the keys into the passed tag.
+	 *
+	 * @throws IllegalStateException if this stack is empty
+	 */
+	public Tag save(HolderLookup.Provider lookupProvider, Tag prefix) {
+		if (this.isEmpty()) {
+			throw new IllegalStateException("Cannot encode empty FluidStack");
+		} else {
+			return CODEC.encode(this, lookupProvider.createSerializationContext(NbtOps.INSTANCE), prefix).getOrThrow();
+		}
+	}
+
+	/**
+	 * Saves this stack to a new tag.
+	 *
+	 * @throws IllegalStateException if this stack is empty
+	 */
+	public Tag save(HolderLookup.Provider lookupProvider) {
+		if (this.isEmpty()) {
+			throw new IllegalStateException("Cannot encode empty FluidStack");
+		} else {
+			return CODEC.encodeStart(lookupProvider.createSerializationContext(NbtOps.INSTANCE), this).getOrThrow();
+		}
+	}
+
+	/**
+	 * Saves this stack to a new tag. Empty stacks are supported and will be saved as an empty tag.
+	 */
+	public Tag saveOptional(HolderLookup.Provider lookupProvider) {
+		return this.isEmpty() ? new CompoundTag() : this.save(lookupProvider, new CompoundTag());
+	}
+
+	/**
+	 * Creates a copy of this fluid stack.
+	 */
 	public FluidStack copy() {
-		CompoundTag tag = getTag();
-		if (tag != null) tag = tag.copy();
-		return new FluidStack(getType(), getAmount(), tag);
-	}
-
-	private boolean isFluidStackTagEqual(FluidStack other) {
-		return tag == null ? other.tag == null : other.tag != null && tag.equals(other.tag);
-	}
-
-	/**
-	 * Determines if the NBT Tags are equal. Useful if the FluidIDs are known to be equal.
-	 */
-	public static boolean areFluidStackTagsEqual(@NotNull FluidStack stack1, @NotNull FluidStack stack2) {
-		return stack1.isFluidStackTagEqual(stack2);
-	}
-
-	/**
-	 * Determines if the Fluids are equal and this stack is larger.
-	 *
-	 * @return true if this FluidStack contains the other FluidStack (same fluid and >= amount)
-	 */
-	public boolean containsFluid(@NotNull FluidStack other) {
-		return isFluidEqual(other) && amount >= other.amount;
-	}
-
-	/**
-	 * Determines if the FluidIDs, Amounts, and NBT Tags are all equal.
-	 *
-	 * @param other
-	 *            - the FluidStack for comparison
-	 * @return true if the two FluidStacks are exactly the same
-	 */
-	public boolean isFluidStackIdentical(FluidStack other) {
-		return isFluidEqual(other) && amount == other.amount;
-	}
-
-	/**
-	 * Determines if the FluidIDs and NBT Tags are equal compared to a registered container
-	 * ItemStack. This does not check amounts.
-	 *
-	 * @param other
-	 *            The ItemStack for comparison
-	 * @return true if the Fluids (IDs and NBT Tags) are the same
-	 */
-	public boolean isFluidEqual(@NotNull ItemStack other) {
-		Storage<FluidVariant> storage = FluidStorage.ITEM.find(other, ContainerItemContext.withConstant(other));
-		if (storage == null)
-			return false;
-		FluidVariant fluidFound = StorageUtil.findExtractableResource(storage, null);
-		return fluidFound != null && this.isFluidEqual(fluidFound);
-	}
-
-	@Override
-	public final int hashCode() {
-		long code = 1;
-		code = 31 * code + getFluid().hashCode();
-		code = 31 * code + amount;
-		if (tag != null)
-			code = 31 * code + tag.hashCode();
-		return (int) code;
-	}
-
-	/**
-	 * Default equality comparison for a FluidStack. Same functionality as isFluidEqual().
-	 *
-	 * This is included for use in data structures.
-	 */
-	@Override
-	public final boolean equals(Object o) {
-		if (!(o instanceof FluidStack)) {
-			return false;
+		if (this.isEmpty()) {
+			return EMPTY;
+		} else {
+			return new FluidStack(this.fluid, this.amount, this.components.copy());
 		}
-		return isFluidEqual((FluidStack) o);
+	}
+
+	/**
+	 * Creates a copy of this fluid stack with the given amount.
+	 */
+	public FluidStack copyWithAmount(int amount) {
+		if (this.isEmpty()) {
+			return EMPTY;
+		} else {
+			FluidStack fluidStack = this.copy();
+			fluidStack.setAmount(amount);
+			return fluidStack;
+		}
+	}
+
+	/**
+	 * Checks if the two fluid stacks are equal. This checks the fluid, amount, and components.
+	 *
+	 * @return {@code true} if the two fluid stacks have equal fluid, amount, and components
+	 */
+	public static boolean matches(FluidStack first, FluidStack second) {
+		if (first == second) {
+			return true;
+		} else {
+			return first.getAmount() != second.getAmount() ? false : isSameFluidSameComponents(first, second);
+		}
+	}
+
+	/**
+	 * Checks if the two fluid stacks have the same fluid. Ignores amount and components.
+	 *
+	 * @return {@code true} if the two fluid stacks have the same fluid
+	 */
+	public static boolean isSameFluid(FluidStack first, FluidStack second) {
+		return first.is(second.getFluid());
+	}
+
+	/**
+	 * Checks if the two fluid stacks have the same fluid and components. Ignores amount.
+	 *
+	 * @return {@code true} if the two fluid stacks have the same fluid and components
+	 */
+	public static boolean isSameFluidSameComponents(FluidStack first, FluidStack second) {
+		if (!first.is(second.getFluid())) {
+			return false;
+		} else {
+			return first.isEmpty() && second.isEmpty() ? true : Objects.equals(first.components, second.components);
+		}
+	}
+
+	public static MapCodec<FluidStack> lenientOtionalFieldOf(String fieldName) {
+		return CODEC.lenientOptionalFieldOf(fieldName)
+				.xmap(optional -> optional.orElse(EMPTY), stack -> stack.isEmpty() ? Optional.empty() : Optional.of(stack));
+	}
+
+	/**
+	 * Hashes the fluid and components of this stack, ignoring the amount.
+	 */
+	public static int hashFluidAndComponents(@Nullable FluidStack stack) {
+		if (stack != null) {
+			int i = 31 + stack.getFluid().hashCode();
+			return 31 * i + stack.getComponents().hashCode();
+		} else {
+			return 0;
+		}
+	}
+
+	/**
+	 * Returns the {@link FluidType#getDescriptionId(FluidStack) description id} of this stack.
+	 */
+	public String getDescriptionId() {
+		return this.getFluidType().getDescriptionId(this);
+	}
+
+	@Override
+	public String toString() {
+		return this.getAmount() + " " + this.getFluid();
+	}
+
+	/**
+	 * Sets a data component.
+	 */
+	@Nullable
+	@Override
+	public <T> T set(DataComponentType<? super T> type, @Nullable T component) {
+		return this.components.set(type, component);
+	}
+
+	/**
+	 * Removes a data component.
+	 */
+	@Nullable
+	@Override
+	public <T> T remove(DataComponentType<? extends T> type) {
+		return this.components.remove(type);
+	}
+
+	/**
+	 * Applies a set of component changes to this stack.
+	 */
+	@Override
+	public void applyComponents(DataComponentPatch patch) {
+		this.components.applyPatch(patch);
+	}
+
+	/**
+	 * Applies a set of component changes to this stack.
+	 */
+	@Override
+	public void applyComponents(DataComponentMap components) {
+		this.components.setAll(components);
+	}
+
+	/**
+	 * Returns the hover name of this stack.
+	 */
+	public Component getHoverName() {
+		return getFluidType().getDescription(this);
+	}
+
+	/**
+	 * Returns the amount of this stack.
+	 */
+	public int getAmount() {
+		return this.isEmpty() ? 0 : this.amount;
+	}
+
+	/**
+	 * Sets the amount of this stack.
+	 */
+	public void setAmount(int amount) {
+		this.amount = amount;
+	}
+
+	/**
+	 * Limits the amount of this stack is at most the given amount.
+	 */
+	public void limitSize(int amount) {
+		if (!this.isEmpty() && this.getAmount() > amount) {
+			this.setAmount(amount);
+		}
+	}
+
+	/**
+	 * Adds the given amount to this stack.
+	 */
+	public void grow(int addedAmount) {
+		this.setAmount(this.getAmount() + addedAmount);
+	}
+
+	/**
+	 * Removes the given amount from this stack.
+	 */
+	public void shrink(int removedAmount) {
+		this.grow(-removedAmount);
+	}
+
+	// Extra methods that are not directly adapted from ItemStack go below
+
+	/**
+	 * Returns the fluid type of this stack.
+	 */
+	public FluidType getFluidType() {
+		return getFluid().getFluidType();
+	}
+
+	/**
+	 * Check if the fluid type of this stack is equal to the given fluid type.
+	 */
+	public boolean is(FluidType fluidType) {
+		return getFluidType() == fluidType;
 	}
 }

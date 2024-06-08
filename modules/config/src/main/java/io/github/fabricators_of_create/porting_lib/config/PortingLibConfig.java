@@ -5,20 +5,19 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-
-import net.minecraft.server.level.ServerPlayer;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
+import io.github.fabricators_of_create.porting_lib.config.network.ConfigSyncPacket;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.minecraft.network.FriendlyByteBuf;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.storage.LevelResource;
 
 public class PortingLibConfig implements ModInitializer {
@@ -35,16 +34,17 @@ public class PortingLibConfig implements ModInitializer {
 	/**
 	 * The ID for the config sync packet.
 	 */
-	public static final ResourceLocation CONFIG_SYNC = new ResourceLocation(ID, "config_sync");
+	public static final ResourceLocation CONFIG_SYNC = ResourceLocation.fromNamespaceAndPath(ID, "config_sync");
 	/**
 	 * An event phase for {@link ServerPlayConnectionEvents#JOIN} that comes after config sync.
 	 * If you need to send packets to players on join that depend on config values already being synced,
 	 * register using this phase.
 	 */
-	public static final ResourceLocation AFTER_CONFIG_SYNC = new ResourceLocation(ID, "after_config_sync");
+	public static final ResourceLocation AFTER_CONFIG_SYNC = ResourceLocation.fromNamespaceAndPath(ID, "after_config_sync");
 
 	@Override
 	public void onInitialize() {
+		PayloadTypeRegistry.configurationS2C().register(ConfigSyncPacket.TYPE, ConfigSyncPacket.STREAM_CODEC);
 		ServerLifecycleEvents.SERVER_STARTING.register(server -> {
 			ConfigTracker.INSTANCE.loadConfigs(ConfigType.SERVER, getServerConfigPath(server));
 		});
@@ -60,13 +60,7 @@ public class PortingLibConfig implements ModInitializer {
 
 			ConfigTracker.INSTANCE.configSets().get(ConfigType.SERVER).forEach(config -> {
 				try {
-					String name = config.getFileName();
-					byte[] data = Files.readAllBytes(config.getFullPath());
-
-					FriendlyByteBuf buf = PacketByteBufs.create();
-					buf.writeUtf(name);
-					buf.writeByteArray(data);
-					sender.sendPacket(CONFIG_SYNC, buf);
+					sender.sendPacket(new ConfigSyncPacket(config.getFileName(), Files.readAllBytes(config.getFullPath())));
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}

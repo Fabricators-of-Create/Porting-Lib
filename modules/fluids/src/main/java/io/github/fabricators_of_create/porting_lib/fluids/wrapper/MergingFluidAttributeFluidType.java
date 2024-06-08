@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.fluids.wrapper;
 
+import org.jetbrains.annotations.Nullable;
+
 import io.github.fabricators_of_create.porting_lib.fluids.FluidStack;
 import io.github.fabricators_of_create.porting_lib.fluids.FluidType;
 import io.github.fabricators_of_create.porting_lib.fluids.sound.SoundAction;
@@ -23,10 +25,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
-
-import org.jetbrains.annotations.Nullable;
 
 public class MergingFluidAttributeFluidType extends FluidType {
 	private final FluidVariant variant;
@@ -178,12 +178,12 @@ public class MergingFluidAttributeFluidType extends FluidType {
 	}
 
 	@Override
-	public @Nullable BlockPathTypes getBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, boolean canFluidLog) {
+	public @Nullable PathType getBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, boolean canFluidLog) {
 		return superType.getBlockPathType(state, level, pos, mob, canFluidLog);
 	}
 
 	@Override
-	public @Nullable BlockPathTypes getAdjacentBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, BlockPathTypes originalType) {
+	public @Nullable PathType getAdjacentBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, PathType originalType) {
 		return superType.getAdjacentBlockPathType(state, level, pos, mob, originalType);
 	}
 

@@ -1,14 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.entity.events;
 
 import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
-import io.github.fabricators_of_create.porting_lib.entity.mixin.common.EntityAccessor;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -23,17 +21,6 @@ public abstract class EntityEvents extends BaseEvent {
 	public Entity getEntity() {
 		return entity;
 	}
-
-	@Deprecated(forRemoval = true)
-	public static final Event<EyeHeight> EYE_HEIGHT = EventFactory.createArrayBacked(EyeHeight.class, callbacks -> (entity, height) -> {
-		for (EyeHeight callback : callbacks) {
-			float newHeight = callback.onEntitySize(entity, height);
-			if (newHeight != height)
-				return newHeight;
-		}
-
-		return height;
-	});
 
 	public static final Event<EntitySize> SIZE = EventFactory.createArrayBacked(EntitySize.class, callbacks -> event -> {
 		for (EntitySize callback : callbacks)
@@ -71,19 +58,8 @@ public abstract class EntityEvents extends BaseEvent {
 			e.onEntityEnterSection(entity, packedOldPos, packedNewPos);
 	});
 
-	/**
-	 * Will be removed in 1.20.2 and the new method will be renamed back to "STRUCK_BY_LIGHTING"
-	 */
-	@Deprecated(forRemoval = true)
-	public static final Event<LightingStrike> STRUCK_BY_LIGHTING = EventFactory.createArrayBacked(LightingStrike.class, callbacks -> (entity, lightningBolt) -> {
+	public static final Event<LightingStrike> STRUCK_BY_LIGHTING = EventFactory.createArrayBacked(LightingStrike.class, callbacks -> event -> {
 		for (LightingStrike callback : callbacks)
-			if (callback.onEntityStruckByLightning(entity, lightningBolt))
-				return true;
-		return false;
-	});
-
-	public static final Event<NewLightingStrike> ENTITY_STRUCK_BY_LIGHTING = EventFactory.createArrayBacked(NewLightingStrike.class, callbacks -> event -> {
-		for (NewLightingStrike callback : callbacks)
 			callback.onEntityStruckByLightning(event);
 	});
 
@@ -119,11 +95,6 @@ public abstract class EntityEvents extends BaseEvent {
 
 	@FunctionalInterface
 	public interface LightingStrike {
-		boolean onEntityStruckByLightning(Entity entity, LightningBolt bolt);
-	}
-
-	@FunctionalInterface
-	public interface NewLightingStrike {
 		void onEntityStruckByLightning(EntityStruckByLightningEvent event);
 	}
 
@@ -217,7 +188,7 @@ public abstract class EntityEvents extends BaseEvent {
 		public void setNewSize(EntityDimensions size, boolean updateEyeHeight) {
 			this.newSize = size;
 			if (updateEyeHeight) {
-				this.newEyeHeight = ((EntityAccessor)this.getEntity()).callGetEyeHeight(this.getPose(), this.newSize);
+				this.newEyeHeight = this.getEntity().getEyeHeight(this.getPose());
 			}
 		}
 

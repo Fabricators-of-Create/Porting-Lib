@@ -1,26 +1,22 @@
 package io.github.fabricators_of_create.porting_lib.fluids;
 
+import org.jetbrains.annotations.Nullable;
+
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.fluids.sound.SoundActions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
-import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
-
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
-
-import org.jetbrains.annotations.Nullable;
 
 public class PortingLibFluids implements ModInitializer {
 	public static final ResourceKey<Registry<FluidType>> FLUID_TYPE_REGISTRY = ResourceKey.createRegistryKey(PortingLib.id("fluid_type"));
@@ -58,7 +54,7 @@ public class PortingLibFluids implements ModInitializer {
 					.canHydrate(true))
 			{
 				@Override
-				public @Nullable BlockPathTypes getBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, boolean canFluidLog)
+				public @Nullable PathType getBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, boolean canFluidLog)
 				{
 					return canFluidLog ? super.getBlockPathType(state, level, pos, mob, true) : null;
 				}
@@ -117,7 +113,7 @@ public class PortingLibFluids implements ModInitializer {
 					.descriptionId("block.minecraft.lava")
 					.canSwim(false)
 					.canDrown(false)
-					.pathType(BlockPathTypes.LAVA)
+					.pathType(PathType.LAVA)
 					.adjacentPathType(null)
 					.sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL_LAVA)
 					.sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY_LAVA)

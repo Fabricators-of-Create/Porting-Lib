@@ -54,7 +54,7 @@ public class LazyRegistrar<T> {
 	}
 
 	public <R extends T> RegistryObject<R> register(String id, Supplier<? extends R> entry) {
-		return register(new ResourceLocation(modId, id), entry);
+		return register(ResourceLocation.fromNamespaceAndPath(modId, id), entry);
 	}
 
 	public <R extends T> RegistryObject<R> register(ResourceLocation id, final Supplier<? extends R> entry) {
@@ -88,7 +88,7 @@ public class LazyRegistrar<T> {
 	@NotNull
 	public TagKey<T> createTagKey(@NotNull String path) {
 		Objects.requireNonNull(path);
-		return createTagKey(new ResourceLocation(this.modId, path));
+		return createTagKey(ResourceLocation.fromNamespaceAndPath(this.modId, path));
 	}
 
 	/**
