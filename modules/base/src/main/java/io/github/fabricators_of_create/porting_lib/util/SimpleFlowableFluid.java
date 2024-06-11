@@ -22,6 +22,10 @@ import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 
+/**
+ * Use {@link io.github.fabricators_of_create.porting_lib.fluids.BaseFlowingFluid} in the fluid module instead.
+ */
+@Deprecated(forRemoval = true)
 public abstract class SimpleFlowableFluid extends FlowingFluid {
 	private final Supplier<? extends Fluid> flowing;
 	private final Supplier<? extends Fluid> still;
