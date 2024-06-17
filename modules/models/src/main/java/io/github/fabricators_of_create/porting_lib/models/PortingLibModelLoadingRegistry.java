@@ -15,8 +15,6 @@ import net.minecraft.resources.ResourceLocation;
 
 import net.minecraft.server.packs.resources.Resource;
 
-import net.minecraft.util.GsonHelper;
-
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;

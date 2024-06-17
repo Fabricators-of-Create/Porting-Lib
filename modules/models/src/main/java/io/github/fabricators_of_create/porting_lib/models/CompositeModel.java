@@ -9,12 +9,15 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import io.github.fabricators_of_create.porting_lib.models_v2.UnbakedGeometryHelper;
+import io.github.fabricators_of_create.porting_lib.models_v2.geometry.IGeometryBakingContext;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import io.github.fabricators_of_create.porting_lib.models.geometry.IUnbakedGeometry;
+import io.github.fabricators_of_create.porting_lib.models_v2.geometry.IUnbakedGeometry;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -46,7 +49,7 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel> {
 	}
 
 	@Override
-	public BakedModel bake(BlockModel context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation, boolean isGui3d) {
+	public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
 		Material particleLocation = context.getMaterial("particle");
 		TextureAtlasSprite particle = spriteGetter.apply(particleLocation);
 
@@ -75,7 +78,7 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel> {
 			itemPassesBuilder.add(model);
 		}
 
-		return new Baked(true, context.getGuiLight().lightLikeBlock(), context.hasAmbientOcclusion(), particle, context.getTransforms(), context.getItemOverrides(baker, context), bakedParts, itemPassesBuilder.build());
+		return new Baked(true, context.useBlockLight(), context.useAmbientOcclusion(), particle, context.getTransforms(), overrides, bakedParts, itemPassesBuilder.build());
 	}
 
 	@Override

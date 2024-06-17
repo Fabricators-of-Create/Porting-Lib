@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.models.geometry.extensions;
+package io.github.fabricators_of_create.porting_lib.models_v2.geometry.extensions;
 
 import org.joml.Matrix3f;
 import org.joml.Vector3f;

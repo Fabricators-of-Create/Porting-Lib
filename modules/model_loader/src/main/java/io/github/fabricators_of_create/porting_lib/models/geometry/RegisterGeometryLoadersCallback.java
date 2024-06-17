@@ -7,8 +7,10 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.Map;
 
 /**
- * Allows users to register their own {@link IGeometryLoader geometry loaders} for use in block/item models.
+ * Allows users to register their own {@link io.github.fabricators_of_create.porting_lib.models_v2.geometry.IGeometryLoader geometry loaders} for use in block/item models.
+ * Use {@link GeometryLoaderManager#registerLoader}
  */
+@Deprecated(forRemoval = true)
 public interface RegisterGeometryLoadersCallback {
 	Event<RegisterGeometryLoadersCallback> EVENT = EventFactory.createArrayBacked(RegisterGeometryLoadersCallback.class, callbacks -> loaders -> {
 		for (RegisterGeometryLoadersCallback e : callbacks)

@@ -1,0 +1,3 @@
+portingLib {
+	addModuleDependencies(["model_loader"])
+}

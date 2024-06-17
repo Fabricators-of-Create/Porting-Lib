@@ -8,8 +8,8 @@
 
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_793": ["io/github/fabricators_of_create/porting_lib/models/geometry/extensions/BlockModelExtensions"],
-      "net/minecraft/class_4590": ["io/github/fabricators_of_create/porting_lib/models/geometry/extensions/TransformationExtensions"]
+      "net/minecraft/class_793": ["io/github/fabricators_of_create/porting_lib/models_v2/geometry/extensions/BlockModelExtensions"],
+      "net/minecraft/class_4590": ["io/github/fabricators_of_create/porting_lib/models_v2/geometry/extensions/TransformationExtensions"]
     }
   }
 }

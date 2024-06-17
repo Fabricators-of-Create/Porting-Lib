@@ -16,7 +16,7 @@ import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Either;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
-import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryLoader;
+import io.github.fabricators_of_create.porting_lib.models_v2.geometry.IGeometryLoader;
 import io.github.fabricators_of_create.porting_lib.models.obj.ObjModel.ModelSettings;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelResolver;

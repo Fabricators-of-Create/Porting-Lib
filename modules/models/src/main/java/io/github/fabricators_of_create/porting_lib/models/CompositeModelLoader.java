@@ -11,7 +11,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryLoader;
+import io.github.fabricators_of_create.porting_lib.models_v2.geometry.IGeometryLoader;
 import net.minecraft.client.renderer.block.model.BlockModel;
 
 public enum CompositeModelLoader implements IGeometryLoader<CompositeModel> {

@@ -6,6 +6,8 @@ import java.util.function.Function;
 
 import com.google.gson.JsonParseException;
 
+import io.github.fabricators_of_create.porting_lib.models_v2.UnbakedGeometryHelper;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
