@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.gametest.mixin;
 
+import net.minecraft.core.HolderLookup;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,13 +29,13 @@ public class StructureBlockEntityMixin implements StructureBlockEntityExtensions
 	}
 
 	@Inject(method = "saveAdditional", at = @At("RETURN"))
-	private void saveQualifiedTestName(CompoundTag nbt, CallbackInfo ci) {
+	private void saveQualifiedTestName(CompoundTag nbt, HolderLookup.Provider provider, CallbackInfo ci) {
 		if (qualifiedTestName != null)
 			nbt.putString("PortingLib$ExtendedGameTestFunction", qualifiedTestName);
 	}
 
-	@Inject(method = "load", at = @At("RETURN"))
-	private void loadQualifiedTestName(CompoundTag nbt, CallbackInfo ci) {
+	@Inject(method = "loadAdditional", at = @At("RETURN"))
+	private void loadQualifiedTestName(CompoundTag nbt, HolderLookup.Provider provider, CallbackInfo ci) {
 		if (nbt.contains("PortingLib$ExtendedGameTestFunction", Tag.TAG_STRING))
 			this.qualifiedTestName = nbt.getString("PortingLib$ExtendedGameTestFunction");
 	}
