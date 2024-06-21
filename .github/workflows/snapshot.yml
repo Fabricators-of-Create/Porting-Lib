@@ -9,8 +9,23 @@ jobs:
       MAVEN_USER: ${{ secrets.MAVEN_USER }}
       MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
     steps:
-      - name: Setup
-        uses: ./.github/workflows/setup.yml
+      - name: Setup Java
+        run: echo "JAVA_HOME=$JAVA_HOME_17_X64" >> "$GITHUB_ENV"
+
+      - name: Loom Cache
+        uses: actions/cache@v4
+        with:
+          path: "**/.gradle/loom-cache"
+          key: "${{ runner.os }}-gradle-${{ hashFiles('**/libs.versions.*', '**/*.gradle*', '**/gradle-wrapper.properties') }}"
+          restore-keys: "${{ runner.os }}-gradle-"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-home-cache-cleanup: true
+
+      - name: Validate Gradle Wrapper Integrity
+        uses: gradle/wrapper-validation-action@v2
 
       - name: Publish
         # build task creates artifacts for capture and upload, then publish publishes to maven
