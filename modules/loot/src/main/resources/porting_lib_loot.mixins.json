@@ -13,8 +13,6 @@
     "LootPoolMixin$LootPoolBuilderMixin",
     "LootPoolMixin$LootPoolSerializerMixin",
     "loottable.LootTableMixin",
-    "loottable.LootTableMixin$BuilderMixin",
-    "loottable.LootTableMixin_Early",
-    "loottable.LootTableMixin_Late"
+    "loottable.LootTableMixin$BuilderMixin"
   ]
 }
