@@ -10,9 +10,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(targets = "net.minecraft.world.inventory.BrewingStandMenu$PotionSlot")
 public class BrewingStandMenu$PotionSlotMixin {
-	@Inject(method = "mayPlaceItem", at = @At("HEAD"), cancellable = true)
-	private static void port_lib$isValidInput(ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
-		if (BrewingRecipeRegistry.isValidInput(itemStack))
-			cir.setReturnValue(true);
-	}
+//	@Inject(method = "mayPlaceItem", at = @At("HEAD"), cancellable = true)
+//	private static void port_lib$isValidInput(ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
+//		if (BrewingRecipeRegistry.isValidInput(itemStack))
+//			cir.setReturnValue(true);
+//	}
 }

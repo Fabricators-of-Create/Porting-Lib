@@ -2,13 +2,14 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
 import java.util.Collection;
 
+import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -16,17 +17,12 @@ import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.Share;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
-import io.github.fabricators_of_create.porting_lib.entity.ITeleporter;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityDataEvents;
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvents;
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityMountEvents;
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.MinecartEvents;
-import io.github.fabricators_of_create.porting_lib.entity.extensions.EntityExtensions;
+import io.github.fabricators_of_create.porting_lib.entity.ext.EntityExt;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
@@ -34,33 +30,25 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.portal.PortalInfo;
 
 @Mixin(Entity.class)
-public abstract class EntityMixin implements EntityExtensions {
+public abstract class EntityMixin implements EntityExt {
 	@Unique
 	private Collection<ItemEntity> port_lib$captureDrops = null;
 
-	@WrapOperation(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getEyeHeight(Lnet/minecraft/world/entity/Pose;Lnet/minecraft/world/entity/EntityDimensions;)F"))
-	private float entitySizeConstructEvent(Entity instance, Pose pose, EntityDimensions dimensions, Operation<Float> original) {
-		EntityEvents.Size sizeEvent = new EntityEvents.Size((Entity) (Object) this, Pose.STANDING, this.dimensions, original.call(instance, pose, dimensions));
-		sizeEvent.sendEvent();
+	@Inject(method = "<init>", at = @At("TAIL"))
+	private void entitySizeConstructEvent(EntityType<?> entityType, Level level, CallbackInfo ci) {
+		EntityEvent.Size sizeEvent = EntityHooks.getEntitySizeForge((Entity) (Object) this, Pose.STANDING, this.dimensions, this.eyeHeight);
 		this.dimensions = sizeEvent.getNewSize();
-		return sizeEvent.getNewEyeHeight();
+		this.eyeHeight = sizeEvent.getNewEyeHeight();
+		new EntityEvent.EntityConstructing((Entity) (Object) this).sendEvent();
 	}
 
-	@WrapOperation(method = "refreshDimensions", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getEyeHeight(Lnet/minecraft/world/entity/Pose;Lnet/minecraft/world/entity/EntityDimensions;)F"))
-	private float entitySizeEvent(Entity instance, Pose pose, EntityDimensions dimensions, Operation<Float> original, @Local(index = 3) EntityDimensions old, @Share("size") LocalRef<EntityEvents.Size> event) {
-		EntityEvents.Size sizeEvent = new EntityEvents.Size((Entity) (Object) this, pose, this.dimensions, old, getEyeHeight(), original.call(instance, pose, dimensions));
-		event.set(sizeEvent);
-		sizeEvent.sendEvent();
-		this.dimensions = sizeEvent.getNewSize();
-		return sizeEvent.getNewEyeHeight();
-	}
-
-	@ModifyVariable(method = "refreshDimensions", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;reapplyPosition()V"), index = 3)
-	private EntityDimensions modifyDimensions(EntityDimensions value, @Share("size") LocalRef<EntityEvents.Size> event) {
-		return event.get().getNewSize();
+	@WrapOperation(method = "refreshDimensions", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getDimensions(Lnet/minecraft/world/entity/Pose;)Lnet/minecraft/world/entity/EntityDimensions;"))
+	private EntityDimensions entitySizeEvent(Entity instance, Pose pose, Operation<EntityDimensions> original, @Local(index = 1) EntityDimensions old) {
+		EntityDimensions newD = original.call(instance, pose);
+		EntityEvent.Size sizeEvent = EntityHooks.getEntitySizeForge(instance, pose, old, newD, newD.eyeHeight());
+		return sizeEvent.getNewSize();
 	}
 
 	// CAPTURE DROPS
@@ -99,110 +87,48 @@ public abstract class EntityMixin implements EntityExtensions {
 	private Entity vehicle;
 
 	@Shadow
-	private float eyeHeight;
-
-	@Shadow
 	private Level level;
-
-	@Shadow
-	public abstract void unRide();
-
-	@Shadow
-	protected abstract void removeAfterChangingDimensions();
-
-	@Shadow
-	public abstract boolean isRemoved();
-
-	@Shadow
-	@Nullable
-	protected abstract PortalInfo findDimensionEntryPoint(ServerLevel destination);
 
 	@Shadow
 	public abstract EntityType<?> getType();
 
 	@Shadow
-	private float yRot;
-
-	@Shadow
 	public abstract int getId();
-
-	@Shadow
-	public abstract Pose getPose();
 
 	@Shadow
 	private EntityDimensions dimensions;
 
 	@Shadow
-	protected abstract float getEyeHeight(Pose pose, EntityDimensions dimensions);
+	public abstract float getEyeHeight();
 
 	@Shadow
-	public abstract float getEyeHeight();
+	private float eyeHeight;
 
 	@Inject(
 			method = "startRiding(Lnet/minecraft/world/entity/Entity;Z)Z",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/world/entity/Entity;isPassenger()Z",
+					target = "Lnet/minecraft/world/entity/Entity;canRide(Lnet/minecraft/world/entity/Entity;)Z",
 					shift = At.Shift.BEFORE
 			),
 			cancellable = true
 	)
 	public void port_lib$startRiding(Entity entity, boolean bl, CallbackInfoReturnable<Boolean> cir) {
-		if (!EntityMountEvents.MOUNT.invoker().canStartRiding(entity, (Entity) (Object) this)) {
+		if (!EntityHooks.canMountEntity((Entity) (Object) this, entity, true))
 			cir.setReturnValue(false);
-		}
 	}
 
 	@Inject(method = "removeVehicle", at = @At(value = "CONSTANT", args = "nullValue=true"), cancellable = true)
 	public void port_lib$removeRidingEntity(CallbackInfo ci) {
-		if (!EntityMountEvents.DISMOUNT.invoker().onStopRiding(this.vehicle, (Entity) (Object) this)) {
+		if (!EntityHooks.canMountEntity((Entity) (Object) this, this.vehicle, false))
 			ci.cancel();
-		}
 	}
 
 	@Inject(method = "remove", at = @At("TAIL"))
 	public void port_lib$onEntityRemove(Entity.RemovalReason reason, CallbackInfo ci) {
-		EntityEvents.ON_REMOVE.invoker().onRemove((Entity) (Object) this, reason);
+//		EntityEvent.ON_REMOVE.invoker().onRemove((Entity) (Object) this, reason); TODO: PORT
 		if ((Object) this instanceof AbstractMinecart cart) {
 			MinecartEvents.REMOVE.invoker().minecartRemove(cart, level);
-		}
-	}
-
-	@Unique
-	@Override
-	public Entity changeDimension(ServerLevel p_20118_, ITeleporter teleporter) {
-		if (this.level instanceof ServerLevel && !this.isRemoved()) {
-			this.level.getProfiler().push("changeDimension");
-			this.unRide();
-			this.level.getProfiler().push("reposition");
-			PortalInfo portalinfo = teleporter.getPortalInfo((Entity) (Object) this, p_20118_, this::findDimensionEntryPoint);
-			if (portalinfo == null) {
-				return null;
-			} else {
-				Entity transportedEntity = teleporter.placeEntity((Entity) (Object) this, (ServerLevel) this.level, p_20118_, this.yRot, spawnPortal -> { //Forge: Start vanilla logic
-					this.level.getProfiler().popPush("reloading");
-					Entity entity = this.getType().create(p_20118_);
-					if (entity != null) {
-						entity.restoreFrom((Entity) (Object) this);
-						entity.moveTo(portalinfo.pos.x, portalinfo.pos.y, portalinfo.pos.z, portalinfo.yRot, entity.getXRot());
-						entity.setDeltaMovement(portalinfo.speed);
-						p_20118_.addDuringTeleport(entity);
-						if (spawnPortal && p_20118_.dimension() == Level.END) {
-							ServerLevel.makeObsidianPlatform(p_20118_);
-						}
-					}
-					return entity;
-				}); //Forge: End vanilla logic
-
-				this.removeAfterChangingDimensions();
-				this.level.getProfiler().pop();
-				((ServerLevel) this.level).resetEmptyTime();
-				p_20118_.resetEmptyTime();
-				this.level.getProfiler().pop();
-				return transportedEntity;
-			}
-		} else {
-			return null;
 		}
 	}
 
@@ -254,5 +180,13 @@ public abstract class EntityMixin implements EntityExtensions {
 	@Inject(method = "load", at = @At("RETURN"))
 	public void afterLoad(CompoundTag nbt, CallbackInfo ci) {
 		EntityDataEvents.LOAD.invoker().onLoad((Entity) (Object) this, nbt);
+	}
+
+	@WrapOperation(method = "rideTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"))
+	private void preEntityTick(Entity instance, Operation<Void> original) {
+		if (!EntityHooks.fireEntityTickPre(instance).isCanceled()) {
+			original.call(instance);
+			EntityHooks.fireEntityTickPost(instance);
+		}
 	}
 }

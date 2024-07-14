@@ -3,7 +3,6 @@ portingLib.addModuleDependencies([
 		"extensions",
 		"gui_utils",
 		"transfer",
-		"utility",
 		"entity",
 		"common",
 		"config",

@@ -20,4 +20,8 @@ public class PortingLib {
 	public static ResourceLocation id(String path) {
 		return ResourceLocation.fromNamespaceAndPath(ID, path);
 	}
+
+	public static RuntimeException createMixinException(String extension) {
+		return new UnsupportedOperationException("Implementation does not support extension: " + extension);
+	}
 }

@@ -2,7 +2,7 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.ProjectileImpactEvent;
+import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 
 import net.minecraft.world.phys.HitResult;
@@ -16,12 +16,10 @@ public class ThrowableProjectileMixin {
 			method = "tick",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/world/entity/projectile/ThrowableProjectile;onHit(Lnet/minecraft/world/phys/HitResult;)V"
+					target = "Lnet/minecraft/world/entity/projectile/ThrowableProjectile;hitTargetOrDeflectSelf(Lnet/minecraft/world/phys/HitResult;)Lnet/minecraft/world/entity/projectile/ProjectileDeflection;"
 			)
 	)
-	private boolean onImpact(ThrowableProjectile projectile, HitResult result) {
-		ProjectileImpactEvent event = new ProjectileImpactEvent(projectile, result);
-		event.sendEvent();
-		return !event.isCanceled();
+	private boolean onProjectileImpact(ThrowableProjectile projectile, HitResult result) {
+		return !EntityHooks.onProjectileImpact(projectile, result);
 	}
 }

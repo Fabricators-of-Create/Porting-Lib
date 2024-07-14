@@ -1,14 +1,17 @@
 package io.github.fabricators_of_create.porting_lib.core.util;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.Tag;
 
-// can't inject this because generics
-public interface INBTSerializable<T extends Tag> {
-	default T serializeNBT() {
-		throw new RuntimeException("override serializeNBT!");
-	}
+import org.jetbrains.annotations.UnknownNullability;
 
-	default void deserializeNBT(T nbt) {
-		throw new RuntimeException("override deserializeNBT!");
-	}
+/**
+ * An interface designed to unify various things in the Minecraft
+ * code base that can be serialized to and from a NBT tag.
+ */
+public interface INBTSerializable<T extends Tag> {
+	@UnknownNullability
+	T serializeNBT(HolderLookup.Provider provider);
+
+	void deserializeNBT(HolderLookup.Provider provider, T nbt);
 }

@@ -57,12 +57,12 @@ public class MergingFluidAttributeFluidType extends FluidType {
 
 	@Override
 	public int getTemperature(FluidStack stack) {
-		return handler.getTemperature(stack.getType());
+		return handler.getTemperature(stack.getVariant());
 	}
 
 	@Override
 	public int getViscosity(FluidStack stack) {
-		return handler.getViscosity(stack.getType(), null);
+		return handler.getViscosity(stack.getVariant(), null);
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class MergingFluidAttributeFluidType extends FluidType {
 
 	@Override
 	public int getLightLevel(FluidStack stack) {
-		return handler.getLuminance(stack.getType());
+		return handler.getLuminance(stack.getVariant());
 	}
 
 	@Override

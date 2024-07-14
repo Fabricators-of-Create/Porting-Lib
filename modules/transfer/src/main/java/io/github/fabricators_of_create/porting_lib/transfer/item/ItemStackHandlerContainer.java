@@ -59,8 +59,8 @@ public class ItemStackHandlerContainer extends ItemStackHandler implements Conta
 		int count = stack.getCount();
 		int toRemove = Math.min(amount, count);
 		int remaining = count - toRemove;
-		ItemStack removed = ItemHandlerHelper.copyStackWithSize(stack, toRemove);
-		ItemStack remainder = remaining <= 0 ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(stack, remaining);
+		ItemStack removed = stack.copyWithCount(toRemove);
+		ItemStack remainder = remaining <= 0 ? ItemStack.EMPTY : stack.copyWithCount(remaining);
 		slot.setNewStack(remainder);
 		return removed;
 	}

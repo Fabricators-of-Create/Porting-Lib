@@ -1,12 +1,13 @@
 package io.github.fabricators_of_create.porting_lib.extensions.extensions;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.Item;
@@ -15,11 +16,15 @@ import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.TippedArrowItem;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionUtils;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 
 import javax.annotation.Nonnull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
+import java.util.Set;
 
 public interface ItemExtensions {
 	/**
@@ -34,20 +39,6 @@ public interface ItemExtensions {
 	 * @return True to prevent harvesting, false to continue as normal
 	 */
 	default boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, Player player) {
-		return false;
-	}
-
-	/**
-	 * Called when the player Left Clicks (attacks) an entity. Processed before
-	 * damage is done, if return value is true further processing is canceled and
-	 * the entity is not attacked.
-	 *
-	 * @param stack  The Item being used
-	 * @param player The player that is attacking
-	 * @param entity The entity being attacked
-	 * @return True to cancel the rest of the interaction.
-	 */
-	default boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
 		return false;
 	}
 
@@ -72,37 +63,28 @@ public interface ItemExtensions {
 		String modId = registryName == null ? null : registryName.getNamespace();
 		if ("minecraft".equals(modId)) {
 			if (item instanceof EnchantedBookItem) {
-				ListTag enchantmentsNbt = EnchantedBookItem.getEnchantments(itemStack);
-				if (enchantmentsNbt.size() == 1) {
-					CompoundTag nbttagcompound = enchantmentsNbt.getCompound(0);
-					ResourceLocation resourceLocation = ResourceLocation.tryParse(nbttagcompound.getString("id"));
-					if (resourceLocation != null && BuiltInRegistries.ENCHANTMENT.containsKey(resourceLocation)) {
-						return resourceLocation.getNamespace();
+				Set<Holder<Enchantment>> enchantments = itemStack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).keySet();
+				if (enchantments.size() == 1) {
+					Holder<Enchantment> enchantmentHolder = enchantments.iterator().next();
+					Optional<ResourceKey<Enchantment>> key = enchantmentHolder.unwrapKey();
+					if (key.isPresent()) {
+						return key.get().location().getNamespace();
 					}
 				}
 			} else if (item instanceof PotionItem || item instanceof TippedArrowItem) {
-				Potion potionType = PotionUtils.getPotion(itemStack);
-				ResourceLocation resourceLocation = BuiltInRegistries.POTION.getKey(potionType);
-				if (resourceLocation != null) {
-					return resourceLocation.getNamespace();
+				PotionContents potionContents = itemStack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+				Optional<Holder<Potion>> potionType = potionContents.potion();
+				Optional<ResourceKey<Potion>> key = potionType.flatMap(Holder::unwrapKey);
+				if (key.isPresent()) {
+					return key.get().location().getNamespace();
 				}
-			} else if (item instanceof SpawnEggItem) {
-				ResourceLocation resourceLocation = BuiltInRegistries.ENTITY_TYPE.getKey(((SpawnEggItem) item).getType(null));
-				if (resourceLocation != null) {
-					return resourceLocation.getNamespace();
+			} else if (item instanceof SpawnEggItem spawnEggItem) {
+				Optional<ResourceKey<EntityType<?>>> key = BuiltInRegistries.ENTITY_TYPE.getResourceKey(spawnEggItem.getType(itemStack));
+				if (key.isPresent()) {
+					return key.get().location().getNamespace();
 				}
 			}
 		}
 		return modId;
-	}
-
-	/**
-	 * Get the tooltip parts that should be hidden by default on the given stack if the {@code HideFlags} tag is not set.
-	 * @see ItemStack.TooltipPart
-	 * @param stack the stack
-	 * @return the default hide flags
-	 */
-	default int getDefaultTooltipHideFlags(@Nonnull ItemStack stack) {
-		return 0;
 	}
 }

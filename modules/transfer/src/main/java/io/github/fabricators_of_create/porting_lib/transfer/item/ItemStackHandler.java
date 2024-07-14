@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -192,16 +193,16 @@ public class ItemStackHandler implements SlottedStackStorage, INBTSerializable<C
 	// serialization
 
 	@Override
-	public CompoundTag serializeNBT() {
+	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
 		CompoundTag nbt = new CompoundTag();
 		nbt.putInt("Size", this.slots.size());
 
 		ListTag slots = new ListTag();
 		for (ItemStackHandlerSlot slot : this.slots) {
-			CompoundTag slotTag = slot.save();
-			if (slotTag != null) {
-				slotTag.putInt("Slot", slot.getIndex());
-				slots.add(slotTag);
+			if (!slot.getStack().isEmpty()) {
+				CompoundTag itemTag = new CompoundTag();
+				itemTag.putInt("Slot", slot.getIndex());
+				slots.add(slot.save(provider, itemTag));
 			}
 		}
 
@@ -210,7 +211,7 @@ public class ItemStackHandler implements SlottedStackStorage, INBTSerializable<C
 	}
 
 	@Override
-	public void deserializeNBT(CompoundTag nbt) {
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
 		setSize(nbt.contains("Size", Tag.TAG_INT) ? nbt.getInt("Size") : slots.size()); // also clears
 		ListTag slots = nbt.getList("Items", Tag.TAG_COMPOUND);
 		for (int i = 0; i < slots.size(); i++) {
@@ -218,7 +219,7 @@ public class ItemStackHandler implements SlottedStackStorage, INBTSerializable<C
 			int index = slotTag.getInt("Slot");
 
 			if (index >= 0 && index < this.slots.size()) {
-				this.slots.get(index).load(slotTag);
+				this.slots.get(index).load(provider, slotTag);
 			}
 		}
 		onLoad();

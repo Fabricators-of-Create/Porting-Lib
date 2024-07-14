@@ -1,12 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import io.github.fabricators_of_create.porting_lib.event.common.RecipesUpdatedCallback;
-import io.github.fabricators_of_create.porting_lib.event.common.TagsUpdatedCallback;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
 import net.minecraft.client.multiplayer.CommonListenerCookie;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.protocol.common.ClientboundUpdateTagsPacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
 
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -53,10 +51,5 @@ public abstract class ClientPacketListenerMixin extends ClientCommonPacketListen
 	@Inject(method = "handleUpdateRecipes", at = @At("TAIL"))
 	public void port_lib$updateRecipes(ClientboundUpdateRecipesPacket packet, CallbackInfo ci) {
 		RecipesUpdatedCallback.EVENT.invoker().onRecipesUpdated(this.recipeManager);
-	}
-
-	@Inject(method = "handleUpdateTags", at = @At("TAIL"))
-	public void port_lib$updateTags(ClientboundUpdateTagsPacket packet, CallbackInfo ci) {
-		TagsUpdatedCallback.EVENT.invoker().onTagsUpdated(this.registryAccess);
 	}
 }

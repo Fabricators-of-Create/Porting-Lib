@@ -7,3 +7,5 @@ accessible field net/minecraft/client/gui/components/Button$Builder y I
 accessible field net/minecraft/client/gui/components/Button$Builder width I
 accessible field net/minecraft/client/gui/components/Button$Builder height I
 accessible field net/minecraft/client/gui/components/Button$Builder createNarration Lnet/minecraft/client/gui/components/Button$CreateNarration;
+
+transitive-accessible method net/minecraft/client/gui/components/AbstractWidget renderScrollingString (Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;IIIII)V

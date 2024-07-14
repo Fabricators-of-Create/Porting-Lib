@@ -1,12 +1,15 @@
 package io.github.fabricators_of_create.porting_lib.entity.testmod;
 
-import io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity;
+import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 
+import net.minecraft.server.level.ServerEntity;
+
 import org.jetbrains.annotations.NotNull;
 
-import io.github.fabricators_of_create.porting_lib.entity.IEntityAdditionalSpawnData;
+import io.github.fabricators_of_create.porting_lib.entity.IEntityWithComplexSpawn;
 import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import net.minecraft.nbt.CompoundTag;
@@ -21,7 +24,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public class CustomSlime extends Slime implements IEntityAdditionalSpawnData, MultiPartEntity {
+public class CustomSlime extends Slime implements IEntityWithComplexSpawn, MultiPartEntity {
 
 	public final OrbitingItem item;
 	public final PartEntity<?>[] parts;
@@ -33,18 +36,13 @@ public class CustomSlime extends Slime implements IEntityAdditionalSpawnData, Mu
 	}
 
 	@Override
-	public void writeSpawnData(FriendlyByteBuf buf) {
+	public void writeSpawnData(RegistryFriendlyByteBuf buf) {
 		buf.writeItem(item.stack);
 	}
 
 	@Override
-	public void readSpawnData(FriendlyByteBuf buf) {
+	public void readSpawnData(RegistryFriendlyByteBuf buf) {
 		item.stack = buf.readItem();
-	}
-
-	@Override
-	public Packet<ClientGamePacketListener> getAddEntityPacket() {
-		return PortingLibEntity.getEntitySpawningPacket(this);
 	}
 
 	@Override

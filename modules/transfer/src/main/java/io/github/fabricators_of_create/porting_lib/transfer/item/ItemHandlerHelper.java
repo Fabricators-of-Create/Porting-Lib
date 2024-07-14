@@ -15,22 +15,6 @@ import net.minecraft.world.level.Level;
 import javax.annotation.Nonnull;
 
 public class ItemHandlerHelper {
-	// left for drop-in compat
-	public static boolean canItemStacksStack(ItemStack first, ItemStack second) {
-		return ItemStack.isSameItemSameTags(first, second);
-	}
-
-	public static ItemStack copyStackWithSize(ItemStack stack, int size) {
-		if (size == 0) return ItemStack.EMPTY;
-		ItemStack copy = stack.copy();
-		copy.setCount(size);
-		return copy;
-	}
-
-	public static ItemStack growCopy(ItemStack stack, int amount) {
-		return copyStackWithSize(stack, stack.getCount() + amount);
-	}
-
 	/**
 	 * giveItemToPlayer without preferred slot
 	 */

@@ -2,26 +2,22 @@ package io.github.fabricators_of_create.porting_lib.entity;
 
 import com.mojang.logging.LogUtils;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.LivingAttackEvent;
-import io.github.fabricators_of_create.porting_lib.entity.events.LivingEntityEvents;
+import io.github.fabricators_of_create.porting_lib.core.util.LogicalSidedProvider;
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityJoinLevelEvent;
+import io.github.fabricators_of_create.porting_lib.entity.network.AdvancedAddEntityPayload;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 
-import net.minecraft.network.protocol.game.ClientboundBundlePacket;
-
+import net.minecraft.server.TickTask;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
-import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
-
-import java.util.List;
 
 public class PortingLibEntity implements ModInitializer {
 	public static final Logger LOGGER = LogUtils.getLogger();
@@ -48,33 +44,24 @@ public class PortingLibEntity implements ModInitializer {
 				}
 			}
 		});
-		ServerEntityEvents.EQUIPMENT_CHANGE.register((livingEntity, equipmentSlot, previousStack, currentStack) -> {
-			LivingEntityEvents.EQUIPMENT_CHANGE.invoker().onEquipmentChange(livingEntity, equipmentSlot, previousStack, currentStack);
-		});
-		LivingEntityEvents.LivingJumpEvent.JUMP.register(event -> {
-			LivingEntityEvents.JUMP.invoker().onLivingEntityJump(event.getEntity());
-		});
-		LivingEntityEvents.LivingVisibilityEvent.VISIBILITY.register(event -> {
-			LivingEntityEvents.VISIBILITY.invoker().getEntityVisibilityMultiplier(event.getEntity(), event.getLookingEntity(), event.getVisibilityModifier());
-		});
-		LivingEntityEvents.LivingTickEvent.TICK.register(event -> {
-			if (!event.isCanceled())
-				LivingEntityEvents.TICK.invoker().onLivingEntityTick(event.getEntity());
-		});
-		LivingAttackEvent.ATTACK.register(event -> {
-			LivingEntityEvents.ATTACK.invoker().onAttack(event.getEntity(), event.getSource(), event.getAmount());
-		});
+		PayloadTypeRegistry.playS2C().register(AdvancedAddEntityPayload.TYPE, AdvancedAddEntityPayload.STREAM_CODEC);
+		EntityJoinLevelEvent.EVENT.register(PortingLibEntity::onEntityJoinWorld);
 	}
 
-	public static Packet<ClientGamePacketListener> getEntitySpawningPacket(Entity entity) {
-		Packet<ClientGamePacketListener> base = new ClientboundAddEntityPacket(entity);
-		if (entity instanceof IEntityAdditionalSpawnData extra) {
-			FriendlyByteBuf buf = PacketByteBufs.create();
-			buf.writeVarInt(entity.getId());
-			extra.writeSpawnData(buf);
-			Packet extraPacket = ServerPlayNetworking.createS2CPacket(IEntityAdditionalSpawnData.EXTRA_DATA_PACKET, buf);
-			return new ClientboundBundlePacket(List.of(base, extraPacket));
+	public static void onEntityJoinWorld(EntityJoinLevelEvent event) {
+		Entity entity = event.getEntity();
+		if (entity.getClass().equals(ItemEntity.class)) {
+			ItemStack stack = ((ItemEntity) entity).getItem();
+			Item item = stack.getItem();
+			if (item.hasCustomEntity(stack)) {
+				Entity newEntity = item.createEntity(event.getLevel(), entity, stack);
+				if (newEntity != null) {
+					entity.discard();
+					event.setCanceled(true);
+					var executor = LogicalSidedProvider.WORKQUEUE.get(event.getLevel().isClientSide ? EnvType.CLIENT : EnvType.SERVER);
+					executor.tell(new TickTask(0, () -> event.getLevel().addFreshEntity(newEntity)));
+				}
+			}
 		}
-		return base;
 	}
 }

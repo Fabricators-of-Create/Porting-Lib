@@ -1,13 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.item;
 
-import net.minecraft.world.item.Item;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 public interface DamageableItem {
-	private Item self() {
-		return (Item) this;
-	}
-
 	/**
 	 * Return the itemDamage represented by this ItemStack. Defaults to the Damage
 	 * entry in the stack NBT, but can be overridden here for other sources.
@@ -16,7 +13,7 @@ public interface DamageableItem {
 	 * @return the damage value
 	 */
 	default int getDamage(ItemStack stack) {
-		return !stack.hasTag() ? 0 : stack.getTag().getInt("Damage");
+		return Mth.clamp(stack.getOrDefault(DataComponents.DAMAGE, 0), 0, stack.getMaxDamage());
 	}
 
 	/**
@@ -26,9 +23,8 @@ public interface DamageableItem {
 	 * @param stack The itemstack that is damaged
 	 * @return the damage value
 	 */
-	@SuppressWarnings("deprecation")
 	default int getMaxDamage(ItemStack stack) {
-		return self().getMaxDamage();
+		return stack.getOrDefault(DataComponents.MAX_DAMAGE, 0);
 	}
 
 	/**
@@ -39,6 +35,6 @@ public interface DamageableItem {
 	 * @param damage the new damage value
 	 */
 	default void setDamage(ItemStack stack, int damage) {
-		stack.getOrCreateTag().putInt("Damage", Math.max(0, damage));
+		stack.set(DataComponents.DAMAGE, Mth.clamp(damage, 0, stack.getMaxDamage()));
 	}
 }

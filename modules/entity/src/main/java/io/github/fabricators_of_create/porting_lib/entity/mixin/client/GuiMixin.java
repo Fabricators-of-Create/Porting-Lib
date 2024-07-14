@@ -23,18 +23,18 @@ public class GuiMixin {
 		Collection<E> effectInstances = (Collection<E>) elements;
 
 		return effectInstances.stream().filter(mobEffectInstance -> {
-			MobEffectRenderer renderer = mobEffectInstance.getEffect().getRenderer();
-			if (renderer != null)
-				return renderer.isVisibleInGui(mobEffectInstance);
+//			MobEffectRenderer renderer = mobEffectInstance.getEffect().getRenderer(); TODO: PORT
+//			if (renderer != null)
+//				return renderer.isVisibleInGui(mobEffectInstance);
 			return true;
 		}).collect(Collectors.toList());
 	}
 
-	@WrapWithCondition(method = "renderEffects", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"))
-	private boolean shouldRenderGuiIcon(List<Runnable> list, Object obj, @Local(index = 0) GuiGraphics graphics, @Local(index = 8) MobEffectInstance mobEffect, @Local(index = 10) int x, @Local(index = 11) int y, @Local(index = 12) float alpha) {
-		MobEffectRenderer renderer = mobEffect.getEffect().getRenderer();
-		if (renderer != null)
-			return !renderer.renderGuiIcon(mobEffect, (Gui) (Object) this, graphics, x, y, 0, alpha);
-		return true;
-	}
+//	@WrapWithCondition(method = "renderEffects", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"))
+//	private boolean shouldRenderGuiIcon(List<Runnable> list, Object obj, @Local(index = 0) GuiGraphics graphics, @Local(index = 8) MobEffectInstance mobEffect, @Local(index = 10) int x, @Local(index = 11) int y, @Local(index = 12) float alpha) {
+//		MobEffectRenderer renderer = mobEffect.getEffect().getRenderer(); TODO: PORT
+//		if (renderer != null)
+//			return !renderer.renderGuiIcon(mobEffect, (Gui) (Object) this, graphics, x, y, 0, alpha);
+//		return true;
+//	}
 }

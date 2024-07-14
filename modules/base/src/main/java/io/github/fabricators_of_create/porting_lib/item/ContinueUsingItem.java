@@ -13,6 +13,10 @@ public interface ContinueUsingItem {
 	 * @return true to set the new stack to active and continue using it
 	 */
 	default boolean canContinueUsing(ItemStack oldStack, ItemStack newStack) {
-		return ItemStack.isSameItem(oldStack, newStack);
+		if (oldStack == newStack) {
+			return true;
+		} else {
+			return !oldStack.isEmpty() && !newStack.isEmpty() && ItemStack.isSameItem(newStack, oldStack);
+		}
 	}
 }

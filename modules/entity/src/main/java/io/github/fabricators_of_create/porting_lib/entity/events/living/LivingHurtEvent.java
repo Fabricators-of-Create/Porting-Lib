@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.entity.events.living;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.LivingEntityEvents;
+import io.github.fabricators_of_create.porting_lib.core.event.CancellableEvent;
+import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.damagesource.DamageSource;
@@ -12,22 +13,22 @@ import net.minecraft.world.entity.LivingEntity;
  * {@code LivingEntity#actuallyHurt(DamageSource, float)} and
  * {@code Player#actuallyHurt(DamageSource, float)}.<br>
  * <br>
+ * This event is fired via the {@link EntityHooks#onLivingHurt(LivingEntity, DamageSource, float)}.<br>
+ * <br>
  * {@link #source} contains the DamageSource that caused this Entity to be hurt. <br>
  * {@link #amount} contains the amount of damage dealt to the Entity that was hurt. <br>
  * <br>
- * This event is cancelable.<br>
+ * This event is {@link CancellableEvent}.<br>
  * If this event is canceled, the Entity is not hurt.<br>
- * <br>
- * This event does not have a result.<br>
- * <br>
  *
  * @see LivingDamageEvent
  **/
-public class LivingHurtEvent extends LivingEntityEvents {
-	public static final Event<HurtCallback> HURT = EventFactory.createArrayBacked(HurtCallback.class, callbacks -> event -> {
-		for (HurtCallback e : callbacks)
-			e.onLivingHurt(event);
+public class LivingHurtEvent extends LivingEvent implements CancellableEvent {
+	public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+		for (final Callback callback : callbacks)
+			callback.onLivingHurt(event);
 	});
+
 	private final DamageSource source;
 	private float amount;
 
@@ -51,11 +52,10 @@ public class LivingHurtEvent extends LivingEntityEvents {
 
 	@Override
 	public void sendEvent() {
-		HURT.invoker().onLivingHurt(this);
+		EVENT.invoker().onLivingHurt(this);
 	}
 
-	@FunctionalInterface
-	public interface HurtCallback {
+	public interface Callback {
 		void onLivingHurt(LivingHurtEvent event);
 	}
 }

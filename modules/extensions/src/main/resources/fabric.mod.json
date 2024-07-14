@@ -14,7 +14,6 @@
       "net/minecraft/class_804": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/ItemTransformExtensions"],
       "net/minecraft/class_1044": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/AbstractTextureExtensions"],
       "net/minecraft/class_1291": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/MobEffectExtensions"],
-      "net/minecraft/class_1293": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/MobEffectInstanceExtensions"],
       "net/minecraft/class_1297": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/INBTSerializableCompound"],
       "net/minecraft/class_1438": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/IShearable"],
       "net/minecraft/class_1472": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/IShearable"],

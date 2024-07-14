@@ -6,8 +6,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
-import io.github.fabricators_of_create.porting_lib.event.common.GrindstoneEvents;
-import io.github.fabricators_of_create.porting_lib.event.common.GrindstoneEvents.OnTakeItem;
+import io.github.fabricators_of_create.porting_lib.event.common.GrindstoneEvent;
+import io.github.fabricators_of_create.porting_lib.event.common.GrindstoneEvent.OnTakeItem;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.GrindstoneMenuExtension;
 import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import net.minecraft.server.level.ServerLevel;
@@ -36,10 +36,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class GrindstoneMenuMixin extends AbstractContainerMenu implements GrindstoneMenuExtension {
 	@Shadow
 	@Final
-	public Container repairSlots;
-
-	@Shadow
-	@Final
 	private Container resultSlots;
 
 	protected GrindstoneMenuMixin(@Nullable MenuType<?> menuType, int i) {
@@ -47,23 +43,18 @@ public abstract class GrindstoneMenuMixin extends AbstractContainerMenu implemen
 	}
 
 	@Inject(
-			method = "createResult",
+			method = "computeResult",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z",
-					ordinal = 3,
+					ordinal = 1,
 					shift = At.Shift.AFTER
 			),
 			cancellable = true
 	)
-	private void handleResult(CallbackInfo ci) {
-		ItemStack top = this.repairSlots.getItem(0);
-		ItemStack bottom = this.repairSlots.getItem(1);
+	private void handleResult(ItemStack top, ItemStack bottom, CallbackInfoReturnable<ItemStack> cir) {
 		this.xp = PortingHooks.onGrindstoneChange(top, bottom, this.resultSlots, -1);
-		if (this.xp != Integer.MIN_VALUE) {
-			ci.cancel();
-			broadcastChanges();
-		}
+		if (this.xp != Integer.MIN_VALUE) cir.setReturnValue(ItemStack.EMPTY); // NF Porting 1.20.5 check if this is correct
 	}
 
 	@Unique
@@ -95,7 +86,7 @@ public abstract class GrindstoneMenuMixin extends AbstractContainerMenu implemen
 			Container input = this.menu.repairSlots;
 			ItemStack top = input.getItem(0);
 			ItemStack bottom = input.getItem(1);
-			this.takeEvent = new GrindstoneEvents.OnTakeItem(top, bottom, amount);
+			this.takeEvent = new GrindstoneEvent.OnTakeItem(top, bottom, amount);
 			takeEvent.sendEvent();
 			if (!takeEvent.isCanceled())
 				original.call(level, pos, takeEvent.getXp());

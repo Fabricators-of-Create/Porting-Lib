@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.entity.extensions.AbstractMinecartExtensions;
+import io.github.fabricators_of_create.porting_lib.entity.ext.AbstractMinecartExt;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(AbstractMinecart.class)
-public abstract class AbstractMinecartMixin extends Entity implements AbstractMinecartExtensions {
+public abstract class AbstractMinecartMixin extends Entity implements AbstractMinecartExt {
 	@Shadow
 	protected abstract double getMaxSpeed();
 

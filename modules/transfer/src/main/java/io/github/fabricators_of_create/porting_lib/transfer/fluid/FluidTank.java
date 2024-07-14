@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 
 import java.util.function.Predicate;
@@ -66,7 +67,7 @@ public class FluidTank extends SingleVariantStorage<FluidVariant> {
 
 	@Override
 	protected FluidVariant getBlankVariant() {
-		return FluidStack.EMPTY.getType();
+		return FluidStack.EMPTY.getVariant();
 	}
 
 	@Override
@@ -83,22 +84,22 @@ public class FluidTank extends SingleVariantStorage<FluidVariant> {
 	}
 
 	public void setFluid(FluidStack fluid) {
-		this.variant = fluid.getType();
+		this.variant = fluid.getVariant();
 		this.amount = fluid.getAmount();
 		this.stack = fluid;
 	}
 
-	public CompoundTag writeToNBT(CompoundTag tag) {
-		updateStack();
-		stack.writeToNBT(tag);
-		tag.putLong("Capacity", capacity);
-		return tag;
+	public FluidTank readFromNBT(HolderLookup.Provider lookupProvider, CompoundTag nbt) {
+		setFluid(FluidStack.parseOptional(lookupProvider, nbt.getCompound("Fluid")));
+		return this;
 	}
 
-	public FluidTank readFromNBT(CompoundTag tag) {
-		setFluid(FluidStack.loadFluidStackFromNBT(tag));
-		if (tag.contains("Capacity")) this.capacity = tag.getLong("Capacity");
-		return this;
+	public CompoundTag writeToNBT(HolderLookup.Provider lookupProvider, CompoundTag nbt) {
+		if (!getFluid().isEmpty()) {
+			nbt.put("Fluid", getFluid().save(lookupProvider));
+		}
+
+		return nbt;
 	}
 
 	public boolean isEmpty() {

@@ -314,7 +314,7 @@ public class TransferUtil {
 			for (StorageView<ItemVariant> view : storage.nonEmptyViews()) {
 				long contained = view.getAmount();
 				ItemVariant item = view.getResource();
-				int maxSize = item.getItem().getMaxStackSize();
+				int maxSize = item.getItem().getDefaultMaxStackSize();
 				while (contained > 0 && stacks.size() < cutoff) {
 					int stackSize = Math.min(maxSize, (int) contained);
 					contained -= stackSize;
@@ -431,7 +431,7 @@ public class TransferUtil {
 
 	/** Quickly extract and commit the given ItemStack. */
 	public static long extractFluid(Storage<FluidVariant> storage, FluidStack stack) {
-		return extract(storage, stack.getType(), stack.getAmount());
+		return extract(storage, stack.getVariant(), stack.getAmount());
 	}
 
 	/** Quickly insert and commit the given variant with the given amount. */
@@ -451,7 +451,7 @@ public class TransferUtil {
 
 	/** Quickly insert and commit the given FluidStack. */
 	public static long insertFluid(Storage<FluidVariant> storage, FluidStack stack) {
-		return insert(storage, stack.getType(), stack.getAmount());
+		return insert(storage, stack.getVariant(), stack.getAmount());
 	}
 
 	/** Insert the given variant and amount into the given Player's inventory, excluding the hotbar, offhand, and armor. */
@@ -488,7 +488,7 @@ public class TransferUtil {
 					continue;
 				}
 				ItemVariant variant = currentView.getResource();
-				int max = (int) Math.min(contained, variant.getItem().getMaxStackSize());
+				int max = (int) Math.min(contained, variant.getItem().getDefaultMaxStackSize());
 				long extracted = currentView.extract(variant, max, t);
 				if (extracted == 0) {
 					currentView = itr.hasNext() ? itr.next() : null;

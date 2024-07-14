@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.fabricators_of_create.porting_lib.entity.IEntityAdditionalSpawnData;
+import io.github.fabricators_of_create.porting_lib.entity.IEntityWithComplexSpawn;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -14,7 +14,7 @@ import net.minecraft.network.protocol.BundlePacket;
 import net.minecraft.network.protocol.Packet;
 
 /**
- * this is needed for {@link IEntityAdditionalSpawnData} to work properly on dedicated servers, since it ends up nesting bundle packets.
+ * this is needed for {@link IEntityWithComplexSpawn} to work properly on dedicated servers, since it ends up nesting bundle packets.
  */
 @Mixin(BundlePacket.class)
 public class BundlePacketMixin {

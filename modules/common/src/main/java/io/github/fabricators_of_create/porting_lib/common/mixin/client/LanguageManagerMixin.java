@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import io.github.fabricators_of_create.porting_lib.common.extensions.LanguageManagerExtensions;
+import io.github.fabricators_of_create.porting_lib.common.ext.LanguageManagerExt;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Environment(EnvType.CLIENT)
 @Mixin(LanguageManager.class)
-public abstract class LanguageManagerMixin implements LanguageManagerExtensions {
+public abstract class LanguageManagerMixin implements LanguageManagerExt {
 	@Shadow
 	public abstract String getSelected();
 
@@ -28,17 +28,12 @@ public abstract class LanguageManagerMixin implements LanguageManagerExtensions 
 
 	@Inject(method = { "setSelected", "<init>" }, at = @At("TAIL"))
 	private void updateLocale(CallbackInfo ci) {
-		String[] split = this.getSelected().split("_", 2);
-		this.javaLocale = split.length == 1 ? new Locale(split[0]) : new Locale(split[0], split[1]);
+		String[] langSplit = this.getSelected().split("_", 2);
+		this.javaLocale = langSplit.length == 1 ? new Locale(langSplit[0]) : new Locale(langSplit[0], langSplit[1]);
 	}
 
 	@Override
-	public Locale getJavaLocale(String code) {
-		return Locale.ROOT;
-	}
-
-	@Override
-	public Locale getSelectedJavaLocale() {
+	public Locale getJavaLocale() {
 		return this.javaLocale;
 	}
 }

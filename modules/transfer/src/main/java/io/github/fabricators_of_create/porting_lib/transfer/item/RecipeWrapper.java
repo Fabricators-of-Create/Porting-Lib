@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -148,13 +149,13 @@ public class RecipeWrapper extends ItemStackHandler implements Container {
 	}
 
 	@Override
-	public CompoundTag serializeNBT() {
-		return handler.serializeNBT();
+	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+		return handler.serializeNBT(provider);
 	}
 
 	@Override
-	public void deserializeNBT(CompoundTag nbt) {
-		handler.deserializeNBT(nbt);
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
+		handler.deserializeNBT(provider, nbt);
 	}
 
 	@Override

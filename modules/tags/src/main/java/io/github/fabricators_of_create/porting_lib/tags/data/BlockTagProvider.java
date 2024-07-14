@@ -1,75 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.tags.data;
 
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.BARRELS;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.BARRELS_WOODEN;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.CHESTS;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.CHESTS_ENDER;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.CHESTS_TRAPPED;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.CHESTS_WOODEN;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.COBBLESTONE;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.COBBLESTONE_DEEPSLATE;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.COBBLESTONE_INFESTED;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.COBBLESTONE_MOSSY;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.COBBLESTONE_NORMAL;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ENDERMAN_PLACE_ON_BLACKLIST;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.END_STONES;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.FENCES;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.FENCES_NETHER_BRICK;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.FENCES_WOODEN;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.FENCE_GATES;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.FENCE_GATES_WOODEN;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.GLASS;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.GLASS_COLORLESS;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.GLASS_PANES;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.GLASS_PANES_COLORLESS;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.GLASS_SILICA;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.GLASS_TINTED;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.GRAVEL;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.NETHERRACK;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.OBSIDIAN;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORES;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORES_COAL;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORES_COPPER;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORES_DIAMOND;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORES_EMERALD;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORES_GOLD;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORES_IN_GROUND_DEEPSLATE;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORES_IN_GROUND_NETHERRACK;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORES_IN_GROUND_STONE;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORES_IRON;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORES_LAPIS;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORES_NETHERITE_SCRAP;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORES_QUARTZ;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORES_REDSTONE;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORE_BEARING_GROUND_DEEPSLATE;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORE_BEARING_GROUND_NETHERRACK;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORE_BEARING_GROUND_STONE;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORE_RATES_DENSE;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORE_RATES_SINGULAR;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.ORE_RATES_SPARSE;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.SAND;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.SANDSTONE;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.SAND_COLORLESS;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.SAND_RED;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.STAINED_GLASS;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.STAINED_GLASS_PANES;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.STONE;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.STORAGE_BLOCKS;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.STORAGE_BLOCKS_AMETHYST;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.STORAGE_BLOCKS_COAL;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.STORAGE_BLOCKS_COPPER;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.STORAGE_BLOCKS_DIAMOND;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.STORAGE_BLOCKS_EMERALD;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.STORAGE_BLOCKS_GOLD;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.STORAGE_BLOCKS_IRON;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.STORAGE_BLOCKS_LAPIS;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.STORAGE_BLOCKS_NETHERITE;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.STORAGE_BLOCKS_QUARTZ;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.STORAGE_BLOCKS_RAW_COPPER;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.STORAGE_BLOCKS_RAW_GOLD;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.STORAGE_BLOCKS_RAW_IRON;
-import static io.github.fabricators_of_create.porting_lib.tags.Tags.Blocks.STORAGE_BLOCKS_REDSTONE;
-
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -79,6 +9,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -86,107 +17,289 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
-public class BlockTagProvider extends FabricTagProvider.BlockTagProvider {
-	public BlockTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
-		super(output, registriesFuture);
+public final class BlockTagProvider extends FabricTagProvider.BlockTagProvider {
+	public BlockTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+		super(output, lookupProvider);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected void addTags(HolderLookup.Provider arg) {
-		tag(BARRELS).addTag(BARRELS_WOODEN);
-		tag(BARRELS_WOODEN).add(Blocks.BARREL);
-		tag(CHESTS).addTag(CHESTS_ENDER).addTag(CHESTS_TRAPPED).addTag(CHESTS_WOODEN);
-		tag(CHESTS_ENDER).add(Blocks.ENDER_CHEST);
-		tag(CHESTS_TRAPPED).add(Blocks.TRAPPED_CHEST);
-		tag(CHESTS_WOODEN).add(Blocks.CHEST, Blocks.TRAPPED_CHEST);
-		tag(COBBLESTONE).addTag(COBBLESTONE_NORMAL).addTag(COBBLESTONE_INFESTED).addTag(COBBLESTONE_MOSSY).addTag(COBBLESTONE_DEEPSLATE);
-		tag(COBBLESTONE_NORMAL).add(Blocks.COBBLESTONE);
-		tag(COBBLESTONE_INFESTED).add(Blocks.INFESTED_COBBLESTONE);
-		tag(COBBLESTONE_MOSSY).add(Blocks.MOSSY_COBBLESTONE);
-		tag(COBBLESTONE_DEEPSLATE).add(Blocks.COBBLED_DEEPSLATE);
-		tag(END_STONES).add(Blocks.END_STONE);
-		tag(ENDERMAN_PLACE_ON_BLACKLIST);
-		tag(FENCE_GATES).addTag(FENCE_GATES_WOODEN);
-		tag(FENCE_GATES_WOODEN).add(Blocks.OAK_FENCE_GATE, Blocks.SPRUCE_FENCE_GATE, Blocks.BIRCH_FENCE_GATE, Blocks.JUNGLE_FENCE_GATE, Blocks.ACACIA_FENCE_GATE, Blocks.DARK_OAK_FENCE_GATE, Blocks.CRIMSON_FENCE_GATE, Blocks.WARPED_FENCE_GATE);
-		tag(FENCES).addTag(FENCES_NETHER_BRICK).addTag(FENCES_WOODEN);
-		tag(FENCES_NETHER_BRICK).add(Blocks.NETHER_BRICK_FENCE);
-		getOrCreateTagBuilder(FENCES_WOODEN).forceAddTag(BlockTags.WOODEN_FENCES);
-		tag(GLASS).addTag(GLASS_COLORLESS).addTag(STAINED_GLASS).addTag(GLASS_TINTED);
-		tag(GLASS_COLORLESS).add(Blocks.GLASS);
-		tag(GLASS_SILICA).add(Blocks.GLASS, Blocks.BLACK_STAINED_GLASS, Blocks.BLUE_STAINED_GLASS, Blocks.BROWN_STAINED_GLASS, Blocks.CYAN_STAINED_GLASS, Blocks.GRAY_STAINED_GLASS, Blocks.GREEN_STAINED_GLASS, Blocks.LIGHT_BLUE_STAINED_GLASS, Blocks.LIGHT_GRAY_STAINED_GLASS, Blocks.LIME_STAINED_GLASS, Blocks.MAGENTA_STAINED_GLASS, Blocks.ORANGE_STAINED_GLASS, Blocks.PINK_STAINED_GLASS, Blocks.PURPLE_STAINED_GLASS, Blocks.RED_STAINED_GLASS, Blocks.WHITE_STAINED_GLASS, Blocks.YELLOW_STAINED_GLASS);
-		tag(GLASS_TINTED).add(Blocks.TINTED_GLASS);
-		addColored(tag(STAINED_GLASS)::add, GLASS, "{color}_stained_glass");
-		tag(GLASS_PANES).addTag(GLASS_PANES_COLORLESS).addTag(STAINED_GLASS_PANES);
-		tag(GLASS_PANES_COLORLESS).add(Blocks.GLASS_PANE);
-		addColored(tag(STAINED_GLASS_PANES)::add, GLASS_PANES, "{color}_stained_glass_pane");
-		tag(GRAVEL).add(Blocks.GRAVEL);
-		tag(NETHERRACK).add(Blocks.NETHERRACK);
-		tag(OBSIDIAN).add(Blocks.OBSIDIAN);
-		tag(ORE_BEARING_GROUND_DEEPSLATE).add(Blocks.DEEPSLATE);
-		tag(ORE_BEARING_GROUND_NETHERRACK).add(Blocks.NETHERRACK);
-		tag(ORE_BEARING_GROUND_STONE).add(Blocks.STONE);
-		tag(ORE_RATES_DENSE).add(Blocks.COPPER_ORE, Blocks.DEEPSLATE_COPPER_ORE, Blocks.DEEPSLATE_LAPIS_ORE, Blocks.DEEPSLATE_REDSTONE_ORE, Blocks.LAPIS_ORE, Blocks.REDSTONE_ORE);
-		tag(ORE_RATES_SINGULAR).add(Blocks.ANCIENT_DEBRIS, Blocks.COAL_ORE, Blocks.DEEPSLATE_COAL_ORE, Blocks.DEEPSLATE_DIAMOND_ORE, Blocks.DEEPSLATE_EMERALD_ORE, Blocks.DEEPSLATE_GOLD_ORE, Blocks.DEEPSLATE_IRON_ORE, Blocks.DIAMOND_ORE, Blocks.EMERALD_ORE, Blocks.GOLD_ORE, Blocks.IRON_ORE, Blocks.NETHER_QUARTZ_ORE);
-		tag(ORE_RATES_SPARSE).add(Blocks.NETHER_GOLD_ORE);
-		tag(ORES).addTag(ORES_COAL).addTag(ORES_COPPER).addTag(ORES_DIAMOND).addTag(ORES_EMERALD).addTag(ORES_GOLD).addTag(ORES_IRON).addTag(ORES_LAPIS).addTag(ORES_REDSTONE).addTag(ORES_QUARTZ).addTag(ORES_NETHERITE_SCRAP);
-		getOrCreateTagBuilder(ORES_COAL).forceAddTag(BlockTags.COAL_ORES);
-		getOrCreateTagBuilder(ORES_COPPER).forceAddTag(BlockTags.COPPER_ORES);
-		getOrCreateTagBuilder(ORES_DIAMOND).forceAddTag(BlockTags.DIAMOND_ORES);
-		getOrCreateTagBuilder(ORES_EMERALD).forceAddTag(BlockTags.EMERALD_ORES);
-		getOrCreateTagBuilder(ORES_GOLD).forceAddTag(BlockTags.GOLD_ORES);
-		getOrCreateTagBuilder(ORES_IRON).forceAddTag(BlockTags.IRON_ORES);
-		getOrCreateTagBuilder(ORES_LAPIS).forceAddTag(BlockTags.LAPIS_ORES);
-		tag(ORES_QUARTZ).add(Blocks.NETHER_QUARTZ_ORE);
-		getOrCreateTagBuilder(ORES_REDSTONE).forceAddTag(BlockTags.REDSTONE_ORES);
-		tag(ORES_NETHERITE_SCRAP).add(Blocks.ANCIENT_DEBRIS);
-		tag(ORES_IN_GROUND_DEEPSLATE).add(Blocks.DEEPSLATE_COAL_ORE, Blocks.DEEPSLATE_COPPER_ORE, Blocks.DEEPSLATE_DIAMOND_ORE, Blocks.DEEPSLATE_EMERALD_ORE, Blocks.DEEPSLATE_GOLD_ORE, Blocks.DEEPSLATE_IRON_ORE, Blocks.DEEPSLATE_LAPIS_ORE, Blocks.DEEPSLATE_REDSTONE_ORE);
-		tag(ORES_IN_GROUND_NETHERRACK).add(Blocks.NETHER_GOLD_ORE, Blocks.NETHER_QUARTZ_ORE);
-		tag(ORES_IN_GROUND_STONE).add(Blocks.COAL_ORE, Blocks.COPPER_ORE, Blocks.DIAMOND_ORE, Blocks.EMERALD_ORE, Blocks.GOLD_ORE, Blocks.IRON_ORE, Blocks.LAPIS_ORE, Blocks.REDSTONE_ORE);
-		tag(SAND).addTag(SAND_COLORLESS).addTag(SAND_RED);
-		tag(SAND_COLORLESS).add(Blocks.SAND);
-		tag(SAND_RED).add(Blocks.RED_SAND);
-		tag(SANDSTONE).add(Blocks.SANDSTONE, Blocks.CUT_SANDSTONE, Blocks.CHISELED_SANDSTONE, Blocks.SMOOTH_SANDSTONE, Blocks.RED_SANDSTONE, Blocks.CUT_RED_SANDSTONE, Blocks.CHISELED_RED_SANDSTONE, Blocks.SMOOTH_RED_SANDSTONE);
-		tag(STONE).add(Blocks.ANDESITE, Blocks.DIORITE, Blocks.GRANITE, Blocks.INFESTED_STONE, Blocks.STONE, Blocks.POLISHED_ANDESITE, Blocks.POLISHED_DIORITE, Blocks.POLISHED_GRANITE, Blocks.DEEPSLATE, Blocks.POLISHED_DEEPSLATE, Blocks.INFESTED_DEEPSLATE, Blocks.TUFF);
-		tag(STORAGE_BLOCKS).addTag(STORAGE_BLOCKS_AMETHYST).addTag(STORAGE_BLOCKS_COAL).addTag(STORAGE_BLOCKS_COPPER).addTag(STORAGE_BLOCKS_DIAMOND).addTag(STORAGE_BLOCKS_EMERALD).addTag(STORAGE_BLOCKS_GOLD).addTag(STORAGE_BLOCKS_IRON).addTag(STORAGE_BLOCKS_LAPIS).addTag(STORAGE_BLOCKS_QUARTZ).addTag(STORAGE_BLOCKS_RAW_COPPER).addTag(STORAGE_BLOCKS_RAW_GOLD).addTag(STORAGE_BLOCKS_RAW_IRON).addTag(STORAGE_BLOCKS_REDSTONE).addTag(STORAGE_BLOCKS_NETHERITE);
-		tag(STORAGE_BLOCKS_AMETHYST).add(Blocks.AMETHYST_BLOCK);
-		tag(STORAGE_BLOCKS_COAL).add(Blocks.COAL_BLOCK);
-		tag(STORAGE_BLOCKS_COPPER).add(Blocks.COPPER_BLOCK); // cut copper intentionally not included: #62
-		tag(STORAGE_BLOCKS_DIAMOND).add(Blocks.DIAMOND_BLOCK);
-		tag(STORAGE_BLOCKS_EMERALD).add(Blocks.EMERALD_BLOCK);
-		tag(STORAGE_BLOCKS_GOLD).add(Blocks.GOLD_BLOCK);
-		tag(STORAGE_BLOCKS_IRON).add(Blocks.IRON_BLOCK);
-		tag(STORAGE_BLOCKS_LAPIS).add(Blocks.LAPIS_BLOCK);
-		tag(STORAGE_BLOCKS_QUARTZ).add(Blocks.QUARTZ_BLOCK);
-		tag(STORAGE_BLOCKS_RAW_COPPER).add(Blocks.RAW_COPPER_BLOCK);
-		tag(STORAGE_BLOCKS_RAW_GOLD).add(Blocks.RAW_GOLD_BLOCK);
-		tag(STORAGE_BLOCKS_RAW_IRON).add(Blocks.RAW_IRON_BLOCK);
-		tag(STORAGE_BLOCKS_REDSTONE).add(Blocks.REDSTONE_BLOCK);
-		tag(STORAGE_BLOCKS_NETHERITE).add(Blocks.NETHERITE_BLOCK);
+	public void addTags(HolderLookup.Provider p_256380_) {
+		tag(Tags.Blocks.BARRELS).addTag(Tags.Blocks.BARRELS_WOODEN);
+		tag(Tags.Blocks.BARRELS_WOODEN).add(Blocks.BARREL);
+		tag(Tags.Blocks.BOOKSHELVES).add(Blocks.BOOKSHELF);
+		tag(Tags.Blocks.BUDDING_BLOCKS).add(Blocks.BUDDING_AMETHYST);
+		tag(Tags.Blocks.BUDS).add(Blocks.SMALL_AMETHYST_BUD).add(Blocks.MEDIUM_AMETHYST_BUD).add(Blocks.LARGE_AMETHYST_BUD);
+		tag(Tags.Blocks.CHAINS).add(Blocks.CHAIN);
+		tag(Tags.Blocks.CHESTS).addTag(Tags.Blocks.CHESTS_ENDER).addTag(Tags.Blocks.CHESTS_TRAPPED).addTag(Tags.Blocks.CHESTS_WOODEN);
+		tag(Tags.Blocks.CHESTS_ENDER).add(Blocks.ENDER_CHEST);
+		tag(Tags.Blocks.CHESTS_TRAPPED).add(Blocks.TRAPPED_CHEST);
+		tag(Tags.Blocks.CHESTS_WOODEN).add(Blocks.CHEST, Blocks.TRAPPED_CHEST);
+		tag(Tags.Blocks.CLUSTERS).add(Blocks.AMETHYST_CLUSTER);
+		tag(Tags.Blocks.COBBLESTONES).addTag(Tags.Blocks.COBBLESTONES_NORMAL).addTag(Tags.Blocks.COBBLESTONES_INFESTED).addTag(Tags.Blocks.COBBLESTONES_MOSSY).addTag(Tags.Blocks.COBBLESTONES_DEEPSLATE);
+		tag(Tags.Blocks.COBBLESTONES_NORMAL).add(Blocks.COBBLESTONE);
+		tag(Tags.Blocks.COBBLESTONES_INFESTED).add(Blocks.INFESTED_COBBLESTONE);
+		tag(Tags.Blocks.COBBLESTONES_MOSSY).add(Blocks.MOSSY_COBBLESTONE);
+		tag(Tags.Blocks.COBBLESTONES_DEEPSLATE).add(Blocks.COBBLED_DEEPSLATE);
+		tag(Tags.Blocks.CONCRETES).add(Blocks.WHITE_CONCRETE, Blocks.ORANGE_CONCRETE, Blocks.MAGENTA_CONCRETE, Blocks.LIGHT_BLUE_CONCRETE, Blocks.YELLOW_CONCRETE, Blocks.LIME_CONCRETE, Blocks.PINK_CONCRETE, Blocks.GRAY_CONCRETE, Blocks.LIGHT_GRAY_CONCRETE, Blocks.CYAN_CONCRETE, Blocks.PURPLE_CONCRETE, Blocks.BLUE_CONCRETE, Blocks.BROWN_CONCRETE, Blocks.GREEN_CONCRETE, Blocks.RED_CONCRETE, Blocks.BLACK_CONCRETE);
+		addColored(Tags.Blocks.DYED, "{color}_banner");
+		addColored(Tags.Blocks.DYED, "{color}_bed");
+		addColored(Tags.Blocks.DYED, "{color}_candle");
+		addColored(Tags.Blocks.DYED, "{color}_carpet");
+		addColored(Tags.Blocks.DYED, "{color}_concrete");
+		addColored(Tags.Blocks.DYED, "{color}_concrete_powder");
+		addColored(Tags.Blocks.DYED, "{color}_glazed_terracotta");
+		addColored(Tags.Blocks.DYED, "{color}_shulker_box");
+		addColored(Tags.Blocks.DYED, "{color}_stained_glass");
+		addColored(Tags.Blocks.DYED, "{color}_stained_glass_pane");
+		addColored(Tags.Blocks.DYED, "{color}_terracotta");
+		addColored(Tags.Blocks.DYED, "{color}_wall_banner");
+		addColored(Tags.Blocks.DYED, "{color}_wool");
+		addColoredTags(tag(Tags.Blocks.DYED)::addTag, Tags.Blocks.DYED);
+		tag(Tags.Blocks.END_STONES).add(Blocks.END_STONE);
+		tag(Tags.Blocks.ENDERMAN_PLACE_ON_BLACKLIST);
+		tag(Tags.Blocks.FENCE_GATES).addTag(Tags.Blocks.FENCE_GATES_WOODEN);
+		tag(Tags.Blocks.FENCE_GATES_WOODEN).add(Blocks.OAK_FENCE_GATE, Blocks.SPRUCE_FENCE_GATE, Blocks.BIRCH_FENCE_GATE, Blocks.JUNGLE_FENCE_GATE, Blocks.ACACIA_FENCE_GATE, Blocks.DARK_OAK_FENCE_GATE, Blocks.CRIMSON_FENCE_GATE, Blocks.WARPED_FENCE_GATE, Blocks.MANGROVE_FENCE_GATE, Blocks.BAMBOO_FENCE_GATE, Blocks.CHERRY_FENCE_GATE);
+		tag(Tags.Blocks.FENCES).addTag(Tags.Blocks.FENCES_NETHER_BRICK).addTag(Tags.Blocks.FENCES_WOODEN);
+		tag(Tags.Blocks.FENCES_NETHER_BRICK).add(Blocks.NETHER_BRICK_FENCE);
+		tag(Tags.Blocks.FENCES_WOODEN).addTag(BlockTags.WOODEN_FENCES);
+		tag(Tags.Blocks.GLASS_BLOCKS).addTag(Tags.Blocks.GLASS_BLOCKS_COLORLESS).addTag(Tags.Blocks.GLASS_BLOCKS_CHEAP).addTag(Tags.Blocks.GLASS_BLOCKS_TINTED).add(Blocks.WHITE_STAINED_GLASS, Blocks.ORANGE_STAINED_GLASS, Blocks.MAGENTA_STAINED_GLASS, Blocks.LIGHT_BLUE_STAINED_GLASS, Blocks.YELLOW_STAINED_GLASS, Blocks.LIME_STAINED_GLASS, Blocks.PINK_STAINED_GLASS, Blocks.GRAY_STAINED_GLASS, Blocks.LIGHT_GRAY_STAINED_GLASS, Blocks.CYAN_STAINED_GLASS, Blocks.PURPLE_STAINED_GLASS, Blocks.BLUE_STAINED_GLASS, Blocks.BROWN_STAINED_GLASS, Blocks.GREEN_STAINED_GLASS, Blocks.RED_STAINED_GLASS, Blocks.BLACK_STAINED_GLASS);
+		tag(Tags.Blocks.GLASS_BLOCKS_COLORLESS).add(Blocks.GLASS);
+		tag(Tags.Blocks.GLASS_BLOCKS_CHEAP).add(Blocks.GLASS, Blocks.WHITE_STAINED_GLASS, Blocks.ORANGE_STAINED_GLASS, Blocks.MAGENTA_STAINED_GLASS, Blocks.LIGHT_BLUE_STAINED_GLASS, Blocks.YELLOW_STAINED_GLASS, Blocks.LIME_STAINED_GLASS, Blocks.PINK_STAINED_GLASS, Blocks.GRAY_STAINED_GLASS, Blocks.LIGHT_GRAY_STAINED_GLASS, Blocks.CYAN_STAINED_GLASS, Blocks.PURPLE_STAINED_GLASS, Blocks.BLUE_STAINED_GLASS, Blocks.BROWN_STAINED_GLASS, Blocks.GREEN_STAINED_GLASS, Blocks.RED_STAINED_GLASS, Blocks.BLACK_STAINED_GLASS);
+		tag(Tags.Blocks.GLASS_BLOCKS_TINTED).add(Blocks.TINTED_GLASS);
+		tag(Tags.Blocks.GLASS_PANES).addTag(Tags.Blocks.GLASS_PANES_COLORLESS).add(Blocks.WHITE_STAINED_GLASS_PANE, Blocks.ORANGE_STAINED_GLASS_PANE, Blocks.MAGENTA_STAINED_GLASS_PANE, Blocks.LIGHT_BLUE_STAINED_GLASS_PANE, Blocks.YELLOW_STAINED_GLASS_PANE, Blocks.LIME_STAINED_GLASS_PANE, Blocks.PINK_STAINED_GLASS_PANE, Blocks.GRAY_STAINED_GLASS_PANE, Blocks.LIGHT_GRAY_STAINED_GLASS_PANE, Blocks.CYAN_STAINED_GLASS_PANE, Blocks.PURPLE_STAINED_GLASS_PANE, Blocks.BLUE_STAINED_GLASS_PANE, Blocks.BROWN_STAINED_GLASS_PANE, Blocks.GREEN_STAINED_GLASS_PANE, Blocks.RED_STAINED_GLASS_PANE, Blocks.BLACK_STAINED_GLASS_PANE);
+		tag(Tags.Blocks.GLASS_PANES_COLORLESS).add(Blocks.GLASS_PANE);
+		tag(Tags.Blocks.GLAZED_TERRACOTTAS).add(Blocks.WHITE_GLAZED_TERRACOTTA, Blocks.ORANGE_GLAZED_TERRACOTTA, Blocks.MAGENTA_GLAZED_TERRACOTTA, Blocks.LIGHT_BLUE_GLAZED_TERRACOTTA, Blocks.YELLOW_GLAZED_TERRACOTTA, Blocks.LIME_GLAZED_TERRACOTTA, Blocks.PINK_GLAZED_TERRACOTTA, Blocks.GRAY_GLAZED_TERRACOTTA, Blocks.LIGHT_GRAY_GLAZED_TERRACOTTA, Blocks.CYAN_GLAZED_TERRACOTTA, Blocks.PURPLE_GLAZED_TERRACOTTA, Blocks.BLUE_GLAZED_TERRACOTTA, Blocks.BROWN_GLAZED_TERRACOTTA, Blocks.GREEN_GLAZED_TERRACOTTA, Blocks.RED_GLAZED_TERRACOTTA, Blocks.BLACK_GLAZED_TERRACOTTA);
+		tag(Tags.Blocks.GRAVELS).add(Blocks.GRAVEL);
+		tag(Tags.Blocks.SKULLS).add(Blocks.SKELETON_SKULL, Blocks.SKELETON_WALL_SKULL, Blocks.WITHER_SKELETON_SKULL, Blocks.WITHER_SKELETON_WALL_SKULL, Blocks.PLAYER_HEAD, Blocks.PLAYER_WALL_HEAD, Blocks.ZOMBIE_HEAD, Blocks.ZOMBIE_WALL_HEAD, Blocks.CREEPER_HEAD, Blocks.CREEPER_WALL_HEAD, Blocks.PIGLIN_HEAD, Blocks.PIGLIN_WALL_HEAD, Blocks.DRAGON_HEAD, Blocks.DRAGON_WALL_HEAD);
+		tag(Tags.Blocks.HIDDEN_FROM_RECIPE_VIEWERS);
+		tag(Tags.Blocks.NETHERRACKS).add(Blocks.NETHERRACK);
+		tag(Tags.Blocks.OBSIDIANS).add(Blocks.OBSIDIAN);
+		tag(Tags.Blocks.ORE_BEARING_GROUND_DEEPSLATE).add(Blocks.DEEPSLATE);
+		tag(Tags.Blocks.ORE_BEARING_GROUND_NETHERRACK).add(Blocks.NETHERRACK);
+		tag(Tags.Blocks.ORE_BEARING_GROUND_STONE).add(Blocks.STONE);
+		tag(Tags.Blocks.ORE_RATES_DENSE).add(Blocks.COPPER_ORE, Blocks.DEEPSLATE_COPPER_ORE, Blocks.DEEPSLATE_LAPIS_ORE, Blocks.DEEPSLATE_REDSTONE_ORE, Blocks.LAPIS_ORE, Blocks.REDSTONE_ORE);
+		tag(Tags.Blocks.ORE_RATES_SINGULAR).add(Blocks.ANCIENT_DEBRIS, Blocks.COAL_ORE, Blocks.DEEPSLATE_COAL_ORE, Blocks.DEEPSLATE_DIAMOND_ORE, Blocks.DEEPSLATE_EMERALD_ORE, Blocks.DEEPSLATE_GOLD_ORE, Blocks.DEEPSLATE_IRON_ORE, Blocks.DIAMOND_ORE, Blocks.EMERALD_ORE, Blocks.GOLD_ORE, Blocks.IRON_ORE, Blocks.NETHER_QUARTZ_ORE);
+		tag(Tags.Blocks.ORE_RATES_SPARSE).add(Blocks.NETHER_GOLD_ORE);
+		tag(Tags.Blocks.ORES).addTag(Tags.Blocks.ORES_COAL).addTag(Tags.Blocks.ORES_COPPER).addTag(Tags.Blocks.ORES_DIAMOND).addTag(Tags.Blocks.ORES_EMERALD).addTag(Tags.Blocks.ORES_GOLD).addTag(Tags.Blocks.ORES_IRON).addTag(Tags.Blocks.ORES_LAPIS).addTag(Tags.Blocks.ORES_NETHERITE_SCRAP).addTag(Tags.Blocks.ORES_REDSTONE).addTag(Tags.Blocks.ORES_QUARTZ);
+		tag(Tags.Blocks.ORES_COAL).addTag(BlockTags.COAL_ORES);
+		tag(Tags.Blocks.ORES_COPPER).addTag(BlockTags.COPPER_ORES);
+		tag(Tags.Blocks.ORES_DIAMOND).addTag(BlockTags.DIAMOND_ORES);
+		tag(Tags.Blocks.ORES_EMERALD).addTag(BlockTags.EMERALD_ORES);
+		tag(Tags.Blocks.ORES_GOLD).addTag(BlockTags.GOLD_ORES);
+		tag(Tags.Blocks.ORES_IRON).addTag(BlockTags.IRON_ORES);
+		tag(Tags.Blocks.ORES_LAPIS).addTag(BlockTags.LAPIS_ORES);
+		tag(Tags.Blocks.ORES_QUARTZ).add(Blocks.NETHER_QUARTZ_ORE);
+		tag(Tags.Blocks.ORES_REDSTONE).addTag(BlockTags.REDSTONE_ORES);
+		tag(Tags.Blocks.ORES_NETHERITE_SCRAP).add(Blocks.ANCIENT_DEBRIS);
+		tag(Tags.Blocks.ORES_IN_GROUND_DEEPSLATE).add(Blocks.DEEPSLATE_COAL_ORE, Blocks.DEEPSLATE_COPPER_ORE, Blocks.DEEPSLATE_DIAMOND_ORE, Blocks.DEEPSLATE_EMERALD_ORE, Blocks.DEEPSLATE_GOLD_ORE, Blocks.DEEPSLATE_IRON_ORE, Blocks.DEEPSLATE_LAPIS_ORE, Blocks.DEEPSLATE_REDSTONE_ORE);
+		tag(Tags.Blocks.ORES_IN_GROUND_NETHERRACK).add(Blocks.NETHER_GOLD_ORE, Blocks.NETHER_QUARTZ_ORE);
+		tag(Tags.Blocks.ORES_IN_GROUND_STONE).add(Blocks.COAL_ORE, Blocks.COPPER_ORE, Blocks.DIAMOND_ORE, Blocks.EMERALD_ORE, Blocks.GOLD_ORE, Blocks.IRON_ORE, Blocks.LAPIS_ORE, Blocks.REDSTONE_ORE);
+		tag(Tags.Blocks.PLAYER_WORKSTATIONS_CRAFTING_TABLES).add(Blocks.CRAFTING_TABLE);
+		tag(Tags.Blocks.PLAYER_WORKSTATIONS_FURNACES).add(Blocks.FURNACE);
+		tag(Tags.Blocks.SANDS).addTag(Tags.Blocks.SANDS_COLORLESS).addTag(Tags.Blocks.SANDS_RED);
+		tag(Tags.Blocks.RELOCATION_NOT_SUPPORTED);
+		tag(Tags.Blocks.ROPES);
+		tag(Tags.Blocks.SANDS_COLORLESS).add(Blocks.SAND);
+		tag(Tags.Blocks.SANDS_RED).add(Blocks.RED_SAND);
+
+		tag(Tags.Blocks.SANDSTONE_RED_BLOCKS).add(Blocks.RED_SANDSTONE, Blocks.CUT_RED_SANDSTONE, Blocks.CHISELED_RED_SANDSTONE, Blocks.SMOOTH_RED_SANDSTONE);
+		tag(Tags.Blocks.SANDSTONE_UNCOLORED_BLOCKS).add(Blocks.SANDSTONE, Blocks.CUT_SANDSTONE, Blocks.CHISELED_SANDSTONE, Blocks.SMOOTH_SANDSTONE);
+		tag(Tags.Blocks.SANDSTONE_BLOCKS).addTag(Tags.Blocks.SANDSTONE_RED_BLOCKS).addTag(Tags.Blocks.SANDSTONE_UNCOLORED_BLOCKS);
+		tag(Tags.Blocks.SANDSTONE_RED_SLABS).add(Blocks.RED_SANDSTONE_SLAB, Blocks.CUT_RED_SANDSTONE_SLAB, Blocks.SMOOTH_RED_SANDSTONE_SLAB);
+		tag(Tags.Blocks.SANDSTONE_UNCOLORED_SLABS).add(Blocks.SANDSTONE_SLAB, Blocks.CUT_SANDSTONE_SLAB, Blocks.SMOOTH_SANDSTONE_SLAB);
+		tag(Tags.Blocks.SANDSTONE_SLABS).addTag(Tags.Blocks.SANDSTONE_RED_SLABS).addTag(Tags.Blocks.SANDSTONE_UNCOLORED_SLABS);
+		tag(Tags.Blocks.SANDSTONE_RED_STAIRS).add(Blocks.RED_SANDSTONE_STAIRS, Blocks.SMOOTH_RED_SANDSTONE_STAIRS);
+		tag(Tags.Blocks.SANDSTONE_UNCOLORED_STAIRS).add(Blocks.SANDSTONE_STAIRS, Blocks.SMOOTH_SANDSTONE_STAIRS);
+		tag(Tags.Blocks.SANDSTONE_STAIRS).addTag(Tags.Blocks.SANDSTONE_RED_STAIRS).addTag(Tags.Blocks.SANDSTONE_UNCOLORED_STAIRS);
+
+		tag(Tags.Blocks.STONES).add(Blocks.ANDESITE, Blocks.DIORITE, Blocks.GRANITE, Blocks.STONE, Blocks.DEEPSLATE, Blocks.TUFF);
+		tag(Tags.Blocks.STORAGE_BLOCKS).addTag(Tags.Blocks.STORAGE_BLOCKS_BONE_MEAL).addTag(Tags.Blocks.STORAGE_BLOCKS_COAL)
+				.addTag(Tags.Blocks.STORAGE_BLOCKS_COPPER).addTag(Tags.Blocks.STORAGE_BLOCKS_DIAMOND).addTag(Tags.Blocks.STORAGE_BLOCKS_DRIED_KELP)
+				.addTag(Tags.Blocks.STORAGE_BLOCKS_EMERALD).addTag(Tags.Blocks.STORAGE_BLOCKS_GOLD).addTag(Tags.Blocks.STORAGE_BLOCKS_IRON)
+				.addTag(Tags.Blocks.STORAGE_BLOCKS_LAPIS).addTag(Tags.Blocks.STORAGE_BLOCKS_NETHERITE).addTag(Tags.Blocks.STORAGE_BLOCKS_RAW_COPPER)
+				.addTag(Tags.Blocks.STORAGE_BLOCKS_RAW_GOLD).addTag(Tags.Blocks.STORAGE_BLOCKS_RAW_IRON).addTag(Tags.Blocks.STORAGE_BLOCKS_REDSTONE)
+				.addTag(Tags.Blocks.STORAGE_BLOCKS_SLIME).addTag(Tags.Blocks.STORAGE_BLOCKS_WHEAT);
+		tag(Tags.Blocks.STORAGE_BLOCKS_BONE_MEAL).add(Blocks.BONE_BLOCK);
+		tag(Tags.Blocks.STORAGE_BLOCKS_COAL).add(Blocks.COAL_BLOCK);
+		tag(Tags.Blocks.STORAGE_BLOCKS_COPPER).add(Blocks.COPPER_BLOCK);
+		tag(Tags.Blocks.STORAGE_BLOCKS_DIAMOND).add(Blocks.DIAMOND_BLOCK);
+		tag(Tags.Blocks.STORAGE_BLOCKS_DRIED_KELP).add(Blocks.DRIED_KELP_BLOCK);
+		tag(Tags.Blocks.STORAGE_BLOCKS_EMERALD).add(Blocks.EMERALD_BLOCK);
+		tag(Tags.Blocks.STORAGE_BLOCKS_GOLD).add(Blocks.GOLD_BLOCK);
+		tag(Tags.Blocks.STORAGE_BLOCKS_IRON).add(Blocks.IRON_BLOCK);
+		tag(Tags.Blocks.STORAGE_BLOCKS_LAPIS).add(Blocks.LAPIS_BLOCK);
+		tag(Tags.Blocks.STORAGE_BLOCKS_NETHERITE).add(Blocks.NETHERITE_BLOCK);
+		tag(Tags.Blocks.STORAGE_BLOCKS_RAW_COPPER).add(Blocks.RAW_COPPER_BLOCK);
+		tag(Tags.Blocks.STORAGE_BLOCKS_RAW_GOLD).add(Blocks.RAW_GOLD_BLOCK);
+		tag(Tags.Blocks.STORAGE_BLOCKS_RAW_IRON).add(Blocks.RAW_IRON_BLOCK);
+		tag(Tags.Blocks.STORAGE_BLOCKS_REDSTONE).add(Blocks.REDSTONE_BLOCK);
+		tag(Tags.Blocks.STORAGE_BLOCKS_SLIME).add(Blocks.SLIME_BLOCK);
+		tag(Tags.Blocks.STORAGE_BLOCKS_WHEAT).add(Blocks.HAY_BLOCK);
+		tag(Tags.Blocks.VILLAGER_JOB_SITES).add(
+				Blocks.BARREL, Blocks.BLAST_FURNACE, Blocks.BREWING_STAND, Blocks.CARTOGRAPHY_TABLE,
+				Blocks.CAULDRON, Blocks.WATER_CAULDRON, Blocks.LAVA_CAULDRON, Blocks.POWDER_SNOW_CAULDRON,
+				Blocks.COMPOSTER, Blocks.FLETCHING_TABLE, Blocks.GRINDSTONE, Blocks.LECTERN,
+				Blocks.LOOM, Blocks.SMITHING_TABLE, Blocks.SMOKER, Blocks.STONECUTTER);
+
+		// Backwards compat with pre-1.21 tags. Done after so optional tag is last for better readability.
+		// TODO: Remove backwards compat tag entries in 1.22
+//		tagWithOptionalLegacy(Tags.Blocks.BARRELS);
+//		tagWithOptionalLegacy(Tags.Blocks.BARRELS_WOODEN);
+//		tagWithOptionalLegacy(Tags.Blocks.BOOKSHELVES);
+//		tagWithOptionalLegacy(Tags.Blocks.CHESTS);
+//		tagWithOptionalLegacy(Tags.Blocks.CHESTS_ENDER);
+//		tagWithOptionalLegacy(Tags.Blocks.CHESTS_TRAPPED);
+//		tagWithOptionalLegacy(Tags.Blocks.CHESTS_WOODEN);
+		tag(Tags.Blocks.COBBLESTONES).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "cobblestone"));
+		tag(Tags.Blocks.COBBLESTONES_NORMAL).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "cobblestone/normal"));
+		tag(Tags.Blocks.COBBLESTONES_INFESTED).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "cobblestone/infested"));
+		tag(Tags.Blocks.COBBLESTONES_MOSSY).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "cobblestone/mossy"));
+		tag(Tags.Blocks.COBBLESTONES_DEEPSLATE).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "cobblestone/deepslate"));
+		tag(Tags.Blocks.DYED_BLACK)
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass/black"))
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "stained_glass/black"));
+		tag(Tags.Blocks.DYED_BLUE)
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass/blue"))
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "stained_glass/blue"));
+		tag(Tags.Blocks.DYED_BROWN)
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass/brown"))
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "stained_glass/brown"));
+		tag(Tags.Blocks.DYED_CYAN)
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass/cyan"))
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "stained_glass/cyan"));
+		tag(Tags.Blocks.DYED_GRAY)
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass/gray"))
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "stained_glass/gray"));
+		tag(Tags.Blocks.DYED_GREEN)
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass/green"))
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "stained_glass/green"));
+		tag(Tags.Blocks.DYED_LIGHT_BLUE)
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass/light_blue"))
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "stained_glass/light_blue"));
+		tag(Tags.Blocks.DYED_LIGHT_GRAY)
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass/light_gray"))
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "stained_glass/light_gray"));
+		tag(Tags.Blocks.DYED_LIME)
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass/lime"))
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "stained_glass/lime"));
+		tag(Tags.Blocks.DYED_MAGENTA)
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass/magenta"))
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "stained_glass/magenta"));
+		tag(Tags.Blocks.DYED_MAGENTA)
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass/magenta"))
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "stained_glass/magenta"));
+		tag(Tags.Blocks.DYED_ORANGE)
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass/orange"))
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "stained_glass/orange"));
+		tag(Tags.Blocks.DYED_PINK)
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass/pink"))
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "stained_glass/pink"));
+		tag(Tags.Blocks.DYED_PURPLE)
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass/purple"))
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "stained_glass/purple"));
+		tag(Tags.Blocks.DYED_RED)
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass/red"))
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "stained_glass/red"));
+		tag(Tags.Blocks.DYED_WHITE)
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass/white"))
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "stained_glass/white"));
+		tag(Tags.Blocks.DYED_YELLOW)
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass/yellow"))
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "stained_glass/yellow"));
+//		tagWithOptionalLegacy(Tags.Blocks.END_STONES);
+//		tagWithOptionalLegacy(Tags.Blocks.ENDERMAN_PLACE_ON_BLACKLIST);
+//		tagWithOptionalLegacy(Tags.Blocks.FENCE_GATES);
+//		tagWithOptionalLegacy(Tags.Blocks.FENCE_GATES_WOODEN);
+//		tagWithOptionalLegacy(Tags.Blocks.FENCES);
+//		tagWithOptionalLegacy(Tags.Blocks.FENCES_NETHER_BRICK);
+//		tagWithOptionalLegacy(Tags.Blocks.FENCES_WOODEN);
+		tag(Tags.Blocks.GRAVELS).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "gravel"));
+		tag(Tags.Blocks.GLASS_BLOCKS).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass"));
+		tag(Tags.Blocks.GLASS_BLOCKS_COLORLESS).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass_colorless"));
+		tag(Tags.Blocks.GLASS_BLOCKS_CHEAP).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass_silica"));
+		tag(Tags.Blocks.GLASS_BLOCKS_TINTED).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass_tinted"));
+		tag(Tags.Blocks.GLASS_PANES_COLORLESS).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "glass_panes_colorless"));
+		tag(Tags.Blocks.NETHERRACKS).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "netherrack"));
+		tag(Tags.Blocks.OBSIDIANS).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "obsidian"));
+//		tagWithOptionalLegacy(Tags.Blocks.ORE_BEARING_GROUND_DEEPSLATE);
+//		tagWithOptionalLegacy(Tags.Blocks.ORE_BEARING_GROUND_NETHERRACK);
+//		tagWithOptionalLegacy(Tags.Blocks.ORE_BEARING_GROUND_STONE);
+//		tagWithOptionalLegacy(Tags.Blocks.ORE_RATES_DENSE);
+//		tagWithOptionalLegacy(Tags.Blocks.ORE_RATES_SINGULAR);
+//		tagWithOptionalLegacy(Tags.Blocks.ORE_RATES_SPARSE);
+//		tagWithOptionalLegacy(Tags.Blocks.ORES);
+//		tagWithOptionalLegacy(Tags.Blocks.ORES_COAL);
+//		tagWithOptionalLegacy(Tags.Blocks.ORES_COPPER);
+//		tagWithOptionalLegacy(Tags.Blocks.ORES_DIAMOND);
+//		tagWithOptionalLegacy(Tags.Blocks.ORES_EMERALD);
+//		tagWithOptionalLegacy(Tags.Blocks.ORES_GOLD);
+//		tagWithOptionalLegacy(Tags.Blocks.ORES_IRON);
+//		tagWithOptionalLegacy(Tags.Blocks.ORES_LAPIS);
+//		tagWithOptionalLegacy(Tags.Blocks.ORES_QUARTZ);
+//		tagWithOptionalLegacy(Tags.Blocks.ORES_REDSTONE);
+//		tagWithOptionalLegacy(Tags.Blocks.ORES_NETHERITE_SCRAP);
+//		tagWithOptionalLegacy(Tags.Blocks.ORES_IN_GROUND_DEEPSLATE);
+//		tagWithOptionalLegacy(Tags.Blocks.ORES_IN_GROUND_NETHERRACK);
+//		tagWithOptionalLegacy(Tags.Blocks.ORES_IN_GROUND_STONE);
+		tag(Tags.Blocks.STONES).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "stone"));
+//		tagWithOptionalLegacy(Tags.Blocks.STORAGE_BLOCKS);
+//		tagWithOptionalLegacy(Tags.Blocks.STORAGE_BLOCKS_COAL);
+//		tagWithOptionalLegacy(Tags.Blocks.STORAGE_BLOCKS_COPPER);
+//		tagWithOptionalLegacy(Tags.Blocks.STORAGE_BLOCKS_DIAMOND);
+//		tagWithOptionalLegacy(Tags.Blocks.STORAGE_BLOCKS_EMERALD);
+//		tagWithOptionalLegacy(Tags.Blocks.STORAGE_BLOCKS_GOLD);
+//		tagWithOptionalLegacy(Tags.Blocks.STORAGE_BLOCKS_IRON);
+//		tagWithOptionalLegacy(Tags.Blocks.STORAGE_BLOCKS_LAPIS);
+//		tagWithOptionalLegacy(Tags.Blocks.STORAGE_BLOCKS_RAW_COPPER);
+//		tagWithOptionalLegacy(Tags.Blocks.STORAGE_BLOCKS_RAW_GOLD);
+//		tagWithOptionalLegacy(Tags.Blocks.STORAGE_BLOCKS_RAW_IRON);
+//		tagWithOptionalLegacy(Tags.Blocks.STORAGE_BLOCKS_REDSTONE);
+//		tagWithOptionalLegacy(Tags.Blocks.STORAGE_BLOCKS_NETHERITE);
+		tag(Tags.Blocks.RELOCATION_NOT_SUPPORTED)
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "relocation_not_supported"))
+				.addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "immovable"));
+		tag(Tags.Blocks.SANDSTONE_BLOCKS).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "sandstone"));
+		tag(Tags.Blocks.SANDS).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "sand"));
+		tag(Tags.Blocks.SANDS_COLORLESS).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "sand/colorless"));
+		tag(Tags.Blocks.SANDS_RED).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", "sand/red"));
 	}
 
-	private void addColored(Consumer<Block> consumer, TagKey<Block> group, String pattern) {
+//	private FabricTagBuilder tagWithOptionalLegacy(TagKey<Block> tag) {
+//		FabricTagBuilder tagAppender = tag(tag);
+//		tagAppender.addOptionalTag(ResourceLocation.fromNamespaceAndPath("c", tag.location().getPath()));
+//		return tagAppender;
+//	}
+
+	private void addColored(TagKey<Block> group, String pattern) {
 		String prefix = group.location().getPath().toUpperCase(Locale.ENGLISH) + '_';
 		for (DyeColor color : DyeColor.values()) {
-			ResourceLocation key = new ResourceLocation("minecraft", pattern.replace("{color}", color.getName()));
+			ResourceLocation key = ResourceLocation.fromNamespaceAndPath("minecraft", pattern.replace("{color}", color.getName()));
 			TagKey<Block> tag = getForgeTag(prefix + color.getName());
 			Block block = BuiltInRegistries.BLOCK.get(key);
 			if (block == null || block == Blocks.AIR)
-				throw new IllegalStateException("Unknown vanilla block: " + key.toString());
+				throw new IllegalStateException("Unknown vanilla block: " + key);
 			tag(tag).add(block);
-			consumer.accept(block);
+		}
+	}
+
+	private void addColoredTags(Consumer<TagKey<Block>> consumer, TagKey<Block> group) {
+		String prefix = group.location().getPath().toUpperCase(Locale.ENGLISH) + '_';
+		for (DyeColor color : DyeColor.values()) {
+			TagKey<Block> tag = getForgeTag(prefix + color.getName());
+			consumer.accept(tag);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	private TagKey<Block> getForgeTag(String name) {
 		try {
-			name = name.toUpperCase(Locale.ENGLISH).replace("_BLOCKS", "");
+			name = name.toUpperCase(Locale.ENGLISH);
 			return (TagKey<Block>) Tags.Blocks.class.getDeclaredField(name).get(null);
 		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
 			throw new IllegalStateException(Tags.Blocks.class.getName() + " is missing tag name: " + name);
 		}
 	}
-
 
 	public FabricTagBuilder tag(TagKey<Block> tag) {
 		return getOrCreateTagBuilder(tag);

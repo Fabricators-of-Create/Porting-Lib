@@ -10,8 +10,8 @@ import net.minecraft.server.level.ServerLevel;
  * setTimeAddition(wakeUpTime) sets a new time that will be added to the dayTime.<br>
  */
 public class SleepFinishedTimeEvent extends LevelEvent {
-	public static final Event<SleepFinishedCallback> SLEEP_FINISHED = EventFactory.createArrayBacked(SleepFinishedCallback.class, callbacks -> event -> {
-		for (SleepFinishedCallback e : callbacks)
+	public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+		for (Callback e : callbacks)
 			e.onSleepFinished(event);
 	});
 	private long newTime;
@@ -45,11 +45,11 @@ public class SleepFinishedTimeEvent extends LevelEvent {
 
 	@Override
 	public void sendEvent() {
-		SLEEP_FINISHED.invoker().onSleepFinished(this);
+		EVENT.invoker().onSleepFinished(this);
 	}
 
 	@FunctionalInterface
-	public interface SleepFinishedCallback {
+	public interface Callback {
 		void onSleepFinished(SleepFinishedTimeEvent event);
 	}
 }

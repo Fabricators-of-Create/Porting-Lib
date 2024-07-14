@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class BlockBehavior$PropertiesMixin {
 	@WrapOperation(
 			// isValidSpawn lambda
-			method = { "method_26239", "m_vuhrtmql", "lambda$new$1" },
+			method = "method_26239",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getLightEmission()I")
 	)
 	private static int port_lib$customLight(BlockState state, Operation<Integer> original,

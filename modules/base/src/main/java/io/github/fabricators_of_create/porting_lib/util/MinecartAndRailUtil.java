@@ -19,7 +19,7 @@ public class MinecartAndRailUtil {
 
 	// rails
 
-	public static final TagKey<Block> ACTIVATOR_RAILS = TagKey.create(Registries.BLOCK, new ResourceLocation("c", "rails/activator"));
+	public static final TagKey<Block> ACTIVATOR_RAILS = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("c", "rails/activator"));
 
 	public static boolean isActivatorRail(Block rail) {
 		return rail.builtInRegistryHolder().is(ACTIVATOR_RAILS);

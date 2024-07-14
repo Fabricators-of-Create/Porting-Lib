@@ -7,26 +7,19 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-
 import com.llamalad7.mixinextras.sugar.Local;
 
-import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
-import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockEntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.LevelExtensions;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.FullChunkStatus;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 
@@ -41,13 +34,11 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import io.github.fabricators_of_create.porting_lib.block.NeighborChangeListeningBlock;
-import io.github.fabricators_of_create.porting_lib.block.WeakPowerCheckingBlock;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -178,23 +169,23 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		}
 	}
 
-	@Inject(
-			method = "explode(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/level/ExplosionDamageCalculator;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;ZLnet/minecraft/core/particles/ParticleOptions;Lnet/minecraft/core/particles/ParticleOptions;Lnet/minecraft/sounds/SoundEvent;)Lnet/minecraft/world/level/Explosion;",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/Explosion;explode()V"
-			),
-			locals = LocalCapture.CAPTURE_FAILHARD,
-			cancellable = true
-	)
-	public void port_lib$onStartExplosion(Entity entity, DamageSource damageSource, ExplosionDamageCalculator explosionDamageCalculator,
-										  double d, double e, double f, float g, boolean bl, Level.ExplosionInteraction explosionInteraction,
-										  boolean bl2, ParticleOptions particleOptions, ParticleOptions particleOptions2, SoundEvent soundEvent,
-										  CallbackInfoReturnable<Explosion> cir, @Local(ordinal = 0) Explosion explosion) {
-		if (ExplosionEvents.START.invoker().onExplosionStart((Level) (Object) this, explosion)) {
-			cir.setReturnValue(explosion);
-		}
-	}
+//	@Inject( TODO: PORT
+//			method = "explode(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/level/ExplosionDamageCalculator;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;ZLnet/minecraft/core/particles/ParticleOptions;Lnet/minecraft/core/particles/ParticleOptions;Lnet/minecraft/sounds/SoundEvent;)Lnet/minecraft/world/level/Explosion;",
+//			at = @At(
+//					value = "INVOKE",
+//					target = "Lnet/minecraft/world/level/Explosion;explode()V"
+//			),
+//			locals = LocalCapture.CAPTURE_FAILHARD,
+//			cancellable = true
+//	)
+//	public void port_lib$onStartExplosion(Entity entity, DamageSource damageSource, ExplosionDamageCalculator explosionDamageCalculator,
+//										  double d, double e, double f, float g, boolean bl, Level.ExplosionInteraction explosionInteraction,
+//										  boolean bl2, ParticleOptions particleOptions, ParticleOptions particleOptions2, SoundEvent soundEvent,
+//										  CallbackInfoReturnable<Explosion> cir, @Local(ordinal = 0) Explosion explosion) {
+//		if (ExplosionEvents.START.invoker().onExplosionStart((Level) (Object) this, explosion)) {
+//			cir.setReturnValue(explosion);
+//		}
+//	}
 
 	@Inject(method = "tickBlockEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;push(Ljava/lang/String;)V", shift = Shift.AFTER))
 	public void port_lib$pendingBlockEntities(CallbackInfo ci) {
@@ -256,11 +247,5 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 				}
 			}
 		}
-	}
-
-	@Inject(method = "updateNeighborsAt", at = @At("HEAD"))
-	private void neighborNotify(BlockPos pPos, Block block, CallbackInfo ci) {
-		BlockEvents.NeighborNotifyEvent event = new BlockEvents.NeighborNotifyEvent((Level) (Object) this, pPos, this.getBlockState(pPos), EnumSet.allOf(Direction.class), false);
-		event.sendEvent();
 	}
 }

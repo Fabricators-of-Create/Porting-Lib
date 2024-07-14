@@ -4,9 +4,14 @@
   "version": "${version}",
   "name": "Porting Lib Common",
   "description": "Miscellaneous utilities for other Porting Lib modules.",
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.common.PortingLibCommon"
+    ]
+  },
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_1076": ["io/github/fabricators_of_create/porting_lib/common/extensions/LanguageManagerExtensions"],
+      "net/minecraft/class_1076": ["io/github/fabricators_of_create/porting_lib/common/ext/LanguageManagerExt"],
       "net/minecraft/class_2211": ["io/github/fabricators_of_create/porting_lib/common/util/IPlantable"],
       "net/minecraft/class_2266": ["io/github/fabricators_of_create/porting_lib/common/util/IPlantable"],
       "net/minecraft/class_2523": ["io/github/fabricators_of_create/porting_lib/common/util/IPlantable"],

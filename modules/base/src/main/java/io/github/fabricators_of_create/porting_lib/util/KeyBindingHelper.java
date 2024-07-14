@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.util;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 
-import io.github.fabricators_of_create.porting_lib.common.util.MixinHelper;
+import io.github.fabricators_of_create.porting_lib.core.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.mixin.accessors.client.accessor.KeyMappingAccessor;
 
 import net.fabricmc.api.EnvType;

@@ -1,54 +1,20 @@
 package io.github.fabricators_of_create.porting_lib.core.event;
 
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
-
-import java.util.function.Consumer;
-
 /**
- * The base of an event that may be cancelled.
+ * Base Event class that all other events are derived from.
+ * <br>
+ * <strong>Note on abstract events</strong>
+ * <p>
+ * This is useful for classes that extend {@link BaseEvent} with more data and methods,
+ * but should never be listened to directly.
+ * <p>
+ * For example, an event with {@code Pre} and {@code Post} subclasses might want to
+ * be declared as {@code abstract} to prevent user accidentally listening to both.
+ * <p>
+ * All the parents of abstract event classes until {@link BaseEvent} must also be abstract.
  */
 public abstract class BaseEvent {
-	public enum Result {
-		DENY,
-		DEFAULT,
-		ALLOW
-	}
-
-	private Result result = Result.DEFAULT;
-	private boolean canceled;
-
-	/**
-	 * Returns the value set as the result of this event
-	 */
-	public Result getResult() {
-		return result;
-	}
-
-	/**
-	 * Sets the result value for this event, not all events can have a result set, and any attempt to
-	 * set a result for an event that isn't expecting it will result in a IllegalArgumentException.
-	 *
-	 * The functionality of setting the result is defined on a per-event basis.
-	 *
-	 * @param value The new result
-	 */
-	public void setResult(Result value) {
-		result = value;
-	}
-
-	public void setCanceled(boolean cancelled) {
-		this.canceled = cancelled;
-	}
-
-	public boolean isCanceled() {
-		return canceled;
-	}
+	boolean isCanceled;
 
 	public abstract void sendEvent();
-
-	public boolean post() {
-		sendEvent();
-		return isCanceled();
-	}
 }

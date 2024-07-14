@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.event.common;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.PlayerEvents;
+import io.github.fabricators_of_create.porting_lib.entity.events.player.PlayerEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.advancements.AdvancementHolder;
@@ -13,7 +13,7 @@ import net.minecraft.world.entity.player.Player;
  * @see AdvancementEarnEvent
  * @see AdvancementProgressEvent
  */
-public abstract class AdvancementEvent extends PlayerEvents {
+public abstract class AdvancementEvent extends PlayerEvent {
 	public static final Event<EarnCallback> EARN = EventFactory.createArrayBacked(EarnCallback.class, callbacks -> event -> {
 		for (EarnCallback c : callbacks)
 			c.onAdvancementEarn(event);

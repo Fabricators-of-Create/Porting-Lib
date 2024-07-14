@@ -6,17 +6,15 @@ import com.llamalad7.mixinextras.sugar.Share;
 
 import com.llamalad7.mixinextras.sugar.ref.LocalLongRef;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvents;
+import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.entity.EntityAccess;
-import net.minecraft.world.level.entity.TransientEntitySectionManager;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -42,17 +40,14 @@ public abstract class TransientEntitySectionManager$CallbackMixin<T extends Enti
 
 	@Inject(
 			method = "onMove",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/entity/EntityAccess;isAlwaysTicking()Z",
-					shift = Shift.AFTER
-			)
+			at = @At("TAIL")
 	)
 	public void afterSectionChange(CallbackInfo ci, @Local(ordinal = 0) BlockPos pos,
 								   @Local(ordinal = 0) long newKey, @Share("oldKey") LocalLongRef oldKey) {
-
-		if (this.entity instanceof Entity realEntity) {
-			EntityEvents.ENTERING_SECTION.invoker().onEntityEnterSection(realEntity, oldKey.get(), newKey);
+		if (newKey != this.currentSectionKey) {
+			if (this.entity instanceof Entity realEntity) {
+				EntityHooks.onEntityEnterSection(realEntity, oldKey.get(), newKey);
+			}
 		}
 	}
 }

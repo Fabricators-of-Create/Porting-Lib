@@ -43,7 +43,7 @@ public class MutableContainerItemContext implements ContainerItemContext {
 
 		@Override
 		protected long getCapacity(ItemVariant variant) {
-			return variant.getItem().getMaxStackSize();
+			return variant.getItem().getDefaultMaxStackSize();
 		}
 	}
 }

@@ -1,9 +1,14 @@
 package io.github.fabricators_of_create.porting_lib.brewing;
 
+import io.github.fabricators_of_create.porting_lib.brewing.ext.PotionBrewingBuilderExt;
 import net.minecraft.world.item.ItemStack;
 
+/**
+ * Interface for more flexible brewing recipes.
+ *
+ * <p>Register using {@link RegisterBrewingRecipesEvent} and {@link PotionBrewingBuilderExt#addRecipe(IBrewingRecipe)}.
+ */
 public interface IBrewingRecipe {
-
 	/**
 	 * Returns true is the passed ItemStack is an input for this recipe. "Input"
 	 * being the item that goes in one of the three bottom slots of the brewing

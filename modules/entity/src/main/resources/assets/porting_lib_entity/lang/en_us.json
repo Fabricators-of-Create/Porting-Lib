@@ -1,0 +1,3 @@
+{
+  "porting_lib.network.advanced_add_entity.failed": "Failed to process advanced entity spawn data: %s"
+}

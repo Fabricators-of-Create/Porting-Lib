@@ -14,6 +14,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
@@ -32,6 +36,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
@@ -58,7 +63,7 @@ public final class FluidStack implements MutableDataComponentHolder {
 			() -> RecordCodecBuilder.create(
 					instance -> instance.group(
 									FLUID_NON_EMPTY_CODEC.fieldOf("id").forGetter(FluidStack::getFluidHolder),
-									ExtraCodecs.POSITIVE_INT.fieldOf("amount").forGetter(FluidStack::getAmount), // note: no .orElse(1) compared to ItemStack
+									PortingLibFluids.POSITIVE_LONG.fieldOf("amount").forGetter(FluidStack::getAmount), // note: no .orElse(1) compared to ItemStack
 									DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY)
 											.forGetter(stack -> stack.components.asPatch()))
 							.apply(instance, FluidStack::new)));
@@ -69,7 +74,7 @@ public final class FluidStack implements MutableDataComponentHolder {
 	 *
 	 * <p>Fluid equivalent of {@link ItemStack#SINGLE_ITEM_CODEC}.
 	 */
-	public static Codec<FluidStack> fixedAmountCodec(int amount) {
+	public static Codec<FluidStack> fixedAmountCodec(long amount) {
 		return Codec.lazyInitialized(
 				() -> RecordCodecBuilder.create(
 						instance -> instance.group(
@@ -92,7 +97,7 @@ public final class FluidStack implements MutableDataComponentHolder {
 
 		@Override
 		public FluidStack decode(RegistryFriendlyByteBuf buf) {
-			int amount = buf.readVarInt();
+			long amount = buf.readVarLong();
 			if (amount <= 0) {
 				return FluidStack.EMPTY;
 			} else {
@@ -107,7 +112,7 @@ public final class FluidStack implements MutableDataComponentHolder {
 			if (stack.isEmpty()) {
 				buf.writeVarInt(0);
 			} else {
-				buf.writeVarInt(stack.getAmount());
+				buf.writeVarLong(stack.getAmount());
 				FLUID_STREAM_CODEC.encode(buf, stack.getFluidHolder());
 				DataComponentPatch.STREAM_CODEC.encode(buf, stack.components.asPatch());
 			}
@@ -137,8 +142,8 @@ public final class FluidStack implements MutableDataComponentHolder {
 		}
 	};
 	private static final Logger LOGGER = LogUtils.getLogger();
-	public static final FluidStack EMPTY = new FluidStack(null);
-	private int amount;
+	public static final FluidStack EMPTY = new FluidStack(null, null);
+	private long amount;
 	private final Fluid fluid;
 	private final PatchedDataComponentMap components;
 
@@ -155,25 +160,37 @@ public final class FluidStack implements MutableDataComponentHolder {
 		return !this.isEmpty() ? ((PatchedDataComponentMapAccessor) (Object) this.components).getPatch().isEmpty() : true;
 	}
 
-	public FluidStack(Holder<Fluid> fluid, int amount, DataComponentPatch patch) {
+	public FluidStack(Holder<Fluid> fluid, long amount, DataComponentPatch patch) {
 		this(fluid.value(), amount, PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, patch));
 	}
 
-	public FluidStack(Holder<Fluid> fluid, int amount) {
+	public FluidStack(Holder<Fluid> fluid, long amount) {
 		this(fluid.value(), amount);
 	}
 
-	public FluidStack(Fluid fluid, int amount) {
+	public FluidStack(Fluid fluid, long amount) {
 		this(fluid, amount, new PatchedDataComponentMap(DataComponentMap.EMPTY));
 	}
 
-	private FluidStack(Fluid fluid, int amount, PatchedDataComponentMap components) {
+	public FluidStack(FluidVariant variant, long amount) {
+		this(variant.getFluid(), amount, PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, variant.getComponents()));
+	}
+
+	public FluidStack(StorageView<FluidVariant> view) {
+		this(view.getResource(), view.getAmount());
+	}
+
+	public FluidStack(ResourceAmount<FluidVariant> resourceAmount) {
+		this(resourceAmount.resource(), resourceAmount.amount());
+	}
+
+	private FluidStack(Fluid fluid, long amount, PatchedDataComponentMap components) {
 		this.fluid = fluid;
 		this.amount = amount;
 		this.components = components;
 	}
 
-	private FluidStack(@Nullable Void unused) {
+	private FluidStack(@Nullable Void unused, @Nullable Void unused1) {
 		this.fluid = null;
 		this.components = new PatchedDataComponentMap(DataComponentMap.EMPTY);
 	}
@@ -203,8 +220,8 @@ public final class FluidStack implements MutableDataComponentHolder {
 	/**
 	 * Splits off a stack of the given amount of this stack and reduces this stack by the amount.
 	 */
-	public FluidStack split(int amount) {
-		int i = Math.min(amount, this.amount);
+	public FluidStack split(long amount) {
+		long i = Math.min(amount, this.amount);
 		FluidStack fluidStack = this.copyWithAmount(i);
 		this.shrink(i);
 		return fluidStack;
@@ -305,7 +322,7 @@ public final class FluidStack implements MutableDataComponentHolder {
 	/**
 	 * Creates a copy of this fluid stack with the given amount.
 	 */
-	public FluidStack copyWithAmount(int amount) {
+	public FluidStack copyWithAmount(long amount) {
 		if (this.isEmpty()) {
 			return EMPTY;
 		} else {
@@ -423,21 +440,21 @@ public final class FluidStack implements MutableDataComponentHolder {
 	/**
 	 * Returns the amount of this stack.
 	 */
-	public int getAmount() {
+	public long getAmount() {
 		return this.isEmpty() ? 0 : this.amount;
 	}
 
 	/**
 	 * Sets the amount of this stack.
 	 */
-	public void setAmount(int amount) {
+	public void setAmount(long amount) {
 		this.amount = amount;
 	}
 
 	/**
 	 * Limits the amount of this stack is at most the given amount.
 	 */
-	public void limitSize(int amount) {
+	public void limitSize(long amount) {
 		if (!this.isEmpty() && this.getAmount() > amount) {
 			this.setAmount(amount);
 		}
@@ -446,14 +463,14 @@ public final class FluidStack implements MutableDataComponentHolder {
 	/**
 	 * Adds the given amount to this stack.
 	 */
-	public void grow(int addedAmount) {
+	public void grow(long addedAmount) {
 		this.setAmount(this.getAmount() + addedAmount);
 	}
 
 	/**
 	 * Removes the given amount from this stack.
 	 */
-	public void shrink(int removedAmount) {
+	public void shrink(long removedAmount) {
 		this.grow(-removedAmount);
 	}
 
@@ -464,6 +481,10 @@ public final class FluidStack implements MutableDataComponentHolder {
 	 */
 	public FluidType getFluidType() {
 		return getFluid().getFluidType();
+	}
+
+	public FluidVariant getVariant() {
+		return FluidVariant.of(this.fluid, this.components.asPatch());
 	}
 
 	/**

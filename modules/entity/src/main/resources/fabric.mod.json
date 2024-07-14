@@ -14,13 +14,14 @@
   },
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_1291": ["io/github/fabricators_of_create/porting_lib/entity/extensions/MobEffectExtensions"],
-      "net/minecraft/class_1297": ["io/github/fabricators_of_create/porting_lib/entity/extensions/EntityExtensions"],
-      "net/minecraft/class_1621": ["io/github/fabricators_of_create/porting_lib/entity/extensions/SlimeExtension"],
-      "net/minecraft/class_1657": ["io/github/fabricators_of_create/porting_lib/entity/extensions/PlayerExtension"],
-      "net/minecraft/class_1688": ["io/github/fabricators_of_create/porting_lib/entity/extensions/AbstractMinecartExtensions"],
-      "net/minecraft/class_1792": ["io/github/fabricators_of_create/porting_lib/entity/extensions/ItemExtensions"],
-      "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/entity/extensions/LevelExtensions"]
+      "net/minecraft/class_1291": ["io/github/fabricators_of_create/porting_lib/entity/ext/MobEffectExt"],
+      "net/minecraft/class_1293": ["io/github/fabricators_of_create/porting_lib/entity/ext/MobEffectInstanceExt"],
+      "net/minecraft/class_1297": ["io/github/fabricators_of_create/porting_lib/entity/ext/EntityExt"],
+      "net/minecraft/class_1621": ["io/github/fabricators_of_create/porting_lib/entity/ext/SlimeExt"],
+      "net/minecraft/class_1657": ["io/github/fabricators_of_create/porting_lib/entity/ext/PlayerExt"],
+      "net/minecraft/class_1688": ["io/github/fabricators_of_create/porting_lib/entity/ext/AbstractMinecartExt"],
+      "net/minecraft/class_1792": ["io/github/fabricators_of_create/porting_lib/entity/ext/ItemExt"],
+      "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/entity/ext/LevelExt"]
     }
   }
 }

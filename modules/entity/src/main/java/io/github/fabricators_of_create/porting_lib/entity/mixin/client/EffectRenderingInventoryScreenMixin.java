@@ -37,9 +37,9 @@ public class EffectRenderingInventoryScreenMixin {
 		Collection<E> effectInstances = (Collection<E>) elements;
 
 		return effectInstances.stream().filter(mobEffectInstance -> {
-			MobEffectRenderer renderer = mobEffectInstance.getEffect().getRenderer();
-			if (renderer != null)
-				return renderer.isVisibleInInventory(mobEffectInstance);
+//			MobEffectRenderer renderer = mobEffectInstance.getEffect().getRenderer(); TODO: PORT
+//			if (renderer != null)
+//				return renderer.isVisibleInInventory(mobEffectInstance);
 			return true;
 		}).collect(Collectors.toList());
 	}
@@ -48,21 +48,21 @@ public class EffectRenderingInventoryScreenMixin {
 	private void handleCustomRenderers(GuiGraphics graphics, int blitX, int blitY, int z, int width, int height, TextureAtlasSprite sprite, Operation<Void> original, @Local(index = 2) int x, @Local(index = 3) int offsetDelta, @Local(index = 5) boolean wide, @Local(index = 9) MobEffectInstance mobEffectInstance, @Local(index = 7) int i, @Share("offset") LocalRef<Integer> offset) {
 		if (offset.get() == null)
 			offset.set(0);
-		MobEffectRenderer renderer = mobEffectInstance.getEffect().getRenderer();
-		if (renderer != null && renderer.renderInventoryIcon(mobEffectInstance, (EffectRenderingInventoryScreen) (Object) this, graphics, x + (wide ? 6 : 7), offset.get() + i, 0)) {
-			offset.set(offset.get() + offsetDelta);
-			return;
-		}
+//		MobEffectRenderer renderer = mobEffectInstance.getEffect().getRenderer(); TODO: PORT
+//		if (renderer != null && renderer.renderInventoryIcon(mobEffectInstance, (EffectRenderingInventoryScreen) (Object) this, graphics, x + (wide ? 6 : 7), offset.get() + i, 0)) {
+//			offset.set(offset.get() + offsetDelta);
+//			return;
+//		}
 		original.call(graphics, blitX, blitY + offset.get(), z, width, height, sprite);
 	}
 
 	@Inject(method = "renderLabels", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/EffectRenderingInventoryScreen;getEffectName(Lnet/minecraft/world/effect/MobEffectInstance;)Lnet/minecraft/network/chat/Component;"))
 	private void renderCustomInventoryText(GuiGraphics graphics, int x, int height, Iterable<MobEffectInstance> statusEffects, CallbackInfo ci, @Local(index = 7) MobEffectInstance mobEffectInstance, @Local(index = 5) int i, @Share("custom") LocalRef<Boolean> cancelled) {
-		MobEffectRenderer renderer = mobEffectInstance.getEffect().getRenderer();
-		if (renderer != null && renderer.renderInventoryText(mobEffectInstance, (EffectRenderingInventoryScreen<?>) (Object) this, graphics, x, i, 0))
-			cancelled.set(true);
-		else
-			cancelled.set(false);
+//		MobEffectRenderer renderer = mobEffectInstance.getEffect().getRenderer(); TODO: PORT
+//		if (renderer != null && renderer.renderInventoryText(mobEffectInstance, (EffectRenderingInventoryScreen<?>) (Object) this, graphics, x, i, 0))
+//			cancelled.set(true);
+//		else
+//			cancelled.set(false);
 	}
 
 	@WrapWithCondition(method = "renderLabels", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;III)I"))

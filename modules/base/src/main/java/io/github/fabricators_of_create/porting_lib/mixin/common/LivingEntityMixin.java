@@ -1,8 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
 import io.github.fabricators_of_create.porting_lib.block.CustomScaffoldingBlock;
 
-import org.jetbrains.annotations.Nullable;
+import io.github.fabricators_of_create.porting_lib.item.ShieldBlockItem;
+
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,7 +23,6 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomFrictionBlock;
 import io.github.fabricators_of_create.porting_lib.block.CustomLandingEffectsBlock;
-import io.github.fabricators_of_create.porting_lib.event.common.PotionEvents;
 import io.github.fabricators_of_create.porting_lib.item.ContinueUsingItem;
 import io.github.fabricators_of_create.porting_lib.item.EntitySwingListenerItem;
 import io.github.fabricators_of_create.porting_lib.item.EquipmentItem;
@@ -27,13 +30,10 @@ import io.github.fabricators_of_create.porting_lib.item.UsingTickItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -52,6 +52,10 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@Shadow
 	public abstract InteractionHand getUsedItemHand();
+
+	@Shadow
+	@NotNull
+	public abstract ItemStack getWeaponItem();
 
 	public LivingEntityMixin(EntityType<?> entityType, Level world) {
 		super(entityType, world);
@@ -107,29 +111,6 @@ public abstract class LivingEntityMixin extends Entity {
 		}
 	}
 
-	@Inject(
-			method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z",
-			at = @At(
-					value = "INVOKE",
-					target = "Ljava/util/Map;get(Ljava/lang/Object;)Ljava/lang/Object;",
-					shift = Shift.BY,
-					by = 3,
-					remap = false
-			),
-			locals = LocalCapture.CAPTURE_FAILHARD
-	)
-	public void port_lib$addEffect(MobEffectInstance newEffect, @Nullable Entity source, CallbackInfoReturnable<Boolean> cir,
-								   MobEffectInstance oldEffect) {
-		PotionEvents.POTION_ADDED.invoker().onPotionAdded((LivingEntity) (Object) this, newEffect, oldEffect, source);
-	}
-
-	@Inject(method = "canBeAffected", at = @At("HEAD"), cancellable = true)
-	public void port_lib$canBeAffected(MobEffectInstance effect, CallbackInfoReturnable<Boolean> cir) {
-		InteractionResult result = PotionEvents.POTION_APPLICABLE.invoker().onPotionApplicable((LivingEntity) (Object) this, effect);
-		if (result != InteractionResult.PASS)
-			cir.setReturnValue(result == InteractionResult.SUCCESS);
-	}
-
 	@Inject(method = "updatingUsingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;", shift = Shift.AFTER, ordinal = 1))
 	public void port_lib$onUsingTick(CallbackInfo ci) {
 		if (useItem.getItem() instanceof UsingTickItem usingTickItem) {
@@ -164,6 +145,16 @@ public abstract class LivingEntityMixin extends Entity {
 		BlockState state = getInBlockState();
 		if (state.getBlock() instanceof CustomScaffoldingBlock custom)
 			return custom.isScaffolding(state, level(), blockPosition(), (LivingEntity) (Object) this);
+		return original;
+	}
+
+	@ModifyReturnValue(method = "canDisableShield", at = @At("RETURN"))
+	private boolean canDisableShieldItem(boolean original) {
+		if (!original) {
+			ItemStack weapon = getWeaponItem();
+			if (weapon.getItem() instanceof ShieldBlockItem shieldBlockItem)
+				return shieldBlockItem.canDisableShield(weapon, this.useItem, (LivingEntity) (Object) this, (LivingEntity) (Object) this);
+		}
 		return original;
 	}
 }

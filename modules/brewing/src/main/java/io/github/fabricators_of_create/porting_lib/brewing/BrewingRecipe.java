@@ -3,12 +3,10 @@ package io.github.fabricators_of_create.porting_lib.brewing;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
-import javax.annotation.Nonnull;
-
 public class BrewingRecipe implements IBrewingRecipe {
-	@Nonnull private final Ingredient input;
-	@Nonnull private final Ingredient ingredient;
-	@Nonnull private final ItemStack output;
+	private final Ingredient input;
+	private final Ingredient ingredient;
+	private final ItemStack output;
 
 	public BrewingRecipe(Ingredient input, Ingredient ingredient, ItemStack output) {
 		this.input = input;
@@ -17,7 +15,7 @@ public class BrewingRecipe implements IBrewingRecipe {
 	}
 
 	@Override
-	public boolean isInput(@Nonnull ItemStack stack) {
+	public boolean isInput(ItemStack stack) {
 		return this.input.test(stack);
 	}
 

@@ -11,9 +11,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(targets = "net.minecraft.world.inventory.BrewingStandMenu$IngredientsSlot")
 public class BrewingStandMenu$IngredientsSlotMixin {
-	@Inject(method = "mayPlace", at = @At("HEAD"), cancellable = true)
-	public void port_lib$canPlace(ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
-		if (BrewingRecipeRegistry.isValidIngredient(itemStack))
-			cir.setReturnValue(true);
-	}
+//	@Inject(method = "mayPlace", at = @At("HEAD"), cancellable = true)
+//	public void port_lib$canPlace(ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
+//		if (BrewingRecipeRegistry.isValidIngredient(itemStack))
+//			cir.setReturnValue(true);
+//	}
 }

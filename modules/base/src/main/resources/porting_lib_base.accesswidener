@@ -14,3 +14,5 @@ transitive-accessible method net/minecraft/commands/synchronization/ArgumentType
 transitive-accessible field net/minecraft/world/entity/LivingEntity effectsDirty Z
 
 accessible field net/minecraft/world/inventory/GrindstoneMenu repairSlots Lnet/minecraft/world/Container;
+
+accessible field net/minecraft/world/item/SpawnEggItem ENTITY_TYPE_FIELD_CODEC Lcom/mojang/serialization/MapCodec;

@@ -21,24 +21,8 @@ import net.minecraft.world.level.Level;
 @Mixin(Player.class)
 public abstract class PlayerMixin extends LivingEntity {
 
-	@Shadow
-	public abstract void disableShield(boolean sprinting);
-
 	protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level level) {
 		super(entityType, level);
-	}
-
-	@Inject(method = "blockUsingShield", at = @At("TAIL"))
-	public void port_lib$blockShieldItem(LivingEntity entity, CallbackInfo ci) {
-		if(entity.getMainHandItem().getItem() instanceof ShieldBlockItem shieldBlockItem) {
-			if (shieldBlockItem.canDisableShield(entity.getMainHandItem(), this.useItem, this, entity))
-				disableShield(true);
-		}
-	}
-
-	@Inject(method = "attack", at = @At("HEAD"), cancellable = true)
-	public void port_lib$itemAttack(Entity targetEntity, CallbackInfo ci) {
-		if(getMainHandItem().getItem().onLeftClickEntity(getMainHandItem(), (Player) (Object) this, targetEntity)) ci.cancel();
 	}
 
 	@ModifyReturnValue(method = "createAttributes", at = @At("RETURN"))

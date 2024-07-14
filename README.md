@@ -52,7 +52,6 @@ Just choose a version and use its version number.
 | `tags`                   | Forge tags                                                                           |
 | `tool_actions`           | Utilities for tool interactions                                                      |
 | `transfer`               | Storage implementations, client-side lookup, FluidStack, assorted transfer utilities |
-| `utility`                | Miscellaneous utilities that are too niche for other modules                         |
 
 ### Contributing
 See [the contribution information](CONTRIBUTING.md).

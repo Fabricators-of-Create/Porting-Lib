@@ -27,7 +27,7 @@ public class DyeColorMixin implements DyeExtension {
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	public void addTag(String enumName, int enumIndex, int id, String name, int color, MapColor mapColor, int fireworkColor, int signColor, CallbackInfo ci) {
-		tag = TagKey.create(Registries.ITEM, new ResourceLocation("c", name + "_dyes"));
+		tag = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "dyes/" + enumName));
 	}
 
 	@Override

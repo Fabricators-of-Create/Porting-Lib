@@ -4,6 +4,10 @@ import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.base.SingleStackStorage;
 
+import net.minecraft.core.HolderLookup;
+
+import net.minecraft.nbt.Tag;
+
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
@@ -83,12 +87,12 @@ public class ItemStackHandlerSlot extends SingleStackStorage {
 	 * @return null to skip saving this slot
 	 */
 	@Nullable
-	public CompoundTag save() {
-		return stack.isEmpty() ? null : stack.save(new CompoundTag());
+	public Tag save(HolderLookup.Provider provider, Tag tag) {
+		return stack.save(provider, tag);
 	}
 
-	public void load(CompoundTag tag) {
-		setStack(ItemStack.of(tag));
+	public void load(HolderLookup.Provider provider, CompoundTag tag) {
+		ItemStack.parse(provider, tag).ifPresent(this::setStack);
 		onStackChange();
 		// intentionally do not notify handler, matches forge
 	}

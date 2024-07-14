@@ -11,6 +11,8 @@
   "mixins": [
     "BrewingStandBlockEntityMixin",
     "BrewingStandMenu$IngredientsSlotMixin",
-    "BrewingStandMenu$PotionSlotMixin"
+    "BrewingStandMenu$PotionSlotMixin",
+    "PotionBrewingMixin",
+    "PotionBrewingMixin$BuilderMixin"
   ]
 }

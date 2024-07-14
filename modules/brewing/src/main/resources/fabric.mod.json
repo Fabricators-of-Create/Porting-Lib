@@ -3,5 +3,11 @@
   "id": "porting_lib_brewing",
   "version": "${version}",
   "name": "Porting Lib Brewing",
-  "description": "Small library for adding brewing recipes"
+  "description": "Small library for adding brewing recipes",
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_1845": ["io/github/fabricators_of_create/porting_lib/brewing/ext/PotionBrewingExt"],
+      "net/minecraft/class_1845/class_9665": ["io/github/fabricators_of_create/porting_lib/brewing/ext/PotionBrewingBuilderExt"]
+    }
+  }
 }

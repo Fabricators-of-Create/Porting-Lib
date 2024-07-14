@@ -12,7 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 import org.jetbrains.annotations.Nullable;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,17 +25,14 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
-import io.github.fabricators_of_create.porting_lib.event.client.ClientWorldEvents;
 import io.github.fabricators_of_create.porting_lib.event.client.InteractEvents;
 import io.github.fabricators_of_create.porting_lib.event.client.MinecraftTailCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.ParticleManagerRegistrationCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.RenderTickStartCallback;
-import io.github.fabricators_of_create.porting_lib.event.common.AttackAirCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.ModsLoadedCallback;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.main.GameConfig;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
@@ -92,26 +88,6 @@ public abstract class MinecraftMixin {
 		new AddPackFindersEvent(PackType.CLIENT_RESOURCES, this.resourcePackRepository::pl$addPackFinder).sendEvent();
 	}
 
-	@Inject(method = "setLevel", at = @At("HEAD"))
-	public void port_lib$onHeadJoinWorld(ClientLevel world, CallbackInfo ci) {
-		if (this.level != null) {
-			ClientWorldEvents.UNLOAD.invoker().onWorldUnload((Minecraft) (Object) this, this.level);
-		}
-	}
-
-	@Inject(
-			method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;)V",
-			at = @At(
-					value = "JUMP",
-					opcode = Opcodes.IFNULL,
-					ordinal = 1,
-					shift = Shift.AFTER
-			)
-	)
-	public void port_lib$onDisconnect(Screen screen, CallbackInfo ci) {
-		ClientWorldEvents.UNLOAD.invoker().onWorldUnload((Minecraft) (Object) this, this.level);
-	}
-
 	@Inject(
 			method = "startAttack",
 			at = @At(
@@ -146,17 +122,6 @@ public abstract class MinecraftMixin {
 			return result == InteractionResult.SUCCESS;
 		}
 		return original.call(gameMode, posBlock, directionFacing); // continue to continueDestroyBlock
-	}
-
-	@Inject(
-			method = "startAttack",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/player/LocalPlayer;resetAttackStrengthTicker()V"
-			)
-	)
-	private void port_lib$onAttackMiss(CallbackInfoReturnable<Boolean> cir) {
-		AttackAirCallback.EVENT.invoker().attackAir(player);
 	}
 
 	@Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;render(FJZ)V", shift = Shift.BEFORE))

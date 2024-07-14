@@ -3,6 +3,8 @@ package io.github.fabricators_of_create.porting_lib.gui.events;
 import com.mojang.datafixers.util.Either;
 
 import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
+import io.github.fabricators_of_create.porting_lib.core.event.CancellableEvent;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.network.chat.FormattedText;
@@ -13,7 +15,16 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 
-public class GatherComponentsEvent extends BaseEvent {
+/**
+ * Fired when a tooltip gathers the {@link TooltipComponent}s to be rendered, before any text wrapping or processing.
+ * The list of components and the maximum width of the tooltip can be modified through this event.
+ *
+ * <p>This event is {@linkplain CancellableEvent cancellable}.
+ * If this event is cancelled, then the list of components will be empty.
+ *
+ * <p>This event is fired only on the {@linkplain EnvType#CLIENT logical client}.</p>
+ */
+public class GatherComponentsEvent extends BaseEvent implements CancellableEvent {
 	public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
 		for (Callback c : callbacks)
 			c.onGatherComponents(event);

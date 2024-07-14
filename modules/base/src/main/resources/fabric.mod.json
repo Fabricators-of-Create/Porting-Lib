@@ -9,7 +9,7 @@
       "io.github.fabricators_of_create.porting_lib.PortingLibBase"
     ],
     "client": [
-      "io.github.fabricators_of_create.porting_lib.PortingLibClient"
+      "io.github.fabricators_of_create.porting_lib.PortingLibBaseClient"
     ]
   },
   "custom": {

@@ -7,6 +7,16 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "ServerLevelMixin"
+    "client.ClientLevelMixin",
+    "common.DiodeBlockMixin",
+    "common.LavaFluidMixin",
+    "common.LevelMixin",
+    "common.MinecraftServerMixin",
+    "common.NaturalSpawnerMixin",
+    "common.ServerLevelMixin",
+    "common.ServerPlayerGameModeMixin"
+  ],
+  "client": [
+    "client.MinecraftMixin"
   ]
 }

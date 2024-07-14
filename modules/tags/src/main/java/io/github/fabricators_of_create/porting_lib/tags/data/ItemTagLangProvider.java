@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.tags.data;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -23,18 +25,18 @@ public class ItemTagLangProvider extends FabricLanguageProvider {
 	private final Class<?> tagClass;
 	private final Map<TagKey<Item>, String> specialCases;
 
-	public ItemTagLangProvider(FabricDataOutput output, Class<?> tagClass) {
-		this(output, tagClass, Map.of());
+	public ItemTagLangProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookup, Class<?> tagClass) {
+		this(output, registryLookup, tagClass, Map.of());
 	}
 
-	public ItemTagLangProvider(FabricDataOutput output, Class<?> tagClass, Map<TagKey<Item>, String> specialCases) {
-		super(output);
+	public ItemTagLangProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookup, Class<?> tagClass, Map<TagKey<Item>, String> specialCases) {
+		super(output, registryLookup);
 		this.tagClass = tagClass;
 		this.specialCases = specialCases;
 	}
 
 	@Override
-	public void generateTranslations(TranslationBuilder translationBuilder) {
+	public void generateTranslations(HolderLookup.Provider registryLookup, TranslationBuilder translationBuilder) {
 		for (Field field : tagClass.getDeclaredFields()) {
 			field.setAccessible(true);
 			try {

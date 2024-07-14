@@ -19,20 +19,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(EntityRenderDispatcher.class)
 public abstract class EntityRenderDispatcherMixin {
 	@Inject(method = "renderHitbox", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;renderLineBox(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/world/phys/AABB;FFFF)V", ordinal = 0, shift = At.Shift.AFTER))
-	private static void renderMultipartHitboxes(PoseStack pMatrixStack, VertexConsumer pBuffer, Entity entity, float pPartialTicks, CallbackInfo ci) {
+	private static void renderMultipartHitboxes(PoseStack poseStack, VertexConsumer vertexConsumer, Entity entity, float pPartialTicks, float g, float h, float i, CallbackInfo ci) {
 		if (entity instanceof MultiPartEntity pEntity && pEntity.isMultipartEntity()) {
 			double d0 = -Mth.lerp(pPartialTicks, entity.xOld, entity.getX());
 			double d1 = -Mth.lerp(pPartialTicks, entity.yOld, entity.getY());
 			double d2 = -Mth.lerp(pPartialTicks, entity.zOld, entity.getZ());
 
 			for(PartEntity<?> part : pEntity.getParts()) {
-				pMatrixStack.pushPose();
+				poseStack.pushPose();
 				double d3 = d0 + Mth.lerp(pPartialTicks, part.xOld, part.getX());
 				double d4 = d1 + Mth.lerp(pPartialTicks, part.yOld, part.getY());
 				double d5 = d2 + Mth.lerp(pPartialTicks, part.zOld, part.getZ());
-				pMatrixStack.translate(d3, d4, d5);
-				LevelRenderer.renderLineBox(pMatrixStack, pBuffer, part.getBoundingBox().move(-part.getX(), -part.getY(), -part.getZ()), 0.25F, 1.0F, 0.0F, 1.0F);
-				pMatrixStack.popPose();
+				poseStack.translate(d3, d4, d5);
+				LevelRenderer.renderLineBox(poseStack, vertexConsumer, part.getBoundingBox().move(-part.getX(), -part.getY(), -part.getZ()), 0.25F, 1.0F, 0.0F, 1.0F);
+				poseStack.popPose();
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.entity.events.player;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.PlayerEvents;
+import io.github.fabricators_of_create.porting_lib.core.event.CancellableEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.entity.Entity;
@@ -13,17 +13,15 @@ import net.minecraft.world.entity.player.Player;
  * <br>
  * {@link #target} contains the Entity that was damaged by the player. <br>
  * <br>
- * This event is cancelable.<br>
+ * This event is {@link CancellableEvent}.<br>
  * If this event is canceled, the player does not attack the Entity.<br>
- * <br>
- * This event does not have a result.<br>
- * <br>
  **/
-public class AttackEntityEvent extends PlayerEvents {
-	public static final Event<AttackEntityCallback> ATTACK_ENTITY = EventFactory.createArrayBacked(AttackEntityCallback.class, callbacks -> event -> {
-		for (AttackEntityCallback e : callbacks)
-			e.onAttackEntity(event);
+public class AttackEntityEvent extends PlayerEvent implements CancellableEvent {
+	public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+		for (final Callback callback : callbacks)
+			callback.onAttackEntity(event);
 	});
+
 	private final Entity target;
 
 	public AttackEntityEvent(Player player, Entity target) {
@@ -37,11 +35,10 @@ public class AttackEntityEvent extends PlayerEvents {
 
 	@Override
 	public void sendEvent() {
-		ATTACK_ENTITY.invoker().onAttackEntity(this);
+		EVENT.invoker().onAttackEntity(this);
 	}
 
-	@FunctionalInterface
-	public interface AttackEntityCallback {
+	public interface Callback {
 		void onAttackEntity(AttackEntityEvent event);
 	}
 }

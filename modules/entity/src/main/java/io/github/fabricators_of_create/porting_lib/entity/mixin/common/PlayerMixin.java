@@ -9,17 +9,15 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
 import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
-import io.github.fabricators_of_create.porting_lib.entity.events.CriticalHitEvent;
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityInteractCallback;
-import io.github.fabricators_of_create.porting_lib.entity.events.LivingAttackEvent;
-import io.github.fabricators_of_create.porting_lib.entity.events.LivingDeathEvent;
-import io.github.fabricators_of_create.porting_lib.entity.events.LivingEntityEvents;
-import io.github.fabricators_of_create.porting_lib.entity.events.PlayerEvents;
-import io.github.fabricators_of_create.porting_lib.entity.events.PlayerTickEvents;
+import io.github.fabricators_of_create.porting_lib.core.util.MixinHelper;
+import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
+import io.github.fabricators_of_create.porting_lib.entity.events.player.CriticalHitEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.player.PlayerEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingDamageEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingHurtEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.player.AttackEntityEvent;
-import io.github.fabricators_of_create.porting_lib.entity.extensions.PlayerExtension;
+import io.github.fabricators_of_create.porting_lib.entity.events.player.PlayerXpEvent;
+import io.github.fabricators_of_create.porting_lib.entity.ext.PlayerExt;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -44,75 +42,104 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = Player.class, priority = 500)
-public abstract class PlayerMixin extends LivingEntity implements PlayerExtension {
+public abstract class PlayerMixin extends LivingEntity implements PlayerExt {
 	protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level level) {
 		super(entityType, level);
 	}
 
 	@Inject(method = "tick", at = @At("HEAD"))
-	public void port_lib$playerStartTickEvent(CallbackInfo ci) {
-		PlayerTickEvents.START.invoker().onStartOfPlayerTick((Player) (Object) this);
+	public void playerStartTickEvent(CallbackInfo ci) {
+		EntityHooks.firePlayerTickPre(MixinHelper.cast(this));
 	}
 
 	@Inject(method = "tick", at = @At("TAIL"))
-	public void port_lib$playerEndTickEvent(CallbackInfo ci) {
-		PlayerTickEvents.END.invoker().onEndOfPlayerTick((Player) (Object) this);
+	public void playerEndTickEvent(CallbackInfo ci) {
+		EntityHooks.firePlayerTickPost(MixinHelper.cast(this));
 	}
 
-	@Inject(method = "interactOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;interact(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;"), cancellable = true)
-	public void port_lib$onEntityInteract(Entity entityToInteractOn, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
-		InteractionResult cancelResult = EntityInteractCallback.EVENT.invoker().onEntityInteract((Player) (Object) this, hand, entityToInteractOn);
+	@Inject(method = "interactOn", at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/player/Player;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;",
+			ordinal = 0
+	), cancellable = true)
+	public void onEntityInteract(Entity entityToInteractOn, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+		InteractionResult cancelResult = EntityHooks.onInteractEntity(MixinHelper.cast(this), entityToInteractOn, hand);
 		if (cancelResult != null) cir.setReturnValue(cancelResult);
 	}
 
 	@Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
-	public void port_lib$attackEvent(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-		LivingAttackEvent event = new LivingAttackEvent(this, source, amount);
-		event.sendEvent();
-		if (event.isCanceled())
+	public void onPlayerAttack(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+		if (!EntityHooks.onPlayerAttack(this, source, amount))
 			cir.setReturnValue(false);
 	}
 
-	@ModifyVariable(method = "hurt", at = @At("HEAD"), argsOnly = true)
-	private float port_lib$onHurt(float amount, DamageSource source, float amount2) {
-		return LivingEntityEvents.HURT.invoker().onHurt(source, this, amount);
+	@ModifyVariable(method = "giveExperiencePoints", at = @At("HEAD"), index = 1, argsOnly = true)
+	private int xpChange(int experience, @Share("event") LocalRef<PlayerXpEvent.XpChange> eventRef) {
+		PlayerXpEvent.XpChange event = new PlayerXpEvent.XpChange((Player) (Object) this, experience);
+		eventRef.set(event);
+		event.sendEvent();
+		return event.getAmount();
 	}
 
-	@ModifyVariable(method = "giveExperiencePoints", at = @At("HEAD"))
-	private int port_lib$xpChange(int experience) {
-		PlayerEvents.XpChange xpChange = new PlayerEvents.XpChange((Player) (Object) this, experience);
-		xpChange.sendEvent();
-		return xpChange.getAmount();
+	@Inject(method = "giveExperiencePoints", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;increaseScore(I)V"), cancellable = true)
+	private void cancelPoints(int experience, CallbackInfo ci, @Share("event") LocalRef<PlayerXpEvent.XpChange> eventRef) {
+		if (eventRef.get().isCanceled())
+			ci.cancel();
+	}
+
+	@ModifyVariable(method = "giveExperienceLevels", at = @At("HEAD"), index = 1, argsOnly = true)
+	private int levelChange(int level, @Share("event") LocalRef<PlayerXpEvent.LevelChange> eventRef) {
+		PlayerXpEvent.LevelChange event = new PlayerXpEvent.LevelChange((Player) (Object) this, level);
+		eventRef.set(event);
+		event.sendEvent();
+		return event.getLevels();
+	}
+
+	@Inject(method = "giveExperienceLevels", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Player;experienceLevel:I", ordinal = 0), cancellable = true)
+	private void cancelLevels(int levels, CallbackInfo ci, @Share("event") LocalRef<PlayerXpEvent.XpChange> eventRef) {
+		if (eventRef.get().isCanceled())
+			ci.cancel();
+	}
+
+	@Inject(method = "attack", at = @At("HEAD"), cancellable = true)
+	private void onPlayerAttackTarget(Entity target, CallbackInfo ci) {
+		if (!EntityHooks.onPlayerAttackTarget((Player) (Object) this, target))
+			ci.cancel();
 	}
 
 	@ModifyVariable(
 			method = "attack",
 			slice = @Slice(
-				from = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;isSprinting()Z", ordinal = 1),
-				to = @At(value = "CONSTANT", args = "floatValue=1.5F")
+					from = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;isSprinting()Z", ordinal = 1),
+					to = @At(value = "CONSTANT", args = "floatValue=1.5F")
 			),
-			at = @At(value = "STORE", opcode = Opcodes.ISTORE), index = 8
+			at = @At(value = "STORE", opcode = Opcodes.ISTORE), index = 9
 	)
 	private boolean modifyResult(boolean value, @Share("original") LocalBooleanRef vanilla) {
 		vanilla.set(value);
 		return true;
 	}
 
-	@ModifyVariable(method = "attack", at = @At(value = "CONSTANT", args = "floatValue=1.5F"), index = 8)
+	@ModifyVariable(method = "attack", at = @At(value = "CONSTANT", args = "floatValue=1.5F"), index = 9)
 	private boolean modifyVanillaResult(boolean value, @Share("original") LocalBooleanRef vanilla) {
 		return vanilla.get();
 	}
 
 	@ModifyExpressionValue(method = "attack", at = @At(value = "CONSTANT", args = "floatValue=1.5F"))
-	private float getCriticalDamageMultiplier(float original, Entity target, @Share("original") LocalBooleanRef vanilla) {
+	private float getCriticalDamageMultiplier(float original, Entity target, @Share("original") LocalBooleanRef vanilla, @Share("event") LocalRef<CriticalHitEvent> eventRef) {
 		boolean vanillaCritical = vanilla.get();
-		CriticalHitEvent hitResult = new CriticalHitEvent((Player) (Object) this, target, original, vanillaCritical);
-		hitResult.sendEvent();
-		if (hitResult.getResult() == BaseEvent.Result.ALLOW || (vanillaCritical && hitResult.getResult() == BaseEvent.Result.DEFAULT)) {
+		var critEvent = EntityHooks.fireCriticalHit((Player) (Object) this, target, vanillaCritical, vanillaCritical ? original : 1.0F);
+		eventRef.set(critEvent);
+		if (critEvent.isCriticalHit()) {
 			vanilla.set(true);
-			return hitResult.getDamageModifier();
+			return critEvent.getDamageMultiplier();
 		}
 		return 1.0F;
+	}
+
+	@ModifyVariable(method = "attack", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Player;walkDist:F"), index = 9)
+	private boolean isCriticalHit(boolean value, @Share("event") LocalRef<CriticalHitEvent> eventRef) {
+		return eventRef.get().isCriticalHit();
 	}
 
 	@Inject(method = "attack", at = @At("HEAD"), cancellable = true)
@@ -125,36 +152,29 @@ public abstract class PlayerMixin extends LivingEntity implements PlayerExtensio
 
 	@Inject(method = "die", at = @At("HEAD"), cancellable = true)
 	private void onLivingDeath(DamageSource cause, CallbackInfo ci) {
-		LivingDeathEvent event = new LivingDeathEvent(this, cause);
-		event.sendEvent();
-		if (event.isCanceled())
+		if (EntityHooks.onLivingDeath(this, cause))
 			ci.cancel();
 	}
 
-	@ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 0), index = 2)
-	private float livingHurtEvent(float value, DamageSource pDamageSource, @Share("hurt") LocalRef<LivingHurtEvent> eventRef) {
-		LivingHurtEvent event = new LivingHurtEvent(this, pDamageSource, value);
-		eventRef.set(event);
-		event.sendEvent();
-		if (event.isCanceled())
-			return 0;
-		return event.getAmount();
+	@ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 0), index = 2, argsOnly = true)
+	private float livingHurtEvent(float amount, DamageSource pDamageSource) {
+		return EntityHooks.onLivingHurt(this, pDamageSource, amount);
 	}
 
 	@Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getDamageAfterArmorAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"), cancellable = true)
-	private void shouldCancelHurt(DamageSource damageSource, float f, CallbackInfo ci, @Share("hurt") LocalRef<LivingHurtEvent> eventRef) {
-		if (eventRef.get().getAmount() <= 0)
+	private void shouldCancelHurt(DamageSource damageSource, float amount, CallbackInfo ci) {
+		if (amount <= 0)
 			ci.cancel();
 	}
 
-	@ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 5), index = 2)
-	private float livingDamageEvent(float value, DamageSource pDamageSource) {
-		LivingDamageEvent event = new LivingDamageEvent(this, pDamageSource, value);
-		event.sendEvent();
-		if (event.isCanceled())
-			return 0;
-		return event.getAmount();
-	}
+//	@ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 5), index = 2) TODO: PORT
+//	private float livingDamageEvent(float value, DamageSource pDamageSource) {
+//		LivingDamageEvent event = new LivingDamageEvent(this, pDamageSource, value);
+//		event.sendEvent();
+//		if (event.isCanceled())
+//			return 0;
+//		return event.getAmount();
+//	}
 
 	private final ThreadLocal<BlockPos> pl$destroySpeedContext = new ThreadLocal<>();
 
@@ -165,9 +185,6 @@ public abstract class PlayerMixin extends LivingEntity implements PlayerExtensio
 
 	@ModifyReturnValue(method = "getDestroySpeed", at = @At("RETURN"))
 	private float breakspeedEvent(float original, BlockState state) {
-		PlayerEvents.BreakSpeed breakSpeed = new PlayerEvents.BreakSpeed((Player) (Object) this, state, original, pl$destroySpeedContext.get());
-		breakSpeed.sendEvent();
-		pl$destroySpeedContext.remove();
-		return breakSpeed.getNewSpeed();
+		return EntityHooks.getBreakSpeed((Player) (Object) this, state, original, pl$destroySpeedContext.get());
 	}
 }

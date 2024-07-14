@@ -1,6 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.entity.events.living;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.LivingEntityEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.damagesource.DamageSource;
@@ -24,7 +23,7 @@ import net.minecraft.world.entity.LivingEntity;
  *
  * @see LivingHurtEvent
  **/
-public class LivingDamageEvent extends LivingEntityEvents {
+public class LivingDamageEvent extends LivingEvent {
 	public static final Event<DamageCallback> DAMAGE = EventFactory.createArrayBacked(DamageCallback.class, callbacks -> event -> {
 		for (DamageCallback e : callbacks)
 			e.onLivingDamage(event);
