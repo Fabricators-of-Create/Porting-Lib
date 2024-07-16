@@ -8,6 +8,7 @@
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
     "GameRendererMixin",
+    "ItemInHandRendererMixin",
     "LocalPlayerMixin",
     "PlayerRendererMixin",
     "SoundEngineMixin"

@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.WrapWithCondition;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomHitEffectsBlock;
 import io.github.fabricators_of_create.porting_lib.event.common.AddPackFindersEvent;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.PackRepository;
@@ -28,7 +29,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.github.fabricators_of_create.porting_lib.event.client.InteractEvents;
 import io.github.fabricators_of_create.porting_lib.event.client.MinecraftTailCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.ParticleManagerRegistrationCallback;
-import io.github.fabricators_of_create.porting_lib.event.client.RenderTickStartCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.RenderFrameEvent;
 import io.github.fabricators_of_create.porting_lib.event.common.ModsLoadedCallback;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -59,6 +60,10 @@ public abstract class MinecraftMixin {
 	@Shadow
 	@Final
 	private PackRepository resourcePackRepository;
+
+	@Shadow
+	@Final
+	private DeltaTracker.Timer timer;
 
 	@Inject(
 			method = "<init>",
@@ -124,9 +129,14 @@ public abstract class MinecraftMixin {
 		return original.call(gameMode, posBlock, directionFacing); // continue to continueDestroyBlock
 	}
 
-	@Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;render(FJZ)V", shift = Shift.BEFORE))
-	private void port_lib$renderTickStart(CallbackInfo ci) {
-		RenderTickStartCallback.EVENT.invoker().tick();
+	@Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;render(Lnet/minecraft/client/DeltaTracker;Z)V", shift = Shift.BEFORE))
+	private void renderTickStart(CallbackInfo ci) {
+		RenderFrameEvent.PRE.invoker().onRenderFrame(this.timer);
+	}
+
+	@Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;render(Lnet/minecraft/client/DeltaTracker;Z)V"))
+	private void renderTickEnd(CallbackInfo ci) {
+		RenderFrameEvent.POST.invoker().onRenderFrame(this.timer);
 	}
 
 	@Inject(

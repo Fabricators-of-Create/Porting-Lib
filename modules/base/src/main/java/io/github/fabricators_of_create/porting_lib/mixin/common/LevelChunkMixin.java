@@ -1,5 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+
+import net.minecraft.core.HolderLookup;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -52,15 +56,15 @@ public abstract class LevelChunkMixin extends ChunkAccess {
 		});
 	}
 
-	@Inject(method = "method_31716",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;loadWithComponents(Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/core/HolderLookup$Provider;)V"),
-			locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true
+	@WrapWithCondition(method = "method_31716",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;loadWithComponents(Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/core/HolderLookup$Provider;)V")
 	)
-	private void port_lib$handleBlockEntityUpdateTag(BlockPos pos, BlockEntityType<?> type, CompoundTag tag, CallbackInfo ci, BlockEntity blockEntity) {
-		if (blockEntity instanceof CustomUpdateTagHandlingBlockEntity handler) {
-			handler.handleUpdateTag(tag);
-			ci.cancel();
+	private boolean handleBlockEntityUpdateTag(BlockEntity instance, CompoundTag tag, HolderLookup.Provider provider) {
+		if (instance instanceof CustomUpdateTagHandlingBlockEntity handler) {
+			handler.handleUpdateTag(tag, provider);
+			return false;
 		}
+		return true;
 	}
 
 	@Inject(method = "addAndRegisterBlockEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/chunk/LevelChunk;updateBlockEntityTicker(Lnet/minecraft/world/level/block/entity/BlockEntity;)V", shift = At.Shift.AFTER))

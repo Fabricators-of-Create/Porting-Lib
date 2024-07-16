@@ -22,9 +22,7 @@ public class ExtendedSlider extends AbstractSliderButton {
 	protected double minValue;
 	protected double maxValue;
 
-	/**
-	 * Allows input of discontinuous values with a certain step
-	 */
+	/** Allows input of discontinuous values with a certain step */
 	protected double stepSize;
 
 	protected boolean drawString;
@@ -190,8 +188,7 @@ public class ExtendedSlider extends AbstractSliderButton {
 	}
 
 	@Override
-	protected void applyValue() {
-	}
+	protected void applyValue() {}
 
 	@Override
 	public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {

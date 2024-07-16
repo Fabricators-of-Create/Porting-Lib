@@ -17,9 +17,9 @@ import net.minecraft.world.level.Level;
 public abstract class EnchantmentMenuMixin {
 	@ModifyVariable(
 			method = "method_17411",
-			at = @At(value = "STORE", ordinal = 1), ordinal = 0, remap = false
+			at = @At(value = "STORE", ordinal = 1), ordinal = 0
 	)
-	private int port_lib$modifyEnchantValue(int obj, ItemStack stack, Level level, BlockPos pos) {
+	private int modifyEnchantValue(int obj, ItemStack stack, Level level, BlockPos pos) {
 		for (BlockPos blockPos : EnchantingTableBlock.BOOKSHELF_OFFSETS) {
 			BlockPos actualPos = pos.offset(blockPos);
 			BlockState state = level.getBlockState(actualPos);

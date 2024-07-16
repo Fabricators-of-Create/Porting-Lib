@@ -1,10 +1,17 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Share;
+
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
+
 import io.github.fabricators_of_create.porting_lib.event.common.RecipesUpdatedCallback;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
 import net.minecraft.client.multiplayer.CommonListenerCookie;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
 
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -41,11 +48,19 @@ public abstract class ClientPacketListenerMixin extends ClientCommonPacketListen
 	}
 
 	@Inject(method = "method_38542", at = @At("HEAD"), cancellable = true)
-	public void port_lib$handleCustomBlockEntity(ClientboundBlockEntityDataPacket packet, BlockEntity blockEntity, CallbackInfo ci) {
+	public void andleCustomBlockEntity(ClientboundBlockEntityDataPacket packet, BlockEntity blockEntity, CallbackInfo ci, @Share("data_packet") LocalBooleanRef handleRef) {
 		if (blockEntity instanceof CustomDataPacketHandlingBlockEntity handler) {
-			handler.onDataPacket(connection, packet);
-			ci.cancel();
-		}
+			handler.onDataPacket(connection, packet, this.registryAccess);
+			handleRef.set(true);
+		} else
+			handleRef.set(false);
+	}
+
+	@WrapOperation(method = "method_38542", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/CompoundTag;isEmpty()Z"))
+	private boolean checkIfUpdateAlreadyHandled(CompoundTag instance, Operation<Boolean> original, @Share("data_packet") LocalBooleanRef handleRef) {
+		if (!handleRef.get())
+			return original.call(instance);
+		return true;
 	}
 
 	@Inject(method = "handleUpdateRecipes", at = @At("TAIL"))

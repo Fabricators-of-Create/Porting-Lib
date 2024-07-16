@@ -1,5 +1,1 @@
 portingLib.addModuleDependency("asm")
-
-dependencies {
-	modApi(include("com.jamieswhiteshirt:reach-entity-attributes:$rea_version"))
-}

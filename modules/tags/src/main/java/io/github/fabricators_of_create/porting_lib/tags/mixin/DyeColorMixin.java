@@ -23,15 +23,23 @@ public class DyeColorMixin implements DyeExtension {
 	@Final
 	private String name;
 	@Unique
-	private TagKey<Item> tag;
+	private TagKey<Item> dyesTag;
+	@Unique
+	private TagKey<Item> dyedTag;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
-	public void addTag(String enumName, int enumIndex, int id, String name, int color, MapColor mapColor, int fireworkColor, int signColor, CallbackInfo ci) {
-		tag = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "dyes/" + enumName));
+	public void addTag(String enumName, int ordinal, int id, String name, int diffuseColor, MapColor mapColor, int fireworkColor, int textColor, CallbackInfo ci) {
+		this.dyesTag = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "dyes/" + name));
+		this.dyedTag = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "dyed/" + name));
 	}
 
 	@Override
 	public TagKey<Item> getTag() {
-		return tag;
+		return dyesTag;
+	}
+
+	@Override
+	public TagKey<Item> getDyedTag() {
+		return dyedTag;
 	}
 }

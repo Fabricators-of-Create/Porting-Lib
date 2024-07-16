@@ -81,7 +81,7 @@ public abstract class LivingEntityMixin extends Entity {
 			cancellable = true
 	)
 	protected void updateFallState(double y, boolean onGround, BlockState state, BlockPos pos,
-								   CallbackInfo ci, @Local(index = 16) int count) {
+								   CallbackInfo ci, @Local(index = 19) int count) {
 		if (state.getBlock() instanceof CustomLandingEffectsBlock custom &&
 				custom.addLandingEffects(state, (ServerLevel) level(), pos, state, (LivingEntity) (Object) this, count)) {
 			super.checkFallDamage(y, onGround, state, pos);

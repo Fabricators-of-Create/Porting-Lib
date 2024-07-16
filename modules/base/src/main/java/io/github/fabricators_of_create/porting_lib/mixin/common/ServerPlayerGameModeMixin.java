@@ -1,26 +1,18 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import com.llamalad7.mixinextras.sugar.Local;
-
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import io.github.fabricators_of_create.porting_lib.block.HarvestableBlock;
 import io.github.fabricators_of_create.porting_lib.item.UseFirstBehaviorItem;
-import io.github.fabricators_of_create.porting_lib.mixin.accessors.common.accessor.BlockAccessor;
-import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
@@ -30,11 +22,8 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.GameMasterBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.phys.BlockHitResult;
@@ -47,9 +36,6 @@ public abstract class ServerPlayerGameModeMixin {
 	@Shadow
 	@Final
 	protected ServerPlayer player;
-
-	@Shadow
-	private GameType gameModeForPlayer;
 
 	@Inject(
 			method = "useItemOn",
@@ -87,24 +73,6 @@ public abstract class ServerPlayerGameModeMixin {
 			return harvestableBlock.canHarvestBlock(blockstate, this.level, pos, player);
 		else
 			return operation.call(player, blockstate);
-	}
-
-	@Unique
-	private ThreadLocal<Integer> XP = ThreadLocal.withInitial(() -> -1);
-
-	@ModifyExpressionValue(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/Item;canAttackBlock(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;)Z"))
-	private boolean port_lib$blockBreakHook(boolean original, BlockPos pos) {
-		int exp = PortingHooks.onBlockBreakEvent(this.level, this.gameModeForPlayer, this.player, pos);
-		XP.set(exp);
-		return !(exp == -1);
-	}
-
-	@Inject(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;playerDestroy(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/item/ItemStack;)V", shift = At.Shift.BY, by = 2), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
-	private void port_lib$popXp(BlockPos pos, CallbackInfoReturnable<Boolean> cir, @Local(index = 8) boolean flag) {
-		int exp = XP.get();
-		if (flag && exp > 0)
-			((BlockAccessor)this.level.getBlockState(pos).getBlock()).port_lib$popExperience(level, pos, exp);
-		XP.remove();
 	}
 
 	@Inject(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getBlock()Lnet/minecraft/world/level/block/Block;"), cancellable = true)
