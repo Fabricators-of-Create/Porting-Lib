@@ -45,7 +45,6 @@ Just choose a version and use its version number.
 | `model_loader`           | Base loader for custom model types                                                   |
 | `model_materials`        | Material data for use in rendering                                                   |
 | `models`                 | Model implementations, ModelData, RenderTypes                                        |
-| `networking`             | A Forge-like packet system                                                           |
 | `obj_loader`             | Loading .obj models                                                                  |
 | `recipe_book_categories` | Allows mods to add additional recipe book categories                                 |
 | `registries`             | Custom datapack registries and registry utils                                        |
