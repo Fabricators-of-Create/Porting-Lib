@@ -6,7 +6,7 @@
   "description": "Super light weight implementation of forge's config library",
   "entrypoints": {
     "main": [
-      "io.github.fabricators_of_create.porting_lib.config.PortingLibConfig"
+      "io.github.fabricators_of_create.porting_lib.config.PortingLibConfig::init"
     ],
     "client": [
       "io.github.fabricators_of_create.porting_lib.config.client.PortingLibConfigClient"

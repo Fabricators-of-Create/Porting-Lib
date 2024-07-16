@@ -1,49 +1,37 @@
 package io.github.fabricators_of_create.porting_lib.config;
 
-import com.electronwill.nightconfig.core.CommentedConfig;
-import com.electronwill.nightconfig.core.ConfigFormat;
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.electronwill.nightconfig.core.file.FileWatcher;
-import com.electronwill.nightconfig.core.io.ParsingException;
-import com.electronwill.nightconfig.core.io.WritingMode;
-import com.electronwill.nightconfig.toml.TomlFormat;
-
-import net.fabricmc.loader.api.FabricLoader;
-
-import org.apache.commons.io.FilenameUtils;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
-import java.util.concurrent.Callable;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
-public class ModConfig {
-	private final ConfigType type;
-	private final ModConfigSpec spec;
-	private final String fileName;
-	private final String modId;
-	private CommentedConfig configData;
+import net.fabricmc.loader.api.ModContainer;
 
-	public ModConfig(final ConfigType type, final ModConfigSpec spec, final String modId, final String fileName) {
+import org.jetbrains.annotations.Nullable;
+
+public final class ModConfig {
+	private final Type type;
+	private final IConfigSpec spec;
+	private final String fileName;
+	final ModContainer container;
+	@Nullable
+	LoadedConfig loadedConfig;
+	/**
+	 * NightConfig's own configs are threadsafe, but mod code is not necessarily.
+	 * This lock is used to prevent multiple concurrent config reloads or event dispatches.
+	 */
+	final Lock lock;
+
+	ModConfig(Type type, IConfigSpec spec, ModContainer container, String fileName, ReentrantLock lock) {
 		this.type = type;
 		this.spec = spec;
 		this.fileName = fileName;
-		this.modId = modId;
-		ConfigTracker.INSTANCE.trackConfig(this);
+		this.container = container;
+		this.lock = lock;
 	}
 
-	public ModConfig(final ConfigType type, final ModConfigSpec spec, final String modId) {
-		this(type, spec, modId, defaultConfigName(type, modId));
-	}
-
-	private static String defaultConfigName(ConfigType type, String modId) {
-		// config file name would be "forge-client.toml" and "forge-server.toml"
-		return String.format(Locale.ROOT, "%s-%s.toml", modId, type.extension());
-	}
-	public ConfigType getType() {
+	public Type getType() {
 		return type;
 	}
 
@@ -51,149 +39,73 @@ public class ModConfig {
 		return fileName;
 	}
 
-	public void unload(Path configBasePath) {
-		Path configPath = configBasePath.resolve(getFileName());
-		try {
-			FileWatcher.defaultInstance().removeWatch(configBasePath.resolve(getFileName()));
-		} catch (RuntimeException e) {
-			ConfigTracker.LOGGER.error("Failed to remove config {} from tracker!", configPath, e);
-		}
-	}
-
-	private boolean setupConfigFile(final ModConfig modConfig, final Path file, final ConfigFormat<?> conf) throws IOException {
-		Files.createDirectories(file.getParent());
-		Path p = FabricLoader.getInstance().getConfigDir().resolve(modConfig.getFileName());
-		if (Files.exists(p)) {
-			ConfigTracker.LOGGER.info(ConfigTracker.CONFIG, "Loading default config file from path {}", p);
-			Files.copy(p, file);
-		} else {
-			Files.createFile(file);
-			conf.initEmptyFile(file);
-		}
-		return true;
-	}
-
-	public Function<ModConfig, CommentedFileConfig> reader(Path configBasePath) {
-		return (c) -> {
-			final Path configPath = configBasePath.resolve(c.getFileName());
-			final CommentedFileConfig configData = CommentedFileConfig.builder(configPath).sync().
-					preserveInsertionOrder().
-					autosave().
-					onFileNotFound((newfile, configFormat)-> setupConfigFile(c, newfile, configFormat)).
-					writingMode(WritingMode.REPLACE).
-					build();
-			ConfigTracker.LOGGER.debug(ConfigTracker.CONFIG, "Built TOML config for {}", configPath.toString());
-			try {
-				configData.load();
-			} catch (ParsingException ex) {
-				throw new ConfigLoadingException(c, ex);
-			}
-			ConfigTracker.LOGGER.debug(ConfigTracker.CONFIG, "Loaded TOML config file {}", configPath.toString());
-			try {
-				FileWatcher.defaultInstance().addWatch(configPath, new ConfigWatcher(c, configData, Thread.currentThread().getContextClassLoader()));
-				ConfigTracker.LOGGER.debug(ConfigTracker.CONFIG, "Watching TOML config file {} for changes", configPath.toString());
-			} catch (IOException e) {
-				throw new RuntimeException("Couldn't watch config file", e);
-			}
-			return configData;
-		};
-	}
-
-	@SuppressWarnings("unchecked")
-	public ModConfigSpec getSpec() {
+	public IConfigSpec getSpec() {
 		return spec;
 	}
 
 	public String getModId() {
-		return modId;
+		return container.getMetadata().getId();
 	}
 
-	public CommentedConfig getConfigData() {
-		return this.configData;
-	}
-
-	void setConfigData(final CommentedConfig configData) {
-		this.configData = configData;
-		this.spec.setConfig(this.configData);
-	}
-
-	public void save() {
-		((CommentedFileConfig)this.configData).save();
-	}
-
+	// TODO: remove from public API?
 	public Path getFullPath() {
-		return ((CommentedFileConfig)this.configData).getNioPath();
+		if (this.loadedConfig != null && loadedConfig.path() != null) {
+			return loadedConfig.path();
+		} else {
+			throw new IllegalStateException("Cannot call getFullPath() on non-file config " + this.loadedConfig + " at path " + getFileName());
+		}
 	}
 
-	public void acceptSyncedConfig(byte[] bytes) {
-		setConfigData(TomlFormat.instance().createParser().parse(new ByteArrayInputStream(bytes)));
-		ConfigEvents.RELOADING.invoker().onModConfigEvent(this);
-	}
+	void setConfig(@Nullable LoadedConfig loadedConfig, Function<ModConfig, ModConfigEvent> eventConstructor) {
+		lock.lock();
 
-	public static void backUpConfig(final CommentedFileConfig commentedFileConfig, final int maxBackups) {
-		Path bakFileLocation = commentedFileConfig.getNioPath().getParent();
-		String bakFileName = FilenameUtils.removeExtension(commentedFileConfig.getFile().getName());
-		String bakFileExtension = FilenameUtils.getExtension(commentedFileConfig.getFile().getName()) + ".bak";
-		Path bakFile = bakFileLocation.resolve(bakFileName + "-1" + "." + bakFileExtension);
 		try {
-			for(int i = maxBackups; i > 0; i--) {
-				Path oldBak = bakFileLocation.resolve(bakFileName + "-" + i + "." + bakFileExtension);
-				if(Files.exists(oldBak)) {
-					if(i >= maxBackups)
-						Files.delete(oldBak);
-					else
-						Files.move(oldBak, bakFileLocation.resolve(bakFileName + "-" + (i + 1) + "." + bakFileExtension));
-				}
-			}
-			Files.copy(commentedFileConfig.getNioPath(), bakFile);
-		} catch (IOException exception) {
-			ConfigTracker.LOGGER.warn(ConfigTracker.CONFIG, "Failed to back up config file {}", commentedFileConfig.getNioPath(), exception);
+			this.loadedConfig = loadedConfig;
+			spec.acceptConfig(loadedConfig);
+			eventConstructor.apply(this).sendEvent();
+		} finally {
+			lock.unlock();
 		}
 	}
 
-	private static class ConfigWatcher implements Runnable {
-		private final ModConfig modConfig;
-		private final CommentedFileConfig commentedFileConfig;
-		private final ClassLoader realClassLoader;
+	public enum Type {
+		/**
+		 * Common mod config for configuration that needs to be loaded on both environments.
+		 * Loaded on both servers and clients.
+		 * Stored in the global config directory.
+		 * Not synced.
+		 * Suffix is "-common" by default.
+		 */
+		COMMON,
+		/**
+		 * Client config is for configuration affecting the ONLY client state such as graphical options.
+		 * Only loaded on the client side.
+		 * Stored in the global config directory.
+		 * Not synced.
+		 * Suffix is "-client" by default.
+		 */
+		CLIENT,
+		/**
+		 * Server type config is configuration that is associated with a server instance.
+		 * Only loaded during server startup.
+		 * Stored in a server/save specific "serverconfig" directory.
+		 * Synced to clients during connection.
+		 * Suffix is "-server" by default.
+		 */
+		SERVER,
+		/**
+		 * Startup configs are for configurations that need to run as early as possible.
+		 * Loaded as soon as the config is registered to PLC.
+		 * Please be aware when using them, as using these configs to enable/disable registration and anything that must be present on both sides
+		 * can cause clients to have issues connecting to servers with different config values.
+		 * Stored in the global config directory.
+		 * Not synced.
+		 * Suffix is "-startup" by default.
+		 */
+		STARTUP;
 
-		ConfigWatcher(final ModConfig modConfig, final CommentedFileConfig commentedFileConfig, final ClassLoader classLoader) {
-			this.modConfig = modConfig;
-			this.commentedFileConfig = commentedFileConfig;
-			this.realClassLoader = classLoader;
-		}
-
-		@Override
-		public void run() {
-			// Force the regular classloader onto the special thread
-			Thread.currentThread().setContextClassLoader(realClassLoader);
-			if (!this.modConfig.getSpec().isCorrecting()) {
-				try
-				{
-					this.commentedFileConfig.load();
-					if(!this.modConfig.getSpec().isCorrect(commentedFileConfig))
-					{
-						ConfigTracker.LOGGER.warn(ConfigTracker.CONFIG, "Configuration file {} is not correct. Correcting", commentedFileConfig.getFile().getAbsolutePath());
-						backUpConfig(commentedFileConfig, 5);
-						this.modConfig.getSpec().correct(commentedFileConfig);
-						commentedFileConfig.save();
-					}
-				}
-				catch (ParsingException ex)
-				{
-					throw new ConfigLoadingException(modConfig, ex);
-				}
-				ConfigTracker.LOGGER.debug(ConfigTracker.CONFIG, "Config file {} changed, sending notifies", this.modConfig.getFileName());
-				this.modConfig.getSpec().afterReload();
-				ConfigEvents.RELOADING.invoker().onModConfigEvent(this.modConfig);
-			}
-		}
-	}
-
-	private static class ConfigLoadingException extends RuntimeException
-	{
-		public ConfigLoadingException(ModConfig config, Exception cause)
-		{
-			super("Failed loading config file " + config.getFileName() + " of type " + config.getType() + " for modid " + config.getModId(), cause);
+		public String extension() {
+			return name().toLowerCase(Locale.ROOT);
 		}
 	}
 }

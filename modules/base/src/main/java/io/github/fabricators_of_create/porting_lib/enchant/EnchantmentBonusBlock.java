@@ -1,8 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.enchant;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public interface EnchantmentBonusBlock {
@@ -13,6 +13,6 @@ public interface EnchantmentBonusBlock {
 	 * @return The amount of enchanting power this block produces.
 	 */
 	default float getEnchantPowerBonus(BlockState state, LevelReader level, BlockPos pos) {
-		return state.is(Blocks.BOOKSHELF) ? 1 : 0;
+		return state.is(BlockTags.ENCHANTMENT_POWER_PROVIDER) ? 1 : 0;
 	}
 }

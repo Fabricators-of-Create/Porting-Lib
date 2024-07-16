@@ -1,10 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.item;
 
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ItemStack;
 
-// TODO: Implement on Illusioner and AbstractSkeleton
 public interface CustomArrowItem {
-	default AbstractArrow customArrow(AbstractArrow arrow) {
+	default AbstractArrow customArrow(AbstractArrow arrow, ItemStack projectileStack, ItemStack weaponStack) {
 		return arrow;
 	}
 }

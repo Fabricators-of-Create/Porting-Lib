@@ -7,12 +7,16 @@ import net.minecraft.world.level.Level;
 
 public interface InfiniteArrowItem {
 	/**
-	 * Allows you to override vanillas logic for checking if the player how infinite arrows
-	 * See {@link net.minecraft.world.item.BowItem#releaseUsing(ItemStack, Level, LivingEntity, int)}
-	 * @param projectile The current projectile to use.
-	 * @param bow The bow the player is holding.
-	 * @param player The player using the bow.
-	 * @return Return whether the player has infinite arrows.
+	 * Called to determine if this arrow will be infinite when fired. If an arrow is infinite, then the arrow will never be consumed (regardless of enchantments).
+	 * <p>
+	 * Only called on the logical server.
+	 *
+	 * @param ammo The ammo stack (containing this item)
+	 * @param bow  The bow stack
+	 * @param livingEntity The entity who is firing the bow
+	 * @return True if the arrow is infinite
 	 */
-	boolean isInfinite(ItemStack projectile, ItemStack bow, Player player);
+	default boolean isInfinite(ItemStack ammo, ItemStack bow, net.minecraft.world.entity.LivingEntity livingEntity) {
+		return false;
+	}
 }

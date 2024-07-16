@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import io.github.fabricators_of_create.porting_lib.block.EntityDestroyBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -36,8 +38,8 @@ public abstract class WitherBossMixin extends Entity {
 		return original;
 	}
 
-	@Inject(method = "customServerAiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void port_lib$shouldDestroy(CallbackInfo ci, int i, int j, int k, boolean bl, int l, int m, int n, int o, int p, int q, BlockPos blockPos) {
+	@Inject(method = "customServerAiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;", shift = At.Shift.AFTER))
+	public void port_lib$shouldDestroy(CallbackInfo ci, @Local(index = 5) BlockPos blockPos) {
 		BlockState blockState = this.level().getBlockState(blockPos);
 		if (blockState.getBlock() instanceof EntityDestroyBlock destroyBlock) {
 			customLogic = true;
