@@ -32,14 +32,14 @@ public class LevelRendererMixin {
 	}
 
 	@Inject(method = "renderClouds", at = @At("HEAD"), cancellable = true)
-	private void renderCustomClouds(PoseStack pPoseStack, Matrix4f pProjectionMatrix, float pPartialTick, double pCamX, double pCamY, double pCamZ, CallbackInfo ci) {
-		if (level.effects().renderClouds(level, ticks, pPartialTick, pPoseStack, pCamX, pCamY, pCamZ, pProjectionMatrix))
+	private void renderCustomClouds(PoseStack poseStack, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, float pPartialTick, double pCamX, double pCamY, double pCamZ, CallbackInfo ci) {
+		if (level.effects().renderClouds(level, ticks, pPartialTick, poseStack, pCamX, pCamY, pCamZ, modelViewMatrix, projectionMatrix))
 			ci.cancel();
 	}
 
 	@Inject(method = "renderSky", at = @At("HEAD"), cancellable = true)
-	private void renderCustomSky(PoseStack pPoseStack, Matrix4f pProjectionMatrix, float pPartialTick, Camera pCamera, boolean pIsFoggy, Runnable pSkyFogSetup, CallbackInfo ci) {
-		if (level.effects().renderSky(level, ticks, pPartialTick, pPoseStack, pCamera, pProjectionMatrix, pIsFoggy, pSkyFogSetup))
+	private void renderCustomSky(Matrix4f modelViewMatrix, Matrix4f pProjectionMatrix, float pPartialTick, Camera pCamera, boolean pIsFoggy, Runnable pSkyFogSetup, CallbackInfo ci) {
+		if (level.effects().renderSky(level, ticks, pPartialTick, modelViewMatrix, pCamera, pProjectionMatrix, pIsFoggy, pSkyFogSetup))
 			ci.cancel();
 	}
 

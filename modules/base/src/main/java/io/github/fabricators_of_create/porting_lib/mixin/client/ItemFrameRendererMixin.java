@@ -52,7 +52,7 @@ public abstract class ItemFrameRendererMixin<T extends ItemFrame> extends Entity
 
 	@ModifyVariable(
 			method = "render(Lnet/minecraft/world/entity/decoration/ItemFrame;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
-			at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/item/MapItem;getSavedData(Ljava/lang/Integer;Lnet/minecraft/world/level/Level;)Lnet/minecraft/world/level/saveddata/maps/MapItemSavedData;")
+			at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/item/MapItem;getSavedData(Lnet/minecraft/world/level/saveddata/maps/MapId;Lnet/minecraft/world/level/Level;)Lnet/minecraft/world/level/saveddata/maps/MapItemSavedData;")
 	)
 	private MapItemSavedData port_lib$getCorrectMapData(MapItemSavedData original, T entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
 		ItemStack stack = entity.getItem();
