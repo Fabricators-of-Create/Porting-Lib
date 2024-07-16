@@ -86,10 +86,4 @@ public class PortingLibLoot implements ModInitializer {
 		}
 		return generatedLoot;
 	}
-
-	public static int getLootingLevel(Entity target, @Nullable Entity killer, @Nullable DamageSource cause) {
-		if (killer instanceof LivingEntity)
-			return EnchantmentHelper.getMobLooting((LivingEntity)killer);
-		return 0;
-	}
 }

@@ -33,9 +33,4 @@ public abstract class LootContextMixin implements LootContextExtensions {
 	public ResourceLocation getQueriedLootTableId() {
 		return this.queriedLootTableId == null ? LootTableIdCondition.UNKNOWN_LOOT_TABLE : this.queriedLootTableId;
 	}
-
-	@Override
-	public int getLootingModifier() {
-		return PortingLibLoot.getLootingLevel(getParamOrNull(LootContextParams.THIS_ENTITY), getParamOrNull(LootContextParams.KILLER_ENTITY), getParamOrNull(LootContextParams.DAMAGE_SOURCE));
-	}
 }
