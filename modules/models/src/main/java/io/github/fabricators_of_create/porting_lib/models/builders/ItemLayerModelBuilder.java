@@ -1,18 +1,22 @@
 package io.github.fabricators_of_create.porting_lib.models.builders;
 
-import java.util.Arrays;
-
 import com.google.common.base.Preconditions;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.data.ExistingFileHelper;
+import io.github.fabricators_of_create.porting_lib.models.ExtraFaceData;
 import io.github.fabricators_of_create.porting_lib.models.generators.CustomLoaderBuilder;
-import io.github.fabricators_of_create.porting_lib.models.materials.MaterialData;
 import io.github.fabricators_of_create.porting_lib.models.generators.ModelBuilder;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import net.minecraft.resources.ResourceLocation;
 
 public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T> {
@@ -20,30 +24,33 @@ public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
 		return new ItemLayerModelBuilder<>(parent, existingFileHelper);
 	}
 
-	private final Int2ObjectMap<MaterialData> faceData = new Int2ObjectOpenHashMap<>();
+	private final Int2ObjectMap<ExtraFaceData> faceData = new Int2ObjectOpenHashMap<>();
+	private final Map<ResourceLocation, IntSet> renderTypes = new LinkedHashMap<>();
+	private final IntSet layersWithRenderTypes = new IntOpenHashSet();
 
 	protected ItemLayerModelBuilder(T parent, ExistingFileHelper existingFileHelper) {
-		super(PortingLib.id("item_layers"), parent, existingFileHelper);
+		super(PortingLib.id("item_layers"), parent, existingFileHelper, false);
 	}
 
 	/**
 	 * Marks a set of layers to be rendered emissively.
 	 *
-	 * @param emissive true or false
-	 * @param layers the layers that will render unlit
+	 * @param blockLight The block light (0-15)
+	 * @param skyLight   The sky light (0-15)
+	 * @param layers     the layers that will render unlit
 	 * @return this builder
 	 * @throws NullPointerException     if {@code layers} is {@code null}
 	 * @throws IllegalArgumentException if {@code layers} is empty
 	 * @throws IllegalArgumentException if any entry in {@code layers} is smaller than 0
 	 */
-	public ItemLayerModelBuilder<T> emissive(boolean emissive, int... layers) {
+	public ItemLayerModelBuilder<T> emissive(int blockLight, int skyLight, int... layers) {
 		Preconditions.checkNotNull(layers, "Layers must not be null");
 		Preconditions.checkArgument(layers.length > 0, "At least one layer must be specified");
 		Preconditions.checkArgument(Arrays.stream(layers).allMatch(i -> i >= 0), "All layers must be >= 0");
-		for(int i : layers) {
+		for (int i : layers) {
 			faceData.compute(i, (key, value) -> {
-				MaterialData fallback = value == null ? MaterialData.DEFAULT : value;
-				return new MaterialData(fallback.color(), emissive, fallback.ambientOcclusion(), fallback.blendMode());
+				ExtraFaceData fallback = value == null ? ExtraFaceData.DEFAULT : value;
+				return new ExtraFaceData(fallback.color(), blockLight, skyLight, fallback.ambientOcclusion());
 			});
 		}
 		return this;
@@ -52,7 +59,7 @@ public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
 	/**
 	 * Marks a set of layers to be rendered with a specific color.
 	 *
-	 * @param color The color, in ARGB.
+	 * @param color  The color, in ARGB.
 	 * @param layers the layers that will render with color
 	 * @return this builder
 	 * @throws NullPointerException     if {@code layers} is {@code null}
@@ -63,10 +70,10 @@ public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
 		Preconditions.checkNotNull(layers, "Layers must not be null");
 		Preconditions.checkArgument(layers.length > 0, "At least one layer must be specified");
 		Preconditions.checkArgument(Arrays.stream(layers).allMatch(i -> i >= 0), "All layers must be >= 0");
-		for(int i : layers) {
+		for (int i : layers) {
 			faceData.compute(i, (key, value) -> {
-				MaterialData fallback = value == null ? MaterialData.DEFAULT : value;
-				return new MaterialData(color, fallback.emissive(), fallback.ambientOcclusion(), fallback.blendMode());
+				ExtraFaceData fallback = value == null ? ExtraFaceData.DEFAULT : value;
+				return new ExtraFaceData(color, fallback.blockLight(), fallback.skyLight(), fallback.ambientOcclusion());
 			});
 		}
 		return this;
@@ -76,7 +83,7 @@ public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
 	 * Set the render type for a set of layers.
 	 *
 	 * @param renderType the render type. Must be registered via
-	 *                   {@link net.minecraftforge.client.event.RegisterNamedRenderTypesEvent}
+	 *                   {@link RegisterNamedRenderTypesEvent}
 	 * @param layers     the layers that will use this render type
 	 * @return this builder
 	 * @throws NullPointerException     if {@code renderType} is {@code null}
@@ -89,9 +96,9 @@ public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
 		Preconditions.checkNotNull(renderType, "Render type must not be null");
 		ResourceLocation asLoc;
 		if (renderType.contains(":"))
-			asLoc = new ResourceLocation(renderType);
+			asLoc = ResourceLocation.parse(renderType);
 		else
-			asLoc = new ResourceLocation(parent.getLocation().getNamespace(), renderType);
+			asLoc = ResourceLocation.fromNamespaceAndPath(parent.getLocation().getNamespace(), renderType);
 		return renderType(asLoc, layers);
 	}
 
@@ -99,7 +106,7 @@ public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
 	 * Set the render type for a set of layers.
 	 *
 	 * @param renderType the render type. Must be registered via
-	 *                   {@link net.minecraftforge.client.event.RegisterNamedRenderTypesEvent}
+	 *                   {@link RegisterNamedRenderTypesEvent}
 	 * @param layers     the layers that will use this render type
 	 * @return this builder
 	 * @throws NullPointerException     if {@code renderType} is {@code null}
@@ -113,12 +120,13 @@ public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
 		Preconditions.checkNotNull(layers, "Layers must not be null");
 		Preconditions.checkArgument(layers.length > 0, "At least one layer must be specified");
 		Preconditions.checkArgument(Arrays.stream(layers).allMatch(i -> i >= 0), "All layers must be >= 0");
-		for(int i : layers) {
-			faceData.compute(i, (key, value) -> {
-				MaterialData fallback = value == null ? MaterialData.DEFAULT : value;
-				return new MaterialData(fallback.color(), fallback.emissive(), fallback.ambientOcclusion(), renderType);
-			});
-		}
+		var alreadyAssigned = Arrays.stream(layers).filter(layersWithRenderTypes::contains).toArray();
+		Preconditions.checkArgument(alreadyAssigned.length == 0, "Attempted to re-assign layer render types: " + Arrays.toString(alreadyAssigned));
+		var renderTypeLayers = renderTypes.computeIfAbsent(renderType, $ -> new IntOpenHashSet());
+		Arrays.stream(layers).forEach(layer -> {
+			renderTypeLayers.add(layer);
+			layersWithRenderTypes.add(layer);
+		});
 		return this;
 	}
 
@@ -126,15 +134,23 @@ public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
 	public JsonObject toJson(JsonObject json) {
 		json = super.toJson(json);
 
-		JsonObject forgeData = new JsonObject();
+		JsonObject moddedData = new JsonObject();
 		JsonObject layerObj = new JsonObject();
 
-		for(Int2ObjectMap.Entry<MaterialData> entry : this.faceData.int2ObjectEntrySet()) {
-			layerObj.add(String.valueOf(entry.getIntKey()), MaterialData.CODEC.encodeStart(JsonOps.INSTANCE, entry.getValue()).getOrThrow(false, s -> {}));
+		for (Int2ObjectMap.Entry<ExtraFaceData> entry : this.faceData.int2ObjectEntrySet()) {
+			layerObj.add(String.valueOf(entry.getIntKey()), ExtraFaceData.CODEC.encodeStart(JsonOps.INSTANCE, entry.getValue()).getOrThrow());
 		}
 
-		forgeData.add("layers", layerObj);
-		json.add("render_materials", forgeData);
+		moddedData.add("layers", layerObj);
+		json.add(ModelBuilder.MODDED_DATA_KEY, moddedData);
+
+		JsonObject renderTypes = new JsonObject();
+		this.renderTypes.forEach((renderType, layers) -> {
+			JsonArray array = new JsonArray();
+			layers.intStream().sorted().forEach(array::add);
+			renderTypes.add(renderType.toString(), array);
+		});
+		json.add("render_types", renderTypes);
 
 		return json;
 	}

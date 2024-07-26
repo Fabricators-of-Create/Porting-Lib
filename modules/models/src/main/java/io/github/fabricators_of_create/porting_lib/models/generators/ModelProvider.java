@@ -1,6 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.models.generators;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,14 +17,13 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-
+import org.jetbrains.annotations.VisibleForTesting;
 
 public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataProvider {
-
 	public static final String BLOCK_FOLDER = "block";
 	public static final String ITEM_FOLDER = "item";
 
-	protected static final ResourceType TEXTURE = new ResourceType(PackType.CLIENT_RESOURCES, ".png", "textures");
+	public static final ResourceType TEXTURE = new ResourceType(PackType.CLIENT_RESOURCES, ".png", "textures");
 	protected static final ResourceType MODEL = new ResourceType(PackType.CLIENT_RESOURCES, ".json", "models");
 	protected static final ResourceType MODEL_WITH_EXTENSION = new ResourceType(PackType.CLIENT_RESOURCES, "", "models");
 
@@ -55,12 +53,12 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
 	}
 
 	public ModelProvider(PackOutput output, String modid, String folder, BiFunction<ResourceLocation, ExistingFileHelper, T> builderFromModId, ExistingFileHelper existingFileHelper) {
-		this(output, modid, folder, loc->builderFromModId.apply(loc, existingFileHelper), existingFileHelper);
+		this(output, modid, folder, loc -> builderFromModId.apply(loc, existingFileHelper), existingFileHelper);
 	}
 
 	public T getBuilder(String path) {
 		Preconditions.checkNotNull(path, "Path must not be null");
-		ResourceLocation outputLoc = extendWithFolder(path.contains(":") ? new ResourceLocation(path) : new ResourceLocation(modid, path));
+		ResourceLocation outputLoc = extendWithFolder(path.contains(":") ? ResourceLocation.parse(path) : ResourceLocation.fromNamespaceAndPath(modid, path));
 		this.existingFileHelper.trackGenerated(outputLoc, MODEL);
 		return generatedModels.computeIfAbsent(outputLoc, factory);
 	}
@@ -69,15 +67,15 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
 		if (rl.getPath().contains("/")) {
 			return rl;
 		}
-		return new ResourceLocation(rl.getNamespace(), folder + "/" + rl.getPath());
+		return ResourceLocation.fromNamespaceAndPath(rl.getNamespace(), folder + "/" + rl.getPath());
 	}
 
 	public ResourceLocation modLoc(String name) {
-		return new ResourceLocation(modid, name);
+		return ResourceLocation.fromNamespaceAndPath(modid, name);
 	}
 
 	public ResourceLocation mcLoc(String name) {
-		return new ResourceLocation(name);
+		return ResourceLocation.parse(name);
 	}
 
 	public T withExistingParent(String name, String parent) {
@@ -365,12 +363,15 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
 		return singleTexture(name, BLOCK_FOLDER + "/carpet", "wool", wool);
 	}
 
+	public T leaves(String name, ResourceLocation texture) {
+		return singleTexture(name, BLOCK_FOLDER + "/leaves", "all", texture);
+	}
+
 	/**
 	 * {@return a model builder that's not directly saved to disk. Meant for use in custom model loaders.}
 	 */
-	public T nested()
-	{
-		return factory.apply(new ResourceLocation("dummy:dummy"));
+	public T nested() {
+		return factory.apply(ResourceLocation.fromNamespaceAndPath("dummy", "dummy"));
 	}
 
 	public ModelFile.ExistingModelFile getExistingFile(ResourceLocation path) {
@@ -379,7 +380,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
 		return ret;
 	}
 
-	public void clear() {
+	protected void clear() {
 		generatedModels.clear();
 	}
 
@@ -390,7 +391,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
 		return generateAll(cache);
 	}
 
-	public CompletableFuture<?> generateAll(CachedOutput cache) {
+	protected CompletableFuture<?> generateAll(CachedOutput cache) {
 		CompletableFuture<?>[] futures = new CompletableFuture<?>[this.generatedModels.size()];
 		int i = 0;
 

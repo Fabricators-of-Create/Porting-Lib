@@ -1,11 +1,10 @@
-package io.github.fabricators_of_create.porting_lib.models.generators.mixin;
+package io.github.fabricators_of_create.porting_lib.models.mixin;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 
 import com.google.gson.JsonObject;
 
-import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
 import net.minecraft.client.renderer.block.model.BlockElementFace;
 
 import org.spongepowered.asm.mixin.Mixin;

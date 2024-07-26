@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.models.generators.mixin;
+package io.github.fabricators_of_create.porting_lib.models.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 

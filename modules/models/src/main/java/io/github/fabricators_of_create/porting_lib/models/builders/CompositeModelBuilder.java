@@ -1,14 +1,18 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package io.github.fabricators_of_create.porting_lib.models.builders;
 
+import com.google.common.base.Preconditions;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.base.Preconditions;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.data.ExistingFileHelper;
@@ -24,7 +28,7 @@ public class CompositeModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
 	private final List<String> itemRenderOrder = new ArrayList<>();
 
 	protected CompositeModelBuilder(T parent, ExistingFileHelper existingFileHelper) {
-		super(PortingLib.id("composite"), parent, existingFileHelper);
+		super(PortingLib.id("composite"), parent, existingFileHelper, false);
 	}
 
 	public CompositeModelBuilder<T> child(String name, T modelBuilder) {
@@ -51,7 +55,7 @@ public class CompositeModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
 		json = super.toJson(json);
 
 		JsonObject children = new JsonObject();
-		for(Map.Entry<String, T> entry : childModels.entrySet()) {
+		for (Map.Entry<String, T> entry : childModels.entrySet()) {
 			children.add(entry.getKey(), entry.getValue().toJson());
 		}
 		json.add("children", children);
