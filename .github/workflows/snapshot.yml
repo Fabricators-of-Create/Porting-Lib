@@ -5,7 +5,7 @@ jobs:
   build:
     strategy:
       matrix:
-        java: [ 17 ]
+        java: [ 21 ]
     runs-on: ubuntu-latest
     env:
       SNAPSHOT: 'true'
@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
           cache: gradle
 
       - name: publish
