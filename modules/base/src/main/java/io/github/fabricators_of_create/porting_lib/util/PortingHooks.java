@@ -1,12 +1,13 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
-import javax.annotation.Nullable;
-
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvents;
 
+import io.github.fabricators_of_create.porting_lib.tool.ToolAction;
 import net.fabricmc.api.EnvType;
 import net.minecraft.server.TickTask;
 import net.minecraft.world.entity.item.ItemEntity;
+
+import net.minecraft.world.item.context.UseOnContext;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -33,6 +34,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"removal", "UnstableApiUsage"})
 public class PortingHooks {
@@ -92,7 +95,7 @@ public class PortingHooks {
 	public static void init() {
 		EntityEvents.ON_JOIN_WORLD.register((entity, world, loadedFromDisk) -> {
 			if (entity.getClass().equals(ItemEntity.class)) {
-				ItemStack stack = ((ItemEntity)entity).getItem();
+				ItemStack stack = ((ItemEntity) entity).getItem();
 				Item item = stack.getItem();
 				if (item.hasCustomEntity(stack)) {
 					Entity newEntity = item.createEntity(world, entity, stack);
@@ -126,5 +129,11 @@ public class PortingHooks {
 
 		outputSlot.setItem(0, e.getOutput());
 		return e.getXp();
+	}
+
+	@Nullable
+	public static BlockState onToolUse(BlockState originalState, UseOnContext context, ToolAction toolAction, boolean simulate) {
+		BlockEvents.BlockToolModificationEvent event = new BlockEvents.BlockToolModificationEvent(originalState, context, toolAction, simulate);
+		return event.post() ? null : event.getFinalState();
 	}
 }

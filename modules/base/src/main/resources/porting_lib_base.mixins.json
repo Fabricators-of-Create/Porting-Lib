@@ -10,6 +10,7 @@
     "client.CreateWorldScreenMixin",
     "common.AbstractMinecartMixin",
     "common.AnvilMenuMixin",
+    "common.AxeItemMixin",
     "common.BambooStalkBlockMixin",
     "common.BaseRailBlockMixin",
     "common.BeaconBlockEntityMixin",
