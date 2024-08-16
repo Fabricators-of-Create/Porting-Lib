@@ -1,23 +1,21 @@
 package io.github.fabricators_of_create.porting_lib.loot;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-
-import com.mojang.serialization.Codec;
-
-import io.github.fabricators_of_create.porting_lib.core.PortingLib;
-
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
 public class LootTableIdCondition implements LootItemCondition {
-	public static final Codec<LootTableIdCondition> CODEC = ResourceLocation.CODEC.xmap(LootTableIdCondition::new, condition -> condition.targetLootTableId);
+	public static final MapCodec<LootTableIdCondition> CODEC = RecordCodecBuilder.mapCodec(
+			builder -> builder
+					.group(
+							ResourceLocation.CODEC.fieldOf("loot_table_id").forGetter(idCondition -> idCondition.targetLootTableId))
+					.apply(builder, LootTableIdCondition::new));
+	// TODO Forge Registry at some point?
 	public static final LootItemConditionType LOOT_TABLE_ID = new LootItemConditionType(CODEC);
-	public static final ResourceLocation UNKNOWN_LOOT_TABLE = PortingLib.id("unknown_loot_table");
+	public static final ResourceLocation UNKNOWN_LOOT_TABLE = ResourceLocation.fromNamespaceAndPath("neoforge", "unknown_loot_table");
 
 	private final ResourceLocation targetLootTableId;
 

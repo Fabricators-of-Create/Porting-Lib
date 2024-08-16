@@ -61,13 +61,25 @@ public abstract class BlockModelDeserializerMixin {
 	@Unique
 	@Nullable
 	private static IUnbakedGeometry<?> deserializeGeometry(JsonDeserializationContext deserializationContext, JsonObject object) throws JsonParseException {
-		String loaderId = GeometryLoaderManager.getModelLoader(object);
-		if (loaderId == null)
+		if (!GeometryLoaderManager.hasModelLoader(object))
 			return null;
 
-		ResourceLocation name = new ResourceLocation(loaderId);
-		IGeometryLoader<?> loader = GeometryLoaderManager.get(name);
+		ResourceLocation name;
+		boolean optional;
+		if (GeometryLoaderManager.getModelLoader(object).isJsonObject()) {
+			JsonObject loaderObj = GeometryLoaderManager.getModelLoader(object).getAsJsonObject();
+			name = ResourceLocation.parse(GsonHelper.getAsString(loaderObj, "id"));
+			optional = GsonHelper.getAsBoolean(loaderObj, "optional", false);
+		} else {
+			name = ResourceLocation.parse(GeometryLoaderManager.getModelLoader(object).getAsString());
+			optional = false;
+		}
+
+		var loader = GeometryLoaderManager.get(name);
 		if (loader == null) {
+			if (optional) {
+				return null;
+			}
 			if (!GeometryLoaderManager.KNOWN_MISSING_LOADERS.contains(name)) {
 				GeometryLoaderManager.KNOWN_MISSING_LOADERS.add(name);
 				PortingLib.LOGGER.warn(String.format(Locale.ENGLISH, "Model loader '%s' not found. Registered loaders: %s", name, GeometryLoaderManager.getLoaderList()));

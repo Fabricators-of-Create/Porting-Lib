@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.tool.mixin;
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
 
 import io.github.fabricators_of_create.porting_lib.tool.ItemAbilities;
-import io.github.fabricators_of_create.porting_lib.tool.addons.ToolActionItem;
+import io.github.fabricators_of_create.porting_lib.tool.addons.ItemAbilityItem;
 import net.minecraft.world.entity.projectile.FishingHook;
 
 import net.minecraft.world.item.FishingRodItem;
@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class FishingHookMixin {
 	@ModifyReceiver(method = "shouldStopFishing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z"))
 	private ItemStack toolActionCast(ItemStack instance, Item item) {
-		if (instance.getItem() instanceof ToolActionItem) {
+		if (instance.getItem() instanceof ItemAbilityItem) {
 			if (instance.canPerformAction(ItemAbilities.FISHING_ROD_CAST)) {
 				return instance.getItem() instanceof FishingRodItem ? instance : Items.FISHING_ROD.getDefaultInstance();
 			}

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
@@ -48,18 +49,20 @@ public final class GeometryLoaderManager {
 		return LOADER_LIST;
 	}
 
+	public static boolean hasModelLoader(JsonObject json) {
+		return json.has("loader") || json.has("porting_lib:loader");
+	}
+
 	/**
 	 * Get the ID of the model loader which should load the given JSON.
 	 */
-	@Nullable
-	public static String getModelLoader(JsonObject json) {
+	public static JsonElement getModelLoader(JsonObject json) {
 		if (json.has("porting_lib:loader")) {
-			return GsonHelper.getAsString(json, "porting_lib:loader");
+			return json.get("porting_lib:loader");
 		} else if (json.has("loader")) {
-			return GsonHelper.getAsString(json, "loader");
-		} else {
-			return null;
+			return json.get("loader");
 		}
+		throw new RuntimeException("Unknown model does not contain model loader json: " + json);
 	}
 
 	@ApiStatus.Internal

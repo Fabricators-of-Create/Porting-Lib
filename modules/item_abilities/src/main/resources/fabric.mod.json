@@ -1,21 +1,20 @@
 {
   "schemaVersion": 1,
-  "id": "porting_lib_tool_actions",
+  "id": "porting_lib_item_abilities",
   "version": "${version}",
-  "name": "Porting Lib Tool Actions",
+  "name": "Porting Lib Item Abilities",
   "description": "Utilities for tool interactions.",
   "entrypoints": {
     "main": [
       "io.github.fabricators_of_create.porting_lib.tool.loot.CanItemPerformAbility::init"
     ],
     "fabric-datagen": [
-      "io.github.fabricators_of_create.porting_lib.tool.data.ToolActionsData"
+      "io.github.fabricators_of_create.porting_lib.tool.data.ItemAbilitiesData"
     ]
   },
   "custom": {
     "loom:injected_interfaces": {
       "net/minecraft/class_1799": ["io/github/fabricators_of_create/porting_lib/tool/extensions/ItemStackExtensions"],
-      "net/minecraft/class_2248": ["io/github/fabricators_of_create/porting_lib/tool/extensions/BlockExtensions"],
       "net/minecraft/class_2680": ["io/github/fabricators_of_create/porting_lib/tool/extensions/BlockStateExtensions"]
     }
   }

@@ -1,1 +1,1 @@
-portingLib.addModuleDependency("common")
+portingLib.addModuleDependencies(["common", "conditions"])

@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 import java.util.List;
 
 import io.github.fabricators_of_create.porting_lib.core.event.CancellableEvent;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -23,6 +25,12 @@ import org.jetbrains.annotations.Nullable;
  * If you wish to edit the state of the block in-world, use {@link BreakEvent}.
  */
 public class BlockDropsEvent extends BlockEvent implements CancellableEvent {
+	public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+		for (Callback callback : callbacks) {
+			callback.onBlockDropsCallback(event);
+		}
+	});
+
 	@Nullable
 	private final BlockEntity blockEntity;
 	private final List<ItemEntity> drops;
@@ -118,5 +126,14 @@ public class BlockDropsEvent extends BlockEvent implements CancellableEvent {
 	public void setDroppedExperience(int experience) {
 		Preconditions.checkArgument(experience >= 0, "May not set a negative experience drop.");
 		this.experience = experience;
+	}
+
+	@Override
+	public void sendEvent() {
+		EVENT.invoker().onBlockDropsCallback(this);
+	}
+
+	public interface Callback {
+		void onBlockDropsCallback(BlockDropsEvent event);
 	}
 }

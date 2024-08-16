@@ -9,6 +9,8 @@ import com.google.common.collect.Sets;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import io.github.fabricators_of_create.porting_lib.tool.extensions.BlockStateExtensions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.server.level.ServerLevel;
@@ -46,27 +48,27 @@ public class ItemAbilities {
 	public static final ItemAbility SHEARS_DIG = ItemAbility.get("shears_dig");
 
 	/**
-	 * Passed onto {@link IBlockExtension#getToolModifiedState} when an axe wants to strip a log
+	 * Passed onto {@link BlockStateExtensions#getToolModifiedState} when an axe wants to strip a log
 	 */
 	public static final ItemAbility AXE_STRIP = ItemAbility.get("axe_strip");
 
 	/**
-	 * Passed onto {@link IBlockExtension#getToolModifiedState} when an axe wants to scrape oxidization off copper
+	 * Passed onto {@link BlockStateExtensions#getToolModifiedState} when an axe wants to scrape oxidization off copper
 	 */
 	public static final ItemAbility AXE_SCRAPE = ItemAbility.get("axe_scrape");
 
 	/**
-	 * Passed onto {@link IBlockExtension#getToolModifiedState} when an axe wants to remove wax out of copper
+	 * Passed onto {@link BlockStateExtensions#getToolModifiedState} when an axe wants to remove wax out of copper
 	 */
 	public static final ItemAbility AXE_WAX_OFF = ItemAbility.get("axe_wax_off");
 
 	/**
-	 * Passed onto {@link IBlockExtension#getToolModifiedState} when a shovel wants to turn dirt into path
+	 * Passed onto {@link BlockStateExtensions#getToolModifiedState} when a shovel wants to turn dirt into path
 	 */
 	public static final ItemAbility SHOVEL_FLATTEN = ItemAbility.get("shovel_flatten");
 
 	/**
-	 * Passed onto {@link IBlockExtension#getToolModifiedState} when a shovel wants to douse a campfire
+	 * Passed onto {@link BlockStateExtensions#getToolModifiedState} when a shovel wants to douse a campfire
 	 */
 	public static final ItemAbility SHOVEL_DOUSE = ItemAbility.get("shovel_douse");
 
@@ -109,7 +111,7 @@ public class ItemAbilities {
 	public static final ItemAbility SHEARS_TRIM = ItemAbility.get("shears_trim");
 
 	/**
-	 * Passed onto {@link IBlockExtension#getToolModifiedState} when a hoe wants to turn dirt into soil
+	 * Passed onto {@link BlockStateExtensions#getToolModifiedState} when a hoe wants to turn dirt into soil
 	 */
 	public static final ItemAbility HOE_TILL = ItemAbility.get("till");
 
@@ -136,7 +138,7 @@ public class ItemAbilities {
 	public static final ItemAbility BRUSH_BRUSH = ItemAbility.get("brush_brush");
 
 	/**
-	 * Passed onto {@link IBlockExtension#getToolModifiedState} when flint and steel or fire charge want to light a campfire/candle/cake.
+	 * Passed onto {@link BlockStateExtensions#getToolModifiedState} when flint and steel or fire charge want to light a campfire/candle/cake.
 	 * Note that dispensers with flint and steel will also use this but will have no player.
 	 */
 	public static final ItemAbility FIRESTARTER_LIGHT = ItemAbility.get("firestarter_light");

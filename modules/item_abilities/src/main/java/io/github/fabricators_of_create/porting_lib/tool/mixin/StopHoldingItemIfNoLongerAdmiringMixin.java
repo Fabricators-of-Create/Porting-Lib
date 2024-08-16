@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.tool.mixin;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import io.github.fabricators_of_create.porting_lib.tool.ItemAbilities;
-import io.github.fabricators_of_create.porting_lib.tool.addons.ToolActionItem;
+import io.github.fabricators_of_create.porting_lib.tool.addons.ItemAbilityItem;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.monster.piglin.StopHoldingItemIfNoLongerAdmiring;
@@ -18,7 +18,7 @@ public class StopHoldingItemIfNoLongerAdmiringMixin {
 	@ModifyExpressionValue(method = "method_47299", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z"))
 	private static boolean isToolActionBlocking(boolean original, ServerLevel level, Piglin piglin) {
 		ItemStack offHand = piglin.getOffhandItem();
-		if (offHand.getItem() instanceof ToolActionItem)
+		if (offHand.getItem() instanceof ItemAbilityItem)
 			return offHand.canPerformAction(ItemAbilities.SHIELD_BLOCK);
 		return original;
 	}

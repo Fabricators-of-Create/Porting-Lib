@@ -1,7 +1,0 @@
-{
-  "schemaVersion": 1,
-  "id": "porting_lib_registries",
-  "version": "${version}",
-  "name": "Porting Lib Registries",
-  "description": "Allow making custom data pack registries and various tools for dealing with registries."
-}

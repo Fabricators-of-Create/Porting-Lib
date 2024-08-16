@@ -1,0 +1,12 @@
+accessWidener v2 named
+
+transitive-accessible field net/minecraft/world/item/AxeItem STRIPPABLES Ljava/util/Map;
+transitive-accessible field net/minecraft/world/item/ShovelItem FLATTENABLES Ljava/util/Map;
+
+transitive-accessible field net/minecraft/data/loot/LootTableProvider LOGGER Lorg/slf4j/Logger;
+
+accessible field net/minecraft/data/loot/LootTableProvider pathProvider Lnet/minecraft/data/PackOutput$PathProvider;
+accessible field net/minecraft/data/loot/LootTableProvider requiredTables Ljava/util/Set;
+accessible field net/minecraft/data/loot/LootTableProvider subProviders Ljava/util/List;
+accessible field net/minecraft/data/loot/LootTableProvider registries Ljava/util/concurrent/CompletableFuture;
+accessible method net/minecraft/data/loot/LootTableProvider sequenceIdForLootTable (Lnet/minecraft/resources/ResourceKey;)Lnet/minecraft/resources/ResourceLocation;

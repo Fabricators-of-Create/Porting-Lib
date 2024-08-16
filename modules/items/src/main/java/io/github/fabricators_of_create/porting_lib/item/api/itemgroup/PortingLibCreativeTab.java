@@ -16,7 +16,7 @@ public class PortingLibCreativeTab {
 	}
 
 	public static class PortingLibCreativeTabBuilder extends CreativeModeTab.Builder {
-		public static final ResourceLocation CREATIVE_TABS_LOCATION = new ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
+		public static final ResourceLocation CREATIVE_TABS_LOCATION = ResourceLocation.withDefaultNamespace("textures/gui/container/creative_inventory/tabs.png");
 
 		private boolean hasDisplayName = false;
 		private ResourceLocation tabsImage = CREATIVE_TABS_LOCATION;

@@ -2,7 +2,6 @@ package io.github.fabricators_of_create.porting_lib.models.geometry;
 
 import java.util.Set;
 import java.util.function.Function;
-
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -19,25 +18,20 @@ import net.minecraft.resources.ResourceLocation;
  * Instances of this class ar usually created via {@link IGeometryLoader}.
  *
  * @see IGeometryLoader
- * @see BlockModel
+ * @see IGeometryBakingContext
  */
 public interface IUnbakedGeometry<T extends IUnbakedGeometry<T>> {
-	BakedModel bake(
-			BlockModel context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter,
-			ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation, boolean isGui3d
-	);
+	BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides);
 
 	/**
 	 * Resolve parents of nested {@link BlockModel}s which are later used in
-	 * {@link IUnbakedGeometry#bake(BlockModel, ModelBaker, Function, ModelState, ItemOverrides, ResourceLocation, boolean)}
+	 * {@link IUnbakedGeometry#bake(IGeometryBakingContext, ModelBaker, Function, ModelState, ItemOverrides)}
 	 * via {@link BlockModel#resolveParents(Function)}
 	 */
-	default void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, BlockModel context) {
-
-	}
+	default void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, IGeometryBakingContext context) {}
 
 	/**
-	 * {@return a set of all the components whose visibility may be configured via {@link BlockModel}}
+	 * {@return a set of all the components whose visibility may be configured via {@link IGeometryBakingContext}}
 	 */
 	default Set<String> getConfigurableComponentNames() {
 		return Set.of();

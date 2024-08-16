@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import io.github.fabricators_of_create.porting_lib.tool.ItemAbilities;
-import io.github.fabricators_of_create.porting_lib.tool.addons.ToolActionItem;
+import io.github.fabricators_of_create.porting_lib.tool.addons.ItemAbilityItem;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -27,7 +27,7 @@ public abstract class PlayerMixin extends LivingEntity {
 
 	@ModifyExpressionValue(method = "hurtCurrentlyUsedShield", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z"))
 	private boolean shieldToolAction(boolean original) {
-		if (this.useItem.getItem() instanceof ToolActionItem) {
+		if (this.useItem.getItem() instanceof ItemAbilityItem) {
 			return this.useItem.canPerformAction(ItemAbilities.SHIELD_BLOCK);
 		}
 		return original;
@@ -35,7 +35,7 @@ public abstract class PlayerMixin extends LivingEntity {
 
 	@ModifyReceiver(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;"))
 	private ItemStack canSwordSweep(ItemStack instance) {
-		if (instance.getItem() instanceof ToolActionItem) {
+		if (instance.getItem() instanceof ItemAbilityItem) {
 			if (instance.canPerformAction(ItemAbilities.SWORD_SWEEP)) {
 				return instance.getItem() instanceof SwordItem ? instance : Items.IRON_SWORD.getDefaultInstance();
 			}

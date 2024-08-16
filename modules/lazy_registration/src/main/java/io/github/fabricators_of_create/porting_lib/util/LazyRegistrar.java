@@ -47,10 +47,10 @@ public class LazyRegistrar<T> {
 
 	private Supplier<Registry<T>> cachedHolder;
 
-	public Supplier<Registry<T>> makeRegistry() {
+	public Registry<T> makeRegistry() {
 		if (cachedHolder == null)
 			cachedHolder = new RegistryHolder<>(getRegistryKey());
-		return cachedHolder;
+		return cachedHolder.get();
 	}
 
 	public <R extends T> RegistryObject<R> register(String id, Supplier<? extends R> entry) {

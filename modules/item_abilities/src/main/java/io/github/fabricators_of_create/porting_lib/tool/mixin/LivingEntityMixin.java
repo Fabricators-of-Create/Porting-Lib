@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.tool.mixin;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import io.github.fabricators_of_create.porting_lib.tool.ItemAbilities;
-import io.github.fabricators_of_create.porting_lib.tool.addons.ToolActionItem;
+import io.github.fabricators_of_create.porting_lib.tool.addons.ItemAbilityItem;
 import net.minecraft.world.entity.LivingEntity;
 
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +20,7 @@ public class LivingEntityMixin {
 
 	@ModifyExpressionValue(method = "isBlocking", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/Item;getUseAnimation(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/item/UseAnim;"))
 	private UseAnim isToolActionBlocking(UseAnim original) {
-		if (this.useItem.getItem() instanceof ToolActionItem) {
+		if (this.useItem.getItem() instanceof ItemAbilityItem) {
 			if (!this.useItem.canPerformAction(ItemAbilities.SHIELD_BLOCK))
 				return UseAnim.NONE;
 			else

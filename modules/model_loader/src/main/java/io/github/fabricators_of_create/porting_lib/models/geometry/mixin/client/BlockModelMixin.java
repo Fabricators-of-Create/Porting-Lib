@@ -3,7 +3,8 @@ package io.github.fabricators_of_create.porting_lib.models.geometry.mixin.client
 import java.util.List;
 import java.util.function.Function;
 
-import io.github.fabricators_of_create.porting_lib.models.geometry.VisibilityData;
+import io.github.fabricators_of_create.porting_lib.models.ExtendedItemOverrides;
+import io.github.fabricators_of_create.porting_lib.models.geometry.BlockGeometryBakingContext;
 
 import net.minecraft.client.renderer.block.model.ItemOverride;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -39,75 +40,34 @@ public class BlockModelMixin implements BlockModelExtensions {
 	@Shadow
 	@Nullable
 	public BlockModel parent;
-	@Unique
-	private IUnbakedGeometry<?> customModel;
-	@Unique
-	@Nullable
-	private Transformation rootTransform;
-	@Unique
-	private final VisibilityData visibilityData = new VisibilityData();
+	private final BlockGeometryBakingContext port_lib$customData = new BlockGeometryBakingContext((BlockModel) (Object) this);
+
+	@Override
+	public BlockGeometryBakingContext port_lib$getCustomData() {
+		return port_lib$customData;
+	}
 
 	@Inject(
-			method = "bake(Lnet/minecraft/client/resources/model/ModelBaker;Lnet/minecraft/client/renderer/block/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/resources/model/BakedModel;",
+			method = "bake(Lnet/minecraft/client/resources/model/ModelBaker;Lnet/minecraft/client/renderer/block/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/resources/model/ModelState;Z)Lnet/minecraft/client/resources/model/BakedModel;",
 			at = @At("HEAD"),
 			cancellable = true
 	)
-	public void handleCustomModels(ModelBaker modelBaker, BlockModel ownerModel, Function<Material, TextureAtlasSprite> spriteGetter,
-								   ModelState modelTransform, ResourceLocation modelLocation, boolean guiLight3d, CallbackInfoReturnable<BakedModel> cir) {
-		IUnbakedGeometry<?> geometry = getCustomGeometry();
-		if (geometry != null) {
-			ItemOverrides overrides = getOverrides(modelBaker, ownerModel, spriteGetter);
-			cir.setReturnValue(geometry.bake(
-					(BlockModel) (Object) this, modelBaker, spriteGetter, modelTransform, overrides, modelLocation, guiLight3d
+	public void handleCustomModels(ModelBaker modelBaker, BlockModel owner, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, boolean guiLight3d, CallbackInfoReturnable<BakedModel> cir) {
+		if (port_lib$customData.hasCustomGeometry()) {
+			cir.setReturnValue(port_lib$customData.getCustomGeometry().bake(
+					port_lib$customData, modelBaker, spriteGetter, modelState, getOverrides(modelBaker, owner, spriteGetter)
 			));
 		}
 	}
 
-	@Inject(method = "resolveParents", at = @At("HEAD"))
+	@Inject(method = "resolveParents", at = @At(value = "INVOKE", target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V"))
 	private void handleCustomResolveParents(Function<ResourceLocation, UnbakedModel> function, CallbackInfo ci) {
-		if (getCustomGeometry() != null)
-			getCustomGeometry().resolveParents(function, self());
+		if (port_lib$customData.hasCustomGeometry())
+			port_lib$customData.getCustomGeometry().resolveParents(function, port_lib$customData);
 	}
 
 	@Override
-	public ItemOverrides getOverrides(ModelBaker p_250138_, BlockModel p_251800_, Function<Material, TextureAtlasSprite> spriteGetter) {
-		return this.overrides.isEmpty() ? ItemOverrides.EMPTY : new ItemOverrides(p_250138_, p_251800_, this.overrides/*, spriteGetter*/);
-	}
-
-	@Override
-	public void setCustomGeometry(IUnbakedGeometry<?> geometry) {
-		this.customModel = geometry;
-	}
-
-	@Override
-	public IUnbakedGeometry<?> getCustomGeometry() {
-		return this.parent != null && customModel == null ? this.parent.getCustomGeometry() : customModel;
-	}
-
-	@Override
-	public VisibilityData getVisibilityData() {
-		return this.visibilityData;
-	}
-
-	@Override
-	public boolean isComponentVisible(String part, boolean fallback) {
-		return self().parent != null && !visibilityData.hasCustomVisibility(part) ?
-				self().parent.isComponentVisible(part, fallback) :
-				visibilityData.isVisible(part, fallback);
-	}
-
-	@Override
-	public Transformation getRootTransform() {
-		if (rootTransform != null)
-			return rootTransform;
-		return self().parent != null ? self().parent.getRootTransform() : Transformation.identity();
-	}
-
-	public void setRootTransform(Transformation rootTransform) {
-		this.rootTransform = rootTransform;
-	}
-
-	private BlockModel self() {
-		return (BlockModel) (Object) this;
+	public ItemOverrides getOverrides(ModelBaker bakery, BlockModel model, Function<Material, TextureAtlasSprite> spriteGetter) {
+		return this.overrides.isEmpty() ? ItemOverrides.EMPTY : new ExtendedItemOverrides(bakery, model, this.overrides, spriteGetter);
 	}
 }

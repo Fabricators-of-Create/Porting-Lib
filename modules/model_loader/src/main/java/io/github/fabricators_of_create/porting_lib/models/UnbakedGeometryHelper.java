@@ -1,7 +1,16 @@
 package io.github.fabricators_of_create.porting_lib.models;
 
 import com.mojang.math.Transformation;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryBakingContext;
+import io.github.fabricators_of_create.porting_lib.models.geometry.IUnbakedGeometry;
 import io.github.fabricators_of_create.porting_lib.models.geometry.SimpleModelState;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.Util;
@@ -16,21 +25,17 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.BuiltInModel;
 import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
-
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Helper for dealing with unbaked models and geometries.
@@ -42,29 +47,28 @@ public class UnbakedGeometryHelper {
 	/**
 	 * Explanation:
 	 * This takes anything that looks like a valid resourcepack texture location, and tries to extract a resourcelocation out of it.
-	 *  1. it will ignore anything up to and including an /assets/ folder,
-	 *  2. it will take the next path component as a namespace,
-	 *  3. it will match but skip the /textures/ part of the path,
-	 *  4. it will take the rest of the path up to but excluding the .png extension as the resource path
+	 * 1. it will ignore anything up to and including an /assets/ folder,
+	 * 2. it will take the next path component as a namespace,
+	 * 3. it will match but skip the /textures/ part of the path,
+	 * 4. it will take the rest of the path up to but excluding the .png extension as the resource path
 	 * It's a best-effort situation, to allow model files exported by modelling software to be used without post-processing.
 	 * Example:
-	 *   C:\Something\Or Other\src\main\resources\assets\mymodid\textures\item\my_thing.png
-	 *   ........................................--------_______----------_____________----
-	 *                                                 <namespace>        <path>
+	 * C:\Something\Or Other\src\main\resources\assets\mymodid\textures\item\my_thing.png
+	 * ........................................--------_______----------_____________----
+	 * <namespace> <path>
 	 * Result after replacing '\' to '/': mymodid:item/my_thing
 	 */
-	private static final Pattern FILESYSTEM_PATH_TO_RESLOC =
-			Pattern.compile("(?:.*[\\\\/]assets[\\\\/](?<namespace>[a-z_-]+)[\\\\/]textures[\\\\/])?(?<path>[a-z_\\\\/-]+)\\.png");
+	private static final Pattern FILESYSTEM_PATH_TO_RESLOC = Pattern.compile("(?:.*[\\\\/]assets[\\\\/](?<namespace>[a-z_-]+)[\\\\/]textures[\\\\/])?(?<path>[a-z_\\\\/-]+)\\.png");
 
 	/**
 	 * Resolves a material that may have been defined with a filesystem path instead of a proper {@link ResourceLocation}.
 	 * <p>
 	 * The target atlas will always be {@link TextureAtlas#LOCATION_BLOCKS}.
 	 */
-	public static Material resolveDirtyMaterial(@Nullable String tex, @Nullable BlockModel owner) {
+	public static Material resolveDirtyMaterial(@Nullable String tex, IGeometryBakingContext owner) {
 		if (tex == null)
 			return new Material(TextureAtlas.LOCATION_BLOCKS, MissingTextureAtlasSprite.getLocation());
-		if (tex.startsWith("#") && owner != null)
+		if (tex.startsWith("#"))
 			return owner.getMaterial(tex);
 
 		// Attempt to convert a common (windows/linux/mac) filesystem path to a ResourceLocation.
@@ -76,50 +80,36 @@ public class UnbakedGeometryHelper {
 			tex = namespace != null ? namespace + ":" + path : path;
 		}
 
-		return new Material(TextureAtlas.LOCATION_BLOCKS, new ResourceLocation(tex));
+		return new Material(TextureAtlas.LOCATION_BLOCKS, ResourceLocation.parse(tex));
 	}
 
 	/**
-	 * Turns a single {@link BlockElementFace} into a {@link BakedQuad}.
+	 * Helper for baking {@link BlockModel} instances. Handles baking custom geometries and deferring item model baking.
 	 */
-	public static BakedQuad bakeElementFace(BlockElement element, BlockElementFace face, TextureAtlasSprite sprite, Direction direction, ModelState state, ResourceLocation modelLocation) {
-		return FACE_BAKERY.bakeQuad(element.from, element.to, face, sprite, direction, state, element.rotation, element.shade, modelLocation);
-	}
+	@ApiStatus.Internal
+	public static BakedModel bake(BlockModel blockModel, ModelBaker modelBaker, BlockModel owner, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, boolean guiLight3d) {
+		IUnbakedGeometry<?> customModel = blockModel.port_lib$getCustomData().getCustomGeometry();
+		if (customModel != null)
+			return customModel.bake(blockModel.port_lib$getCustomData(), modelBaker, spriteGetter, modelState, blockModel.getOverrides(modelBaker, owner, spriteGetter));
 
-	/**
-	 * Create an {@link RenderContext.QuadTransform} to apply a {@link Transformation} that undoes the {@link ModelState}
-	 * transform (blockstate transform), applies the given root transform and then re-applies the
-	 * blockstate transform.
-	 *
-	 * @return an {@code IQuadTransformer} that applies the root transform to a baked quad that already has the
-	 * transformation of the given {@code ModelState} applied to it
-	 */
-	public static RenderContext.QuadTransform applyRootTransform(ModelState modelState, Transformation rootTransform) {
-		// Move the origin of the ModelState transform and its inverse from the negative corner to the block center
-		// to replicate the way the ModelState transform is applied in the FaceBakery by moving the vertices such that
-		// the negative corner acts as the block center
-		Transformation transform = modelState.getRotation().applyOrigin(new Vector3f(.5F, .5F, .5F));
-		return QuadTransformers.applying(transform.compose(rootTransform).compose(transform.inverse()));
-	}
+		// Handle vanilla item models here, since vanilla has a shortcut for them
+		if (blockModel.getRootModel() == ModelBakery.GENERATION_MARKER)
+			return ITEM_MODEL_GENERATOR.generateBlockModel(spriteGetter, blockModel).bake(modelBaker, blockModel, spriteGetter, modelState, guiLight3d);
 
-	public static void bakeElements(List<BakedQuad> quads, List<BlockElement> elements, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation) {
-		for (BlockElement element : elements) {
-			element.faces.forEach((side, face) -> {
-				var sprite = spriteGetter.apply(new Material(TextureAtlas.LOCATION_BLOCKS, new ResourceLocation(face.texture)));
-				quads.add(BlockModel.FACE_BAKERY.bakeQuad(element.from, element.to, face, sprite, side, modelState, element.rotation, element.shade, modelLocation));
-			});
+		if (blockModel.getRootModel() == ModelBakery.BLOCK_ENTITY_MARKER) {
+			var particleSprite = spriteGetter.apply(blockModel.getMaterial("particle"));
+			return new BuiltInModel(blockModel.getTransforms(), blockModel.getOverrides(modelBaker, owner, spriteGetter), particleSprite, blockModel.getGuiLight().lightLikeBlock());
 		}
+
+		var elementsModel = new ElementsModel(blockModel.getElements());
+		return elementsModel.bake(blockModel.port_lib$getCustomData(), modelBaker, spriteGetter, modelState, blockModel.getOverrides(modelBaker, owner, spriteGetter));
 	}
 
 	/**
-	 * Bakes a list of {@linkplain BlockElement block elements} and returns the list of baked quads.
+	 * @see #createUnbakedItemElements(int, TextureAtlasSprite, ExtraFaceData)
 	 */
-	public static List<BakedQuad> bakeElements(List<BlockElement> elements, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation) {
-		if (elements.isEmpty())
-			return List.of();
-		var list = new ArrayList<BakedQuad>();
-		bakeElements(list, elements, spriteGetter, modelState, modelLocation);
-		return list;
+	public static List<BlockElement> createUnbakedItemElements(int layerIndex, TextureAtlasSprite sprite) {
+		return createUnbakedItemElements(layerIndex, sprite, null);
 	}
 
 	/**
@@ -128,8 +118,20 @@ public class UnbakedGeometryHelper {
 	 * <p>
 	 * The {@link Direction#NORTH} and {@link Direction#SOUTH} faces take up the whole surface.
 	 */
-	public static List<BlockElement> createUnbakedItemElements(int layerIndex, SpriteContents spriteContents) {
-		return ITEM_MODEL_GENERATOR.processFrames(layerIndex, "layer" + layerIndex, spriteContents);
+	public static List<BlockElement> createUnbakedItemElements(int layerIndex, TextureAtlasSprite sprite, @Nullable ExtraFaceData faceData) {
+		var elements = ITEM_MODEL_GENERATOR.processFrames(layerIndex, "layer" + layerIndex, sprite.contents());
+//		ClientHooks.fixItemModelSeams(elements, sprite); We could implement this but meh
+		if (faceData != null) {
+			elements.forEach(element -> element.setFaceData(faceData));
+		}
+		return elements;
+	}
+
+	/**
+	 * @see #createUnbakedItemMaskElements(int, TextureAtlasSprite, ExtraFaceData)
+	 */
+	public static List<BlockElement> createUnbakedItemMaskElements(int layerIndex, TextureAtlasSprite sprite) {
+		return createUnbakedItemMaskElements(layerIndex, sprite, null);
 	}
 
 	/**
@@ -138,10 +140,11 @@ public class UnbakedGeometryHelper {
 	 * <p>
 	 * The {@link Direction#NORTH} and {@link Direction#SOUTH} faces take up only the pixels the texture uses.
 	 */
-	public static List<BlockElement> createUnbakedItemMaskElements(int layerIndex, SpriteContents spriteContents) {
-		var elements = createUnbakedItemElements(layerIndex, spriteContents);
+	public static List<BlockElement> createUnbakedItemMaskElements(int layerIndex, TextureAtlasSprite sprite, @Nullable ExtraFaceData faceData) {
+		var elements = createUnbakedItemElements(layerIndex, sprite, faceData);
 		elements.remove(0); // Remove north and south faces
 
+		SpriteContents spriteContents = sprite.contents();
 		int width = spriteContents.width(), height = spriteContents.height();
 		var bits = new BitSet(width * height);
 
@@ -158,7 +161,8 @@ public class UnbakedGeometryHelper {
 			int xStart = -1;
 			for (int x = 0; x < width; x++) {
 				var opaque = bits.get(x + y * width);
-				if (opaque == (xStart == -1)) { // (opaque && -1) || (!opaque && !-1)
+				if (opaque == (xStart == -1)) // (opaque && -1) || (!opaque && !-1)
+				{
 					if (xStart == -1) {
 						// We have found the start of a new segment, continue
 						xStart = x;
@@ -187,8 +191,7 @@ public class UnbakedGeometryHelper {
 									map.put(direction, new BlockElementFace(null, layerIndex, "layer" + layerIndex, new BlockFaceUV(null, 0)));
 							}),
 							null,
-							true
-					));
+							true));
 
 					// Reset xStart
 					xStart = -1;
@@ -196,6 +199,56 @@ public class UnbakedGeometryHelper {
 			}
 		}
 		return elements;
+	}
+
+	/**
+	 * Bakes a list of {@linkplain BlockElement block elements} and feeds the baked quads to a {@linkplain IModelBuilder model builder}.
+	 */
+	public static void bakeElements(IModelBuilder<?> builder, List<BlockElement> elements, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState) {
+		for (BlockElement element : elements) {
+			element.faces.forEach((side, face) -> {
+				var sprite = spriteGetter.apply(new Material(TextureAtlas.LOCATION_BLOCKS, ResourceLocation.parse(face.texture())));
+				var quad = bakeElementFace(element, face, sprite, side, modelState);
+				if (face.cullForDirection() == null)
+					builder.addUnculledFace(quad);
+				else
+					builder.addCulledFace(Direction.rotate(modelState.getRotation().getMatrix(), face.cullForDirection()), quad);
+			});
+		}
+	}
+
+	/**
+	 * Bakes a list of {@linkplain BlockElement block elements} and returns the list of baked quads.
+	 */
+	public static List<BakedQuad> bakeElements(List<BlockElement> elements, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState) {
+		if (elements.isEmpty())
+			return List.of();
+		var list = new ArrayList<BakedQuad>();
+		bakeElements(IModelBuilder.collecting(list), elements, spriteGetter, modelState);
+		return list;
+	}
+
+	/**
+	 * Turns a single {@link BlockElementFace} into a {@link BakedQuad}.
+	 */
+	public static BakedQuad bakeElementFace(BlockElement element, BlockElementFace face, TextureAtlasSprite sprite, Direction direction, ModelState state) {
+		return FACE_BAKERY.bakeQuad(element.from, element.to, face, sprite, direction, state, element.rotation, element.shade);
+	}
+
+	/**
+	 * Create an {@link RenderContext.QuadTransform} to apply a {@link Transformation} that undoes the {@link ModelState}
+	 * transform (blockstate transform), applies the given root transform and then re-applies the
+	 * blockstate transform.
+	 *
+	 * @return an {@code IQuadTransformer} that applies the root transform to a baked quad that already has the
+	 *         transformation of the given {@code ModelState} applied to it
+	 */
+	public static RenderContext.QuadTransform applyRootTransform(ModelState modelState, Transformation rootTransform) {
+		// Move the origin of the ModelState transform and its inverse from the negative corner to the block center
+		// to replicate the way the ModelState transform is applied in the FaceBakery by moving the vertices such that
+		// the negative corner acts as the block center
+		Transformation transform = modelState.getRotation().applyOrigin(new Vector3f(.5F, .5F, .5F));
+		return QuadTransformers.applying(transform.compose(rootTransform).compose(transform.inverse()));
 	}
 
 	/**

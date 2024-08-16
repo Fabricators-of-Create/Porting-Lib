@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_conditions",
+  "version": "${version}",
+  "name": "Porting Lib Conditions",
+  "description": "An extension to fabric's resource condition api."
+}
