@@ -5,8 +5,10 @@ import java.util.function.BiConsumer;
 
 import com.google.common.collect.Sets;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.loot.BlockLootSubProvider;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
@@ -15,24 +17,24 @@ import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootTable;
 
 public abstract class ModdedBlockLootSubProvider extends BlockLootSubProvider {
-	protected ModdedBlockLootSubProvider(Set<Item> set, FeatureFlagSet featureFlagSet) {
-		super(set, featureFlagSet);
+	protected ModdedBlockLootSubProvider(Set<Item> set, FeatureFlagSet featureFlagSet, HolderLookup.Provider provider) {
+		super(set, featureFlagSet, provider);
 	}
 
 	@Override
-	public void generate(BiConsumer<ResourceLocation, LootTable.Builder> biConsumer) {
+	public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> biConsumer) {
 		this.generate();
-		Set<ResourceLocation> set = Sets.<ResourceLocation>newHashSet();
+		Set<ResourceKey<LootTable>> set = Sets.newHashSet();
 
 		for(Block block : getKnownBlocks()) {
-			ResourceLocation resourceLocation = block.getLootTable();
-			if (resourceLocation != BuiltInLootTables.EMPTY && set.add(resourceLocation)) {
-				LootTable.Builder builder6 = map.remove(resourceLocation);
+			ResourceKey<LootTable> resourceKey = block.getLootTable();
+			if (resourceKey != BuiltInLootTables.EMPTY && set.add(resourceKey)) {
+				LootTable.Builder builder6 = map.remove(resourceKey);
 				if (builder6 == null) {
-					throw new IllegalStateException(String.format("Missing loottable '%s' for '%s'", resourceLocation, BuiltInRegistries.BLOCK.getKey(block)));
+					throw new IllegalStateException(String.format("Missing loottable '%s' for '%s'", resourceKey, BuiltInRegistries.BLOCK.getKey(block)));
 				}
 
-				biConsumer.accept(resourceLocation, builder6);
+				biConsumer.accept(resourceKey, builder6);
 			}
 		}
 

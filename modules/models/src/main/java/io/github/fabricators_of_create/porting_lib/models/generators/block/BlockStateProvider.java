@@ -144,11 +144,11 @@ public abstract class BlockStateProvider implements DataProvider {
 	}
 
 	public ResourceLocation modLoc(String name) {
-		return new ResourceLocation(modid, name);
+		return ResourceLocation.fromNamespaceAndPath(modid, name);
 	}
 
 	public ResourceLocation mcLoc(String name) {
-		return new ResourceLocation(name);
+		return ResourceLocation.withDefaultNamespace(name);
 	}
 
 	private ResourceLocation key(Block block) {
@@ -161,11 +161,11 @@ public abstract class BlockStateProvider implements DataProvider {
 
 	public ResourceLocation blockTexture(Block block) {
 		ResourceLocation name = key(block);
-		return new ResourceLocation(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath());
+		return ResourceLocation.fromNamespaceAndPath(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath());
 	}
 
 	private ResourceLocation extend(ResourceLocation rl, String suffix) {
-		return new ResourceLocation(rl.getNamespace(), rl.getPath() + suffix);
+		return ResourceLocation.fromNamespaceAndPath(rl.getNamespace(), rl.getPath() + suffix);
 	}
 
 	public ModelFile cubeAll(Block block) {

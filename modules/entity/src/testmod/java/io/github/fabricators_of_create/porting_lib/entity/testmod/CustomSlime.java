@@ -5,6 +5,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerEntity;
 
 import org.jetbrains.annotations.NotNull;
@@ -37,25 +38,25 @@ public class CustomSlime extends Slime implements IEntityWithComplexSpawn, Multi
 
 	@Override
 	public void writeSpawnData(RegistryFriendlyByteBuf buf) {
-		buf.writeItem(item.stack);
+		ItemStack.STREAM_CODEC.encode(buf, item.stack);
 	}
 
 	@Override
 	public void readSpawnData(RegistryFriendlyByteBuf buf) {
-		item.stack = buf.readItem();
+		item.stack = ItemStack.STREAM_CODEC.decode(buf);
 	}
 
 	@Override
 	public void addAdditionalSaveData(CompoundTag nbt) {
 		super.addAdditionalSaveData(nbt);
-		nbt.put("Item", item.stack.save(new CompoundTag()));
+		nbt.put("Item", item.stack.save(registryAccess()));
 	}
 
 	@Override
 	public void readAdditionalSaveData(CompoundTag nbt) {
 		super.readAdditionalSaveData(nbt);
 		if (nbt.contains("Item", Tag.TAG_COMPOUND))
-			item.stack = ItemStack.of(nbt.getCompound("Item"));
+			item.stack = ItemStack.parseOptional(registryAccess(), nbt.getCompound("Item"));
 	}
 
 	@Override
@@ -67,7 +68,7 @@ public class CustomSlime extends Slime implements IEntityWithComplexSpawn, Multi
 
 	@Override
 	public boolean spawnCustomParticles() {
-		playSound(SoundEvents.GENERIC_EXPLODE, this.getSoundVolume(), ((this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F) / 0.8F);
+		playSound(SoundEvents.GENERIC_EXPLODE.value(), this.getSoundVolume(), ((this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F) / 0.8F);
 		return true;
 	}
 
@@ -89,7 +90,7 @@ public class CustomSlime extends Slime implements IEntityWithComplexSpawn, Multi
 		}
 
 		@Override
-		protected void defineSynchedData() {
+		protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		}
 
 		@Override

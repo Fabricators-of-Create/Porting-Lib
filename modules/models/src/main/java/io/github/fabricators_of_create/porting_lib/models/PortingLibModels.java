@@ -24,7 +24,7 @@ public class PortingLibModels implements ClientModInitializer {
 
 			loaders.put(PortingLib.id("fluid_container"), DynamicFluidContainerModel.Loader.INSTANCE);
 
-			loaders.put(new ResourceLocation("forge", "bucket"), DynamicFluidContainerModel.Loader.INSTANCE_DEPRECATED);
+			loaders.put(ResourceLocation.fromNamespaceAndPath("neoforge", "bucket"), DynamicFluidContainerModel.Loader.INSTANCE_DEPRECATED);
 		});
 		BlockModel.GSON = BlockModel.GSON.newBuilder()
 				.registerTypeAdapter(Transformation.class, new TransformationHelper.Deserializer())

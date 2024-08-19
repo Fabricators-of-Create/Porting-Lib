@@ -23,7 +23,7 @@ public class PortingLibEntityTestmod implements ModInitializer {
 	public void onInitialize() {
 		Registry.register(
 				BuiltInRegistries.ENTITY_TYPE,
-				new ResourceLocation("porting_lib", "custom_slime"),
+				ResourceLocation.fromNamespaceAndPath("porting_lib", "custom_slime"),
 				CUSTOM_SLIME
 		);
 		FabricDefaultAttributeRegistry.register(CUSTOM_SLIME, Monster.createMonsterAttributes());

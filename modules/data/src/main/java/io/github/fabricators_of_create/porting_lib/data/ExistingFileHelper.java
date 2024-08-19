@@ -26,6 +26,7 @@ import net.minecraft.client.resources.ClientPackSource;
 import net.minecraft.client.resources.IndexedAssetSource;
 import net.minecraft.data.DataProvider;
 import net.minecraft.server.packs.FilePackResources;
+import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PathPackResources;
 import net.minecraft.server.packs.repository.ServerPacksSource;
 import net.minecraft.server.packs.resources.MultiPackResourceManager;
@@ -173,7 +174,7 @@ public class ExistingFileHelper {
 	}
 
 	private ResourceLocation getLocation(ResourceLocation base, String suffix, String prefix) {
-		return new ResourceLocation(base.getNamespace(), prefix + "/" + base.getPath() + suffix);
+		return ResourceLocation.fromNamespaceAndPath(base.getNamespace(), prefix + "/" + base.getPath() + suffix);
 	}
 
 	/**

@@ -37,7 +37,7 @@ public class BlockModelDeserializerMixin {
 			Renderer renderer = RendererAccess.INSTANCE.getRenderer();
 			if (renderer != null) {
 				String typeName = GsonHelper.getAsString(modelJson, "render_type");
-				BlendMode blendMode = BlendMode.fromRenderLayer(RenderTypeUtil.get(new ResourceLocation(typeName)));
+				BlendMode blendMode = BlendMode.fromRenderLayer(RenderTypeUtil.get(ResourceLocation.parse(typeName)));
 				((BlockModelExtensions) model).port_lib$setBlendMode(blendMode);
 			}
 		}
