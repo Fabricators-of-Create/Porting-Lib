@@ -4,8 +4,6 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
-import io.github.fabricators_of_create.porting_lib.util.LazyRegistrar;
-import io.github.fabricators_of_create.porting_lib.util.RegistryObject;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -21,7 +19,7 @@ import net.minecraft.world.level.block.SoundType;
  * <p>
  * A possible solution of initializing {@code SoundEvent}s first would require static initialization of the
  * {@code SoundEvent} instances and later registration, which goes against the contract of the registry system and
- * prevents the use of {@link LazyRegistrar} and {@link RegistryObject}s.
+ * prevents the use of {@link DeferredRegister} and {@link RegistryObject}s.
  * <p>
  * This class offers an alternative and preferable solution, by allowing mods to create {@link SoundType}s using
  * {@link Supplier}s of {@link SoundEvent}s instead, which do not require static initialization of {@code SoundEvent}s

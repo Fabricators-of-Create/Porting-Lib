@@ -2,8 +2,6 @@ package io.github.fabricators_of_create.porting_lib.tool.loot;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.mojang.serialization.Codec;
-
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -17,7 +15,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 

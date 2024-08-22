@@ -1,16 +1,11 @@
 package io.github.fabricators_of_create.porting_lib.loot;
 
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-import javax.annotation.Nullable;
 
 import com.mojang.serialization.Codec;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableBuilderExtensions;
-import io.github.fabricators_of_create.porting_lib.util.LazyRegistrar;
 import io.github.fabricators_of_create.porting_lib.util.RegistryBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.api.ModInitializer;
@@ -22,11 +17,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.storage.loot.LootContext;
 
 public class PortingLibLoot implements ModInitializer {

@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.models.geometry;
 
 import com.google.common.base.Predicates;
 import com.mojang.math.Transformation;
+
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import java.util.Map;
 import java.util.function.BiPredicate;
@@ -18,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
  * A {@linkplain IGeometryBakingContext geometry baking context} that is not bound to block/item model loading.
  */
 public class StandaloneGeometryBakingContext implements IGeometryBakingContext {
-	public static final ResourceLocation LOCATION = ResourceLocation.fromNamespaceAndPath("neoforge", "standalone");
+	public static final ResourceLocation LOCATION = PortingLib.id("standalone");
 
 	public static final StandaloneGeometryBakingContext INSTANCE = create(LOCATION);
 

@@ -12,8 +12,6 @@ import net.minecraft.resources.ResourceLocation;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 public class RegistryBuilder<T> {
@@ -80,7 +78,7 @@ public class RegistryBuilder<T> {
 
 	/**
 	 * Creates a new registry from this builder.
-	 * Also use {@link LazyRegistrar#makeRegistry(Consumer)}
+	 * Also use {@link DeferredRegister#makeRegistry(Consumer)}
 	 * to not have to call this manually.
 	 *
 	 * @return the created registry
