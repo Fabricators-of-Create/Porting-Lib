@@ -26,7 +26,7 @@ public class RenderMaterialDeserializer implements JsonDeserializer<RenderMateri
 			throw new JsonParseException("The Fabric Rendering API is not available. If you have Sodium, install Indium!");
 		MaterialFinder finder = renderer.materialFinder();
 		JsonObject obj = json.getAsJsonObject();
-		forEachSpriteIndex(obj, "blendMode", (spriteIndex, jsonElement) -> finder.blendMode(spriteIndex, BlendMode.fromRenderLayer(RenderTypeUtil.get(new ResourceLocation(jsonElement.getAsString())))));
+		forEachSpriteIndex(obj, "blendMode", (spriteIndex, jsonElement) -> finder.blendMode(spriteIndex, BlendMode.fromRenderLayer(RenderTypeUtil.get(ResourceLocation.parse(jsonElement.getAsString())))));
 		forEachSpriteIndex(obj, "disableColorIndex", (spriteIndex, jsonElement) -> finder.disableColorIndex(spriteIndex, jsonElement.getAsBoolean()));
 		forEachSpriteIndex(obj, "disableDiffuse", (spriteIndex, jsonElement) -> finder.disableDiffuse(spriteIndex, jsonElement.getAsBoolean()));
 		forEachSpriteIndex(obj, "disableAo", (spriteIndex, jsonElement) -> finder.disableAo(spriteIndex, jsonElement.getAsBoolean()));

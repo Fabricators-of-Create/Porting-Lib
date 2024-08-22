@@ -11,7 +11,7 @@ public class PortingLibModelsTestmodClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		ModelResourceLocation location = new ModelResourceLocation(BuiltInRegistries.ITEM.getKey(PortingLibModelsTestmod.DERPY_HELMET), "inventory");
 		ModelLoadingPlugin.register(pluginCtx -> pluginCtx.modifyModelAfterBake().register(
-				(model, ctx) -> ctx.id().equals(location) ? new DerpyItemModel(model) : model
+				(model, ctx) -> ctx.topLevelId().equals(location) ? new DerpyItemModel(model) : model
 		));
 	}
 }

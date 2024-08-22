@@ -170,7 +170,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 			if (!jsonObject.has("fluid"))
 				throw new RuntimeException("Bucket model requires 'fluid' value.");
 
-			ResourceLocation fluidName = new ResourceLocation(jsonObject.get("fluid").getAsString());
+			ResourceLocation fluidName = ResourceLocation.parse(jsonObject.get("fluid").getAsString());
 
 			Fluid fluid = BuiltInRegistries.FLUID.get(fluidName);
 
@@ -223,7 +223,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 
 						if (!cache.containsKey(name)) {
 							DynamicFluidContainerModel unbaked = this.parent.withFluid(fluid);
-							BakedModel bakedModel = unbaked.bake(owner, baker, Material::sprite, BlockModelRotation.X0_Y0, this, new ResourceLocation("forge:bucket_override"), false);
+							BakedModel bakedModel = unbaked.bake(owner, baker, Material::sprite, BlockModelRotation.X0_Y0, this, ResourceLocation.parse("neoforge:bucket_override"), false);
 							cache.put(name, bakedModel);
 							return bakedModel;
 						}
@@ -240,7 +240,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 		public int getColor(@NotNull ItemStack stack, int tintIndex) {
 			if (tintIndex != 1) return 0xFFFFFFFF;
 			return TransferUtil.getFluidContained(stack)
-					.map(fluidStack -> FluidVariantRendering.getColor(fluidStack.getType()))
+					.map(fluidStack -> FluidVariantRendering.getColor(fluidStack.getVariant()))
 					.orElse(0xFFFFFFFF);
 		}
 	}

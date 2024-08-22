@@ -38,7 +38,7 @@ public class ObjMaterialLibrary {
 					break;
 				}
 				case "texture":
-					currentMaterial.texture = new ResourceLocation(line[1]);
+					currentMaterial.texture = ResourceLocation.parse(line[1]);
 					break;
 
 				case "Ka":
