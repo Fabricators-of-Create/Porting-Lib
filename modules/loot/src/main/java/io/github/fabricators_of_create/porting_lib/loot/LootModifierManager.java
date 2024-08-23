@@ -17,25 +17,43 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import com.mojang.serialization.JsonOps;
+
+import io.github.fabricators_of_create.porting_lib.conditions.ConditionalOps;
+import io.github.fabricators_of_create.porting_lib.conditions.ICondition;
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.util.ParticleUtils;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 
-public class LootModifierManager extends SimpleJsonResourceReloadListener {
+public class LootModifierManager extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 	public static final Logger LOGGER = LogManager.getLogger();
 
+	public static final LootModifierManager INSTANCE = new LootModifierManager();
+
+	private HolderLookup.Provider registries;
 	private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
 	private static final String folder = "loot_modifiers";
+	public static final ResourceLocation ID = PortingLib.id(folder);;
 
 	public LootModifierManager() {
 		super(GSON, folder);
+	}
+
+	public void injectContext(HolderLookup.Provider registries) {
+		this.registries = registries;
 	}
 
 	@Override
@@ -70,7 +88,7 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
 
 	@Override
 	protected void apply(Map<ResourceLocation, JsonElement> resourceList, ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
-		DynamicOps<JsonElement> ops = this.makeConditionalOps();
+		DynamicOps<JsonElement> ops = new ConditionalOps<>(RegistryOps.create(JsonOps.INSTANCE, registries), ICondition.IContext.EMPTY);
 		Builder<ResourceLocation, IGlobalLootModifier> builder = ImmutableMap.builder();
 		for (Map.Entry<ResourceLocation, JsonElement> entry : resourceList.entrySet()) {
 			ResourceLocation location = entry.getKey();
@@ -90,5 +108,10 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
 	 */
 	public Collection<IGlobalLootModifier> getAllLootMods() {
 		return registeredLootModifiers.values();
+	}
+
+	@Override
+	public ResourceLocation getFabricId() {
+		return ID;
 	}
 }

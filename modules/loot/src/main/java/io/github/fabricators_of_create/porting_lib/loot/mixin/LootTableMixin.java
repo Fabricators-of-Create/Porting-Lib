@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.loot.mixin.loottable;
+package io.github.fabricators_of_create.porting_lib.loot.mixin;
 
 import java.util.Objects;
 import java.util.Stack;

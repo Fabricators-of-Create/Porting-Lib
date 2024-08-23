@@ -54,14 +54,14 @@ public abstract class GlobalLootModifierProvider implements DataProvider {
 	public CompletableFuture<?> run(CachedOutput cache) {
 		start();
 
-		Path forgePath = this.output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve("forge").resolve("loot_modifiers").resolve("global_loot_modifiers.json");
+		Path forgePath = this.output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve("neoforge").resolve("loot_modifiers").resolve("global_loot_modifiers.json");
 		Path modifierFolderPath = this.output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(this.modid).resolve("loot_modifiers");
 		List<ResourceLocation> entries = new ArrayList<>();
 
 		ImmutableList.Builder<CompletableFuture<?>> futuresBuilder = new ImmutableList.Builder<>();
 
 		toSerialize.forEach(LamdbaExceptionUtils.rethrowBiConsumer((name, json) -> {
-			entries.add(new ResourceLocation(modid, name));
+			entries.add(ResourceLocation.fromNamespaceAndPath(modid, name));
 			Path modifierPath = modifierFolderPath.resolve(name + ".json");
 			futuresBuilder.add(DataProvider.saveStable(cache, json, modifierPath));
 		}));
@@ -82,7 +82,7 @@ public abstract class GlobalLootModifierProvider implements DataProvider {
 	 * @param instance      The instance to serialize
 	 */
 	public <T extends IGlobalLootModifier> void add(String modifier, T instance) {
-		JsonElement json = IGlobalLootModifier.DIRECT_CODEC.encodeStart(JsonOps.INSTANCE, instance).getOrThrow(false, s -> {});
+		JsonElement json = IGlobalLootModifier.DIRECT_CODEC.encodeStart(JsonOps.INSTANCE, instance).getOrThrow(s -> new IllegalStateException("Could not encode global loot modifier. " + s));
 		this.toSerialize.put(modifier, json);
 	}
 

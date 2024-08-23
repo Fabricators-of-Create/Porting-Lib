@@ -16,7 +16,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 /**
  * Implementation that defines what a global loot modifier must implement in order to be functional.
  * {@link LootModifier} Supplies base functionality; most modders should only need to extend that.<br/>
- * Requires a {@link Codec} to be registered: {@link PortingLibLoot#GLOBAL_LOOT_MODIFIER_SERIALIZERS}, and returned in {@link #codec()}
+ * Requires a {@link MapCodec} to be registered: {@link PortingLibLoot#GLOBAL_LOOT_MODIFIER_SERIALIZERS}, and returned in {@link #codec()}
  * Individual instances of modifiers must be registered via json, see neoforge:loot_modifiers/global_loot_modifiers
  */
 public interface IGlobalLootModifier {
