@@ -135,7 +135,7 @@ public abstract class ValidateModuleTask extends DefaultTask {
 			if (module.equals(formatted))
 				return; // found it
 		}
-		assertTrue(false, "Module does not have an entry in the README table");
+		assertTrue(false, "Module \"" + name + "\" does not have an entry in the README table");
 	}
 
 	private static List<String> getMixinFilenames(JsonObject mixins, String side) {
