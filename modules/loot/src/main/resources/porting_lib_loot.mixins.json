@@ -11,8 +11,8 @@
     "LootDataTypeMixin",
     "LootPoolMixin",
     "LootPoolMixin$LootPoolBuilderMixin",
-    "loottable.LootTableMixin",
-    "loottable.LootTableMixin$BuilderMixin",
+    "LootTableMixin",
+    "LootTableMixin$BuilderMixin",
     "loottable.LootTableMixin_Early",
     "loottable.LootTableMixin_Late"
   ]

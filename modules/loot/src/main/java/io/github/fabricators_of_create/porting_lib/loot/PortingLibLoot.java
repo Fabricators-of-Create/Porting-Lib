@@ -2,7 +2,7 @@ package io.github.fabricators_of_create.porting_lib.loot;
 
 import java.util.List;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 import com.mojang.serialization.MapCodec;
 
@@ -12,7 +12,7 @@ import io.github.fabricators_of_create.porting_lib.util.RegistryBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
+import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -29,12 +29,15 @@ public class PortingLibLoot implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(LootModifierManager.INSTANCE);
+		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(LootModifierManager.ID, lookup -> {
+			LootModifierManager.INSTANCE.injectContext(lookup);
+			return LootModifierManager.INSTANCE;
+		});
 		Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, PortingLib.id("loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
 
 		LootTableEvents.MODIFY.addPhaseOrdering(Event.DEFAULT_PHASE, LAST);
 		LootTableEvents.MODIFY.register(LAST,
-				(key, builder, source) -> ((LootTableBuilderExtensions) builder).port_lib$setId(key.location())
+				(key, builder, source, provider) -> ((LootTableBuilderExtensions) builder).port_lib$setId(key.location())
 		);
 	}
 
@@ -72,7 +75,7 @@ public class PortingLibLoot implements ModInitializer {
 	 */
 	public static ObjectArrayList<ItemStack> modifyLoot(ResourceLocation lootTableId, ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
 		context.setQueriedLootTableId(lootTableId); // In case the ID was set via copy constructor, this will be ignored: intended
-		LootModifierManager man = LootModifierManager.getLootModifierManager();
+		LootModifierManager man = LootModifierManager.INSTANCE;
 		for (IGlobalLootModifier mod : man.getAllLootMods()) {
 			generatedLoot = mod.apply(generatedLoot, context);
 		}
