@@ -2,6 +2,9 @@ package io.github.fabricators_of_create.porting_lib.core;
 
 import net.fabricmc.loader.api.FabricLoader;
 
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +23,10 @@ public class PortingLib {
 
 	public static ResourceLocation id(String path) {
 		return ResourceLocation.fromNamespaceAndPath(ID, path);
+	}
+
+	public static <T> ResourceKey<Registry<T>> key(String path) {
+		return ResourceKey.createRegistryKey(id(path));
 	}
 
 	public static ResourceLocation neo(String path) {
