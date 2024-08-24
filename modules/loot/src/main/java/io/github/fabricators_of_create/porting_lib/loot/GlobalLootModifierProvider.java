@@ -3,23 +3,24 @@ package io.github.fabricators_of_create.porting_lib.loot;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.serialization.JsonOps;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
-import io.github.fabricators_of_create.porting_lib.core.util.LamdbaExceptionUtils;
+import io.github.fabricators_of_create.porting_lib.conditions.ICondition;
+import io.github.fabricators_of_create.porting_lib.conditions.WithConditions;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 /**
  * Provider for forge's GlobalLootModifier system. See {@link LootModifier}
@@ -29,12 +30,15 @@ import java.util.stream.Collectors;
 public abstract class GlobalLootModifierProvider implements DataProvider {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private final PackOutput output;
+	private final CompletableFuture<HolderLookup.Provider> registriesLookup;
+	protected HolderLookup.Provider registries;
 	private final String modid;
-	private final Map<String, JsonElement> toSerialize = new HashMap<>();
+	private final Map<String, WithConditions<IGlobalLootModifier>> toSerialize = new HashMap<>();
 	private boolean replace = false;
 
-	public GlobalLootModifierProvider(PackOutput output, String modid) {
+	public GlobalLootModifierProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, String modid) {
 		this.output = output;
+		this.registriesLookup = registries;
 		this.modid = modid;
 	}
 
@@ -51,7 +55,12 @@ public abstract class GlobalLootModifierProvider implements DataProvider {
 	protected abstract void start();
 
 	@Override
-	public CompletableFuture<?> run(CachedOutput cache) {
+	public final CompletableFuture<?> run(CachedOutput cache) {
+		return this.registriesLookup.thenCompose(registries -> this.run(cache, registries));
+	}
+
+	protected CompletableFuture<?> run(CachedOutput cache, HolderLookup.Provider registries) {
+		this.registries = registries;
 		start();
 
 		Path forgePath = this.output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve("neoforge").resolve("loot_modifiers").resolve("global_loot_modifiers.json");
@@ -60,11 +69,13 @@ public abstract class GlobalLootModifierProvider implements DataProvider {
 
 		ImmutableList.Builder<CompletableFuture<?>> futuresBuilder = new ImmutableList.Builder<>();
 
-		toSerialize.forEach(LamdbaExceptionUtils.rethrowBiConsumer((name, json) -> {
+		for (var entry : toSerialize.entrySet()) {
+			var name = entry.getKey();
+			var lootModifier = entry.getValue();
 			entries.add(ResourceLocation.fromNamespaceAndPath(modid, name));
 			Path modifierPath = modifierFolderPath.resolve(name + ".json");
-			futuresBuilder.add(DataProvider.saveStable(cache, json, modifierPath));
-		}));
+			futuresBuilder.add(DataProvider.saveStable(cache, registries, IGlobalLootModifier.CONDITIONAL_CODEC, Optional.of(lootModifier), modifierPath));
+		}
 
 		JsonObject forgeJson = new JsonObject();
 		forgeJson.addProperty("replace", this.replace);
@@ -78,12 +89,23 @@ public abstract class GlobalLootModifierProvider implements DataProvider {
 	/**
 	 * Passes in the data needed to create the file without any extra objects.
 	 *
-	 * @param modifier      The name of the modifier, which will be the file name.
-	 * @param instance      The instance to serialize
+	 * @param modifier   the name of the modifier, which will be the file name
+	 * @param instance   the instance to serialize
+	 * @param conditions a list of conditions to add to the GLM file
 	 */
-	public <T extends IGlobalLootModifier> void add(String modifier, T instance) {
-		JsonElement json = IGlobalLootModifier.DIRECT_CODEC.encodeStart(JsonOps.INSTANCE, instance).getOrThrow(s -> new IllegalStateException("Could not encode global loot modifier. " + s));
-		this.toSerialize.put(modifier, json);
+	public <T extends IGlobalLootModifier> void add(String modifier, T instance, List<ICondition> conditions) {
+		this.toSerialize.put(modifier, new WithConditions<>(conditions, instance));
+	}
+
+	/**
+	 * Passes in the data needed to create the file without any extra objects.
+	 *
+	 * @param modifier   the name of the modifier, which will be the file name
+	 * @param instance   the instance to serialize
+	 * @param conditions a list of conditions to add to the GLM file
+	 */
+	public <T extends IGlobalLootModifier> void add(String modifier, T instance, ICondition... conditions) {
+		add(modifier, instance, Arrays.asList(conditions));
 	}
 
 	@Override

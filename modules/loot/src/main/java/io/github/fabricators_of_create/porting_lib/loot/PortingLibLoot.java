@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.mojang.serialization.MapCodec;
 
+import com.mojang.serialization.MapCodec;
+
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableBuilderExtensions;
 import io.github.fabricators_of_create.porting_lib.util.RegistryBuilder;
@@ -21,7 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 
 public class PortingLibLoot implements ModInitializer {
-	public static final ResourceKey<Registry<MapCodec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS_KEY = ResourceKey.createRegistryKey(PortingLib.id("global_loot_modifier_serializers"));
+	public static final ResourceKey<Registry<MapCodec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS_KEY = PortingLib.key("global_loot_modifier_serializers");
 	public static final Registry<MapCodec<? extends IGlobalLootModifier>> GLOBAL_LOOT_MODIFIER_SERIALIZERS = new RegistryBuilder<>(GLOBAL_LOOT_MODIFIER_SERIALIZERS_KEY).create();
 	public static final ResourceLocation LAST = PortingLib.id("last");
 
