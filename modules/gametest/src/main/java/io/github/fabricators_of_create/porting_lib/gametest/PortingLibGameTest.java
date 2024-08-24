@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -19,7 +18,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
 import io.github.fabricators_of_create.porting_lib.gametest.infrastructure.CustomGameTestHelper;
-//import io.github.fabricators_of_create.porting_lib.gametest.infrastructure.ExtendedTestFunction;
+import io.github.fabricators_of_create.porting_lib.gametest.infrastructure.ExtendedTestFunction;
 import io.github.fabricators_of_create.porting_lib.gametest.infrastructure.GameTestGroup;
 import io.github.fabricators_of_create.porting_lib.gametest.quickexport.AreaSelectorItem;
 import io.github.fabricators_of_create.porting_lib.gametest.quickexport.QuickExportCommand;
@@ -51,15 +50,13 @@ public class PortingLibGameTest implements ModInitializer {
 	 * of {@link CustomGameTestHelper} and {@link GameTestGroup}.
 	 */
 	public static Collection<TestFunction> getTestsFrom(Class<?>... classes) {
-		return Collections.emptyList();
-		// fixme port me :plead:
-//		return Stream.of(classes)
-//				.map(Class::getDeclaredMethods)
-//				.flatMap(Stream::of)
-//				.map(ExtendedTestFunction::of)
-//				.filter(Objects::nonNull)
-//				.sorted(Comparator.comparing(TestFunction::testName))
-//				.toList();
+		return Stream.of(classes)
+				.map(Class::getDeclaredMethods)
+				.flatMap(Stream::of)
+				.map(ExtendedTestFunction::of)
+				.filter(Objects::nonNull)
+				.sorted(Comparator.comparing(TestFunction::testName))
+				.toList();
 	}
 
 	private static boolean checkEnabled() {
