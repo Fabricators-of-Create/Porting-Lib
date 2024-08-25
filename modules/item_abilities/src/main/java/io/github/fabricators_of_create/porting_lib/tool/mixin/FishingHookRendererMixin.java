@@ -15,8 +15,8 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(FishingHookRenderer.class)
 public class FishingHookRendererMixin {
-	@ModifyExpressionValue(method = "render(Lnet/minecraft/world/entity/projectile/FishingHook;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z"))
-	private boolean toolActionFishingHook(boolean original, @Local(index = 13) ItemStack stack) {
+	@ModifyExpressionValue(method = "getPlayerHandPos", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z"))
+	private boolean toolActionFishingHook(boolean original, @Local ItemStack stack) {
 		if (stack.getItem() instanceof ItemAbilityItem)
 			return stack.canPerformAction(ItemAbilities.FISHING_ROD_CAST);
 		return original;
