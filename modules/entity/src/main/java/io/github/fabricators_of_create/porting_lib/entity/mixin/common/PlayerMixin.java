@@ -96,7 +96,7 @@ public abstract class PlayerMixin extends LivingEntity implements PlayerExt {
 	}
 
 	@Inject(method = "giveExperienceLevels", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Player;experienceLevel:I", ordinal = 0), cancellable = true)
-	private void cancelLevels(int levels, CallbackInfo ci, @Share("event") LocalRef<PlayerXpEvent.XpChange> eventRef) {
+	private void cancelLevels(int levels, CallbackInfo ci, @Share("event") LocalRef<PlayerXpEvent.LevelChange> eventRef) {
 		if (eventRef.get().isCanceled())
 			ci.cancel();
 	}
