@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -137,7 +138,7 @@ public class ItemStackHandler implements SlottedStackStorage, INBTSerializable<C
 	}
 
 	public int getSlotLimit(int slot) {
-		return getStackInSlot(slot).getMaxStackSize();
+		return getStackInSlot(slot).getOrDefault(DataComponents.MAX_STACK_SIZE, 64);
 	}
 
 	/**
