@@ -24,7 +24,7 @@ public abstract class ExplosionMixin {
 	private Level level;
 
 	@Inject(method = "explode", at = @At(value = "NEW", target = "net/minecraft/world/phys/Vec3", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void onExplode(CallbackInfo ci, Set<BlockPos> blocks, float j, int k, int l, int r, int s, int t, int u, List<Entity> list) {
+	public void onExplode(CallbackInfo ci, Set<BlockPos> blocks, int i, float j, int k, int l, int r, int s, int t, int u, List<Entity> list) {
 		ExplosionEvents.DETONATE.invoker().onDetonate(this.level, (Explosion) (Object) this, list, j);
 	}
 }
