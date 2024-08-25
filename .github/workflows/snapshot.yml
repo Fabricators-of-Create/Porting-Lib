@@ -1,36 +1,29 @@
-name: snapshot
+name: Snapshot
 on: workflow_dispatch
 
 jobs:
   build:
-    strategy:
-      matrix:
-        java: [ 21 ]
     runs-on: ubuntu-latest
     env:
       SNAPSHOT: 'true'
       MAVEN_USER: ${{ secrets.MAVEN_USER }}
       MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
     steps:
-
-      - name: checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: make gradle wrapper executable
-        run: chmod +x ./gradlew
-
-      - name: setup Java
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
           cache: gradle
 
-      - name: publish
+      - name: Publish
         # build task creates artifacts for capture and upload, then publish publishes to maven
         run: ./gradlew build publish
 
-      - name: capture build artifacts
+      - name: Capture Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Artifacts

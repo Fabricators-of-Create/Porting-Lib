@@ -1,4 +1,4 @@
-name: release
+name: Release
 on:
   workflow_dispatch:
     inputs:
@@ -9,40 +9,33 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        java: [ 21 ]
     runs-on: ubuntu-latest
     env:
       MAVEN_USER: ${{ secrets.MAVEN_USER }}
       MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
       RELEASE: true
     steps:
-
-      - name: checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: make gradle wrapper executable
-        run: chmod +x ./gradlew
-
-      - name: setup Java
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
           cache: gradle
 
-      - name: publish
+      - name: Publish
         # build task creates artifacts for capture and upload, then publish publishes to maven
         run: ./gradlew build publish
 
-      - name: capture build artifacts
+      - name: Capture Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Artifacts
           path: build/libs/
 
-      - name: publish to Modrinth and Curseforge
+      - name: Publish to Modrinth and Curseforge
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           modrinth-id: tEJPA4Ty
@@ -62,10 +55,10 @@ jobs:
           dependencies: |
             fabric-api(required){modrinth:P7dR8mSH}{curseforge:306612}
 
-      - name: prepare for next release
+      - name: Prepare for next release
         run: './gradlew postRelease -PnextVersion="${{ inputs.nextVersion }}"'
 
-      - name: push updated version and changelog
+      - name: Push updated version and changelog
         run: |
           git config --global user.name github-actions-bot
           git config --global user.email github-actions[bot]@users.noreply.github.com
