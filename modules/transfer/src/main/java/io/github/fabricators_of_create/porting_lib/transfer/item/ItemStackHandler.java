@@ -138,7 +138,7 @@ public class ItemStackHandler implements SlottedStackStorage, INBTSerializable<C
 	}
 
 	public int getSlotLimit(int slot) {
-		return getStackInSlot(slot).getOrDefault(DataComponents.MAX_STACK_SIZE, 99);
+		return getStackInSlot(slot).getOrDefault(DataComponents.MAX_STACK_SIZE, Integer.MAX_VALUE);
 	}
 
 	/**
