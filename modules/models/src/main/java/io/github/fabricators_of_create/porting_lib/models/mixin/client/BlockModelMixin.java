@@ -39,10 +39,8 @@ public class BlockModelMixin implements BlockModelExtensions {
 		this.blendMode = blendMode;
 	}
 
-	@ModifyReturnValue(method = "bake(Lnet/minecraft/client/resources/model/ModelBaker;Lnet/minecraft/client/renderer/block/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/resources/model/BakedModel;", at = @At("RETURN"))
-	private BakedModel useCustomRendering(BakedModel model, ModelBaker modelBaker, BlockModel blockModel,
-										  Function<Material, TextureAtlasSprite> function, ModelState modelState,
-										  ResourceLocation resourceLocation, boolean bl) {
+	@ModifyReturnValue(method = "bake(Lnet/minecraft/client/resources/model/ModelBaker;Lnet/minecraft/client/renderer/block/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/resources/model/ModelState;Z)Lnet/minecraft/client/resources/model/BakedModel;", at = @At("RETURN"))
+	private BakedModel useCustomRendering(BakedModel model) {
 		if (this.material != null) {
 			return new RenderMaterialModel(model, this.material);
 		} else if (blendMode != null) {

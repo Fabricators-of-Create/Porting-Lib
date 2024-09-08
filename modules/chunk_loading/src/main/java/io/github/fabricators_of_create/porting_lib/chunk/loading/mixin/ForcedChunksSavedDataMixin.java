@@ -1,7 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.chunk.loading.mixin;
 
-import io.github.fabricators_of_create.porting_lib.chunk.loading.PortingLibChunkManager;
+import io.github.fabricators_of_create.porting_lib.chunk.loading.ForcedChunkManager;
 import io.github.fabricators_of_create.porting_lib.chunk.loading.extensions.ForcedChunksSavedDataExtension;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.ForcedChunksSavedData;
 
@@ -10,29 +12,32 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.UUID;
+
 @Mixin(ForcedChunksSavedData.class)
 public class ForcedChunksSavedDataMixin implements ForcedChunksSavedDataExtension {
-	private PortingLibChunkManager.TicketTracker<net.minecraft.core.BlockPos> blockForcedChunks = new PortingLibChunkManager.TicketTracker<>();
-	private PortingLibChunkManager.TicketTracker<java.util.UUID> entityForcedChunks = new PortingLibChunkManager.TicketTracker<>();
+	// Neo: Keep track of forced loaded chunks caused by entities or blocks.
+	private final ForcedChunkManager.TicketTracker<BlockPos> port_lib$blockForcedChunks = new ForcedChunkManager.TicketTracker<>();
+	private final ForcedChunkManager.TicketTracker<UUID> port_lib$entityForcedChunks = new ForcedChunkManager.TicketTracker<>();
 
 	@Inject(method = "load", at = @At("RETURN"))
-	private static void readForgeForcedChunks(CompoundTag tag, CallbackInfoReturnable<ForcedChunksSavedData> cir) {
+	private static void readForgeForcedChunks(CompoundTag tag, HolderLookup.Provider provider, CallbackInfoReturnable<ForcedChunksSavedData> cir) {
 		ForcedChunksSavedData data = cir.getReturnValue();
-		PortingLibChunkManager.readForgeForcedChunks(tag, data.getBlockForcedChunks(), data.getEntityForcedChunks());
+		ForcedChunkManager.readModForcedChunks(tag, data.getBlockForcedChunks(), data.getEntityForcedChunks());
 	}
 
 	@Inject(method = "save", at = @At("TAIL"))
-	private void saveForgeForcedChunks(CompoundTag compoundTag, CallbackInfoReturnable<CompoundTag> cir) {
-		PortingLibChunkManager.writeForgeForcedChunks(compoundTag, getBlockForcedChunks(), getEntityForcedChunks());
+	private void saveForgeForcedChunks(CompoundTag tag, HolderLookup.Provider provider, CallbackInfoReturnable<CompoundTag> cir) {
+		ForcedChunkManager.writeModForcedChunks(tag, getBlockForcedChunks(), getEntityForcedChunks());
 	}
 
 	@Override
-	public PortingLibChunkManager.TicketTracker<net.minecraft.core.BlockPos> getBlockForcedChunks() {
-		return this.blockForcedChunks;
+	public ForcedChunkManager.TicketTracker<BlockPos> getBlockForcedChunks() {
+		return this.port_lib$blockForcedChunks;
 	}
 
 	@Override
-	public PortingLibChunkManager.TicketTracker<java.util.UUID> getEntityForcedChunks() {
-		return this.entityForcedChunks;
+	public ForcedChunkManager.TicketTracker<UUID> getEntityForcedChunks() {
+		return this.port_lib$entityForcedChunks;
 	}
 }

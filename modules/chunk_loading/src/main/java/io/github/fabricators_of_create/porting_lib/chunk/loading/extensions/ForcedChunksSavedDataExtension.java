@@ -1,13 +1,13 @@
 package io.github.fabricators_of_create.porting_lib.chunk.loading.extensions;
 
-import io.github.fabricators_of_create.porting_lib.chunk.loading.PortingLibChunkManager;
+import io.github.fabricators_of_create.porting_lib.chunk.loading.ForcedChunkManager;
 
 public interface ForcedChunksSavedDataExtension {
-	default PortingLibChunkManager.TicketTracker<net.minecraft.core.BlockPos> getBlockForcedChunks() {
+	default ForcedChunkManager.TicketTracker<net.minecraft.core.BlockPos> getBlockForcedChunks() {
 		throw new RuntimeException();
 	}
 
-	default PortingLibChunkManager.TicketTracker<java.util.UUID> getEntityForcedChunks() {
+	default ForcedChunkManager.TicketTracker<java.util.UUID> getEntityForcedChunks() {
 		throw new RuntimeException();
 	}
 }
