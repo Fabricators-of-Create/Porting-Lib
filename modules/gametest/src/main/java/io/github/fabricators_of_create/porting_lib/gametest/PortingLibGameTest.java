@@ -8,6 +8,10 @@ import java.util.Comparator;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import io.github.fabricators_of_create.porting_lib.gametest.quickexport.AreaSelection;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.world.item.component.CustomData;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,11 +38,13 @@ public class PortingLibGameTest implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("Porting Lib GameTest");
 	public static final boolean AREA_SELECTOR_ENABLED = checkEnabled();
 	public static final Item AREA_SELECTOR = AREA_SELECTOR_ENABLED ? new AreaSelectorItem(new Item.Properties()) : null;
+	public static final DataComponentType<AreaSelection> AREA_SELECTOR_DATA_COMPONENT = AREA_SELECTOR_ENABLED ? DataComponentType.<AreaSelection>builder().persistent(AreaSelection.CODEC).networkSynchronized(AreaSelection.STREAM_CODEC).build() : null;
 
 	@Override
 	public void onInitialize() {
 		if (AREA_SELECTOR_ENABLED) {
 			Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath("porting_lib", "area_selector"), AREA_SELECTOR);
+			Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, ResourceLocation.fromNamespaceAndPath("porting_lib", "area_selector"), AREA_SELECTOR_DATA_COMPONENT);
 			QuickExportCommand.register();
 		} else {
 			LOGGER.info("Porting Lib GameTest: Area Selector and quickexport disabled.");

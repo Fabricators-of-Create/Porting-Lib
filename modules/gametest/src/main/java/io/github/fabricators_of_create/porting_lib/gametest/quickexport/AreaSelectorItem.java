@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.gametest.quickexport;
 
+import io.github.fabricators_of_create.porting_lib.gametest.PortingLibGameTest;
 import net.minecraft.core.component.DataComponents;
 
 import net.minecraft.network.chat.contents.NbtContents;
@@ -73,7 +74,7 @@ public class AreaSelectorItem extends Item {
 			return InteractionResult.PASS;
 		}
 		if (player.isShiftKeyDown()) {
-			held.remove(DataComponents.CUSTOM_DATA);
+			held.remove(PortingLibGameTest.AREA_SELECTOR_DATA_COMPONENT);
 			player.sendSystemMessage(RESET, true);
 			return InteractionResult.SUCCESS;
 		}
@@ -104,16 +105,14 @@ public class AreaSelectorItem extends Item {
 	}
 
 	public static AreaSelection getArea(ItemStack stack) {
-		CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-		if (data != null && data.copyTag().contains(AREA_KEY, Tag.TAG_COMPOUND)) {
-			AreaSelection area = AreaSelection.fromNbt(data.copyTag().getCompound(AREA_KEY));
-			return area.first != null ? area : null; // safety from broken data
-		}
+		AreaSelection area = stack.get(PortingLibGameTest.AREA_SELECTOR_DATA_COMPONENT);
+		if (area != null)
+			return area.first != null ? area : null;
 		return null;
 	}
 
 	public static void setArea(ItemStack stack, AreaSelection area) {
-		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(area.toNbt()));
+		stack.set(PortingLibGameTest.AREA_SELECTOR_DATA_COMPONENT, area);
 	}
 
 	public static BlockPos getLookTarget(Player player) {
