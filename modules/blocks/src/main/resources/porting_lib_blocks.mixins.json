@@ -12,6 +12,7 @@
     "RedStoneOreBlockMixin",
     "SculkCatalystBlockMixin",
     "SculkSensorBlockMixin",
-    "SculkShriekerBlockMixin"
+    "SculkShriekerBlockMixin",
+    "SpawnerBlockMixin"
   ]
 }
