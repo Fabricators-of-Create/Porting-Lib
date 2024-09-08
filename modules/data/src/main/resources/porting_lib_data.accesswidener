@@ -1,7 +1,10 @@
 accessWidener v2 named
 
 transitive-accessible class net/minecraft/core/RegistrySetBuilder$RegistryStub
-accessible class net/minecraft/server/packs/FilePackResources$SharedZipFileAccess
+transitive-accessible class net/minecraft/server/packs/FilePackResources$SharedZipFileAccess
+transitive-accessible method net/minecraft/server/packs/FilePackResources$SharedZipFileAccess <init> (Ljava/io/File;)V
+
+accessible method net/minecraft/server/packs/FilePackResources <init> (Lnet/minecraft/server/packs/PackLocationInfo;Lnet/minecraft/server/packs/FilePackResources$SharedZipFileAccess;Ljava/lang/String;)V
 
 transitive-accessible method net/minecraft/client/resources/ClientPackSource createVanillaPackSource (Ljava/nio/file/Path;)Lnet/minecraft/server/packs/VanillaPackResources;
 transitive-accessible method net/minecraft/data/registries/RegistriesDatapackGenerator dumpValue (Ljava/nio/file/Path;Lnet/minecraft/data/CachedOutput;Lcom/mojang/serialization/DynamicOps;Lcom/mojang/serialization/Encoder;Ljava/lang/Object;)Ljava/util/concurrent/CompletableFuture;

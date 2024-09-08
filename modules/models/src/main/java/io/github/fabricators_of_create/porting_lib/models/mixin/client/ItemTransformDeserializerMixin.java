@@ -1,11 +1,10 @@
-package io.github.fabricators_of_create.porting_lib.extensions.mixin.client;
+package io.github.fabricators_of_create.porting_lib.models.mixin.client;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 
 import com.google.gson.JsonObject;
 
-import io.github.fabricators_of_create.porting_lib.extensions.extensions.ItemTransformExtensions;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 
 import org.joml.Vector3f;
@@ -31,6 +30,6 @@ public abstract class ItemTransformDeserializerMixin {
 	private void port_lib$rightRotation(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext, CallbackInfoReturnable<ItemTransform> cir) {
 		Vector3f rightRotation = this.getVector3f(jsonElement.getAsJsonObject(), "right_rotation", DEFAULT_ROTATION);
 		// why is this cast required???
-		((ItemTransformExtensions)cir.getReturnValue()).setRightRotation(rightRotation);
+		cir.getReturnValue().setRightRotation(rightRotation);
 	}
 }

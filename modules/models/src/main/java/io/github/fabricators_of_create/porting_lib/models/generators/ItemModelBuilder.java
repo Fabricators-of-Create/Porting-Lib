@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.models.generators.item;
+package io.github.fabricators_of_create.porting_lib.models.generators;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -10,8 +10,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import io.github.fabricators_of_create.porting_lib.data.ExistingFileHelper;
-import io.github.fabricators_of_create.porting_lib.models.generators.ModelBuilder;
-import io.github.fabricators_of_create.porting_lib.models.generators.ModelFile;
 import net.minecraft.resources.ResourceLocation;
 
 /**

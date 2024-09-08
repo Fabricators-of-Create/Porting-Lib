@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.models.generators.block;
+package io.github.fabricators_of_create.porting_lib.models.generators;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -21,12 +21,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 
-import io.github.fabricators_of_create.porting_lib.models.generators.ConfiguredModel;
-import io.github.fabricators_of_create.porting_lib.models.generators.IGeneratedBlockState;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import io.github.fabricators_of_create.porting_lib.models.generators.block.BlockStateProvider.ConfiguredModelList;
+import io.github.fabricators_of_create.porting_lib.models.generators.BlockStateProvider.ConfiguredModelList;
 import org.jetbrains.annotations.Nullable;
 
 /**

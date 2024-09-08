@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.models.generators.block;
+package io.github.fabricators_of_create.porting_lib.models.generators;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,8 +13,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import io.github.fabricators_of_create.porting_lib.models.generators.ConfiguredModel;
-import io.github.fabricators_of_create.porting_lib.models.generators.IGeneratedBlockState;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.Property;
 

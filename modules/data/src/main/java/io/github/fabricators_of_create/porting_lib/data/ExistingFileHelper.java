@@ -1,7 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.data;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import java.io.File;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -9,15 +11,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 import io.github.fabricators_of_create.porting_lib.data.extensions.MinecraftExtension;
-import io.github.fabricators_of_create.porting_lib.data.mixin.accessor.FilePackResources$SharedZipFileAccessAccessor;
-import io.github.fabricators_of_create.porting_lib.data.mixin.accessor.FilePackResourcesAccessor;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.Minecraft;
@@ -25,32 +22,32 @@ import net.minecraft.client.main.GameConfig;
 import net.minecraft.client.resources.ClientPackSource;
 import net.minecraft.client.resources.IndexedAssetSource;
 import net.minecraft.data.DataProvider;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.FilePackResources;
 import net.minecraft.server.packs.PackLocationInfo;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.PathPackResources;
+import net.minecraft.server.packs.VanillaPackResources;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.ServerPacksSource;
 import net.minecraft.server.packs.resources.MultiPackResourceManager;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.PackResources;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.VanillaPackResources;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 /**
  * Enables data providers to check if other data files currently exist. The
- * instance provided in the {@link GatherDataEvent} utilizes the standard
+ * instance provided in the {@link ExistingFileHelper#withResourcesFromArg()} utilizes the standard
  * resources (via {@link VanillaPackResources}), forge's resources, as well as any
  * extra resource packs passed in via the {@code --existing} argument,
  * or mod resources via the {@code --existing-mod} argument.
  */
 public class ExistingFileHelper {
-
 	public interface IResourceType {
-
 		PackType getPackType();
 
 		String getSuffix();
@@ -59,9 +56,9 @@ public class ExistingFileHelper {
 	}
 
 	public static class ResourceType implements IResourceType {
-
 		final PackType packType;
 		final String suffix, prefix;
+
 		public ResourceType(PackType type, String suffix, String prefix) {
 			this.packType = type;
 			this.suffix = suffix;
@@ -69,13 +66,19 @@ public class ExistingFileHelper {
 		}
 
 		@Override
-		public PackType getPackType() { return packType; }
+		public PackType getPackType() {
+			return packType;
+		}
 
 		@Override
-		public String getSuffix() { return suffix; }
+		public String getSuffix() {
+			return suffix;
+		}
 
 		@Override
-		public String getPrefix() { return prefix; }
+		public String getPrefix() {
+			return prefix;
+		}
 	}
 
 	private final MultiPackResourceManager clientResources, serverData;
@@ -131,42 +134,47 @@ public class ExistingFileHelper {
 	 * <p>
 	 * Only create a new helper if you intentionally want to ignore the existence of
 	 * other generated files.
+	 *
 	 * @param existingPacks a collection of paths to existing packs
-	 * @param existingMods a set of mod IDs for existing mods
-	 * @param enable {@code true} if validation is enabled
-	 * @param assetIndex the identifier for the asset index, generally Minecraft's current major version
-	 * @param assetsDir the directory in which to find vanilla assets and indexes
+	 * @param existingMods  a set of mod IDs for existing mods
+	 * @param enable        {@code true} if validation is enabled
+	 * @param assetIndex    the identifier for the asset index, generally Minecraft's current major version
+	 * @param assetsDir     the directory in which to find vanilla assets and indexes
 	 */
 	public ExistingFileHelper(Collection<Path> existingPacks, final Set<String> existingMods, boolean enable, @Nullable final String assetIndex, @Nullable final File assetsDir) {
 		List<PackResources> candidateClientResources = new ArrayList<>();
 		List<PackResources> candidateServerResources = new ArrayList<>();
 
-		if (assetIndex != null && assetsDir != null && assetsDir.exists())
-		{
+		if (assetIndex != null && assetsDir != null && assetsDir.exists()) {
 			candidateClientResources.add(ClientPackSource.createVanillaPackSource(IndexedAssetSource.createIndexFs(assetsDir.toPath(), assetIndex)));
 		}
 		candidateServerResources.add(ServerPacksSource.createVanillaPackSource());
 		for (Path existing : existingPacks) {
 			File file = existing.toFile();
-			PackResources pack = file.isDirectory()
-					? new PathPackResources(file.getName(), file.toPath(), false)
-					: FilePackResourcesAccessor.callInit(file.getName(), FilePackResources$SharedZipFileAccessAccessor.callInit(file), false, "");
+			if (!file.exists())
+				continue;
+			PackResources pack = file.isDirectory() ? new PathPackResources(new PackLocationInfo(file.getName(), Component.empty(), PackSource.BUILT_IN, Optional.empty()), file.toPath()) : new FilePackResources(new PackLocationInfo(file.getName(), Component.empty(), PackSource.BUILT_IN, Optional.empty()), new FilePackResources.SharedZipFileAccess(file), "");
 			candidateClientResources.add(pack);
 			candidateServerResources.add(pack);
 		}
 		for (String existingMod : existingMods) {
-			ModContainer modFileInfo = FabricLoader.getInstance().getModContainer(existingMod).orElse(null);
-			if (modFileInfo != null) {
-				PackResources pack = io.github.fabricators_of_create.porting_lib.resources.PathPackResources.createPackForMod(modFileInfo);
-				candidateClientResources.add(pack);
-				candidateServerResources.add(pack);
-			}
+			Optional<ModContainer> modFileInfo = FabricLoader.getInstance().getModContainer(existingMod);
+			modFileInfo.ifPresent(modContainer -> {
+				// Only opens primary packs - overlays are not currently considered for datagen
+				final String name = "mod/" + existingMod;
+				candidateClientResources.add(createPackForMod(modContainer).openPrimary(new PackLocationInfo(name, Component.empty(), PackSource.BUILT_IN, Optional.empty())));
+				candidateServerResources.add(createPackForMod(modContainer).openPrimary(new PackLocationInfo(name, Component.empty(), PackSource.BUILT_IN, Optional.empty())));
+			});
 		}
 
 		this.clientResources = new MultiPackResourceManager(PackType.CLIENT_RESOURCES, candidateClientResources);
 		this.serverData = new MultiPackResourceManager(PackType.SERVER_DATA, candidateServerResources);
 
 		this.enable = enable;
+	}
+
+	public static Pack.ResourcesSupplier createPackForMod(ModContainer mf) {
+		return new PathPackResources.PathResourcesSupplier(mf.getRootPath());
 	}
 
 	private ResourceManager getManager(PackType packType) {
@@ -273,13 +281,18 @@ public class ExistingFileHelper {
 	}
 
 	@VisibleForTesting
-	public Resource getResource(ResourceLocation loc, PackType packType, String pathSuffix, String pathPrefix) throws IOException {
+	public Resource getResource(ResourceLocation loc, PackType packType, String pathSuffix, String pathPrefix) throws FileNotFoundException {
 		return getResource(getLocation(loc, pathSuffix, pathPrefix), packType);
 	}
 
 	@VisibleForTesting
-	public Resource getResource(ResourceLocation loc, PackType packType) throws IOException {
-		return getManager(packType).getResource(loc).orElseThrow();
+	public Resource getResource(ResourceLocation loc, PackType packType) throws FileNotFoundException {
+		return getManager(packType).getResourceOrThrow(loc);
+	}
+
+	@VisibleForTesting
+	public List<Resource> getResourceStack(ResourceLocation loc, PackType packType) {
+		return getManager(packType).getResourceStack(loc);
 	}
 
 	/**

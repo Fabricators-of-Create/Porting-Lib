@@ -49,7 +49,7 @@ public class ElementsModel extends SimpleUnbakedGeometry<ElementsModel> {
 				var face = element.faces.get(direction);
 				var sprite = spriteGetter.apply(context.getMaterial(face.texture()));
 				var quad = BlockModel.bakeFace(element, face, sprite, direction, modelState);
-				postTransform.processInPlace(quad);
+//				postTransform.processInPlace(quad); TODO: PORT
 
 				if (face.cullForDirection() == null)
 					modelBuilder.addUnculledFace(quad);

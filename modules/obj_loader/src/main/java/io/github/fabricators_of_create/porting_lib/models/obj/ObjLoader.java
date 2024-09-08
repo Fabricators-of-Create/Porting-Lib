@@ -3,10 +3,7 @@ package io.github.fabricators_of_create.porting_lib.models.obj;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.function.Consumer;
-
-import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Maps;
 import com.google.gson.JsonDeserializationContext;
@@ -19,9 +16,7 @@ import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryLoader;
 import io.github.fabricators_of_create.porting_lib.models.obj.ObjModel.ModelSettings;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
-import net.fabricmc.fabric.api.client.model.loading.v1.ModelResolver;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -48,7 +43,6 @@ public class ObjLoader implements ModelLoadingPlugin, IGeometryLoader<ObjModel> 
 		materialCache.clear();
 
 		findModels(ctx::addModels);
-		ctx.resolveModel().register(new Resolver());
 	}
 
 	/**
@@ -105,16 +99,11 @@ public class ObjLoader implements ModelLoadingPlugin, IGeometryLoader<ObjModel> 
 		});
 	}
 
-	private ObjModel loadModel(ObjModel.ModelSettings settings) {
-		ResourceLocation id = settings.modelLocation();
-		Resource resource = getResourceManager().getResource(id).orElseThrow(() -> new NoSuchElementException(id.toString()));
-		return loadModel(resource, settings);
-	}
-
-	private ObjModel loadModel(Resource resource, ObjModel.ModelSettings settings) {
-		return modelCache.computeIfAbsent(settings, data -> {
+	public ObjModel loadModel(ObjModel.ModelSettings settings) {
+		return modelCache.computeIfAbsent(settings, (data) -> {
+			Resource resource = getResourceManager().getResource(settings.modelLocation()).orElseThrow();
 			try (ObjTokenizer tokenizer = new ObjTokenizer(resource.open())) {
-				return ObjParser.parse(tokenizer, settings);
+				return ObjModel.parse(tokenizer, settings);
 			} catch (FileNotFoundException e) {
 				throw new RuntimeException("Could not find OBJ model", e);
 			} catch (Exception e) {
@@ -138,31 +127,5 @@ public class ObjLoader implements ModelLoadingPlugin, IGeometryLoader<ObjModel> 
 
 	private static ResourceManager getResourceManager() {
 		return Minecraft.getInstance().getResourceManager();
-	}
-
-	private class Resolver implements ModelResolver {
-		@Override
-		@Nullable
-		public UnbakedModel resolveModel(Context context) {
-			ResourceLocation id = context.id();
-			var resourceManager = getResourceManager();
-			return resourceManager.getResource(id).map(resource -> {
-				JsonObject json = tryLoadModelJson(id, resource);
-				if (json != null) {
-					return tryReadSettings(json).map(settings -> {
-						try {
-							return loadModel(resourceManager.getResourceOrThrow(ResourceLocation.parse(GsonHelper.getAsString(json, "model"))), settings);
-						} catch (FileNotFoundException e) {
-							throw new RuntimeException(e);
-						}
-					}, exception -> {
-						PortingLib.LOGGER.error("Error loading obj model: " + id, exception);
-						return null;
-					});
-
-				}
-				return null;
-			}).orElse(null);
-		}
 	}
 }

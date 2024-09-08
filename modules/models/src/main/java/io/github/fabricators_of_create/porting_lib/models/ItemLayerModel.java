@@ -1,110 +1,111 @@
 package io.github.fabricators_of_create.porting_lib.models;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.function.Function;
-
+import com.google.common.collect.ImmutableList;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-import org.jetbrains.annotations.Nullable;
-
-import com.google.common.collect.ImmutableList;
-import com.google.gson.JsonObject;
-
+import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryBakingContext;
+import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryLoader;
+import io.github.fabricators_of_create.porting_lib.models.geometry.IUnbakedGeometry;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
-import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
-import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
-import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModel;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import java.util.Map;
+import java.util.function.Function;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.ItemModelGenerator;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
-public class ItemLayerModel implements UnbakedModel {
-	private final BlockModel owner;
+/**
+ * Forge reimplementation of vanilla's {@link ItemModelGenerator}, i.e. builtin/generated models with some tweaks:
+ * - Represented as {@link IUnbakedGeometry} so it can be baked as usual instead of being special-cased
+ * - Not limited to an arbitrary number of layers (5)
+ * - Support for per-layer render types
+ */
+public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel> {
 	@Nullable
 	private ImmutableList<Material> textures;
-	private final Int2ObjectMap<RenderMaterial> layerData;
+	private final Int2ObjectMap<ExtraFaceData> layerData;
+	private final Int2ObjectMap<ResourceLocation> renderTypeNames;
 
-	private ItemLayerModel(BlockModel owner, @Nullable ImmutableList<Material> textures, Int2ObjectMap<RenderMaterial> layerData) {
-		this.owner = owner;
+	private ItemLayerModel(@Nullable ImmutableList<Material> textures, Int2ObjectMap<ExtraFaceData> layerData, Int2ObjectMap<ResourceLocation> renderTypeNames) {
 		this.textures = textures;
 		this.layerData = layerData;
+		this.renderTypeNames = renderTypeNames;
 	}
 
 	@Override
-	public Collection<ResourceLocation> getDependencies() {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter) {}
-
-	@Nullable
-	@Override
-	public BakedModel bake(ModelBaker modelBaker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation) {
+	public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides) {
 		if (textures == null) {
 			ImmutableList.Builder<Material> builder = ImmutableList.builder();
-			if (owner.hasTexture("particle"))
-				builder.add(owner.getMaterial("particle"));
-			for (int i = 0; owner.hasTexture("layer" + i); i++)
-			{
-				builder.add(owner.getMaterial("layer" + i));
+			for (int i = 0; context.hasMaterial("layer" + i); i++) {
+				builder.add(context.getMaterial("layer" + i));
 			}
 			textures = builder.build();
 		}
 
 		TextureAtlasSprite particle = spriteGetter.apply(
-				owner.hasTexture("particle") ? owner.getMaterial("particle") : textures.get(0)
-		);
+				context.hasMaterial("particle") ? context.getMaterial("particle") : textures.get(0));
+		var rootTransform = context.getRootTransform();
+		if (!rootTransform.isIdentity())
+			modelState = UnbakedGeometryHelper.composeRootTransformIntoModelState(modelState, rootTransform);
 
-		MeshBuilder meshBuilder = RendererAccess.INSTANCE.getRenderer().meshBuilder();
-		for (int i = 0; i < textures.size(); i++)
-		{
-			QuadEmitter emitter = meshBuilder.getEmitter();
+		var normalRenderTypes = new RenderTypeGroup(RenderType.translucent(), RenderType.translucent()/*NeoForgeRenderTypes.ITEM_UNSORTED_TRANSLUCENT.get() TODO: PORT */);
+		CompositeModel.Baked.Builder builder = CompositeModel.Baked.builder(context, particle, overrides, context.getTransforms());
+		for (int i = 0; i < textures.size(); i++) {
 			TextureAtlasSprite sprite = spriteGetter.apply(textures.get(i));
-			var unbaked = ModelBakery.ITEM_MODEL_GENERATOR.processFrames(i, "layer" + i, sprite.contents());
-			var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> sprite, modelState, modelLocation);
-			for (BakedQuad quad : quads) {
-				emitter.fromVanilla(quad, this.layerData.get(i), quad.getDirection());
-				emitter.emit();
-			}
+			var unbaked = UnbakedGeometryHelper.createUnbakedItemElements(i, sprite, this.layerData.get(i));
+			var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> sprite, modelState);
+			var renderTypeName = renderTypeNames.get(i);
+			RenderTypeGroup renderTypes = /*renderTypeName != null ? context.getRenderType(renderTypeName) :*/ null;
+			builder.addQuads(renderTypes != null ? renderTypes : normalRenderTypes, quads);
 		}
 
-		return new BakedMeshModel(owner, particle, meshBuilder.build());
+		return builder.build();
 	}
 
-	public static final class Loader implements ModelLoader {
+	public static final class Loader implements IGeometryLoader<ItemLayerModel> {
 		public static final Loader INSTANCE = new Loader();
 
 		@Override
-		public UnbakedModel readModel(BlockModel parent, JsonObject jsonObject) {
-			if (!RendererAccess.INSTANCE.hasRenderer())
-				throw new JsonParseException("The Fabric Rendering API is not available. If you have Sodium, install Indium!");
-			var emissiveLayers = new Int2ObjectArrayMap<RenderMaterial>();
-			if(jsonObject.has("render_materials")) {
-				JsonObject forgeData = jsonObject.get("render_materials").getAsJsonObject();
-				readLayerData(forgeData, "layers", emissiveLayers);
+		public ItemLayerModel read(JsonObject jsonObject, JsonDeserializationContext deserializationContext) {
+			var renderTypeNames = new Int2ObjectOpenHashMap<ResourceLocation>();
+			if (jsonObject.has("render_types")) {
+				var renderTypes = jsonObject.getAsJsonObject("render_types");
+				for (Map.Entry<String, JsonElement> entry : renderTypes.entrySet()) {
+					var renderType = ResourceLocation.parse(entry.getKey());
+					for (var layer : entry.getValue().getAsJsonArray())
+						if (renderTypeNames.put(layer.getAsInt(), renderType) != null)
+							throw new JsonParseException("Registered duplicate render type for layer " + layer);
+				}
 			}
-			return new ItemLayerModel(parent, null, emissiveLayers);
+
+			var emissiveLayers = new Int2ObjectArrayMap<ExtraFaceData>();
+			if (jsonObject.has("forge_data")) throw new JsonParseException("forge_data should be replaced by neoforge_data"); // TODO 1.22: Remove
+			if (jsonObject.has("neoforge_data")) {
+				JsonObject forgeData = jsonObject.get("neoforge_data").getAsJsonObject();
+				readLayerData(forgeData, "layers", renderTypeNames, emissiveLayers, false);
+			}
+			return new ItemLayerModel(null, emissiveLayers, renderTypeNames);
 		}
 
-		public void readLayerData(JsonObject jsonObject, String name, Int2ObjectMap<RenderMaterial> layerData) {
+		protected void readLayerData(JsonObject jsonObject, String name, Int2ObjectOpenHashMap<ResourceLocation> renderTypeNames, Int2ObjectMap<ExtraFaceData> layerData, boolean logWarning) {
 			if (!jsonObject.has(name)) {
 				return;
 			}
 			var fullbrightLayers = jsonObject.getAsJsonObject(name);
 			for (var entry : fullbrightLayers.entrySet()) {
 				int layer = Integer.parseInt(entry.getKey());
-				var data = PortingLibModelLoadingRegistry.GSON.fromJson(entry.getValue(), RenderMaterial.class);
+				var data = ExtraFaceData.read(entry.getValue(), ExtraFaceData.DEFAULT);
 				layerData.put(layer, data);
 			}
 		}

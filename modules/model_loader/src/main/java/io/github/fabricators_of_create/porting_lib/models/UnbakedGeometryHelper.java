@@ -122,7 +122,7 @@ public class UnbakedGeometryHelper {
 		var elements = ITEM_MODEL_GENERATOR.processFrames(layerIndex, "layer" + layerIndex, sprite.contents());
 //		ClientHooks.fixItemModelSeams(elements, sprite); We could implement this but meh
 		if (faceData != null) {
-			elements.forEach(element -> element.setFaceData(faceData));
+			elements.forEach(element -> element.port_lib$setFaceData(faceData));
 		}
 		return elements;
 	}

@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import java.util.List;
 
 import io.github.fabricators_of_create.porting_lib.core.event.CancellableEvent;
+import io.github.fabricators_of_create.porting_lib.level.LevelHooks;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.core.BlockPos;
@@ -57,7 +58,7 @@ public class BlockDropsEvent extends BlockEvent implements CancellableEvent {
 		this.breaker = breaker;
 		this.tool = tool;
 
-		this.experience = EnchantmentHelper.processBlockExperience(level, tool, state.getExpDrop(level, pos, blockEntity, breaker, tool));
+		this.experience = EnchantmentHelper.processBlockExperience(level, tool, LevelHooks.getExpDrop(state, level, pos, blockEntity, breaker, tool));
 	}
 
 	/**

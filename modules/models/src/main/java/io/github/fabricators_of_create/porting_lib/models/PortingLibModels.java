@@ -15,16 +15,14 @@ public class PortingLibModels implements ClientModInitializer {
 	public void onInitializeClient() {
 		ModelLoadingPlugin.register(PortingLibModelLoadingRegistry.INSTANCE);
 
-		PortingLibModelLoadingRegistry.LOADERS.put(PortingLib.id("item_layers"), ItemLayerModel.Loader.INSTANCE);
-
 		RegisterGeometryLoadersCallback.EVENT.register(loaders -> {
 			loaders.put(PortingLib.id("elements"), ElementsModel.Loader.INSTANCE);
 
-			loaders.put(PortingLib.id("composite"), CompositeModelLoader.INSTANCE);
+			loaders.put(PortingLib.id("composite"), CompositeModel.Loader.INSTANCE);
+			loaders.put(PortingLib.id("item_layers"), ItemLayerModel.Loader.INSTANCE);
 
-			loaders.put(PortingLib.id("fluid_container"), DynamicFluidContainerModel.Loader.INSTANCE);
+//			loaders.put(PortingLib.id("fluid_container"), DynamicFluidContainerModel.Loader.INSTANCE); TODO: PORT
 
-			loaders.put(ResourceLocation.fromNamespaceAndPath("neoforge", "bucket"), DynamicFluidContainerModel.Loader.INSTANCE_DEPRECATED);
 		});
 		BlockModel.GSON = BlockModel.GSON.newBuilder()
 				.registerTypeAdapter(Transformation.class, new TransformationHelper.Deserializer())

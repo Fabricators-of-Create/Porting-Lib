@@ -1,17 +1,16 @@
 package io.github.fabricators_of_create.porting_lib.data;
 
-import com.mojang.serialization.JsonOps;
-import net.minecraft.client.renderer.texture.atlas.SpriteSource;
-import net.minecraft.client.renderer.texture.atlas.SpriteSources;
-import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackType;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
+import java.util.concurrent.CompletableFuture;
+import net.minecraft.client.renderer.texture.atlas.SpriteSource;
+import net.minecraft.client.renderer.texture.atlas.SpriteSources;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
 
 /**
  * <p>Data provider for atlas configuration files.<br>
@@ -34,33 +33,29 @@ public abstract class SpriteSourceProvider extends JsonCodecProvider<List<Sprite
 
 	private final Map<ResourceLocation, SourceList> atlases = new HashMap<>();
 
-	public SpriteSourceProvider(PackOutput output, String modid) {
-		super(output, modid, JsonOps.INSTANCE, PackType.CLIENT_RESOURCES, "atlases", SpriteSources.FILE_CODEC, Map.of());
+	public SpriteSourceProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId, ExistingFileHelper existingFileHelper) {
+		super(output, PackOutput.Target.RESOURCE_PACK, "atlases", PackType.CLIENT_RESOURCES, SpriteSources.FILE_CODEC, lookupProvider, modId, existingFileHelper);
 	}
-
-	@Override
-	protected final void gather(BiConsumer<ResourceLocation, List<SpriteSource>> consumer) {
-		addSources();
-		atlases.forEach((atlas, srcList) -> consumer.accept(atlas, srcList.sources));
-	}
-
-	protected abstract void addSources();
 
 	/**
 	 * Get or create a {@link SourceList} for the given atlas
-	 * @param atlas The texture atlas the sources should be added to, see constants at the top for the format
-	 *              and the vanilla atlases
+	 *
+	 * @param id The texture atlas the sources should be added to, see constants at the top for the format
+	 *           and the vanilla atlases
 	 * @return an existing {@code SourceList} for the given atlas or a new one if not present yet
 	 */
-	protected final SourceList atlas(ResourceLocation atlas) {
-		return atlases.computeIfAbsent(atlas, $ -> new SourceList());
+	protected final SourceList atlas(ResourceLocation id) {
+		return atlases.computeIfAbsent(id, i -> {
+			final SourceList newAtlas = new SourceList(new ArrayList<>());
+			unconditional(i, newAtlas.sources());
+			return newAtlas;
+		});
 	}
 
-	protected static final class SourceList {
-		private final List<SpriteSource> sources = new ArrayList<>();
-
+	protected record SourceList(List<SpriteSource> sources) {
 		/**
 		 * Add the given {@link SpriteSource} to this atlas configuration
+		 *
 		 * @param source The {@code SpriteSource} to be added
 		 */
 		public SourceList addSource(SpriteSource source) {

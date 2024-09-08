@@ -1,6 +1,5 @@
-package io.github.fabricators_of_create.porting_lib.models.generators.block;
+package io.github.fabricators_of_create.porting_lib.models.generators;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -9,7 +8,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -19,11 +17,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 import io.github.fabricators_of_create.porting_lib.data.ExistingFileHelper;
-import io.github.fabricators_of_create.porting_lib.models.generators.ConfiguredModel;
-import io.github.fabricators_of_create.porting_lib.models.generators.IGeneratedBlockState;
-import io.github.fabricators_of_create.porting_lib.models.generators.ModelFile;
-import io.github.fabricators_of_create.porting_lib.models.generators.ModelProvider;
-import io.github.fabricators_of_create.porting_lib.models.generators.item.ItemModelProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -59,14 +52,13 @@ import net.minecraft.world.level.block.state.properties.StairsShape;
 import net.minecraft.world.level.block.state.properties.WallSide;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 /**
  * Data provider for blockstate files. Extends {@link BlockModelProvider} so that
  * blockstates and their referenced models can be provided in tandem.
  */
 public abstract class BlockStateProvider implements DataProvider {
-
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
 
@@ -82,14 +74,22 @@ public abstract class BlockStateProvider implements DataProvider {
 		this.output = output;
 		this.modid = modid;
 		this.blockModels = new BlockModelProvider(output, modid, exFileHelper) {
-			@Override public CompletableFuture<?> run(CachedOutput cache) { return CompletableFuture.allOf(); }
+			@Override
+			public CompletableFuture<?> run(CachedOutput cache) {
+				return CompletableFuture.allOf();
+			}
 
-			@Override protected void registerModels() {}
+			@Override
+			protected void registerModels() {}
 		};
 		this.itemModels = new ItemModelProvider(output, modid, this.blockModels.existingFileHelper) {
-			@Override protected void registerModels() {}
+			@Override
+			protected void registerModels() {}
 
-			@Override public CompletableFuture<?> run(CachedOutput cache) { return CompletableFuture.allOf(); }
+			@Override
+			public CompletableFuture<?> run(CachedOutput cache) {
+				return CompletableFuture.allOf();
+			}
 		};
 	}
 
@@ -148,7 +148,7 @@ public abstract class BlockStateProvider implements DataProvider {
 	}
 
 	public ResourceLocation mcLoc(String name) {
-		return ResourceLocation.withDefaultNamespace(name);
+		return ResourceLocation.parse(name);
 	}
 
 	private ResourceLocation key(Block block) {
@@ -285,8 +285,7 @@ public abstract class BlockStateProvider implements DataProvider {
 				.forAllStates(state -> ConfiguredModel.builder()
 						.modelFile(modelFunc.apply(state))
 						.rotationY(((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + angleOffset) % 360)
-						.build()
-				);
+						.build());
 	}
 
 	public void horizontalFaceBlock(Block block, ModelFile model) {
@@ -307,8 +306,7 @@ public abstract class BlockStateProvider implements DataProvider {
 						.modelFile(modelFunc.apply(state))
 						.rotationX(state.getValue(BlockStateProperties.ATTACH_FACE).ordinal() * 90)
 						.rotationY((((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + angleOffset) + (state.getValue(BlockStateProperties.ATTACH_FACE) == AttachFace.CEILING ? 180 : 0)) % 360)
-						.build()
-				);
+						.build());
 	}
 
 	public void directionalBlock(Block block, ModelFile model) {
@@ -628,10 +626,10 @@ public abstract class BlockStateProvider implements DataProvider {
 	}
 
 	public static final ImmutableMap<Direction, Property<WallSide>> WALL_PROPS = ImmutableMap.<Direction, Property<WallSide>>builder()
-			.put(Direction.EAST,  BlockStateProperties.EAST_WALL)
+			.put(Direction.EAST, BlockStateProperties.EAST_WALL)
 			.put(Direction.NORTH, BlockStateProperties.NORTH_WALL)
 			.put(Direction.SOUTH, BlockStateProperties.SOUTH_WALL)
-			.put(Direction.WEST,  BlockStateProperties.WEST_WALL)
+			.put(Direction.WEST, BlockStateProperties.WEST_WALL)
 			.build();
 
 	public void wallBlock(WallBlock block, ModelFile post, ModelFile side, ModelFile sideTall) {
@@ -867,7 +865,6 @@ public abstract class BlockStateProvider implements DataProvider {
 		return DataProvider.saveStable(cache, stateJson, outputPath);
 	}
 
-	@NotNull
 	@Override
 	public String getName() {
 		return "Block States: " + modid;
@@ -890,11 +887,11 @@ public abstract class BlockStateProvider implements DataProvider {
 		}
 
 		public JsonElement toJSON() {
-			if (models.size()==1) {
+			if (models.size() == 1) {
 				return models.get(0).toJSON(false);
 			} else {
 				JsonArray ret = new JsonArray();
-				for (ConfiguredModel m:models) {
+				for (ConfiguredModel m : models) {
 					ret.add(m.toJSON(true));
 				}
 				return ret;

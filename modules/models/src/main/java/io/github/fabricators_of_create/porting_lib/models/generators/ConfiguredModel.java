@@ -11,12 +11,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ObjectArrays;
 import com.google.gson.JsonObject;
 
-import io.github.fabricators_of_create.porting_lib.models.generators.block.MultiPartBlockStateBuilder;
-import io.github.fabricators_of_create.porting_lib.models.generators.block.VariantBlockStateBuilder;
-import io.github.fabricators_of_create.porting_lib.models.generators.block.VariantBlockStateBuilder.PartialBlockstate;
-import io.github.fabricators_of_create.porting_lib.models.generators.block.MultiPartBlockStateBuilder.PartBuilder;
+import io.github.fabricators_of_create.porting_lib.models.generators.VariantBlockStateBuilder.PartialBlockstate;
+import io.github.fabricators_of_create.porting_lib.models.generators.MultiPartBlockStateBuilder.PartBuilder;
 
-import io.github.fabricators_of_create.porting_lib.models.generators.block.BlockStateProvider;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import org.jetbrains.annotations.Nullable;
 

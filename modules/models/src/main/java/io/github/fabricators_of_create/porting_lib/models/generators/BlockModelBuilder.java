@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.models.generators.block;
+package io.github.fabricators_of_create.porting_lib.models.generators;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonArray;
@@ -6,8 +6,6 @@ import com.google.gson.JsonObject;
 import com.mojang.math.Transformation;
 
 import io.github.fabricators_of_create.porting_lib.data.ExistingFileHelper;
-import io.github.fabricators_of_create.porting_lib.models.generators.ModelBuilder;
-import io.github.fabricators_of_create.porting_lib.models.generators.ModelProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;

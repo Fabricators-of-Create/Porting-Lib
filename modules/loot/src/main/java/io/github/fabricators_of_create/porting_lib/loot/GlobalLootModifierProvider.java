@@ -94,7 +94,7 @@ public abstract class GlobalLootModifierProvider implements DataProvider {
 	 * @param conditions a list of conditions to add to the GLM file
 	 */
 	public <T extends IGlobalLootModifier> void add(String modifier, T instance, List<ICondition> conditions) {
-		this.toSerialize.put(modifier, new WithConditions<>(conditions, instance));
+//		this.toSerialize.put(modifier, new WithConditions<>(conditions, instance)); TODO: PORT
 	}
 
 	/**

@@ -8,6 +8,10 @@
   },
   "mixins": [
     "BlockBehaviourMixin",
-    "DropExperienceBlockMixin"
+    "DropExperienceBlockMixin",
+    "RedStoneOreBlockMixin",
+    "SculkCatalystBlockMixin",
+    "SculkSensorBlockMixin",
+    "SculkShriekerBlockMixin"
   ]
 }

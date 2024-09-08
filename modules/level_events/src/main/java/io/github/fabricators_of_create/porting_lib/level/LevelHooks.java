@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.level;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 
+import io.github.fabricators_of_create.porting_lib.blocks.extensions.CustomExpBlock;
 import io.github.fabricators_of_create.porting_lib.level.events.BlockEvent;
 import io.github.fabricators_of_create.porting_lib.level.events.LevelEvent;
 import net.minecraft.core.BlockPos;
@@ -18,7 +19,9 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.GameMasterBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ServerLevelData;
 
@@ -113,5 +116,12 @@ public class LevelHooks {
 		BlockEvent.FluidPlaceBlockEvent event = new BlockEvent.FluidPlaceBlockEvent(level, pos, liquidPos, state);
 		event.sendEvent();
 		return event.getNewState();
+	}
+
+	public static int getExpDrop(BlockState state, LevelAccessor level, BlockPos pos, @Nullable BlockEntity blockEntity, @Nullable Entity breaker, ItemStack tool) {
+		Block block = state.getBlock();
+		if (block instanceof CustomExpBlock customExpBlock)
+			return customExpBlock.getExpDrop(state, level, pos, blockEntity, breaker, tool);
+		return 0; // Ignore Vanilla exp because vanilla blocks already handle that
 	}
 }

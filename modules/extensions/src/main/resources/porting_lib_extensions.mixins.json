@@ -15,8 +15,6 @@
   ],
   "client": [
     "client.DimensionSpecialEffectsMixin",
-    "client.ItemTransformDeserializerMixin",
-    "client.ItemTransformMixin",
     "client.LevelRendererMixin",
     "client.LightTextureMixin",
     "client.PoseStackMixin",

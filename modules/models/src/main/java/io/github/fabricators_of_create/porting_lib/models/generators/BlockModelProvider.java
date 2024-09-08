@@ -1,7 +1,6 @@
-package io.github.fabricators_of_create.porting_lib.models.generators.block;
+package io.github.fabricators_of_create.porting_lib.models.generators;
 
 import io.github.fabricators_of_create.porting_lib.data.ExistingFileHelper;
-import io.github.fabricators_of_create.porting_lib.models.generators.ModelProvider;
 import net.minecraft.data.PackOutput;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,6 +1,6 @@
-package io.github.fabricators_of_create.porting_lib.extensions.mixin.client;
+package io.github.fabricators_of_create.porting_lib.models.mixin.client;
 
-import io.github.fabricators_of_create.porting_lib.extensions.extensions.ItemTransformExtensions;
+import io.github.fabricators_of_create.porting_lib.models.extensions.ItemTransformExtensions;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 
 import org.joml.Vector3f;

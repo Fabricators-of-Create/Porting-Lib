@@ -1,8 +1,6 @@
-package io.github.fabricators_of_create.porting_lib.models.generators.item;
+package io.github.fabricators_of_create.porting_lib.models.generators;
 
 import io.github.fabricators_of_create.porting_lib.data.ExistingFileHelper;
-import io.github.fabricators_of_create.porting_lib.models.generators.ModelFile;
-import io.github.fabricators_of_create.porting_lib.models.generators.ModelProvider;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;

@@ -5,10 +5,11 @@
   "plugin": "io.github.fabricators_of_create.porting_lib.models.mixin.PortingLibModelsPlugin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "BlockElementFaceMixin",
     "client.BlockModelDeserializerMixin",
     "client.BlockModelMixin",
     "client.ItemRendererMixin",
+    "client.ItemTransformDeserializerMixin",
+    "client.ItemTransformMixin",
     "client.ParticleEngineMixin",
     "client.ScreenEffectRendererMixin",
     "client.TerrainParticle$ProviderMixin",

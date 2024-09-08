@@ -1,19 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.models.obj;
 
+import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.NoSuchElementException;
-
-import org.joml.Vector4f;
-
-import com.google.common.collect.Maps;
-
 import joptsimple.internal.Strings;
-import net.fabricmc.fabric.api.renderer.v1.Renderer;
-import net.fabricmc.fabric.api.renderer.v1.material.MaterialFinder;
-import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
-import net.minecraft.resources.ResourceLocation;
+import org.joml.Vector4f;
 
 /**
  * An OBJ material library (MTL), composed of named {@link Material materials}.
@@ -22,8 +15,7 @@ public class ObjMaterialLibrary {
 	public static final ObjMaterialLibrary EMPTY = new ObjMaterialLibrary();
 	final Map<String, Material> materials = Maps.newHashMap();
 
-	private ObjMaterialLibrary() {
-	}
+	private ObjMaterialLibrary() {}
 
 	public ObjMaterialLibrary(ObjTokenizer reader) throws IOException {
 		Material currentMaterial = null;
@@ -37,12 +29,9 @@ public class ObjMaterialLibrary {
 					materials.put(name, currentMaterial);
 					break;
 				}
-				case "texture":
-					currentMaterial.texture = ResourceLocation.parse(line[1]);
-					break;
 
 				case "Ka":
-					currentMaterial.ambientColor = ObjParser.parseVector4(line);
+					currentMaterial.ambientColor = ObjModel.parseVector4(line);
 					break;
 
 				case "map_Ka":
@@ -51,10 +40,11 @@ public class ObjMaterialLibrary {
 					break;
 
 				case "Kd":
-					currentMaterial.diffuseColor = ObjParser.parseVector4(line);
+					currentMaterial.diffuseColor = ObjModel.parseVector4(line);
 					break;
 
 				case "forge_TintIndex":
+				case "neoforge_TintIndex":
 					currentMaterial.diffuseTintIndex = Integer.parseInt(line[1]);
 					break;
 
@@ -64,7 +54,7 @@ public class ObjMaterialLibrary {
 					break;
 
 				case "Ks":
-					currentMaterial.specularColor = ObjParser.parseVector4(line);
+					currentMaterial.specularColor = ObjModel.parseVector4(line);
 					break;
 
 				case "Ns":
@@ -89,21 +79,18 @@ public class ObjMaterialLibrary {
 	}
 
 	public Material getMaterial(String mat) {
-		if (!materials.containsKey(mat)) {
+		if (!materials.containsKey(mat))
 			throw new NoSuchElementException("The material was not found in the library: " + mat);
-		}
 		return materials.get(mat);
 	}
 
 	public static class Material {
 		public final String name;
-		private RenderMaterial material;
-		public ResourceLocation texture;
-		public Vector4f ambientColor = new Vector4f(0, 0, 0, 1);
+		public Vector4f ambientColor = new Vector4f();
 		public String ambientColorMap;
 		public Vector4f diffuseColor = new Vector4f(1, 1, 1, 1);
 		public String diffuseColorMap;
-		public Vector4f specularColor = new Vector4f(0, 0, 0, 1);
+		public Vector4f specularColor = new Vector4f();
 		public float specularHighlight = 0;
 		public String specularColorMap;
 
@@ -111,17 +98,7 @@ public class ObjMaterialLibrary {
 		public float transparency = 0.0f;
 
 		// non-standard
-		public int diffuseTintIndex = 0;
-
-		public RenderMaterial getMaterial(Renderer renderer) {
-			if (this.material == null) {
-				MaterialFinder finder = renderer.materialFinder();
-
-				this.material = finder.find();
-			}
-
-			return this.material;
-		}
+		public int diffuseTintIndex = -1;
 
 		public Material(String name) {
 			this.name = name;
