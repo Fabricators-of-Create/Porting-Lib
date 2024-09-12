@@ -1,5 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -28,13 +33,13 @@ public abstract class RailStateMixin {
 	@Final
 	private Level level;
 
-	@Redirect(method = { "connectTo", "place" }, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/BaseRailBlock;isRail(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Z"))
-	private boolean port_lib$redirectRailChecksToCheckSlopes(Level level, BlockPos pos) {
+	@WrapOperation(method = { "connectTo", "place" }, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/BaseRailBlock;isRail(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Z"))
+	private boolean port_lib$wrapRailChecksToCheckSlopes(Level level, BlockPos blockPos, Operation<Boolean> original) {
 		boolean canMakeSlopes = true;
 		if (block instanceof SlopeCreationCheckingRailBlock checking) {
-			canMakeSlopes = checking.canMakeSlopes(state, this.level, pos);
+			canMakeSlopes = checking.canMakeSlopes(state, this.level, blockPos);
 		}
-		return BaseRailBlock.isRail(level, pos) && canMakeSlopes;
+		return original.call(level, blockPos) && canMakeSlopes;
 	}
 
 }
