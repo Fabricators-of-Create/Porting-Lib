@@ -98,9 +98,9 @@ allprojects {
 		// dev environment
 		minecraft("com.mojang:minecraft:$minecraft_version")
 		mappings(loom.layered {
+			it.officialMojangMappings { nameSyntheticMembers = false }
 			if (parchment_version != "none")
 				it.parchment("org.parchmentmc.data:parchment-$minecraft_version:$parchment_version@zip")
-			it.officialMojangMappings { nameSyntheticMembers = false }
 		})
 		modImplementation("net.fabricmc:fabric-loader:$loader_version")
 
