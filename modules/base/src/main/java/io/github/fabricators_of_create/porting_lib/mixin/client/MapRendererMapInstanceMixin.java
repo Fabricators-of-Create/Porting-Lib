@@ -3,6 +3,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import io.github.fabricators_of_create.porting_lib.render.MapDecorationIterator;
 
 import org.joml.Matrix4f;

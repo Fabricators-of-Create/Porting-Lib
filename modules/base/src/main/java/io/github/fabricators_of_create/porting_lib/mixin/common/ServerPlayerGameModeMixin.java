@@ -1,5 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.Share;
+
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -87,22 +92,18 @@ public abstract class ServerPlayerGameModeMixin {
 			return operation.call(player, blockstate);
 	}
 
-	@Unique
-	private ThreadLocal<Integer> XP = ThreadLocal.withInitial(() -> -1);
-
 	@ModifyExpressionValue(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/Item;canAttackBlock(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;)Z"))
-	private boolean port_lib$blockBreakHook(boolean original, BlockPos pos) {
+	private boolean port_lib$blockBreakHook(boolean original, BlockPos pos, @Share("xp") LocalIntRef xp) {
 		int exp = PortingHooks.onBlockBreakEvent(this.level, this.gameModeForPlayer, this.player, pos);
-		XP.set(exp);
+		xp.set(exp);
 		return !(exp == -1);
 	}
 
-	@Inject(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;playerDestroy(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/item/ItemStack;)V", shift = At.Shift.BY, by = 2), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
-	private void port_lib$popXp(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState blockState, BlockEntity blockEntity, Block block, boolean bl) {
-		int exp = XP.get();
+	@Inject(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;playerDestroy(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/item/ItemStack;)V", shift = At.Shift.BY, by = 2))
+	private void port_lib$popXp(BlockPos pos, CallbackInfoReturnable<Boolean> cir, @Local BlockState blockState, @Local(ordinal = 0) boolean bl, @Share("xp") LocalIntRef xp) {
+		int exp = xp.get();
 		if (bl && exp > 0)
-			((BlockAccessor)blockState.getBlock()).port_lib$popExperience(level, pos, exp);
-		XP.remove();
+			((BlockAccessor) blockState.getBlock()).port_lib$popExperience(level, pos, exp);
 	}
 
 	@Inject(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getBlock()Lnet/minecraft/world/level/block/Block;"), cancellable = true)
