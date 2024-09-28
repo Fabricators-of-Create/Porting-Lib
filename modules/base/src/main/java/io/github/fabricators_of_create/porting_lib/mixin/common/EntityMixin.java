@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import io.github.fabricators_of_create.porting_lib.core.util.INBTSerializable;
 import net.minecraft.core.HolderLookup;
 
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomRunningEffectsBlock;
-import io.github.fabricators_of_create.porting_lib.extensions.extensions.INBTSerializableCompound;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
@@ -21,7 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 @Mixin(Entity.class)
-public abstract class EntityMixin implements INBTSerializableCompound {
+public abstract class EntityMixin implements INBTSerializable<CompoundTag> {
 	@Shadow
 	private Level level;
 	@Shadow
