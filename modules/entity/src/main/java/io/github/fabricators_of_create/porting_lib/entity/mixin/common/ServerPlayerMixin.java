@@ -96,16 +96,6 @@ public abstract class ServerPlayerMixin extends Player {
 		ServerPlayerCreationCallback.EVENT.invoker().onCreate((ServerPlayer) (Object) this);
 	}
 
-	@Inject(method = "tick", at = @At("HEAD"))
-	public void port_lib$clientStartTickEvent(CallbackInfo ci) {
-		PlayerTickEvents.START.invoker().onStartOfPlayerTick(this);
-	}
-
-	@Inject(method = "tick", at = @At("TAIL"))
-	public void port_lib$clientEndTickEvent(CallbackInfo ci) {
-		PlayerTickEvents.END.invoker().onEndOfPlayerTick(this);
-	}
-
 	@Nullable
 	@Override
 	public Entity changeDimension(ServerLevel p_9180_, ITeleporter teleporter) {
