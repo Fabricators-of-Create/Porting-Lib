@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -23,8 +25,8 @@ public abstract class ExplosionMixin {
 	@Final
 	private Level level;
 
-	@Inject(method = "explode", at = @At(value = "NEW", target = "net/minecraft/world/phys/Vec3", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void onExplode(CallbackInfo ci, Set<BlockPos> blocks, int i, float j, int k, int l, int r, int s, int t, int u, List<Entity> list) {
+	@Inject(method = "explode", at = @At(value = "NEW", target = "net/minecraft/world/phys/Vec3", ordinal = 1))
+	public void onExplode(CallbackInfo ci, @Local float j, @Local List<Entity> list) {
 		ExplosionEvents.DETONATE.invoker().onDetonate(this.level, (Explosion) (Object) this, list, j);
 	}
 }

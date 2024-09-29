@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.chunk.loading.mixin;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import io.github.fabricators_of_create.porting_lib.chunk.loading.extensions.DistanceManagerExtension;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.server.level.DistanceManager;
@@ -48,8 +50,8 @@ public abstract class DistanceManagerMixin implements DistanceManagerExtension {
 		return tickets != null && !tickets.isEmpty();
 	}
 
-	@Inject(method = {"addRegionTicket", "removeRegionTicket"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/ChunkPos;toLong()J"), locals = LocalCapture.CAPTURE_FAILHARD)
-	private <T> void setForcedTicket(TicketType<T> type, ChunkPos pos, int distance, T value, CallbackInfo ci, Ticket<T> ticket) {
+	@Inject(method = {"addRegionTicket", "removeRegionTicket"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/ChunkPos;toLong()J"))
+	private <T> void setForcedTicket(TicketType<T> type, ChunkPos pos, int distance, T value, CallbackInfo ci, @Local Ticket<T> ticket) {
 		ticket.setForceTicks(forceTicksToggle.get());
 	}
 

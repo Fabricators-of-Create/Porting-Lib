@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,13 +38,9 @@ public abstract class BoatMixin extends Entity {
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/block/Block;getFriction()F"
-			),
-			locals = LocalCapture.CAPTURE_FAILHARD
+			)
 	)
-	public void port_lib$storeVariables(CallbackInfoReturnable<Float> cir,
-									AABB aabb, AABB aabb2, int i, int j, int k,
-									int l, int m, int n, VoxelShape shape, float f, int o, BlockPos.MutableBlockPos mutable,
-									int p, int q, int r, int s, BlockState blockState) {
+	public void port_lib$storeVariables(CallbackInfoReturnable<Float> cir, @Local BlockPos.MutableBlockPos mutable, @Local BlockState blockState) {
 		port_lib$state = blockState;
 		port_lib$pos = mutable;
 	}

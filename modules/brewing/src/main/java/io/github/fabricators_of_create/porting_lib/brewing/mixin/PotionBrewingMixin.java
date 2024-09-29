@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.brewing.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import io.github.fabricators_of_create.porting_lib.brewing.BrewingRecipe;
 import io.github.fabricators_of_create.porting_lib.brewing.BrewingRecipeRegistry;
 import io.github.fabricators_of_create.porting_lib.brewing.IBrewingRecipe;
@@ -73,8 +75,8 @@ public abstract class PotionBrewingMixin implements PotionBrewingExt {
 			value = "INVOKE",
 			target = "Lnet/minecraft/world/item/alchemy/PotionBrewing;addVanillaMixes(Lnet/minecraft/world/item/alchemy/PotionBrewing$Builder;)V",
 			shift = At.Shift.AFTER
-	), locals = LocalCapture.CAPTURE_FAILHARD)
-	private static void fireRegisterEvent(FeatureFlagSet featureFlagSet, CallbackInfoReturnable<PotionBrewing> cir, PotionBrewing.Builder builder) {
+	))
+	private static void fireRegisterEvent(FeatureFlagSet featureFlagSet, CallbackInfoReturnable<PotionBrewing> cir, @Local PotionBrewing.Builder builder) {
 		new RegisterBrewingRecipesEvent(builder).sendEvent();
 	}
 

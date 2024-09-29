@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.recipe_book_categories.mixin
 
 import com.google.common.collect.ImmutableList;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import io.github.fabricators_of_create.porting_lib.recipe_book_categories.RecipeBookRegistry;
 import net.minecraft.client.ClientRecipeBook;
 
@@ -25,12 +27,12 @@ import java.util.Map;
 
 @Mixin(ClientRecipeBook.class)
 public class ClientRecipeBookMixin {
-	@Inject(method = "setupCollections", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap;copyOf(Ljava/util/Map;)Lcom/google/common/collect/ImmutableMap;"), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void setupModdedAggregateCategories(Iterable<Recipe<?>> iterable, RegistryAccess registryAccess, CallbackInfo ci, Map<RecipeBookCategories, List<List<RecipeHolder<?>>>> categorizeAndGroupRecipes, Map<RecipeBookCategories, List<RecipeCollection>> aggregateCategories) {
+	@Inject(method = "setupCollections", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap;copyOf(Ljava/util/Map;)Lcom/google/common/collect/ImmutableMap;"))
+	private void setupModdedAggregateCategories(Iterable<Recipe<?>> iterable, RegistryAccess registryAccess, CallbackInfo ci, @Local(ordinal = 1) Map<RecipeBookCategories, List<RecipeCollection>> aggregateCategories) {
 		RecipeBookRegistry.AGGREGATE_CATEGORIES.forEach((recipeBookCategories, list) -> {
-			aggregateCategories.put(recipeBookCategories, list.stream().flatMap((recipeBookCategoriesx) -> {
-				return aggregateCategories.getOrDefault(recipeBookCategoriesx, ImmutableList.of()).stream();
-			}).collect(ImmutableList.toImmutableList()));
+			aggregateCategories.put(recipeBookCategories, list.stream().flatMap((recipeBookCategoriesx) ->
+				aggregateCategories.getOrDefault(recipeBookCategoriesx, ImmutableList.of()).stream()
+			).collect(ImmutableList.toImmutableList()));
 		});
 	}
 

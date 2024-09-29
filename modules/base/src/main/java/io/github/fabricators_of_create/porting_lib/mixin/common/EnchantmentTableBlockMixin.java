@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.Iterator;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import net.minecraft.util.RandomSource;
 
 import net.minecraft.world.level.block.EnchantingTableBlock;
@@ -21,10 +23,10 @@ import net.minecraft.world.level.block.state.BlockState;
 @Mixin(EnchantingTableBlock.class)
 public abstract class EnchantmentTableBlockMixin {
 
-	@Inject(method = "animateTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/RandomSource;nextInt(I)I"), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void port_lib$particles(BlockState state, Level level, BlockPos pos, RandomSource random, CallbackInfo ci, Iterator var5, BlockPos blockPos) {
+	@Inject(method = "animateTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/RandomSource;nextInt(I)I"))
+	public void port_lib$particles(BlockState state, Level level, BlockPos pos, RandomSource random, CallbackInfo ci, @Local(ordinal = 1) BlockPos blockPos) {
 		if (random.nextInt(16) == 0 && isValid(level, pos, blockPos)) {
-			level.addParticle(ParticleTypes.ENCHANT, (double)pos.getX() + 0.5D, (double)pos.getY() + 2.0D, (double)pos.getZ() + 0.5D, (double)((float)blockPos.getX() + random.nextFloat()) - 0.5D, (double)((float)blockPos.getY() - random.nextFloat() - 1.0F), (double)((float)blockPos.getZ() + random.nextFloat()) - 0.5D);
+			level.addParticle(ParticleTypes.ENCHANT, (double)pos.getX() + 0.5D, (double)pos.getY() + 2.0D, (double)pos.getZ() + 0.5D, (double)((float)blockPos.getX() + random.nextFloat()) - 0.5D, (float)blockPos.getY() - random.nextFloat() - 1.0F, (double)((float)blockPos.getZ() + random.nextFloat()) - 0.5D);
 		}
 	}
 

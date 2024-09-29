@@ -39,6 +39,7 @@ import org.apache.commons.lang3.mutable.MutableObject;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -74,7 +75,8 @@ public class MultiPlayerGameModeMixin {
 			cir.setReturnValue(true);
 	}
 
-	private ThreadLocal<PlayerInteractEvent.LeftClickBlock> capturedEvent = new ThreadLocal<>();
+	@Unique
+	private final ThreadLocal<PlayerInteractEvent.LeftClickBlock> capturedEvent = new ThreadLocal<>();
 
 	@Inject(method = "startDestroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;", ordinal = 1))
 	public void port_lib$startDestroy(BlockPos loc, Direction face, CallbackInfoReturnable<Boolean> cir) {
@@ -88,7 +90,7 @@ public class MultiPlayerGameModeMixin {
 	}
 
 	@Inject(method = "method_41930", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getDestroyProgress(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)F"), cancellable = true)
-	private void cancelUsePacket(BlockState blockState, BlockPos blockPos, Direction direction, int i, CallbackInfoReturnable<Packet> cir) {
+	private void cancelUsePacket(BlockState blockState, BlockPos blockPos, Direction direction, int i, CallbackInfoReturnable<Packet<?>> cir) {
 		if (capturedEvent.get().getUseItem() == TriState.FALSE)
 			cir.setReturnValue(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, blockPos, direction, i));
 	}
@@ -96,8 +98,8 @@ public class MultiPlayerGameModeMixin {
 	@Inject(method = "method_41929", at = @At(
 			value = "INVOKE",
 			target = "Lnet/minecraft/world/item/ItemStack;use(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResultHolder;"
-	), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	private void onItemRightClick(InteractionHand hand, Player player, MutableObject<InteractionResult> result, int sequence, CallbackInfoReturnable<Packet> cir, ServerboundUseItemPacket packet) {
+	), cancellable = true)
+	private void onItemRightClick(InteractionHand hand, Player player, MutableObject<InteractionResult> result, int sequence, CallbackInfoReturnable<Packet<?>> cir, @Local ServerboundUseItemPacket packet) {
 		InteractionResult cancelResult = EntityHooks.onItemRightClick(player, hand);
 		if (cancelResult != null) {
 			result.setValue(cancelResult);
@@ -119,8 +121,8 @@ public class MultiPlayerGameModeMixin {
 			value = "INVOKE",
 			target = "Lnet/minecraft/client/player/LocalPlayer;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;",
 			ordinal = 0
-	), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	private void onRightClickBlock(LocalPlayer player, InteractionHand hand, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir, BlockPos pos) {
+	), cancellable = true)
+	private void onRightClickBlock(LocalPlayer player, InteractionHand hand, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir, @Local BlockPos pos) {
 		PlayerInteractEvent.RightClickBlock event = EntityHooks.onRightClickBlock(player, hand, pos, hitResult);
 		if (event.isCanceled()) {
 			cir.setReturnValue(event.getCancellationResult());

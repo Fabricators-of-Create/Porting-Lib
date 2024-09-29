@@ -159,12 +159,10 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 					shift = Shift.BY,
 					by = 2,
 					ordinal = 0
-			),
-			locals = LocalCapture.CAPTURE_FAILHARD
+			)
 	)
 	public void port_lib$updateNeighbourForOutputSignal(BlockPos pos, Block block, CallbackInfo ci,
-														Iterator<?> var3, Direction direction, BlockPos offset,
-														BlockState state) {
+														@Local(ordinal = 1) BlockPos offset, @Local BlockState state) {
 		if (state.getBlock() instanceof NeighborChangeListeningBlock listener) {
 			listener.onNeighborChange(state, this, offset, pos);
 		}

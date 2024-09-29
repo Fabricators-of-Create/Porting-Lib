@@ -77,7 +77,6 @@ public abstract class LivingEntityMixin extends Entity {
 					target = "Lnet/minecraft/server/level/ServerLevel;sendParticles(Lnet/minecraft/core/particles/ParticleOptions;DDDIDDDD)I",
 					shift = At.Shift.BEFORE
 			),
-			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
 	protected void updateFallState(double y, boolean onGround, BlockState state, BlockPos pos,

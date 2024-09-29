@@ -29,10 +29,9 @@ public abstract class SpawnPlacementsMixin {
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/block/state/BlockState;isValidSpawn(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/EntityType;)Z"
 			),
-			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
-	private void port_lib$validSpawnBlock(LevelReader levelReader, BlockPos blockPos, @Nullable EntityType<?> entityType, CallbackInfoReturnable<Boolean> cir, BlockPos blockPos2, BlockPos blockPos3, BlockState blockState) {
+	private void port_lib$validSpawnBlock(LevelReader levelReader, BlockPos blockPos, @Nullable EntityType<?> entityType, CallbackInfoReturnable<Boolean> cir, @Local(ordinal = 1) BlockPos blockPos2, @Local BlockState blockState) {
 		if (blockState.getBlock() instanceof ValidSpawnBlock validSpawnBlock)
 			cir.setReturnValue(validSpawnBlock.isValidSpawn(blockState, levelReader, blockPos2, SpawnPlacementTypes.ON_GROUND, entityType));
 	}

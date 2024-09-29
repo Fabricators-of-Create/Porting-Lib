@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
@@ -36,10 +38,9 @@ public abstract class ProjectileUtilMixin {
 
 	@Inject(
 			method = "getEntityHitResult(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;D)Lnet/minecraft/world/phys/EntityHitResult;",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getRootVehicle()Lnet/minecraft/world/entity/Entity;", ordinal = 0, shift = At.Shift.BEFORE),
-			locals = LocalCapture.CAPTURE_FAILHARD
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getRootVehicle()Lnet/minecraft/world/entity/Entity;", ordinal = 0, shift = At.Shift.BEFORE)
 	)
-	private static void port_lib$result(Entity shooter, Vec3 startVec, Vec3 endVec, AABB boundingBox, Predicate<Entity> filter, double distance, CallbackInfoReturnable<EntityHitResult> cir, Level level, double d, Entity entity, Vec3 vec3, Iterator var12, Entity entity2, AABB aABB, Optional optional, Vec3 vec32, double e) {
-		port_lib$canRiderInteract = !entity2.canRiderInteract();
+	private static void port_lib$result(Entity shooter, Vec3 startVec, Vec3 endVec, AABB boundingBox, Predicate<Entity> filter, double distance, CallbackInfoReturnable<EntityHitResult> cir, @Local(ordinal = 1) Entity entity) {
+		port_lib$canRiderInteract = !entity.canRiderInteract();
 	}
 }

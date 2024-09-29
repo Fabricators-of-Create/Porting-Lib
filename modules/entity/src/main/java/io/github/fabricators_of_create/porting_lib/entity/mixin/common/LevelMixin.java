@@ -30,10 +30,9 @@ public class LevelMixin implements LevelExt {
 
 	@Inject(
 			method = "getEntities(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;",
-			at = @At("TAIL"),
-			locals = LocalCapture.CAPTURE_FAILHARD
+			at = @At("TAIL")
 	)
-	private void appendPartEntitiesPredicate(@Nullable Entity entity, AABB area, Predicate<? super Entity> predicate, CallbackInfoReturnable<List<Entity>> cir, List<Entity> list) {
+	private void appendPartEntitiesPredicate(@Nullable Entity entity, AABB area, Predicate<? super Entity> predicate, CallbackInfoReturnable<List<Entity>> cir, @Local List<Entity> list) {
 		for (PartEntity<?> p : this.getPartEntities()) {
 			if (p != entity && p.getBoundingBox().intersects(area) && predicate.test(p)) {
 				list.add(p);
