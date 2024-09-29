@@ -30,10 +30,9 @@ public abstract class FireBlockMixin {
 	@Inject(
 			method = "checkBurnOut",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getBlock()Lnet/minecraft/world/level/block/Block;"),
-			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
-	private void port_lib$onCaughtFire(Level level, BlockPos pos, int spreadFactor, RandomSource random, int currentAge, CallbackInfo ci, int i, BlockState blockState) {
+	private void port_lib$onCaughtFire(Level level, BlockPos pos, int spreadFactor, RandomSource random, int currentAge, CallbackInfo ci, @Local BlockState blockState) {
 		if (blockState.getBlock() instanceof CaughtFireBlock fireBlock) {
 			fireBlock.onCaughtFire(blockState, level, pos, null, null);
 			ci.cancel();

@@ -25,8 +25,8 @@ public abstract class EntityRenderDispatcherMixin {
 	@Shadow
 	private Map<String, EntityRenderer<? extends Player>> playerRenderers;
 
-	@Inject(method = "onResourceManagerReload", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void port_lib$resourceReload(ResourceManager resourceManager, CallbackInfo ci, EntityRendererProvider.Context context) {
+	@Inject(method = "onResourceManagerReload", at = @At("TAIL"))
+	public void port_lib$resourceReload(ResourceManager resourceManager, CallbackInfo ci) {
 		EntityAddedLayerCallback.EVENT.invoker().addLayers(renderers, playerRenderers);
 	}
 }

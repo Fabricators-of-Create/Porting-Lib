@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -52,8 +54,8 @@ public abstract class FogRendererMixin {
 		}
 	}
 
-	@Inject(method = "setupFog", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
-	private static void fogRenderEvent(Camera camera, FogRenderer.FogMode fogMode, float viewDistance, boolean thickFog, float partialTick, CallbackInfo ci, FogType fogType, Entity entity, FogRenderer.FogData fogData) {
+	@Inject(method = "setupFog", at = @At("TAIL"))
+	private static void fogRenderEvent(Camera camera, FogRenderer.FogMode fogMode, float viewDistance, boolean thickFog, float partialTick, CallbackInfo ci, @Local FogType fogType, @Local FogRenderer.FogData fogData) {
 		FogEvents.FogData data = new FogEvents.FogData(fogData.start, fogData.end, fogData.shape);
 		if (FogEvents.RENDER_FOG.invoker().onFogRender(fogMode, fogType, camera, partialTick, viewDistance, fogData.start, fogData.end, fogData.shape, data)) {
 			RenderSystem.setShaderFogStart(data.getNearPlaneDistance());

@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import io.github.fabricators_of_create.porting_lib.core.util.INBTSerializable;
 import net.minecraft.core.HolderLookup;
 
@@ -35,7 +37,6 @@ public abstract class EntityMixin implements INBTSerializable<CompoundTag> {
 	@Shadow
 	public abstract void load(CompoundTag nbt);
 
-	@Unique
 	@Override
 	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
 		load(nbt);
@@ -61,10 +62,10 @@ public abstract class EntityMixin implements INBTSerializable<CompoundTag> {
 					shift = At.Shift.BY,
 					by = 2
 			),
-			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
-	public void port_lib$spawnSprintParticle(CallbackInfo ci, BlockPos pos, BlockState state) {
+	public void port_lib$spawnSprintParticle(CallbackInfo ci, @Local BlockPos pos, @Local BlockState state) {
+		//noinspection ConstantValue
 		if (state.getBlock() instanceof CustomRunningEffectsBlock custom &&
 				custom.addRunningEffects(state, level, pos, (Entity) (Object) this)) {
 			ci.cancel();

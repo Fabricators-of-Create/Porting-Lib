@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import javax.annotation.Nonnull;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -35,11 +37,9 @@ public abstract class ItemInHandRendererMixin {
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/player/LocalPlayer;getAttackStrengthScale(F)F",
 					shift = At.Shift.AFTER
-			),
-			locals = LocalCapture.CAPTURE_FAILHARD
+			)
 	)
-	public void port_lib$tick(CallbackInfo ci,
-							LocalPlayer clientPlayerEntity, ItemStack itemStack, ItemStack itemStack2) {
+	public void port_lib$tick(CallbackInfo ci, @Local LocalPlayer clientPlayerEntity, @Local(ordinal = 0) ItemStack itemStack, @Local(ordinal = 1) ItemStack itemStack2) {
 		if (!port_lib$shouldCauseReequipAnimation(mainHandItem, itemStack, clientPlayerEntity.getInventory().selected)) {
 			mainHandItem = itemStack;
 		}

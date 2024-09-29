@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import io.github.fabricators_of_create.porting_lib.event.client.ColorHandlersCallback;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,8 +14,8 @@ import net.minecraft.client.color.block.BlockColors;
 
 @Mixin(BlockColors.class)
 public abstract class BlockColorsMixin {
-  @Inject(method = "createDefault", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
-  private static void registerModdedColorHandlers(CallbackInfoReturnable<BlockColors> cir, BlockColors blockColors) {
-    ColorHandlersCallback.BLOCK.invoker().registerBlockColors(blockColors);
-  }
+  	@Inject(method = "createDefault", at = @At("TAIL"))
+  	private static void registerModdedColorHandlers(CallbackInfoReturnable<BlockColors> cir, @Local BlockColors blockColors) {
+    	ColorHandlersCallback.BLOCK.invoker().registerBlockColors(blockColors);
+  	}
 }

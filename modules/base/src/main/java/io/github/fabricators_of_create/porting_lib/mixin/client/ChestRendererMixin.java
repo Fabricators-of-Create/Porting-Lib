@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import java.util.function.Function;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import io.github.fabricators_of_create.porting_lib.util.MaterialChest;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -32,11 +34,10 @@ public abstract class ChestRendererMixin<T extends BlockEntity & LidBlockEntity>
 
 	@Inject(
 			method = "render(Lnet/minecraft/world/level/block/entity/BlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/Sheets;chooseMaterial(Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/level/block/state/properties/ChestType;Z)Lnet/minecraft/client/resources/model/Material;"),
-			locals = LocalCapture.CAPTURE_FAILHARD
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/Sheets;chooseMaterial(Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/level/block/state/properties/ChestType;Z)Lnet/minecraft/client/resources/model/Material;")
 	)
-	public void port_lib$customChestMaterial(T blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, CallbackInfo ci, Level level, boolean bl, BlockState blockState, ChestType chestType) {
-		if(this instanceof MaterialChest materialChest)
+	public void port_lib$customChestMaterial(T blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, CallbackInfo ci, @Local ChestType chestType) {
+		if (this instanceof MaterialChest materialChest)
 			port_lib$customMaterial = materialChest.getMaterial(blockEntity, chestType);
 	}
 

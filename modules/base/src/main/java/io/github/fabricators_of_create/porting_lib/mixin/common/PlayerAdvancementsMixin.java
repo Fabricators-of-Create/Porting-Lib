@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,14 +22,14 @@ public abstract class PlayerAdvancementsMixin {
 	@Shadow
 	private ServerPlayer player;
 
-	@Inject(method = "award", at = @At(value = "INVOKE", target = "Ljava/util/Set;add(Ljava/lang/Object;)Z", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void onAdvancementProgress(AdvancementHolder advancement, String criterionName, CallbackInfoReturnable<Boolean> cir, boolean bl, AdvancementProgress advancementProgress) {
+	@Inject(method = "award", at = @At(value = "INVOKE", target = "Ljava/util/Set;add(Ljava/lang/Object;)Z", shift = At.Shift.AFTER))
+	public void onAdvancementProgress(AdvancementHolder advancement, String criterionName, CallbackInfoReturnable<Boolean> cir, @Local AdvancementProgress advancementProgress) {
 		AdvancementEvent.AdvancementProgressEvent event = new AdvancementEvent.AdvancementProgressEvent(this.player, advancement, advancementProgress, criterionName, AdvancementEvent.AdvancementProgressEvent.ProgressType.GRANT);
 		event.sendEvent();
 	}
 
-	@Inject(method = "revoke", at = @At(value = "INVOKE", target = "Ljava/util/Set;add(Ljava/lang/Object;)Z", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void onAdvancementRevoke(AdvancementHolder advancement, String criterionName, CallbackInfoReturnable<Boolean> cir, boolean bl, AdvancementProgress advancementProgress) {
+	@Inject(method = "revoke", at = @At(value = "INVOKE", target = "Ljava/util/Set;add(Ljava/lang/Object;)Z", shift = At.Shift.AFTER))
+	private void onAdvancementRevoke(AdvancementHolder advancement, String criterionName, CallbackInfoReturnable<Boolean> cir, @Local AdvancementProgress advancementProgress) {
 		AdvancementEvent.AdvancementProgressEvent event = new AdvancementEvent.AdvancementProgressEvent(this.player, advancement, advancementProgress, criterionName, AdvancementEvent.AdvancementProgressEvent.ProgressType.REVOKE);
 		event.sendEvent();
 	}
