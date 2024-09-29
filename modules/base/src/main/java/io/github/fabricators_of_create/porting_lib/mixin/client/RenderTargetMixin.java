@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
-import com.llamalad7.mixinextras.injector.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
 import org.lwjgl.opengl.GL30;
 import org.spongepowered.asm.mixin.Mixin;

@@ -1,7 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import com.llamalad7.mixinextras.injector.WrapWithCondition;
-
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;

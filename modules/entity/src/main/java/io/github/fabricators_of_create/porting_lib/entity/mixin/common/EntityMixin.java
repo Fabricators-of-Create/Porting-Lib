@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
 import java.util.Collection;
 
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 
 import org.jetbrains.annotations.Nullable;
@@ -13,7 +15,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;

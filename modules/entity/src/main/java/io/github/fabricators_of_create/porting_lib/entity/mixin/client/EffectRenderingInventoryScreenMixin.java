@@ -3,8 +3,7 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin.client;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import com.llamalad7.mixinextras.injector.WrapWithCondition;
-
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -24,7 +23,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
-import io.github.fabricators_of_create.porting_lib.entity.client.MobEffectRenderer;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.world.effect.MobEffectInstance;
 
