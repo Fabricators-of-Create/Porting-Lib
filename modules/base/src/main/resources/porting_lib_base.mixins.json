@@ -54,7 +54,6 @@
     "common.LivingEntityMixin",
     "common.MainMixin",
     "common.MapDecorationMixin",
-    "common.MapItemMixin",
     "common.MushroomCowMixin",
     "common.PiglinAiMixin",
     "common.PistonMovingBlockEntityMixin",
