@@ -5,6 +5,7 @@ import io.github.fabricators_of_create.porting_lib.tool.ItemAbility;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.HoneycombItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ShovelItem;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.CandleBlock;
 import net.minecraft.world.level.block.CandleCakeBlock;
 import net.minecraft.world.level.block.GrowingPlantHeadBlock;
+import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.WeatheringCopper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -43,14 +45,15 @@ public interface ItemAbilityBlock {
 			return null;
 
 		if (ItemAbilities.AXE_STRIP == itemAbility) {
-//			return AxeItem.getAxeStrippingState(state); TODO: PORT
+			Block block = AxeItem.STRIPPABLES.get(state.getBlock());
+			return block != null ? block.defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)) : null;
 		} else if (ItemAbilities.AXE_SCRAPE == itemAbility) {
 			return WeatheringCopper.getPrevious(state).orElse(null);
 		} else if (ItemAbilities.AXE_WAX_OFF == itemAbility) {
-//			Block waxOffBlock = DataMapHooks.getBlockUnwaxed(state.getBlock()); TODO: PORT
-//			return Optional.ofNullable(waxOffBlock).map(block -> block.withPropertiesOf(state)).orElse(null);
+			Block waxOffBlock = HoneycombItem.WAX_OFF_BY_BLOCK.get().get(state.getBlock());
+			return Optional.ofNullable(waxOffBlock).map(block -> block.withPropertiesOf(state)).orElse(null);
 		} else if (ItemAbilities.SHOVEL_FLATTEN == itemAbility) {
-//			return ShovelItem.getShovelPathingState(state); TODO: PORT
+			return ShovelItem.FLATTENABLES.get(state.getBlock());
 		} else if (ItemAbilities.HOE_TILL == itemAbility) {
 			// Logic copied from HoeItem#TILLABLES; needs to be kept in sync during updating
 			Block block = state.getBlock();
@@ -74,11 +77,11 @@ public interface ItemAbilityBlock {
 				if (!simulate) {
 					CampfireBlock.dowse(context.getPlayer(), context.getLevel(), context.getClickedPos(), state);
 				}
-				return state.setValue(CampfireBlock.LIT, Boolean.valueOf(false));
+				return state.setValue(CampfireBlock.LIT, false);
 			}
 		} else if (ItemAbilities.FIRESTARTER_LIGHT == itemAbility) {
 			if (CampfireBlock.canLight(state) || CandleBlock.canLight(state) || CandleCakeBlock.canLight(state)) {
-				return state.setValue(BlockStateProperties.LIT, Boolean.valueOf(true));
+				return state.setValue(BlockStateProperties.LIT, false);
 			}
 		}
 
