@@ -42,24 +42,6 @@ public class PortingLibLoot implements ModInitializer {
 	}
 
 	/**
-	 * All loot table drops should be passed to this function so that mod added effects
-	 * (e.g. smelting enchantments) can be processed.
-	 *
-	 * @param list The loot generated
-	 * @param context The loot context that generated that loot
-	 * @return The modified list
-	 *
-	 * @deprecated Use {@link #modifyLoot(ResourceLocation, ObjectArrayList, LootContext)} instead.
-	 *
-	 * @implNote This method will use the {@linkplain LootTableIdCondition#UNKNOWN_LOOT_TABLE
-	 *           unknown loot table marker} when redirecting.
-	 */
-	@Deprecated
-	public static List<ItemStack> modifyLoot(List<ItemStack> list, LootContext context) {
-		return modifyLoot(LootTableIdCondition.UNKNOWN_LOOT_TABLE, ObjectArrayList.wrap((ItemStack[]) list.toArray()), context);
-	}
-
-	/**
 	 * Handles the modification of loot table drops via the registered Global Loot Modifiers,
 	 * so that custom effects can be processed.
 	 *

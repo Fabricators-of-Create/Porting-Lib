@@ -27,15 +27,6 @@ public interface SlottedStackStorage extends SlottedStorage<ItemVariant> {
 	 */
 	int getSlotLimit(int slot);
 
-
-	/**
-	 * Use {@link SlottedStackStorage#isItemValid(int, ItemVariant, int)} as a replacement which takes in an extra count parameter
-	 */
-	@Deprecated(forRemoval = true)
-	default boolean isItemValid(int slot, ItemVariant resource) {
-		return isItemValid(slot, resource, 1);
-	}
-
 	/**
 	 * Determines if the given ItemVariant can be stored in the given slot.
 	 * @param slot the slot the resource is in
