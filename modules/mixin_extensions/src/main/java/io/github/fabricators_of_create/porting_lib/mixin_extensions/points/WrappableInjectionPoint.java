@@ -17,15 +17,14 @@ import org.spongepowered.asm.mixin.injection.InjectionPoint.AtCode;
 import org.spongepowered.asm.mixin.injection.struct.InjectionPointData;
 
 /**
- * Custom injection point that can target specific wrappable opcodes.
- * Specified as "PORTING_LIB:WRAPPABLE" in an @At
- * Can specify which opcodes to target with args: args = "opcodes=ILOAD,I2F"
+ * Custom injection point that can target specific wrappable opcodes.<br>
+ * Specified as "PORTING_LIB:WRAPPABLE" in an @At<br>
+ * Can specify which opcodes to target with args: args = "opcodes=ILOAD,I2F"<br>
  * For the supported list, see {@link WrapVariableInjector#OPCODE_TYPES}
  */
 @AtCode("WRAPPABLE")
 public class WrappableInjectionPoint extends InjectionPoint {
 	public static final Map<String, Integer> NAME_TO_OPCODE = new HashMap<>();
-	public static final Set<Integer> ALLOWED_OPCODES = WrapVariableInjector.OPCODE_TYPES.keySet();
 
 	static {
 		try {
@@ -53,7 +52,7 @@ public class WrappableInjectionPoint extends InjectionPoint {
 	private Set<Integer> parseOpcodes(InjectionPointData data) {
 		String opcodesStr = data.get("opcodes", "");
 		if (opcodesStr.isEmpty()) {
-			return ALLOWED_OPCODES;
+			return WrapVariableInjector.ALLOWED_OPCODES;
 		}
 		String[] split = opcodesStr.split(",");
 		Set<Integer> opcodes = new HashSet<>();

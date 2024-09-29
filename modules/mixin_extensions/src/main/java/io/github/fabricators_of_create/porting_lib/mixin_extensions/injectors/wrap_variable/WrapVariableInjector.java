@@ -2,6 +2,9 @@ package io.github.fabricators_of_create.porting_lib.mixin_extensions.injectors.w
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableBiMap;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -27,42 +30,40 @@ import org.spongepowered.asm.mixin.injection.throwables.InvalidInjectionExceptio
  */
 public class WrapVariableInjector extends Injector {
 	public static final Type OBJECT_TYPE = InstructionAdapter.OBJECT_TYPE;
-	public static Map<Integer, Type> OPCODE_TYPES = new HashMap<>();
-
-	static {
-		// locals
-		OPCODE_TYPES.put(Opcodes.ALOAD, OBJECT_TYPE);
-		OPCODE_TYPES.put(Opcodes.DLOAD, Type.DOUBLE_TYPE);
-		OPCODE_TYPES.put(Opcodes.FLOAD, Type.FLOAT_TYPE);
-		OPCODE_TYPES.put(Opcodes.ILOAD, Type.INT_TYPE);
-		OPCODE_TYPES.put(Opcodes.LLOAD, Type.LONG_TYPE);
-		// arrays
-		OPCODE_TYPES.put(Opcodes.AALOAD, OBJECT_TYPE);
-		OPCODE_TYPES.put(Opcodes.BALOAD, Type.BOOLEAN_TYPE);
-		OPCODE_TYPES.put(Opcodes.CALOAD, Type.CHAR_TYPE);
-		OPCODE_TYPES.put(Opcodes.DALOAD, Type.DOUBLE_TYPE);
-		OPCODE_TYPES.put(Opcodes.FALOAD, Type.FLOAT_TYPE);
-		OPCODE_TYPES.put(Opcodes.IALOAD, Type.INT_TYPE);
-		OPCODE_TYPES.put(Opcodes.LALOAD, Type.LONG_TYPE);
-		OPCODE_TYPES.put(Opcodes.SALOAD, Type.SHORT_TYPE);
-		// casts
-		OPCODE_TYPES.put(Opcodes.CHECKCAST, OBJECT_TYPE);
-		OPCODE_TYPES.put(Opcodes.I2L, Type.LONG_TYPE);
-		OPCODE_TYPES.put(Opcodes.I2F, Type.FLOAT_TYPE);
-		OPCODE_TYPES.put(Opcodes.I2D, Type.DOUBLE_TYPE);
-		OPCODE_TYPES.put(Opcodes.L2I, Type.INT_TYPE);
-		OPCODE_TYPES.put(Opcodes.L2F, Type.FLOAT_TYPE);
-		OPCODE_TYPES.put(Opcodes.L2D, Type.DOUBLE_TYPE);
-		OPCODE_TYPES.put(Opcodes.F2I, Type.INT_TYPE);
-		OPCODE_TYPES.put(Opcodes.F2L, Type.FLOAT_TYPE);
-		OPCODE_TYPES.put(Opcodes.F2D, Type.DOUBLE_TYPE);
-		OPCODE_TYPES.put(Opcodes.D2I, Type.INT_TYPE);
-		OPCODE_TYPES.put(Opcodes.D2L, Type.LONG_TYPE);
-		OPCODE_TYPES.put(Opcodes.D2F, Type.FLOAT_TYPE);
-		OPCODE_TYPES.put(Opcodes.I2B, Type.BOOLEAN_TYPE);
-		OPCODE_TYPES.put(Opcodes.I2C, Type.CHAR_TYPE);
-		OPCODE_TYPES.put(Opcodes.I2S, Type.SHORT_TYPE);
-	}
+	private static final Map<Integer, Type> OPCODE_TYPES = ImmutableBiMap.<Integer, Type>builder()
+			.put(Opcodes.ALOAD, OBJECT_TYPE)
+			.put(Opcodes.DLOAD, Type.DOUBLE_TYPE)
+			.put(Opcodes.FLOAD, Type.FLOAT_TYPE)
+			.put(Opcodes.ILOAD, Type.INT_TYPE)
+			.put(Opcodes.LLOAD, Type.LONG_TYPE)
+			// arrays
+			.put(Opcodes.AALOAD, OBJECT_TYPE)
+			.put(Opcodes.BALOAD, Type.BOOLEAN_TYPE)
+			.put(Opcodes.CALOAD, Type.CHAR_TYPE)
+			.put(Opcodes.DALOAD, Type.DOUBLE_TYPE)
+			.put(Opcodes.FALOAD, Type.FLOAT_TYPE)
+			.put(Opcodes.IALOAD, Type.INT_TYPE)
+			.put(Opcodes.LALOAD, Type.LONG_TYPE)
+			.put(Opcodes.SALOAD, Type.SHORT_TYPE)
+			// casts
+			.put(Opcodes.CHECKCAST, OBJECT_TYPE)
+			.put(Opcodes.I2L, Type.LONG_TYPE)
+			.put(Opcodes.I2F, Type.FLOAT_TYPE)
+			.put(Opcodes.I2D, Type.DOUBLE_TYPE)
+			.put(Opcodes.L2I, Type.INT_TYPE)
+			.put(Opcodes.L2F, Type.FLOAT_TYPE)
+			.put(Opcodes.L2D, Type.DOUBLE_TYPE)
+			.put(Opcodes.F2I, Type.INT_TYPE)
+			.put(Opcodes.F2L, Type.FLOAT_TYPE)
+			.put(Opcodes.F2D, Type.DOUBLE_TYPE)
+			.put(Opcodes.D2I, Type.INT_TYPE)
+			.put(Opcodes.D2L, Type.LONG_TYPE)
+			.put(Opcodes.D2F, Type.FLOAT_TYPE)
+			.put(Opcodes.I2B, Type.BOOLEAN_TYPE)
+			.put(Opcodes.I2C, Type.CHAR_TYPE)
+			.put(Opcodes.I2S, Type.SHORT_TYPE)
+			.build();
+	public static final Set<Integer> ALLOWED_OPCODES = OPCODE_TYPES.keySet();
 
 	public WrapVariableInjector(InjectionInfo info) {
 		super(info, "@WrapVariable");
