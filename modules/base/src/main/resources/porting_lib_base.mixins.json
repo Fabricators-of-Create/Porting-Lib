@@ -11,6 +11,7 @@
     "common.AbstractMinecartMixin",
     "common.AbstractSkeletonMixin",
     "common.AnvilMenuMixin",
+    "common.AxeItemMixin",
     "common.BambooStalkBlockMixin",
     "common.BaseRailBlockMixin",
     "common.BeaconBlockEntityMixin",

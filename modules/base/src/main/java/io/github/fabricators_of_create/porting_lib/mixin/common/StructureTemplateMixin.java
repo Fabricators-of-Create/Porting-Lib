@@ -7,6 +7,10 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import com.llamalad7.mixinextras.sugar.Local;
 
+import com.llamalad7.mixinextras.sugar.Share;
+
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.util.StructureTemplateUtils;
 import net.minecraft.util.RandomSource;
@@ -43,9 +47,6 @@ public abstract class StructureTemplateMixin implements StructureTemplateExtensi
 	@Shadow
 	protected abstract void placeEntities(ServerLevelAccessor serverLevelAccessor, BlockPos blockPos, Mirror mirror, Rotation rotation, BlockPos blockPos2, @Nullable BoundingBox boundingBox, boolean bl);
 
-	@Unique
-	private static final ThreadLocal<StructurePlaceSettings> currentSettings = new ThreadLocal<>();
-
 	@Inject(
 			method = "placeInWorld",
 			at = @At(
@@ -54,7 +55,7 @@ public abstract class StructureTemplateMixin implements StructureTemplateExtensi
 			)
 	)
 	private void grabSettings(ServerLevelAccessor level, BlockPos pos, BlockPos pivot, StructurePlaceSettings settings,
-							  RandomSource random, int i, CallbackInfoReturnable<Boolean> cir) {
+							  RandomSource random, int i, CallbackInfoReturnable<Boolean> cir, @Share("currentSettings") LocalRef<StructurePlaceSettings> currentSettings) {
 		currentSettings.set(settings);
 	}
 
@@ -67,7 +68,7 @@ public abstract class StructureTemplateMixin implements StructureTemplateExtensi
 	)
 	private List<StructureEntityInfo> processEntityInfos(List<StructureEntityInfo> original,
 														 ServerLevelAccessor level, BlockPos pos, Mirror mirror, Rotation rotation,
-														 BlockPos pivot, @Nullable BoundingBox bounds, boolean finalizeMobs) {
+														 BlockPos pivot, @Nullable BoundingBox bounds, boolean finalizeMobs, @Share("currentSettings") LocalRef<StructurePlaceSettings> currentSettings) {
 		StructurePlaceSettings settings = currentSettings.get();
 
 		if (PortingLib.DEBUG)
@@ -88,7 +89,7 @@ public abstract class StructureTemplateMixin implements StructureTemplateExtensi
 					target = "Lnet/minecraft/core/BlockPos;offset(Lnet/minecraft/core/Vec3i;)Lnet/minecraft/core/BlockPos;"
 			)
 	)
-	private BlockPos dontProcessBlockPosTwice(BlockPos original, @Local StructureEntityInfo info) {
+	private BlockPos dontProcessBlockPosTwice(BlockPos original, @Local StructureEntityInfo info, @Share("currentSettings") LocalRef<StructurePlaceSettings> currentSettings) {
 		StructurePlaceSettings settings = currentSettings.get();
 		if (settings != null) { // pos was already processed.
 			return info.blockPos;
@@ -103,17 +104,12 @@ public abstract class StructureTemplateMixin implements StructureTemplateExtensi
 					target = "Lnet/minecraft/world/phys/Vec3;add(DDD)Lnet/minecraft/world/phys/Vec3;"
 			)
 	)
-	private Vec3 dontProcessVecTwice(Vec3 original, @Local StructureEntityInfo info) {
+	private Vec3 dontProcessVecTwice(Vec3 original, @Local StructureEntityInfo info, @Share("currentSettings") LocalRef<StructurePlaceSettings> currentSettings) {
 		StructurePlaceSettings settings = currentSettings.get();
 		if (settings != null) { // pos was already processed.
 			return info.pos;
 		}
 		return original;
-	}
-
-	@Inject(method = "placeEntities", at = @At("RETURN"))
-	private void clearGrabbedSettings(CallbackInfo ci) {
-		currentSettings.remove(); // clear the settings when done to avoid leaking it
 	}
 
 	// --- deprecated API ---
