@@ -12,8 +12,6 @@
     "LootPoolMixin",
     "LootPoolMixin$LootPoolBuilderMixin",
     "LootTableMixin",
-    "LootTableMixin$BuilderMixin",
-    "loottable.LootTableMixin_Early",
-    "loottable.LootTableMixin_Late"
+    "LootTableMixin$BuilderMixin"
   ]
 }

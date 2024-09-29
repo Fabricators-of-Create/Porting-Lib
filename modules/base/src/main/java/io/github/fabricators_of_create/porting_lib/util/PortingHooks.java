@@ -1,9 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
+import io.github.fabricators_of_create.porting_lib.tool.ItemAbility;
+import io.github.fabricators_of_create.porting_lib.tool.events.BlockToolModificationEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ExperienceOrb;
 
 import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.phys.Vec3;
 
@@ -15,6 +18,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
@@ -61,5 +66,11 @@ public class PortingHooks {
 			inputSlots.setChanged();
 		});
 		return true;
+	}
+
+	@Nullable
+	public static BlockState onToolUse(BlockState originalState, UseOnContext context, ItemAbility itemAbility, boolean simulate) {
+		BlockToolModificationEvent event = new BlockToolModificationEvent(originalState, context, itemAbility, simulate);
+		return event.post() ? null : event.getFinalState();
 	}
 }
