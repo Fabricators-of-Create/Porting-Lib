@@ -40,10 +40,10 @@ public class MultiPlayerGameModeMixin {
 	@Shadow
 	private GameType localPlayerMode;
 
-	@Inject(method = "interact", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ServerboundInteractPacket;createInteractionPacket(Lnet/minecraft/world/entity/Entity;ZLnet/minecraft/world/InteractionHand;)Lnet/minecraft/network/protocol/game/ServerboundInteractPacket;"), cancellable = true)
+	@Inject(method = "interact", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/client/multiplayer/ClientPacketListener;send(Lnet/minecraft/network/protocol/Packet;)V"), cancellable = true)
 	public void port_lib$onEntityInteract(Player player, Entity target, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
 		if (this.localPlayerMode != GameType.SPECTATOR) { // don't fire for spectators to match non-specific EntityInteract
-			InteractionResult cancelResult = EntityInteractCallback.EVENT.invoker().onEntityInteract(player, hand, target);
+			InteractionResult cancelResult 	= EntityInteractCallback.EVENT.invoker().onEntityInteract(player, hand, target);
 			if (cancelResult != null) cir.setReturnValue(cancelResult);
 		}
 	}
