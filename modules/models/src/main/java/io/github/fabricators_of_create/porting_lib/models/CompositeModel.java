@@ -9,17 +9,17 @@ import com.google.gson.JsonParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryBakingContext;
 import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryLoader;
 import io.github.fabricators_of_create.porting_lib.models.geometry.IUnbakedGeometry;
-import net.minecraft.client.renderer.RenderType;
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -113,6 +113,20 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel> {
 			this.overrides = overrides;
 			this.transforms = transforms;
 			this.itemPasses = itemPasses;
+		}
+
+		@Override
+		public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
+			for (Map.Entry<String, BakedModel> entry : children.entrySet()) {
+				entry.getValue().emitBlockQuads(blockView, state, pos, randomSupplier, context);
+			}
+		}
+
+		@Override
+		public void emitItemQuads(ItemStack stack, Supplier<RandomSource> randomSupplier, RenderContext context) {
+			for (Map.Entry<String, BakedModel> entry : children.entrySet()) {
+				entry.getValue().emitItemQuads(stack, randomSupplier, context);
+			}
 		}
 
 		@Override
