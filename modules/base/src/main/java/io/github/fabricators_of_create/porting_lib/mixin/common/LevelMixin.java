@@ -155,9 +155,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 			method = "updateNeighbourForOutputSignal",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/Level;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;",
-					shift = Shift.BY,
-					by = 2,
+					target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z",
 					ordinal = 0
 			)
 	)
