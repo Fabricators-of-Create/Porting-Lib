@@ -70,7 +70,8 @@ public abstract class MinecraftMixin {
 			at = @At(
 					value = "FIELD",
 					target = "Lnet/minecraft/client/Minecraft;particleEngine:Lnet/minecraft/client/particle/ParticleEngine;",
-					shift = Shift.AFTER
+					shift = Shift.AFTER,
+					ordinal = 0
 			)
 	)
 	public void port_lib$registerParticleManagers(GameConfig gameConfiguration, CallbackInfo ci) {
