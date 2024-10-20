@@ -1,0 +1,5 @@
+{
+    "parent": "neoforge:item/bucket",
+    "loader": "porting_lib:fluid_container",
+    "fluid": "lava"
+}

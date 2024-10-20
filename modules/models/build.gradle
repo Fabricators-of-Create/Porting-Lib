@@ -1,5 +1,5 @@
 portingLib {
-	addModuleDependencies(["model_loader", "transfer", "data"])
+	addModuleDependencies(["model_loader", "transfer", "data", "fluids"])
 	enableTestMod()
 }
 

@@ -73,19 +73,19 @@ public interface IModelBuilder<T extends IModelBuilder<T>> {
 
 		@Override
 		public Simple addCulledFace(Direction facing, BakedQuad quad) {
-			builder.getEmitter().fromVanilla(quad, material, facing);
+			builder.getEmitter().fromVanilla(quad, material, facing).emit();
 			return this;
 		}
 
 		@Override
 		public Simple addUnculledFace(BakedQuad quad) {
-			builder.getEmitter().fromVanilla(quad, material, null);
+			builder.getEmitter().fromVanilla(quad, material, null).emit();
 			return this;
 		}
 
 		@Override
 		public Simple addFace(QuadView quad) {
-			builder.getEmitter().copyFrom(quad);
+			builder.getEmitter().copyFrom(quad).emit();
 			return this;
 		}
 
