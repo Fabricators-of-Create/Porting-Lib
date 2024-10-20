@@ -1,5 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import com.llamalad7.mixinextras.expression.Definition;
+import com.llamalad7.mixinextras.expression.Expression;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import io.github.fabricators_of_create.porting_lib.core.util.INBTSerializable;
@@ -8,11 +11,7 @@ import net.minecraft.core.HolderLookup;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import io.github.fabricators_of_create.porting_lib.block.CustomRunningEffectsBlock;
 import net.minecraft.core.BlockPos;
@@ -54,23 +53,15 @@ public abstract class EntityMixin implements INBTSerializable<CompoundTag> {
 
 	// RUNNING EFFECTS
 
-	@Inject(
-			method = "spawnSprintParticle",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/Level;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;",
-					shift = At.Shift.BY,
-					by = 2
-			),
-			cancellable = true
-	)
-	public void port_lib$spawnSprintParticle(CallbackInfo ci, @Local BlockPos pos, @Local BlockState state) {
+	@Definition(id = "blockState", local = @Local(type = BlockState.class))
+	@Definition(id = "getRenderShape", method = "Lnet/minecraft/world/level/block/state/BlockState;getRenderShape()Lnet/minecraft/world/level/block/RenderShape;")
+	@Definition(id = "INVISIBLE", field = "Lnet/minecraft/world/level/block/RenderShape;INVISIBLE:Lnet/minecraft/world/level/block/RenderShape;")
+	@Expression("blockState.getRenderShape() != INVISIBLE")
+	@ModifyExpressionValue(method = "spawnSprintParticle", at = @At("MIXINEXTRAS:EXPRESSION"))
+	public boolean port_lib$spawnSprintParticle(boolean original, @Local BlockPos pos, @Local BlockState state) {
 		//noinspection ConstantValue
-		if (state.getBlock() instanceof CustomRunningEffectsBlock custom &&
-				custom.addRunningEffects(state, level, pos, (Entity) (Object) this)) {
-			ci.cancel();
-		}
+		return original && !(state.getBlock() instanceof CustomRunningEffectsBlock custom &&
+				custom.addRunningEffects(state, level, pos, (Entity) (Object) this));
 	}
-
 
 }

@@ -4,6 +4,7 @@
   "priority": 951,
   "package": "io.github.fabricators_of_create.porting_lib.mixin",
   "plugin": "io.github.fabricators_of_create.porting_lib.mixin.PortingLibMixinPlugin",
+  "minMixinExtrasVersion": "0.5.0-beta.3",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "client.BoatRendererMixin",
