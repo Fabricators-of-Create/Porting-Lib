@@ -47,8 +47,7 @@ public abstract class ExperienceOrbMixin extends Entity {
 			method = "repairPlayerItems",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/world/item/enchantment/EnchantedItemInUse;itemStack()Lnet/minecraft/world/item/ItemStack;",
-					remap = false
+					target = "Lnet/minecraft/world/item/enchantment/EnchantedItemInUse;itemStack()Lnet/minecraft/world/item/ItemStack;"
 			)
 	)
 	private ItemStack port_lib$grabStackToMend(ItemStack original) {
