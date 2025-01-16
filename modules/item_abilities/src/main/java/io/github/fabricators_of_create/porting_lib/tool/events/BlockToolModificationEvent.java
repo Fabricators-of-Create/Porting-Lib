@@ -34,13 +34,13 @@ public class BlockToolModificationEvent extends BlockEvent implements Cancellabl
 	private final boolean simulate;
 	private BlockState state;
 
-	public BlockToolModificationEvent(BlockState originalState, UseOnContext context, ItemAbility itemAbility, boolean simulate) {
-		super(context.getLevel(), context.getClickedPos(), originalState);
-		this.context = context;
-		this.state = originalState;
-		this.itemAbility = itemAbility;
-		this.simulate = simulate;
-	}
+    public BlockToolModificationEvent(BlockState originalState, UseOnContext context, ItemAbility itemAbility, boolean simulate) {
+        super(context.getLevel(), context.getClickedPos(), originalState);
+        this.context = context;
+        this.state = originalState;
+        this.itemAbility = itemAbility;
+        this.simulate = simulate;
+    }
 
 	/**
 	 * @return the player using the tool.
