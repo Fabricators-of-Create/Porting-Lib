@@ -1,0 +1,63 @@
+package io.github.fabricators_of_create.porting_lib.mixin.client;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Consumer;
+import io.github.fabricators_of_create.porting_lib.event.client.CameraSetupCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.CameraSetupCallback.CameraInfo;
+import io.github.fabricators_of_create.porting_lib.event.client.FOVModifierCallback;
+import io.github.fabricators_of_create.porting_lib.extensions.CameraExtensions;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.At.Shift;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import com.mojang.datafixers.util.Pair;
+
+import io.github.fabricators_of_create.porting_lib.event.client.RegisterShadersCallback;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.gl.Program;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.Shader;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.math.Vec3f;
+
+@Environment(EnvType.CLIENT)
+@Mixin(GameRenderer.class)
+public abstract class GameRendererMixin {
+	@Shadow
+	@Final
+	private Camera mainCamera;
+
+	@Inject(method = "reloadShaders", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;shutdownShaders()V"), locals = LocalCapture.CAPTURE_FAILHARD)
+	private void port_lib$registerShaders(ResourceManager manager, CallbackInfo ci, List<Program> list, List<Pair<Shader, Consumer<Shader>>> shaderRegistry) {
+		try {
+			RegisterShadersCallback.EVENT.invoker().onShaderReload(manager, new RegisterShadersCallback.ShaderRegistry(shaderRegistry));
+		} catch (IOException e) {
+			throw new RuntimeException("[Porting Lib] failed to reload modded shaders", e);
+		}
+	}
+
+	@Inject(method = "getFov", at = @At(value = "RETURN", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
+	private void port_lib$modifyFOV(Camera activeRenderInfo, float partialTicks, boolean useFOVSetting, CallbackInfoReturnable<Double> cir, double oldFov) {
+		double newFov = FOVModifierCallback.PARTIAL_FOV.invoker().getNewFOV((GameRenderer) (Object) this, activeRenderInfo, partialTicks, oldFov);
+		if (newFov != oldFov)
+			cir.setReturnValue(newFov);
+	}
+
+	@Inject(method = "renderLevel", at = @At(value = "INVOKE", shift = Shift.AFTER, target = "Lnet/minecraft/client/Camera;setup(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/world/entity/Entity;ZZF)V"))
+	private void port_lib$modifyCameraInfo(float partialTicks, long l, MatrixStack poseStack, CallbackInfo ci) {
+		Camera cam = this.mainCamera;
+		CameraInfo info = new CameraInfo((GameRenderer) (Object) this, cam, partialTicks, cam.getYaw(), cam.getPitch(), 0);
+		CameraSetupCallback.EVENT.invoker().onCameraSetup(info);
+		cam.setAnglesInternal(info.yaw, info.pitch);
+		poseStack.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(info.roll));
+	}
+}
