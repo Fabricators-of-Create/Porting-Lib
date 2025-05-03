@@ -27,7 +27,8 @@ String versionNumber = providers.provider {
 
 dependencies {
 	subprojects.forEach {
-		api(include(project(path: ":$it.name", configuration: "namedElements")))
+		api(project(path: ":$it.name", configuration: "namedElements"))
+        include(project(":$it.name"))
 	}
 }
 

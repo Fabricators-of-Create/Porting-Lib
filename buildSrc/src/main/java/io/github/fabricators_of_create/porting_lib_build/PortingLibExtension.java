@@ -31,7 +31,7 @@ public abstract class PortingLibExtension {
 				"configuration", "namedElements"
 		));
 		dependencies.add("api", dependency);
-		dependencies.add("include", dependency);
+		dependencies.add("include", dependencies.project(Map.of("path", ":" + name)));
 
 		if (name.equals("mixin_extensions")) {
 			// special case, also an AP
