@@ -64,5 +64,8 @@
     "client.MinecraftMixin",
     "client.MultiPlayerGameModeMixin",
     "client.RemotePlayerMixin"
-  ]
+  ],
+  "mixinextras": {
+    "minVersion": "0.5.0-rc.2"
+  }
 }

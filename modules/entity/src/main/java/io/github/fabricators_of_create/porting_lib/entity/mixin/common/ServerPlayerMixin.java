@@ -1,5 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.authlib.GameProfile;
 
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
@@ -12,6 +15,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 
 import net.minecraft.world.level.Level;
@@ -52,5 +57,14 @@ public abstract class ServerPlayerMixin extends Player {
 	private void onPlayerDie(DamageSource cause, CallbackInfo ci) {
 		if (EntityHooks.onLivingDeath(this, cause))
 			ci.cancel();
+	}
+
+	@WrapOperation(method = "drop(Lnet/minecraft/world/item/ItemStack;ZZ)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+	private boolean captureDrops(Level instance, Entity entity, Operation<Boolean> original, @Local(ordinal = 0) ItemEntity item) {
+		if (captureDrops() != null) {
+			captureDrops().add(item);
+			return false;
+		}
+		return original.call(instance, entity);
 	}
 }

@@ -4,6 +4,8 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import java.util.Arrays;
 import java.util.List;
+
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadView;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 
 /**
@@ -12,7 +14,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
  * @see FabricQuadTransformers
  */
 public interface IQuadTransformer {
-	int STRIDE = DefaultVertexFormat.BLOCK.getVertexSize() / 4;
+	int STRIDE = QuadView.VANILLA_VERTEX_STRIDE;
 	int POSITION = findOffset(VertexFormatElement.POSITION);
 	int COLOR = findOffset(VertexFormatElement.COLOR);
 	int UV0 = findOffset(VertexFormatElement.UV0);

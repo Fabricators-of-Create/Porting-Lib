@@ -20,9 +20,9 @@ public class PortingLibModels implements ClientModInitializer {
 
 			loaders.put(PortingLib.id("composite"), CompositeModel.Loader.INSTANCE);
 			loaders.put(PortingLib.id("item_layers"), ItemLayerModel.Loader.INSTANCE);
+			loaders.put(PortingLib.id("separate_transforms"), SeparateTransformsModel.Loader.INSTANCE);
 
 //			loaders.put(PortingLib.id("fluid_container"), DynamicFluidContainerModel.Loader.INSTANCE); TODO: PORT
-
 		});
 		BlockModel.GSON = BlockModel.GSON.newBuilder()
 				.registerTypeAdapter(Transformation.class, new TransformationHelper.Deserializer())

@@ -9,6 +9,12 @@ import java.util.Map;
 
 import io.github.fabricators_of_create.porting_lib.models.IQuadTransformer;
 import io.github.fabricators_of_create.porting_lib.textures.UnitTextureAtlasSprite;
+import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
+import net.fabricmc.fabric.api.renderer.v1.material.MaterialFinder;
+import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadView;
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -29,7 +35,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer {
 		for (var element : DefaultVertexFormat.BLOCK.getElements())
 			map.put(element, DefaultVertexFormat.BLOCK.getOffset(element) / 4); // Int offset
 	});
-	private static final int QUAD_DATA_SIZE = IQuadTransformer.STRIDE * 4;
+	private static final int QUAD_DATA_SIZE = QuadView.VANILLA_QUAD_STRIDE;
 
 	private final int[] quadData = new int[QUAD_DATA_SIZE];
 	private int vertexIndex = 0;
@@ -38,6 +44,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer {
 	private int tintIndex = -1;
 	private Direction direction = Direction.DOWN;
 	private TextureAtlasSprite sprite = UnitTextureAtlasSprite.INSTANCE;
+	private MaterialFinder materialFinder = RendererAccess.INSTANCE.getRenderer().materialFinder();
 	private boolean shade;
 	private int lightEmission;
 	private boolean hasAmbientOcclusion;
@@ -135,15 +142,50 @@ public class QuadBakingVertexConsumer implements VertexConsumer {
 		this.hasAmbientOcclusion = hasAmbientOcclusion;
 	}
 
+	public void setRenderMaterial(RenderMaterial material) {
+		this.materialFinder.clear();
+		this.materialFinder.copyFrom(material);
+	}
+
+	/**
+	 * Only supports vanilla's quad format use the method below this one for full rendering feature support.
+	 * This method does not support ambient occlusion and light emission
+	 */
+	@Deprecated
 	public BakedQuad bakeQuad() {
 		if (!building || ++vertexIndex != 4) {
 			throw new IllegalStateException("Not enough vertices available. Vertices in buffer: " + vertexIndex);
 		}
 
-		BakedQuad quad = new BakedQuad(quadData.clone(), tintIndex, direction, sprite, shade, lightEmission, hasAmbientOcclusion);
+		BakedQuad quad = new BakedQuad(quadData.clone(), tintIndex, direction, sprite, shade);
 		vertexIndex = 0;
 		building = false;
 		Arrays.fill(quadData, 0);
 		return quad;
+	}
+
+	public QuadView build() {
+		if (!building || ++vertexIndex != 4) {
+			throw new IllegalStateException("Not enough vertices available. Vertices in buffer: " + vertexIndex);
+		}
+
+		QuadEmitter emitter = RendererAccess.INSTANCE.getRenderer().meshBuilder().getEmitter();
+
+		emitter.fromVanilla(quadData.clone(), 0);
+		emitter.colorIndex(tintIndex);
+		emitter.nominalFace(direction);
+
+		if (!shade) {
+			materialFinder.disableDiffuse(true);
+		}
+
+		emitter.material(materialFinder.find());
+
+		materialFinder.ambientOcclusion(TriState.of(hasAmbientOcclusion));
+
+		emitter.lightmap(lightEmission, lightEmission, lightEmission, lightEmission);
+
+
+		return emitter;
 	}
 }

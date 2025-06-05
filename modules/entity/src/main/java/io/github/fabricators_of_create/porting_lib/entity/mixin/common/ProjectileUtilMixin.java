@@ -1,46 +1,27 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
 
+import com.llamalad7.mixinextras.expression.Definition;
+import com.llamalad7.mixinextras.expression.Expression;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
-
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 @Mixin(ProjectileUtil.class)
 public abstract class ProjectileUtilMixin {
-
-	@Unique
-	private static boolean port_lib$canRiderInteract = false;
-
+	@Definition(id = "getRootVehicle", method = "Lnet/minecraft/world/entity/Entity;getRootVehicle()Lnet/minecraft/world/entity/Entity;")
+	@Definition(id = "entity2", local = @Local(type = Entity.class, ordinal = 2))
+	@Definition(id = "shooter", local = @Local(type = Entity.class, ordinal = 0, argsOnly = true))
+	@Expression("entity2.getRootVehicle() == shooter.getRootVehicle()")
 	@ModifyExpressionValue(
 			method = "getEntityHitResult(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;D)Lnet/minecraft/world/phys/EntityHitResult;",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getRootVehicle()Lnet/minecraft/world/entity/Entity;", ordinal = 1)
+			at = @At(value = "MIXINEXTRAS:EXPRESSION")
 	)
-	private static Entity port_lib$rider(Entity original) {
-		return port_lib$canRiderInteract ? original : null;
-	}
-
-	@Inject(
-			method = "getEntityHitResult(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;D)Lnet/minecraft/world/phys/EntityHitResult;",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getRootVehicle()Lnet/minecraft/world/entity/Entity;", ordinal = 0, shift = At.Shift.BEFORE)
-	)
-	private static void port_lib$result(Entity shooter, Vec3 startVec, Vec3 endVec, AABB boundingBox, Predicate<Entity> filter, double distance, CallbackInfoReturnable<EntityHitResult> cir, @Local(ordinal = 1) Entity entity) {
-		port_lib$canRiderInteract = !entity.canRiderInteract();
+	private static boolean checkCanRiderInteract(boolean original, @Local(ordinal = 2) Entity entity) {
+		return original && !entity.canRiderInteract();
 	}
 }
