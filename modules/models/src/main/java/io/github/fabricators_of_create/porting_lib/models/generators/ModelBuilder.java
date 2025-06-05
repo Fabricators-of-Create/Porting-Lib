@@ -316,7 +316,10 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 				}
 
 				if (!part.port_lib$getFaceData().equals(ExtraFaceData.DEFAULT)) {
-					partObj.add("neoforge_data", ExtraFaceData.CODEC.encodeStart(JsonOps.INSTANCE, part.port_lib$getFaceData()).result().get());
+					var faceData = part.port_lib$getFaceData();
+					if (faceData != null) {
+						partObj.add("neoforge_data", ExtraFaceData.CODEC.encodeStart(JsonOps.INSTANCE, part.port_lib$getFaceData()).result().get());
+					}
 				}
 
 				JsonObject faces = new JsonObject();
