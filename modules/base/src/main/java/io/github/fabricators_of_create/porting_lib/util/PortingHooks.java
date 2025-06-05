@@ -67,10 +67,4 @@ public class PortingHooks {
 		});
 		return true;
 	}
-
-	@Nullable
-	public static BlockState onToolUse(BlockState originalState, UseOnContext context, ItemAbility itemAbility, boolean simulate) {
-		BlockToolModificationEvent event = new BlockToolModificationEvent(originalState, context, itemAbility, simulate);
-		return event.post() ? null : event.getFinalState();
-	}
 }

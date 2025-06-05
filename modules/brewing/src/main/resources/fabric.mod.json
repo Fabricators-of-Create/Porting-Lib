@@ -7,7 +7,7 @@
   "custom": {
     "loom:injected_interfaces": {
       "net/minecraft/class_1845": ["io/github/fabricators_of_create/porting_lib/brewing/ext/PotionBrewingExt"],
-      "net/minecraft/class_1845/class_9665": ["io/github/fabricators_of_create/porting_lib/brewing/ext/PotionBrewingBuilderExt"]
+      "net/minecraft/class_1845$class_9665": ["io/github/fabricators_of_create/porting_lib/brewing/ext/PotionBrewingBuilderExt"]
     }
   }
 }
