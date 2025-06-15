@@ -15,8 +15,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import io.github.fabricators_of_create.porting_lib.conditions.ConditionalOps;
+import io.github.fabricators_of_create.porting_lib.conditions.ICondition;
 import io.github.fabricators_of_create.porting_lib.conditions.WithConditions;
-import io.github.fabricators_of_create.porting_lib.data.ExistingFileHelper.ResourceType;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
@@ -39,7 +39,7 @@ import org.slf4j.Logger;
  */
 public abstract class JsonCodecProvider<T> implements DataProvider {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	protected final ResourceType resourceType;
+	protected final ExistingFileHelper.ResourceType resourceType;
 	protected final PackOutput.PathProvider pathProvider;
 	protected final ExistingFileHelper existingFileHelper;
 	protected final CompletableFuture<HolderLookup.Provider> lookupProvider;
@@ -63,7 +63,7 @@ public abstract class JsonCodecProvider<T> implements DataProvider {
 							 String modId,
 							 ExistingFileHelper existingFileHelper) {
 		// Track generated data so other dataproviders can validate if needed.
-		this.resourceType = new ResourceType(packType, ".json", directory);
+		this.resourceType = new ExistingFileHelper.ResourceType(packType, ".json", directory);
 		this.pathProvider = output.createPathProvider(target, directory);
 		this.existingFileHelper = existingFileHelper;
 		this.modid = modId;
@@ -79,13 +79,13 @@ public abstract class JsonCodecProvider<T> implements DataProvider {
 		gather();
 
 		return lookupProvider.thenCompose(provider -> {
-			final DynamicOps<JsonElement> dynamicOps = RegistryOps.create(JsonOps.INSTANCE, provider);
+			final DynamicOps<JsonElement> dynamicOps = new ConditionalOps<>(RegistryOps.create(JsonOps.INSTANCE, provider), ICondition.IContext.EMPTY);
 
 			this.conditions.forEach((id, withConditions) -> {
 				final Path path = this.pathProvider.json(id);
 
 				futuresBuilder.add(CompletableFuture.supplyAsync(() -> {
-					final Codec<Optional<WithConditions<T>>> withConditionsCodec = ConditionalOps.createConditionalCodecWithConditions(provider, this.codec);
+					final Codec<Optional<WithConditions<T>>> withConditionsCodec = ConditionalOps.createConditionalCodecWithConditions(this.codec);
 					return withConditionsCodec.encodeStart(dynamicOps, Optional.of(withConditions)).getOrThrow(msg -> new RuntimeException("Failed to encode %s: %s".formatted(path, msg)));
 				}).thenComposeAsync(encoded -> DataProvider.saveStable(cache, encoded, path)));
 			});

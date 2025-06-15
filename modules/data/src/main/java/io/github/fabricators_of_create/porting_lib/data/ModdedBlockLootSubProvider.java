@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.data;
 
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
@@ -24,22 +26,24 @@ public abstract class ModdedBlockLootSubProvider extends BlockLootSubProvider {
 	@Override
 	public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> biConsumer) {
 		this.generate();
-		Set<ResourceKey<LootTable>> set = Sets.newHashSet();
+		Set<ResourceKey<LootTable>> set = new HashSet();
 
 		for(Block block : getKnownBlocks()) {
-			ResourceKey<LootTable> resourceKey = block.getLootTable();
-			if (resourceKey != BuiltInLootTables.EMPTY && set.add(resourceKey)) {
-				LootTable.Builder builder6 = map.remove(resourceKey);
-				if (builder6 == null) {
-					throw new IllegalStateException(String.format("Missing loottable '%s' for '%s'", resourceKey, BuiltInRegistries.BLOCK.getKey(block)));
-				}
+			if (block.isEnabled(this.enabledFeatures)) {
+				ResourceKey<LootTable> lootTable = block.getLootTable();
+				if (lootTable != BuiltInLootTables.EMPTY && set.add(lootTable)) {
+					LootTable.Builder builder = this.map.remove(lootTable);
+					if (builder == null) {
+						throw new IllegalStateException(String.format(Locale.ROOT, "Missing loottable '%s' for '%s'", lootTable.location(), BuiltInRegistries.BLOCK.getKey(block)));
+					}
 
-				biConsumer.accept(resourceKey, builder6);
+					biConsumer.accept(lootTable, builder);
+				}
 			}
 		}
 
-		if (!map.isEmpty()) {
-			throw new IllegalStateException("Created block loot tables for non-blocks: " + map.keySet());
+		if (!this.map.isEmpty()) {
+			throw new IllegalStateException("Created block loot tables for non-blocks: " + String.valueOf(this.map.keySet()));
 		}
 	}
 

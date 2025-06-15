@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
+import io.github.fabricators_of_create.porting_lib.registry.DeferredRegister;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;

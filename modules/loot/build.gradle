@@ -1,1 +1,1 @@
-portingLib.addModuleDependencies(["conditions", "lazy_registration"])
+portingLib.addModuleDependencies(["conditions", "registry"])

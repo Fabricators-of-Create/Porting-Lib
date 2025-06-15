@@ -3,14 +3,11 @@ package io.github.fabricators_of_create.porting_lib.conditions;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
-
 import org.apache.commons.lang3.Validate;
 
-public record WithConditions<A>(List<ResourceCondition> conditions, A carrier) {
+public record WithConditions<A>(List<ICondition> conditions, A carrier) {
 
-	public WithConditions(A carrier, ResourceCondition... conditions) {
+	public WithConditions(A carrier, ICondition... conditions) {
 		this(List.of(conditions), carrier);
 	}
 
@@ -22,15 +19,15 @@ public record WithConditions<A>(List<ResourceCondition> conditions, A carrier) {
 		return new Builder<A>().withCarrier(carrier);
 	}
 	public static class Builder<T> {
-		private final List<ResourceCondition> conditions = new ArrayList<>();
+		private final List<ICondition> conditions = new ArrayList<>();
 		private T carrier;
 
-		public Builder<T> addCondition(ResourceCondition... condition) {
+		public Builder<T> addCondition(ICondition... condition) {
 			this.conditions.addAll(List.of(condition));
 			return this;
 		}
 
-		public Builder<T> addCondition(Collection<ResourceCondition> conditions) {
+		public Builder<T> addCondition(Collection<ICondition> conditions) {
 			this.conditions.addAll(conditions);
 			return this;
 		}

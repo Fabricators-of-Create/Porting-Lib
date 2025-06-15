@@ -6,4 +6,6 @@ transitive-accessible field net/minecraft/client/renderer/block/model/BlockModel
 transitive-accessible field net/minecraft/client/renderer/block/model/BlockModel parent Lnet/minecraft/client/renderer/block/model/BlockModel;
 accessible method net/minecraft/client/renderer/block/model/BlockModel bakeFace (Lnet/minecraft/client/renderer/block/model/BlockElement;Lnet/minecraft/client/renderer/block/model/BlockElementFace;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/core/Direction;Lnet/minecraft/client/resources/model/ModelState;)Lnet/minecraft/client/renderer/block/model/BakedQuad;
 
+accessible class net/minecraft/client/renderer/block/model/BlockElementFace$Deserializer
+
 accessible method net/minecraft/client/resources/model/SimpleBakedModel$Builder <init> (ZZZLnet/minecraft/client/renderer/block/model/ItemTransforms;Lnet/minecraft/client/renderer/block/model/ItemOverrides;)V

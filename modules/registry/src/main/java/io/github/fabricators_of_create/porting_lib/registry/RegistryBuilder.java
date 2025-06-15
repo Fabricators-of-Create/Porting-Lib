@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.util;
+package io.github.fabricators_of_create.porting_lib.registry;
 
 import com.mojang.serialization.Lifecycle;
 

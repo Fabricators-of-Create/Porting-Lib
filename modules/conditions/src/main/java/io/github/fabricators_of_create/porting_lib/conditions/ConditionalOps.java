@@ -11,13 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 import io.github.fabricators_of_create.porting_lib.core.util.PortingLibExtraCodecs;
-import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
-import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.util.ExtraCodecs;
-
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Extension of {@link RegistryOps} that also encapsulates a {@link ICondition.IContext}.
@@ -25,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ConditionalOps<T> extends RegistryOps<T> {
 	private final ICondition.IContext context;
-	private @Nullable HolderLookup.Provider registryLookup;
 
 	public ConditionalOps(RegistryOps<T> ops, ICondition.IContext context) {
 		super(ops, ops.lookupProvider);
@@ -48,7 +42,7 @@ public class ConditionalOps<T> extends RegistryOps<T> {
 	/**
 	 * Key used for the conditions inside an object.
 	 */
-	public static final String DEFAULT_CONDITIONS_KEY = ResourceConditions.CONDITIONS_KEY;
+	public static final String DEFAULT_CONDITIONS_KEY = "porting_lib:conditions";
 	/**
 	 * Key used to store the value associated with conditions,
 	 * when the value is not represented as a map.
@@ -56,12 +50,12 @@ public class ConditionalOps<T> extends RegistryOps<T> {
 	 *
 	 * <pre>
 	 * {
-	 *     "neoforge:conditions": [ ... ],
-	 *     "neoforge:value": 2
+	 *     "porting_lib:conditions": [ ... ],
+	 *     "porting_lib:value": 2
 	 * }
 	 * </pre>
 	 */
-	public static final String CONDITIONAL_VALUE_KEY = "neoforge:value";
+	public static final String CONDITIONAL_VALUE_KEY = "porting_lib:value";
 
 	/**
 	 * @see #createConditionalCodec(Codec, String)
@@ -96,38 +90,22 @@ public class ConditionalOps<T> extends RegistryOps<T> {
 	}
 
 	/**
-	 * @see #createConditionalCodecWithConditions(HolderLookup.Provider, Codec, String)
-	 */
-	public static <T> Codec<Optional<WithConditions<T>>> createConditionalCodecWithConditions(@Nullable HolderLookup.Provider registryLookup, final Codec<T> ownerCodec) {
-		return createConditionalCodecWithConditions(registryLookup, ownerCodec, DEFAULT_CONDITIONS_KEY);
-	}
-
-	/**
 	 * Creates a conditional codec.
 	 *
 	 * <p>The conditional codec is generally not suitable for use as a dispatch target because it is never a {@link MapCodec.MapCodecCodec}.
 	 */
 	public static <T> Codec<Optional<WithConditions<T>>> createConditionalCodecWithConditions(final Codec<T> ownerCodec, String conditionalsKey) {
-		return createConditionalCodecWithConditions(null, ownerCodec, conditionalsKey);
-	}
-
-	/**
-	 * Creates a conditional codec.
-	 *
-	 * <p>The conditional codec is generally not suitable for use as a dispatch target because it is never a {@link MapCodec.MapCodecCodec}.
-	 */
-	public static <T> Codec<Optional<WithConditions<T>>> createConditionalCodecWithConditions(@Nullable HolderLookup.Provider registryLookup, final Codec<T> ownerCodec, String conditionalsKey) {
 		return Codec.of(
 				new ConditionalEncoder<>(conditionalsKey, ICondition.LIST_CODEC, ownerCodec),
-				new ConditionalDecoder<>(registryLookup, conditionalsKey, ICondition.LIST_CODEC, retrieveContext().codec(), ownerCodec));
+				new ConditionalDecoder<>(conditionalsKey, ICondition.LIST_CODEC, retrieveContext().codec(), ownerCodec));
 	}
 
 	private static final class ConditionalEncoder<A> implements Encoder<Optional<WithConditions<A>>> {
 		private final String conditionalsPropertyKey;
-		public final Codec<List<ResourceCondition>> conditionsCodec;
+		public final Codec<List<ICondition>> conditionsCodec;
 		private final Encoder<A> innerCodec;
 
-		private ConditionalEncoder(String conditionalsPropertyKey, Codec<List<ResourceCondition>> conditionsCodec, Encoder<A> innerCodec) {
+		private ConditionalEncoder(String conditionalsPropertyKey, Codec<List<ICondition>> conditionsCodec, Encoder<A> innerCodec) {
 			this.conditionalsPropertyKey = conditionalsPropertyKey;
 			this.conditionsCodec = conditionsCodec;
 			this.innerCodec = innerCodec;
@@ -188,13 +166,11 @@ public class ConditionalOps<T> extends RegistryOps<T> {
 
 	private static final class ConditionalDecoder<A> implements Decoder<Optional<WithConditions<A>>> {
 		private final String conditionalsPropertyKey;
-		public final Codec<List<ResourceCondition>> conditionsCodec;
+		public final Codec<List<ICondition>> conditionsCodec;
 		private final Codec<ICondition.IContext> contextCodec;
 		private final Decoder<A> innerCodec;
-		private final @Nullable HolderLookup.Provider registryLookup;
 
-		private ConditionalDecoder(@Nullable HolderLookup.Provider registryLookup, String conditionalsPropertyKey, Codec<List<ResourceCondition>> conditionsCodec, Codec<ICondition.IContext> contextCodec, Decoder<A> innerCodec) {
-			this.registryLookup = registryLookup;
+		private ConditionalDecoder(String conditionalsPropertyKey, Codec<List<ICondition>> conditionsCodec, Codec<ICondition.IContext> contextCodec, Decoder<A> innerCodec) {
 			this.conditionalsPropertyKey = conditionalsPropertyKey;
 			this.conditionsCodec = conditionsCodec;
 			this.contextCodec = contextCodec;
@@ -218,13 +194,13 @@ public class ConditionalOps<T> extends RegistryOps<T> {
 				}
 
 				return conditionsCodec.decode(ops, conditionsDataCarrier).flatMap(conditionsCarrier -> {
-					final List<ResourceCondition> conditions = conditionsCarrier.getFirst();
+					final List<ICondition> conditions = conditionsCarrier.getFirst();
 					final DataResult<Pair<ICondition.IContext, T>> contextDataResult = contextCodec.decode(ops, ops.emptyMap());
 
 					return contextDataResult.flatMap(contextCarrier -> {
 						final ICondition.IContext context = contextCarrier.getFirst();
 
-						final boolean conditionsMatch = conditions.stream().allMatch(c -> c instanceof ICondition nc ? nc.test(registryLookup, context) : c.test(registryLookup));
+						final boolean conditionsMatch = conditions.stream().allMatch(c -> c.test(context));
 						if (!conditionsMatch)
 							return DataResult.success(Pair.of(Optional.empty(), input));
 

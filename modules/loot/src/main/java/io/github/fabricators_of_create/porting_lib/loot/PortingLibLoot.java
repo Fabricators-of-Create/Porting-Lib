@@ -1,14 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.loot;
 
-import java.util.List;
-
-import com.mojang.serialization.MapCodec;
-
 import com.mojang.serialization.MapCodec;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.loot.extensions.LootTableBuilderExtensions;
-import io.github.fabricators_of_create.porting_lib.util.RegistryBuilder;
+import io.github.fabricators_of_create.porting_lib.registry.RegistryBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.Event;

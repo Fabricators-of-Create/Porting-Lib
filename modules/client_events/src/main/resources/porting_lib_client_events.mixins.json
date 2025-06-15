@@ -10,6 +10,7 @@
     "GameRendererMixin",
     "ItemInHandRendererMixin",
     "LocalPlayerMixin",
+    "MusicManagerMixin",
     "PlayerRendererMixin",
     "SoundEngineMixin"
   ],

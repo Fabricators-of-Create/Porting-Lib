@@ -316,10 +316,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 				}
 
 				if (!part.port_lib$getFaceData().equals(ExtraFaceData.DEFAULT)) {
-					var faceData = part.port_lib$getFaceData();
-					if (faceData != null) {
-						partObj.add("neoforge_data", ExtraFaceData.CODEC.encodeStart(JsonOps.INSTANCE, part.port_lib$getFaceData()).result().get());
-					}
+					partObj.add("porting_lib_data", ExtraFaceData.CODEC.encodeStart(JsonOps.INSTANCE, part.port_lib$getFaceData()).result().get());
 				}
 
 				JsonObject faces = new JsonObject();
@@ -341,9 +338,9 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 					if (face.tintIndex() != -1) {
 						faceObj.addProperty("tintindex", face.tintIndex());
 					}
-//					if (!face.faceData().equals(ExtraFaceData.DEFAULT)) { TODO: PORT
-//						faceObj.add("neoforge_data", ExtraFaceData.CODEC.encodeStart(JsonOps.INSTANCE, face.faceData()).result().orElseThrow());
-//					}
+					if (!face.port_lib$faceData().equals(ExtraFaceData.DEFAULT)) {
+						faceObj.add("porting_lib_data", ExtraFaceData.CODEC.encodeStart(JsonOps.INSTANCE, face.port_lib$faceData()).result().orElseThrow());
+					}
 					faces.add(dir.getSerializedName(), faceObj);
 				}
 				if (!part.faces.isEmpty()) {
@@ -574,7 +571,9 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 					.collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().build(), (k1, k2) -> {
 						throw new IllegalArgumentException();
 					}, LinkedHashMap::new));
-			return new BlockElement(from, to, faces, rotation == null ? null : rotation.build(), shade/*, new ExtraFaceData(this.color, this.blockLight, this.skyLight, this.hasAmbientOcclusion) TODO: PORT*/);
+			var result = new BlockElement(from, to, faces, rotation == null ? null : rotation.build(), shade);
+			result.port_lib$setFaceData(new ExtraFaceData(this.color, this.blockLight, this.skyLight, this.hasAmbientOcclusion));
+			return result;
 		}
 
 		public T end() {
@@ -676,7 +675,9 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 				if (this.texture == null) {
 					throw new IllegalStateException("A model face must have a texture");
 				}
-				return new BlockElementFace(cullface, tintindex, texture, new BlockFaceUV(uvs, rotation.rotation)/*, new ExtraFaceData(this.color, this.blockLight, this.skyLight, this.hasAmbientOcclusion), new MutableObject<>() TODO: PORT*/);
+				var result = new BlockElementFace(cullface, tintindex, texture, new BlockFaceUV(uvs, rotation.rotation));
+				result.port_lib$setFaceData(new ExtraFaceData(this.color, this.blockLight, this.skyLight, this.hasAmbientOcclusion), new MutableObject<>());
+				return result;
 			}
 
 			public ElementBuilder end() {

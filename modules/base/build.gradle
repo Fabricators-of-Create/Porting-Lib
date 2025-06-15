@@ -1,9 +1,9 @@
 portingLib.addModuleDependencies([
-		"lazy_registration",
 		"item_abilities",
 		"extensions",
 		"gui_utils",
 		"transfer",
+		"registry",
 		"entity",
 		"common",
 		"config",

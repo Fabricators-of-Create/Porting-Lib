@@ -2,7 +2,7 @@ package io.github.fabricators_of_create.porting_lib.models.geometry.mixin.common
 
 import com.mojang.math.Transformation;
 
-import io.github.fabricators_of_create.porting_lib.models.geometry.extensions.TransformationExtensions;
+import io.github.fabricators_of_create.porting_lib.models.geometry.extensions.TransformationExtension;
 import net.minecraft.core.Direction;
 
 import org.joml.Matrix3f;
@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(Transformation.class)
-public abstract class TransformationMixin implements TransformationExtensions {
+public abstract class TransformationMixin implements TransformationExtension {
 	@Shadow
 	@Final
 	private Matrix4f matrix;

@@ -4,14 +4,11 @@ import org.joml.Matrix3f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Transformation;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.core.Direction;
 
-public interface TransformationExtensions {
+public interface TransformationExtension {
 	/**
 	 * Apply this transformation to a different origin.
 	 * Can be used for switching between coordinate systems.

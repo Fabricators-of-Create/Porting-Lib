@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.util;
+package io.github.fabricators_of_create.porting_lib.registry;
 
 import com.mojang.datafixers.util.Either;
 import java.util.Locale;
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <T> The type of object being held by this DeferredHolder.
  */
-public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
+public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T>, DelegatedHolder<R> {
 	/**
 	 * Creates a new DeferredHolder targeting the value with the specified name in the specified registry.
 	 *
@@ -292,9 +292,9 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
 		return this.holder != null && this.holder.canSerializeIn(owner);
 	}
 
-//	@Override
-//	public Holder<R> getDelegate() {
-//		bind(false);
-//		return this.holder != null ? this.holder.getDelegate() : this;
-//	}
+	@Override
+	public Holder<R> getDelegate() {
+		bind(false);
+		return this.holder != null ? DelegatedHolder.getDelegate(this.holder) : this;
+	}
 }

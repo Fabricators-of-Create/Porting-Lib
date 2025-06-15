@@ -1,15 +1,15 @@
 package io.github.fabricators_of_create.porting_lib.models.geometry.mixin.client;
 
 import io.github.fabricators_of_create.porting_lib.models.ExtraFaceData;
-import io.github.fabricators_of_create.porting_lib.models.geometry.extensions.BlockElementExt;
+import io.github.fabricators_of_create.porting_lib.models.geometry.extensions.BlockElementExtension;
 import net.minecraft.client.renderer.block.model.BlockElement;
 
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(BlockElement.class)
-public class BlockElementMixin implements BlockElementExt {
+public class BlockElementMixin implements BlockElementExtension {
 
-	private ExtraFaceData port_lib$faceData;
+	private ExtraFaceData port_lib$faceData = ExtraFaceData.DEFAULT;
 
 	@Override
 	public ExtraFaceData port_lib$getFaceData() {

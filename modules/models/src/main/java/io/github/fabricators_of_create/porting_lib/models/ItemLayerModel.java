@@ -92,9 +92,9 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel> {
 			}
 
 			var emissiveLayers = new Int2ObjectArrayMap<ExtraFaceData>();
-			if (jsonObject.has("forge_data")) throw new JsonParseException("forge_data should be replaced by neoforge_data"); // TODO 1.22: Remove
-			if (jsonObject.has("neoforge_data")) {
-				JsonObject forgeData = jsonObject.get("neoforge_data").getAsJsonObject();
+//			if (jsonObject.has("forge_data")) throw new JsonParseException("forge_data should be replaced by neoforge_data"); // TODO 1.22: Remove
+			if (jsonObject.has("porting_lib_data")) {
+				JsonObject forgeData = jsonObject.get("porting_lib_data").getAsJsonObject();
 				readLayerData(forgeData, "layers", renderTypeNames, emissiveLayers, false);
 			}
 			return new ItemLayerModel(null, emissiveLayers, renderTypeNames);

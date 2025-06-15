@@ -10,7 +10,7 @@ import net.minecraft.client.resources.model.ModelBaker;
 
 import java.util.function.Function;
 
-public interface BlockModelExtensions {
+public interface BlockModelExtension {
 	default BlockGeometryBakingContext port_lib$getCustomData() {
 		throw PortingLib.createMixinException("BlockModelExtensions#port_lib$getCustomData()");
 	}

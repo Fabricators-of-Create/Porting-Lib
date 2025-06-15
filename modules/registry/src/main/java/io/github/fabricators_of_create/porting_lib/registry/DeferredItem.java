@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.util;
+package io.github.fabricators_of_create.porting_lib.registry;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;

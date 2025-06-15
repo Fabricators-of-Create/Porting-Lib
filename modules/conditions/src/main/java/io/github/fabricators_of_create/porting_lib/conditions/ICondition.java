@@ -1,29 +1,83 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package io.github.fabricators_of_create.porting_lib.conditions;
 
-import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.MapCodec;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Unit;
 
-import org.jetbrains.annotations.Nullable;
+public interface ICondition {
+	Codec<ICondition> CODEC = PortingLibConditions.CONDITION_SERIALIZERS.byNameCodec()
+			.dispatch(ICondition::codec, Function.identity());
+	Codec<List<ICondition>> LIST_CODEC = CODEC.listOf();
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
-public interface ICondition extends ResourceCondition {
-
-	@Override
-	default boolean test(@Nullable HolderLookup.Provider registryLookup) {
-		return test(registryLookup, IContext.TAGS_INVALID);
+	static <V, T> Optional<T> getConditionally(Codec<T> codec, DynamicOps<V> ops, V element) {
+		return getWithConditionalCodec(ConditionalOps.createConditionalCodec(codec), ops, element);
 	}
 
-	boolean test(@Nullable HolderLookup.Provider registryLookup, IContext context);
+	static <V, T> Optional<T> getWithConditionalCodec(Codec<Optional<T>> codec, DynamicOps<V> ops, V element) {
+		return codec.parse(ops, element).getOrThrow(JsonParseException::new);
+	}
 
+	static <V, T> Optional<T> getWithWithConditionsCodec(Codec<Optional<WithConditions<T>>> codec, DynamicOps<V> ops, V elements) {
+		return codec.parse(ops, elements).promotePartial((m) -> {}).getOrThrow(JsonParseException::new).map(WithConditions::carrier);
+	}
+
+	static <V> boolean conditionsMatched(DynamicOps<V> ops, V element) {
+		final Codec<Unit> codec = Codec.unit(Unit.INSTANCE);
+		return getConditionally(codec, ops, element).isPresent();
+	}
+
+	/**
+	 * Writes an array of conditions to a JSON object.
+	 */
+	static void writeConditions(HolderLookup.Provider registries, JsonObject jsonObject, ICondition... conditions) {
+		writeConditions(registries, jsonObject, List.of(conditions));
+	}
+
+	/**
+	 * Writes a list of conditions to a JSON object.
+	 */
+	static void writeConditions(HolderLookup.Provider registries, JsonObject jsonObject, List<ICondition> conditions) {
+		writeConditions(RegistryOps.create(JsonOps.INSTANCE, registries), jsonObject, conditions);
+	}
+
+	/**
+	 * Writes a list of conditions to a JSON object.
+	 */
+	static void writeConditions(DynamicOps<JsonElement> jsonOps, JsonObject jsonObject, List<ICondition> conditions) {
+		if (!conditions.isEmpty()) {
+			var result = LIST_CODEC.encodeStart(jsonOps, conditions);
+			JsonElement serializedConditions = result.result().orElseThrow(() -> new RuntimeException("Failed to serialize conditions"));
+			jsonObject.add(ConditionalOps.DEFAULT_CONDITIONS_KEY, serializedConditions);
+		}
+	}
+
+	boolean test(IContext context);
+
+	MapCodec<? extends ICondition> codec();
 
 	interface IContext {
 		IContext EMPTY = new IContext() {

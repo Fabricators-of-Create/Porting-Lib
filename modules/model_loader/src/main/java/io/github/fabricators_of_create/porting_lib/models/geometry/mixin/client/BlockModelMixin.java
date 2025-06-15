@@ -13,16 +13,12 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.mojang.math.Transformation;
-
-import io.github.fabricators_of_create.porting_lib.models.geometry.IUnbakedGeometry;
-import io.github.fabricators_of_create.porting_lib.models.geometry.extensions.BlockModelExtensions;
+import io.github.fabricators_of_create.porting_lib.models.geometry.extensions.BlockModelExtension;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
@@ -33,7 +29,7 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 
 @Mixin(BlockModel.class)
-public class BlockModelMixin implements BlockModelExtensions {
+public class BlockModelMixin implements BlockModelExtension {
 	@Shadow
 	@Final
 	private List<ItemOverride> overrides;
