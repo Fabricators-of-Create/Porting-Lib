@@ -3,12 +3,13 @@ package io.github.fabricators_of_create.porting_lib.models.generators.loaders;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 
+import com.mojang.serialization.JsonOps;
+
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.data.ExistingFileHelper;
 import io.github.fabricators_of_create.porting_lib.models.generators.CustomLoaderBuilder;
 import io.github.fabricators_of_create.porting_lib.models.generators.ModelBuilder;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.world.level.material.Fluid;
 
 public class DynamicFluidContainerModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T> {
@@ -16,7 +17,7 @@ public class DynamicFluidContainerModelBuilder<T extends ModelBuilder<T>> extend
 		return new DynamicFluidContainerModelBuilder<>(parent, existingFileHelper);
 	}
 
-	private ResourceLocation fluid;
+	private FluidVariant fluid;
 	private Boolean flipGas;
 	private Boolean applyTint;
 	private Boolean coverIsMask;
@@ -26,9 +27,15 @@ public class DynamicFluidContainerModelBuilder<T extends ModelBuilder<T>> extend
 		super(PortingLib.id("fluid_container"), parent, existingFileHelper, false);
 	}
 
+	public DynamicFluidContainerModelBuilder<T> fluid(FluidVariant fluid) {
+		Preconditions.checkNotNull(fluid, "fluid must not be null");
+		this.fluid = fluid;
+		return this;
+	}
+
 	public DynamicFluidContainerModelBuilder<T> fluid(Fluid fluid) {
 		Preconditions.checkNotNull(fluid, "fluid must not be null");
-		this.fluid = BuiltInRegistries.FLUID.getKey(fluid);
+		this.fluid = FluidVariant.of(fluid);
 		return this;
 	}
 
@@ -58,7 +65,7 @@ public class DynamicFluidContainerModelBuilder<T extends ModelBuilder<T>> extend
 
 		Preconditions.checkNotNull(fluid, "fluid must not be null");
 
-		json.addProperty("fluid", fluid.toString());
+		json.add("variant", FluidVariant.CODEC.encodeStart(JsonOps.INSTANCE, fluid).getOrThrow());
 
 		if (flipGas != null)
 			json.addProperty("flip_gas", flipGas);
