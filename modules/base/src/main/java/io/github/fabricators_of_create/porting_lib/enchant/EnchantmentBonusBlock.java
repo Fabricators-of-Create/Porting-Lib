@@ -12,7 +12,7 @@ public interface EnchantmentBonusBlock {
 	 * @param pos Block position in level
 	 * @return The amount of enchanting power this block produces.
 	 */
-	default float getEnchantPowerBonus(BlockState state, LevelReader level, BlockPos pos) {
+	default int getEnchantPowerBonus(BlockState state, LevelReader level, BlockPos pos) {
 		return state.is(BlockTags.ENCHANTMENT_POWER_PROVIDER) ? 1 : 0;
 	}
 }

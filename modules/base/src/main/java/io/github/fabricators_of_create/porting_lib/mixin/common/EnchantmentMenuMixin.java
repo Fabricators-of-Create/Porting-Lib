@@ -1,31 +1,36 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import net.minecraft.world.level.block.EnchantingTableBlock;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+
+import com.llamalad7.mixinextras.sugar.Local;
+
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import io.github.fabricators_of_create.porting_lib.enchant.EnchantmentBonusBlock;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.EnchantmentMenu;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 
 @Mixin(EnchantmentMenu.class)
 public abstract class EnchantmentMenuMixin {
-//	@ModifyVariable( TODO: PORT
-//			method = "method_17411",
-//			at = @At(value = "STORE", ordinal = 1), ordinal = 0, remap = false
-//	)
-//	private int modifyEnchantValue(int obj, ItemStack stack, Level level, BlockPos pos) {
-//		for (BlockPos blockPos : EnchantingTableBlock.BOOKSHELF_OFFSETS) {
-//			BlockPos actualPos = pos.offset(blockPos);
-//			BlockState state = level.getBlockState(actualPos);
-//			if (state.getBlock() instanceof EnchantmentBonusBlock bonusBlock)
-//				obj += bonusBlock.getEnchantPowerBonus(state, level, actualPos);
-//		}
-//		return obj;
-//	}
+	@ModifyExpressionValue(
+			method = "method_17411",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/block/EnchantingTableBlock;isValidBookShelf(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;)Z"
+			)
+	)
+	private boolean modifyEnchantValue(boolean original, @Local(argsOnly = true) Level level, @Local(argsOnly = true) BlockPos pos, @Local(ordinal = 1) BlockPos offset, @Local(ordinal = 0) LocalIntRef powerRef) {
+		BlockState state = level.getBlockState(pos.offset(offset));
+		if (state.getBlock() instanceof EnchantmentBonusBlock block) {
+			powerRef.set(powerRef.get() + block.getEnchantPowerBonus(state, level, pos.offset(offset)));
+			return false;
+		}
+		return original;
+	}
 }

@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.util.client;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import io.github.fabricators_of_create.porting_lib.event.client.TextureAtlasStitchedEvent;
@@ -19,10 +20,14 @@ import org.jetbrains.annotations.ApiStatus;
 
 public class ClientHooks {
 	public static ResourceLocation getArmorTexture(Entity entity, ItemStack armor, ArmorMaterial.Layer layer, boolean innerModel, EquipmentSlot slot) {
+		return getArmorTexture(entity, armor, layer, innerModel, slot, op -> ((ArmorMaterial.Layer) op[0]).texture((boolean) op[1]));
+	}
+
+	public static ResourceLocation getArmorTexture(Entity entity, ItemStack armor, ArmorMaterial.Layer layer, boolean innerModel, EquipmentSlot slot, Operation<ResourceLocation> original) {
 		ResourceLocation result = null;
 		if (armor.getItem() instanceof ArmorTextureItem armorTextureItem)
 			result = armorTextureItem.getArmorTexture(armor, entity, slot, layer, innerModel);
-		return result != null ? result : layer.texture(innerModel);
+		return result != null ? result : original.call(layer, innerModel);
 	}
 
 	public static void setPartVisibility(HumanoidModel<?> armorModel, EquipmentSlot slot) {
