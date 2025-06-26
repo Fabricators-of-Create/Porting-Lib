@@ -3,5 +3,12 @@
   "id": "porting_lib_blocks",
   "version": "${version}",
   "name": "Porting Lib Blocks",
-  "description": "Adds extra block extensions."
+  "description": "Adds extra block extensions.",
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_1657": ["io/github/fabricators_of_create/porting_lib/blocks/injects/PlayerInjection"],
+      "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/blocks/injects/LevelInjection"],
+      "net/minecraft/class_2680": ["io/github/fabricators_of_create/porting_lib/blocks/injects/BaseBlockStateInjection"]
+    }
+  }
 }

@@ -8,13 +8,9 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
-import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
 import io.github.fabricators_of_create.porting_lib.core.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 import io.github.fabricators_of_create.porting_lib.entity.events.player.CriticalHitEvent;
-import io.github.fabricators_of_create.porting_lib.entity.events.player.PlayerEvent;
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingDamageEvent;
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingHurtEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.player.AttackEntityEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.player.PlayerXpEvent;
 import io.github.fabricators_of_create.porting_lib.entity.ext.PlayerExt;

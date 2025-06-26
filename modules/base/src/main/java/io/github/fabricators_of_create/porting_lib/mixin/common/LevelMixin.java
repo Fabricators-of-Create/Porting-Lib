@@ -2,8 +2,6 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,12 +35,10 @@ import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import io.github.fabricators_of_create.porting_lib.block.NeighborChangeListeningBlock;
+import io.github.fabricators_of_create.porting_lib.blocks.extensions.NeighborChangeListeningBlock;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -54,10 +50,6 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	// onFinalCommit on commits, and through snapshot rollbacks on aborts.
 	@Unique
 	private List<ChangedPosData> port_lib$modifiedStates = null;
-	@Unique
-	private final ArrayList<BlockEntity> port_lib$freshBlockEntities = new ArrayList<>();
-	@Unique
-	private final ArrayList<BlockEntity> port_lib$pendingFreshBlockEntities = new ArrayList<>();
 	@Unique
 	@Nullable
 	private Integer port_lib$oldStateLight = null;
@@ -152,21 +144,6 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	}
 
 	@Inject(
-			method = "updateNeighbourForOutputSignal",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z",
-					ordinal = 0
-			)
-	)
-	public void port_lib$updateNeighbourForOutputSignal(BlockPos pos, Block block, CallbackInfo ci,
-														@Local(ordinal = 1) BlockPos offset, @Local BlockState state) {
-		if (state.getBlock() instanceof NeighborChangeListeningBlock listener) {
-			listener.onNeighborChange(state, this, offset, pos);
-		}
-	}
-
-	@Inject(
 			method = "explode(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/level/ExplosionDamageCalculator;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;ZLnet/minecraft/core/particles/ParticleOptions;Lnet/minecraft/core/particles/ParticleOptions;Lnet/minecraft/core/Holder;)Lnet/minecraft/world/level/Explosion;",
 			at = @At(
 					value = "INVOKE",
@@ -177,32 +154,6 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	public void port_lib$onStartExplosion(Entity source, DamageSource damageSource, ExplosionDamageCalculator damageCalculator, double x, double y, double z, float radius, boolean fire, Level.ExplosionInteraction explosionInteraction, boolean spawnParticles, ParticleOptions smallExplosionParticles, ParticleOptions largeExplosionParticles, Holder<SoundEvent> explosionSound, CallbackInfoReturnable<Explosion> cir, @Local(ordinal = 0) Explosion explosion) {
 		if (ExplosionEvents.START.invoker().onExplosionStart((Level) (Object) this, explosion)) {
 			cir.setReturnValue(explosion);
-		}
-	}
-
-	@Inject(method = "tickBlockEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;push(Ljava/lang/String;)V", shift = Shift.AFTER))
-	public void port_lib$pendingBlockEntities(CallbackInfo ci) {
-		if (!this.port_lib$pendingFreshBlockEntities.isEmpty()) {
-			this.port_lib$freshBlockEntities.addAll(this.port_lib$pendingFreshBlockEntities);
-			this.port_lib$pendingFreshBlockEntities.clear();
-		}
-	}
-
-	@Inject(method = "tickBlockEntities", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z"))
-	public void port_lib$onBlockEntitiesLoad(CallbackInfo ci) {
-		if (!this.port_lib$freshBlockEntities.isEmpty()) {
-			this.port_lib$freshBlockEntities.forEach(BlockEntityExtensions::onLoad);
-			this.port_lib$freshBlockEntities.clear();
-		}
-	}
-
-	@Unique
-	@Override
-	public void addFreshBlockEntities(Collection<BlockEntity> beList) {
-		if (this.tickingBlockEntities) {
-			this.port_lib$pendingFreshBlockEntities.addAll(beList);
-		} else {
-			this.port_lib$freshBlockEntities.addAll(beList);
 		}
 	}
 

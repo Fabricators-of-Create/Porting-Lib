@@ -1,7 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.item.testmod;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
-import io.github.fabricators_of_create.porting_lib.item.api.itemgroup.PortingLibCreativeTab;
+import io.github.fabricators_of_create.porting_lib.item.itemgroup.PortingLibCreativeTab;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;

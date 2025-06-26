@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 
-import io.github.fabricators_of_create.porting_lib.block.CustomHitEffectsBlock;
+import io.github.fabricators_of_create.porting_lib.blocks.extensions.CustomHitEffectsBlock;
 import io.github.fabricators_of_create.porting_lib.event.common.AddPackFindersEvent;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.particle.ParticleEngine;
@@ -91,7 +91,7 @@ public abstract class MinecraftMixin {
 
 	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;reload()V"))
 	private void addClientResources(GameConfig gameConfig, CallbackInfo ci) {
-		new AddPackFindersEvent(PackType.CLIENT_RESOURCES, this.resourcePackRepository::pl$addPackFinder).sendEvent();
+//		new AddPackFindersEvent(PackType.CLIENT_RESOURCES, this.resourcePackRepository::pl$addPackFinder).sendEvent();
 	}
 
 	@Inject(

@@ -1,7 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.entity.events.tick;
 
 import io.github.fabricators_of_create.porting_lib.core.event.CancellableEvent;
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvent;
+import io.github.fabricators_of_create.porting_lib.core.event.entity.EntityEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.entity.Entity;

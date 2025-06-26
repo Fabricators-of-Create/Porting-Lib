@@ -1,10 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.block.CullingBlockEntityIterator;
 import io.github.fabricators_of_create.porting_lib.world.PieceBeardifierIterator;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.levelgen.Beardifier;
 
 import net.minecraft.world.level.levelgen.structure.StructurePiece;

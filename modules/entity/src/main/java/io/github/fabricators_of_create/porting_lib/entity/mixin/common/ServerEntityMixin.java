@@ -1,7 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.server.level.ServerEntity;

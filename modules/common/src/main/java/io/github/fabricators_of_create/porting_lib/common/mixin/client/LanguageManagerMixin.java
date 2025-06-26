@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import io.github.fabricators_of_create.porting_lib.common.ext.LanguageManagerExt;
+import io.github.fabricators_of_create.porting_lib.common.injects.LanguageManagerInjection;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Environment(EnvType.CLIENT)
 @Mixin(LanguageManager.class)
-public abstract class LanguageManagerMixin implements LanguageManagerExt {
+public abstract class LanguageManagerMixin implements LanguageManagerInjection {
 	@Shadow
 	public abstract String getSelected();
 
@@ -33,7 +33,7 @@ public abstract class LanguageManagerMixin implements LanguageManagerExt {
 	}
 
 	@Override
-	public Locale getJavaLocale() {
+	public Locale port_lib$getJavaLocale() {
 		return this.javaLocale;
 	}
 }

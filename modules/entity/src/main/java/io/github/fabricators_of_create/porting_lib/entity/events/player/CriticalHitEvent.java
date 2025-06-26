@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.entity.events.player;
 
+import io.github.fabricators_of_create.porting_lib.core.event.entity.player.PlayerEvent;
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;

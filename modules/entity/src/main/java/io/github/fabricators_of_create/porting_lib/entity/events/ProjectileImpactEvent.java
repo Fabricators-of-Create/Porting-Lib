@@ -1,13 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.entity.events;
 
 import io.github.fabricators_of_create.porting_lib.core.event.CancellableEvent;
+import io.github.fabricators_of_create.porting_lib.core.event.entity.EntityEvent;
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.HitResult;
-
-import java.util.Objects;
 
 /**
  * This event is fired when a projectile entity impacts something.<br>

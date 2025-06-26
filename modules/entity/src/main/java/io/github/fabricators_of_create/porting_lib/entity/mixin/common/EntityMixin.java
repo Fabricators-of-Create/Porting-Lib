@@ -20,7 +20,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityDataEvents;
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.MinecartEvents;
 import io.github.fabricators_of_create.porting_lib.entity.ext.EntityExt;
 import net.minecraft.nbt.CompoundTag;
@@ -39,16 +39,16 @@ public abstract class EntityMixin implements EntityExt {
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void entitySizeConstructEvent(EntityType<?> entityType, Level level, CallbackInfo ci) {
-		EntityEvent.Size sizeEvent = EntityHooks.getEntitySizeForge((Entity) (Object) this, Pose.STANDING, this.dimensions, this.eyeHeight);
+		EntityEvents.Size sizeEvent = EntityHooks.getEntitySizeForge((Entity) (Object) this, Pose.STANDING, this.dimensions, this.eyeHeight);
 		this.dimensions = sizeEvent.getNewSize();
 		this.eyeHeight = sizeEvent.getNewEyeHeight();
-		new EntityEvent.EntityConstructing((Entity) (Object) this).sendEvent();
+		new EntityEvents.EntityConstructing((Entity) (Object) this).sendEvent();
 	}
 
 	@WrapOperation(method = "refreshDimensions", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getDimensions(Lnet/minecraft/world/entity/Pose;)Lnet/minecraft/world/entity/EntityDimensions;"))
 	private EntityDimensions entitySizeEvent(Entity instance, Pose pose, Operation<EntityDimensions> original, @Local(index = 1) EntityDimensions old) {
 		EntityDimensions newD = original.call(instance, pose);
-		EntityEvent.Size sizeEvent = EntityHooks.getEntitySizeForge(instance, pose, old, newD, newD.eyeHeight());
+		EntityEvents.Size sizeEvent = EntityHooks.getEntitySizeForge(instance, pose, old, newD, newD.eyeHeight());
 		return sizeEvent.getNewSize();
 	}
 

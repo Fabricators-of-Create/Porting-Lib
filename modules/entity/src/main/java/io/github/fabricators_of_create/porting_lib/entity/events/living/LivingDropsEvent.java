@@ -3,6 +3,7 @@ package io.github.fabricators_of_create.porting_lib.entity.events.living;
 import java.util.Collection;
 
 import io.github.fabricators_of_create.porting_lib.core.event.CancellableEvent;
+import io.github.fabricators_of_create.porting_lib.core.event.entity.living.LivingEvent;
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;

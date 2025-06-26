@@ -19,7 +19,6 @@ Just choose a version and use its version number.
 | Module                   | Description                                                                                    |
 |--------------------------|------------------------------------------------------------------------------------------------|
 | `accessors`              | Accessor mixins aplenty                                                                        |
-| `asm`                    | Utils for doing asm                                                                            |
 | `attributes`             | Additional Entity Attributes; step height, gravity, swim speed                                 |
 | `base`                   | Code that has not yet been split into modules                                                  |
 | `blocks`                 | Adds extra block extensions.                                                                   |

@@ -4,12 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-
-import io.github.fabricators_of_create.porting_lib.block.CustomDestroyEffectsBlock;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.state.BlockState;
-
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -51,15 +45,5 @@ public abstract class ParticleEngineMixin {
 		if (!RENDER_ORDER.contains(particleRenderType)) {
 			addRenderTypeSafe(particleRenderType);
 		}
-	}
-
-	@ModifyExpressionValue(method = "destroy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;shouldSpawnTerrainParticles()Z"))
-	private boolean customDestroyEffects(boolean original, BlockPos blockPos, BlockState blockState) {
-		if (blockState.getBlock() instanceof CustomDestroyEffectsBlock custom) {
-			if (!custom.addDestroyEffects(blockState, level, blockPos, (ParticleEngine) (Object) this)) {
-				return false;
-			}
-		}
-		return original;
 	}
 }

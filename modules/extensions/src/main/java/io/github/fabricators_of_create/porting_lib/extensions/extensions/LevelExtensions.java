@@ -33,10 +33,6 @@ public interface LevelExtensions {
 	record ChangedPosData(BlockPos pos, BlockState state, int flags) {
 	}
 
-	default void addFreshBlockEntities(Collection<BlockEntity> beList) {
-		throw new RuntimeException("this should be overridden via mixin. what?");
-	}
-
 	default void markAndNotifyBlock(BlockPos pos, @Nullable LevelChunk levelchunk, BlockState oldState, BlockState newState, int flags, int p_46608_) {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}

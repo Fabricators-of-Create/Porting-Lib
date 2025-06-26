@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
-import io.github.fabricators_of_create.porting_lib.extensions.extensions.AbstractTextureExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.client.AbstractTextureExtension;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.texture.AbstractTexture;
@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Environment(EnvType.CLIENT)
 @Mixin(AbstractTexture.class)
-public abstract class AbstractTextureMixin implements AbstractTextureExtensions {
+public abstract class AbstractTextureMixin implements AbstractTextureExtension {
 	@Shadow
 	protected boolean blur;
 	@Shadow
@@ -27,7 +27,7 @@ public abstract class AbstractTextureMixin implements AbstractTextureExtensions 
 
 	@Unique
 	@Override
-	public void setBlurMipmap(boolean blur, boolean mipmap) {
+	public void port_lib$setBlurMipmap(boolean blur, boolean mipmap) {
 		this.port_lib$lastBlur = this.blur;
 		this.port_lib$lastMipmap = this.mipmap;
 		setFilter(blur, mipmap);
@@ -35,7 +35,7 @@ public abstract class AbstractTextureMixin implements AbstractTextureExtensions 
 
 	@Unique
 	@Override
-	public void restoreLastBlurMipmap() {
+	public void port_lib$restoreLastBlurMipmap() {
 		setFilter(this.port_lib$lastBlur, this.port_lib$lastMipmap);
 	}
 }

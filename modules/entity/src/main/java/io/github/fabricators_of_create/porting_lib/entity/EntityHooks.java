@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.entity;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityMountEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityStruckByLightningEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityTeleportEvent;
@@ -15,30 +15,21 @@ import io.github.fabricators_of_create.porting_lib.entity.events.living.ShieldBl
 import io.github.fabricators_of_create.porting_lib.entity.events.player.AttackEntityEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.player.CriticalHitEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.player.PlayerDestroyItemEvent;
-import io.github.fabricators_of_create.porting_lib.entity.events.player.PlayerEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.player.PlayerEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.player.PlayerInteractEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.ProjectileImpactEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingChangeTargetEvent;
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingDamageEvent;
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingFallEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingHurtEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingUseTotemEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.tick.EntityTickEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.tick.PlayerTickEvent;
 import io.github.fabricators_of_create.porting_lib.entity.mixin.accessor.PlayerDataStorageAccessor;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.network.protocol.game.ClientboundBundlePacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
-import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
@@ -58,7 +49,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.PlayerDataStorage;
 import net.minecraft.world.phys.BlockHitResult;
@@ -71,19 +61,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 public final class EntityHooks {
-//	public static boolean doPlayerHarvestCheck(Player player, BlockState state, BlockGetter level, BlockPos pos) {
-//		// Call deprecated hasCorrectToolForDrops overload for a fallback value, in turn the non-deprecated overload calls this method
-//		boolean vanillaValue = player.hasCorrectToolForDrops(state);
-//		PlayerEvent.HarvestCheck event = new PlayerEvent.HarvestCheck(player, state, level, pos, vanillaValue);
-//		event.sendEvent();
-//		return event.canHarvest();
-//	}
-
 	public static float getBreakSpeed(Player player, BlockState state, float original, BlockPos pos) {
-		PlayerEvent.BreakSpeed event = new PlayerEvent.BreakSpeed(player, state, original, pos);
+		PlayerEvents.BreakSpeed event = new PlayerEvents.BreakSpeed(player, state, original, pos);
 		event.sendEvent();
 		return (event.isCanceled() ? -1 : event.getNewSpeed());
 	}
@@ -169,13 +150,13 @@ public final class EntityHooks {
 	}
 
 	public static double getEntityVisibilityMultiplier(LivingEntity entity, Entity lookingEntity, double originalMultiplier) {
-		LivingEvent.LivingVisibilityEvent event = new LivingEvent.LivingVisibilityEvent(entity, lookingEntity, originalMultiplier);
+		LivingEvents.LivingVisibilityEvent event = new LivingEvents.LivingVisibilityEvent(entity, lookingEntity, originalMultiplier);
 		event.sendEvent();
 		return Math.max(0, event.getVisibilityModifier());
 	}
 
 	public static void onLivingJump(LivingEntity entity) {
-		new LivingEvent.LivingJumpEvent(entity).sendEvent();
+		new LivingEvents.LivingJumpEvent(entity).sendEvent();
 	}
 
 	public static boolean onPlayerAttackTarget(Player player, Entity target) {
@@ -240,14 +221,14 @@ public final class EntityHooks {
 		new PlayerInteractEvent.LeftClickEmpty(player).sendEvent();
 	}
 
-	public static EntityEvent.Size getEntitySizeForge(Entity entity, Pose pose, EntityDimensions size, float eyeHeight) {
-		EntityEvent.Size evt = new EntityEvent.Size(entity, pose, size, eyeHeight);
+	public static EntityEvents.Size getEntitySizeForge(Entity entity, Pose pose, EntityDimensions size, float eyeHeight) {
+		EntityEvents.Size evt = new EntityEvents.Size(entity, pose, size, eyeHeight);
 		evt.sendEvent();
 		return evt;
 	}
 
-	public static EntityEvent.Size getEntitySizeForge(Entity entity, Pose pose, EntityDimensions oldSize, EntityDimensions newSize, float newEyeHeight) {
-		EntityEvent.Size evt = new EntityEvent.Size(entity, pose, oldSize, newSize, entity.getEyeHeight(), newEyeHeight);
+	public static EntityEvents.Size getEntitySizeForge(Entity entity, Pose pose, EntityDimensions oldSize, EntityDimensions newSize, float newEyeHeight) {
+		EntityEvents.Size evt = new EntityEvents.Size(entity, pose, oldSize, newSize, entity.getEyeHeight(), newEyeHeight);
 		evt.sendEvent();
 		return evt;
 	}
@@ -284,11 +265,11 @@ public final class EntityHooks {
 	}
 
 	public static void firePlayerLoggedIn(Player player) {
-		new PlayerEvent.PlayerLoggedInEvent(player).sendEvent();
+		new PlayerEvents.PlayerLoggedInEvent(player).sendEvent();
 	}
 
 	public static void firePlayerLoggedOut(Player player) {
-		new PlayerEvent.PlayerLoggedOutEvent(player).sendEvent();
+		new PlayerEvents.PlayerLoggedOutEvent(player).sendEvent();
 	}
 
 	public static boolean onEntityStruckByLightning(Entity entity, LightningBolt bolt) {
@@ -318,23 +299,23 @@ public final class EntityHooks {
 	}
 
 	public static void onStartEntityTracking(Entity entity, Player player) {
-		new PlayerEvent.StartTracking(player, entity).sendEvent();
+		new PlayerEvents.StartTracking(player, entity).sendEvent();
 	}
 
 	public static void onStopEntityTracking(Entity entity, Player player) {
-		new PlayerEvent.StopTracking(player, entity).sendEvent();
+		new PlayerEvents.StopTracking(player, entity).sendEvent();
 	}
 
 	public static void firePlayerLoadingEvent(Player player, File playerDirectory, String uuidString) {
-		new PlayerEvent.LoadFromFile(player, playerDirectory, uuidString).sendEvent();
+		new PlayerEvents.LoadFromFile(player, playerDirectory, uuidString).sendEvent();
 	}
 
 	public static void firePlayerSavingEvent(Player player, File playerDirectory, String uuidString) {
-		new PlayerEvent.SaveToFile(player, playerDirectory, uuidString).sendEvent();
+		new PlayerEvents.SaveToFile(player, playerDirectory, uuidString).sendEvent();
 	}
 
 	public static void firePlayerLoadingEvent(Player player, PlayerDataStorage playerFileData, String uuidString) {
-		new PlayerEvent.LoadFromFile(player, ((PlayerDataStorageAccessor) playerFileData).getPlayerDir(), uuidString).sendEvent();
+		new PlayerEvents.LoadFromFile(player, ((PlayerDataStorageAccessor) playerFileData).getPlayerDir(), uuidString).sendEvent();
 	}
 
 	public static boolean onProjectileImpact(Projectile projectile, HitResult ray) {
@@ -344,11 +325,11 @@ public final class EntityHooks {
 	}
 
 	public static void firePlayerCraftingEvent(Player player, ItemStack crafted, Container craftMatrix) {
-		new PlayerEvent.ItemCraftedEvent(player, crafted, craftMatrix).sendEvent();
+		new PlayerEvents.ItemCraftedEvent(player, crafted, craftMatrix).sendEvent();
 	}
 
 	public static void firePlayerSmeltedEvent(Player player, ItemStack smelted) {
-		new PlayerEvent.ItemSmeltedEvent(player, smelted).sendEvent();
+		new PlayerEvents.ItemSmeltedEvent(player, smelted).sendEvent();
 	}
 
 	/**
@@ -405,7 +386,7 @@ public final class EntityHooks {
 	}
 
 	public static void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos) {
-		new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos).sendEvent();
+		new EntityEvents.EnteringSection(entity, packedOldPos, packedNewPos).sendEvent();
 	}
 
 	public static ShieldBlockEvent onShieldBlock(LivingEntity blocker, DamageSource source, float blocked) {

@@ -4,7 +4,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-import io.github.fabricators_of_create.porting_lib.block.CustomFrictionBlock;
+import io.github.fabricators_of_create.porting_lib.blocks.extensions.CustomFrictionBlock;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;

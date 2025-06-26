@@ -18,11 +18,11 @@ import java.nio.file.Path;
 public class ServerPacksSourceMixin {
 	@Inject(method = "createPackRepository(Ljava/nio/file/Path;Lnet/minecraft/world/level/validation/DirectoryValidator;)Lnet/minecraft/server/packs/repository/PackRepository;", at = @At("RETURN"))
 	private static void firePackFinders(Path path, DirectoryValidator directoryValidator, CallbackInfoReturnable<PackRepository> cir) {
-		new AddPackFindersEvent(PackType.SERVER_DATA, cir.getReturnValue()::pl$addPackFinder).sendEvent();
+//		new AddPackFindersEvent(PackType.SERVER_DATA, cir.getReturnValue()::pl$addPackFinder).sendEvent();
 	}
 
 	@Inject(method = "createVanillaTrustedRepository", at = @At("RETURN"))
 	private static void firePackFinders(CallbackInfoReturnable<PackRepository> cir) {
-		new AddPackFindersEvent(PackType.SERVER_DATA, cir.getReturnValue()::pl$addPackFinder).sendEvent();
+//		new AddPackFindersEvent(PackType.SERVER_DATA, cir.getReturnValue()::pl$addPackFinder).sendEvent();
 	}
 }

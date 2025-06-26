@@ -19,6 +19,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class CreateWorldScreenMixin {
 	@Inject(method = "openFresh", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/worldselection/CreateWorldScreen;createDefaultLoadConfig(Lnet/minecraft/server/packs/repository/PackRepository;Lnet/minecraft/world/level/WorldDataConfiguration;)Lnet/minecraft/server/WorldLoader$InitConfig;"))
 	private static void addPacks(Minecraft minecraft, Screen screen, CallbackInfo ci, @Local(index = 2) PackRepository repository) {
-		new AddPackFindersEvent(PackType.SERVER_DATA, repository::pl$addPackFinder).sendEvent();
+//		new AddPackFindersEvent(PackType.SERVER_DATA, repository::pl$addPackFinder).sendEvent();
 	}
 }

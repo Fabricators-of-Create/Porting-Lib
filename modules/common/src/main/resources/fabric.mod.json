@@ -11,11 +11,7 @@
   },
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_1076": ["io/github/fabricators_of_create/porting_lib/common/ext/LanguageManagerExt"],
-      "net/minecraft/class_2211": ["io/github/fabricators_of_create/porting_lib/common/util/IPlantable"],
-      "net/minecraft/class_2266": ["io/github/fabricators_of_create/porting_lib/common/util/IPlantable"],
-      "net/minecraft/class_2523": ["io/github/fabricators_of_create/porting_lib/common/util/IPlantable"],
-      "net/minecraft/class_2261": ["io/github/fabricators_of_create/porting_lib/common/util/IPlantable"]
+      "net/minecraft/class_1076": ["io/github/fabricators_of_create/porting_lib/common/injects/LanguageManagerInjection"]
     }
   }
 }

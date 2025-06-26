@@ -6,12 +6,12 @@
   "description": "Adds extra item extensions",
   "entrypoints": {
     "client": [
-      "io.github.fabricators_of_create.porting_lib.item.impl.client.ItemDecoratorHandler::init"
+      "io.github.fabricators_of_create.porting_lib.item.client.ItemDecoratorHandler::init"
     ]
   },
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_1799": ["io/github/fabricators_of_create/porting_lib/item/api/extensions/ItemsItemStackExt"]
+      "net/minecraft/class_1799": ["io/github/fabricators_of_create/porting_lib/item/injects/ItemStackInjection"]
     }
   }
 }

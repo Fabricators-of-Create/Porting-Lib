@@ -7,12 +7,48 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "BlockBehaviourMixin",
-    "DropExperienceBlockMixin",
-    "RedStoneOreBlockMixin",
-    "SculkCatalystBlockMixin",
-    "SculkSensorBlockMixin",
-    "SculkShriekerBlockMixin",
-    "SpawnerBlockMixin"
-  ]
+    "common.AbstractMinecartAccessor",
+    "common.AbstractMinecartMixin",
+    "common.BeaconBlockEntityMixin",
+    "common.BlockBehavior$PropertiesMixin",
+    "common.BlockBehaviourMixin",
+    "common.BlockGetterMixin",
+    "common.BlockLightEngineMixin",
+    "common.DispenseItemBehaviorMixin",
+    "common.DoorBlockMixin",
+    "common.DropExperienceBlockMixin",
+    "common.EntityMixin",
+    "common.ExperienceOrbMixin",
+    "common.ExplosionDamageCalculatorMixin",
+    "common.FireBlockAccessor",
+    "common.FireBlockMixin",
+    "common.LevelChunkMixin",
+    "common.LevelMixin",
+    "common.LightEngineMixin",
+    "common.LivingEntityMixin",
+    "common.PistonMovingBlockEntityMixin",
+    "common.PistonStructureResolverMixin",
+    "common.PlayerMixin",
+    "common.RailStateMixin",
+    "common.RedStoneOreBlockMixin",
+    "common.RedStoneWireBlockMixin",
+    "common.SculkCatalystBlockMixin",
+    "common.SculkSensorBlockMixin",
+    "common.SculkShriekerBlockMixin",
+    "common.ServerPlayerGameModeMixin",
+    "common.SignalGetterMixin",
+    "common.SpawnerBlockMixin",
+    "common.TntBlockMixin",
+    "common.WitherBossMixin"
+  ],
+  "client": [
+    "client.ClientPacketListenerMixin",
+    "client.LevelRendererMixin",
+    "client.ModelBlockRendererMixin",
+    "client.MultiPlayerGameModeMixin",
+    "client.ParticleEngineMixin"
+  ],
+  "mixinextras": {
+    "minVersion": "0.5.0-rc.2"
+  }
 }
