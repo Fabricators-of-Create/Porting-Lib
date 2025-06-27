@@ -1,4 +1,6 @@
 accessWidener v2 named
+transitive-accessible class net/minecraft/client/gui/MapRenderer$MapInstance
+
 accessible field net/minecraft/client/gui/components/Button$Builder message Lnet/minecraft/network/chat/Component;
 accessible field net/minecraft/client/gui/components/Button$Builder onPress Lnet/minecraft/client/gui/components/Button$OnPress;
 accessible field net/minecraft/client/gui/components/Button$Builder tooltip Lnet/minecraft/client/gui/components/Tooltip;
@@ -7,5 +9,7 @@ accessible field net/minecraft/client/gui/components/Button$Builder y I
 accessible field net/minecraft/client/gui/components/Button$Builder width I
 accessible field net/minecraft/client/gui/components/Button$Builder height I
 accessible field net/minecraft/client/gui/components/Button$Builder createNarration Lnet/minecraft/client/gui/components/Button$CreateNarration;
+
+accessible field net/minecraft/client/gui/MapRenderer decorationTextures Lnet/minecraft/client/resources/MapDecorationTextureManager;
 
 transitive-accessible method net/minecraft/client/gui/components/AbstractWidget renderScrollingString (Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;IIIII)V

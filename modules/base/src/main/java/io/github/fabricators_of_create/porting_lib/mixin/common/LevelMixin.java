@@ -1,7 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,8 +7,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
-import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockEntityExtensions;
-import io.github.fabricators_of_create.porting_lib.extensions.extensions.LevelExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.common.LevelExtensions;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
@@ -22,7 +19,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 
 import org.jetbrains.annotations.Nullable;
@@ -33,10 +29,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import io.github.fabricators_of_create.porting_lib.blocks.extensions.NeighborChangeListeningBlock;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -48,13 +41,8 @@ import net.minecraft.world.level.block.state.BlockState;
 public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	// only non-null during transactions. Is set back to null in
 	// onFinalCommit on commits, and through snapshot rollbacks on aborts.
-	@Unique
 	private List<ChangedPosData> port_lib$modifiedStates = null;
-	@Unique
-	@Nullable
-	private Integer port_lib$oldStateLight = null;
 
-	@Unique
 	private final SnapshotParticipant<LevelSnapshotData> port_lib$snapshotParticipant = new SnapshotParticipant<>() {
 
 		@Override
@@ -84,12 +72,6 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	public abstract BlockState getBlockState(BlockPos blockPos);
 
 	@Shadow
-	private boolean tickingBlockEntities;
-
-	@Shadow
-	public abstract ProfilerFiller getProfiler();
-
-	@Shadow
 	public abstract void setBlocksDirty(BlockPos pos, BlockState old, BlockState updated);
 
 	@Shadow
@@ -112,7 +94,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 
 	@Inject(method = "getBlockState", at = @At(value = "INVOKE", shift = Shift.BEFORE,
 			target = "Lnet/minecraft/world/level/Level;getChunk(II)Lnet/minecraft/world/level/chunk/LevelChunk;"), cancellable = true)
-	private void port_lib$getBlockState(BlockPos pos, CallbackInfoReturnable<BlockState> cir) {
+	private void getBlockState(BlockPos pos, CallbackInfoReturnable<BlockState> cir) {
 		if (port_lib$modifiedStates != null) {
 			// iterate in reverse order - latest changes priority
 			for (ChangedPosData data : port_lib$modifiedStates) {
@@ -132,7 +114,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 
 	@Inject(method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z",
 			at = @At(value = "INVOKE", shift = Shift.BEFORE, target = "Lnet/minecraft/world/level/Level;getChunkAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/chunk/LevelChunk;"), cancellable = true)
-	private void port_lib$setBlock(BlockPos pos, BlockState state, int flags, int recursionLeft, CallbackInfoReturnable<Boolean> cir) {
+	private void setBlock(BlockPos pos, BlockState state, int flags, int recursionLeft, CallbackInfoReturnable<Boolean> cir) {
 		if (state == null) {
 			PortingLib.LOGGER.error("Setting null blockstate at " + pos);
 			new Throwable().printStackTrace();
@@ -151,15 +133,14 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 			),
 			cancellable = true
 	)
-	public void port_lib$onStartExplosion(Entity source, DamageSource damageSource, ExplosionDamageCalculator damageCalculator, double x, double y, double z, float radius, boolean fire, Level.ExplosionInteraction explosionInteraction, boolean spawnParticles, ParticleOptions smallExplosionParticles, ParticleOptions largeExplosionParticles, Holder<SoundEvent> explosionSound, CallbackInfoReturnable<Explosion> cir, @Local(ordinal = 0) Explosion explosion) {
+	public void onStartExplosion(Entity source, DamageSource damageSource, ExplosionDamageCalculator damageCalculator, double x, double y, double z, float radius, boolean fire, Level.ExplosionInteraction explosionInteraction, boolean spawnParticles, ParticleOptions smallExplosionParticles, ParticleOptions largeExplosionParticles, Holder<SoundEvent> explosionSound, CallbackInfoReturnable<Explosion> cir, @Local(ordinal = 0) Explosion explosion) {
 		if (ExplosionEvents.START.invoker().onExplosionStart((Level) (Object) this, explosion)) {
 			cir.setReturnValue(explosion);
 		}
 	}
 
-	@Unique
 	@Override
-	public void markAndNotifyBlock(BlockPos pos, @Nullable LevelChunk levelchunk, BlockState oldState, BlockState newState, int flags, int recursionLeft) {
+	public void port_lib$markAndNotifyBlock(BlockPos pos, @Nullable LevelChunk levelchunk, BlockState oldState, BlockState newState, int flags, int recursionLeft) {
 		Block block = newState.getBlock();
 		BlockState blockstate1 = getBlockState(pos);
 		{

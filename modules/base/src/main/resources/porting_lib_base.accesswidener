@@ -1,6 +1,5 @@
 accessWidener v2 named
 
-transitive-accessible class net/minecraft/client/gui/MapRenderer$MapInstance
 transitive-accessible class net/minecraft/client/renderer/FogRenderer$FogData
 transitive-accessible class net/minecraft/client/renderer/texture/SpriteContents$AnimatedTexture
 transitive-accessible class net/minecraft/world/item/crafting/Ingredient$Value

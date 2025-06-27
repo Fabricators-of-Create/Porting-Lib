@@ -22,7 +22,6 @@
         "io/github/fabricators_of_create/porting_lib/core/util/DefaultNbtSerializable<Lnet/minecraft/nbt/CompoundTag;>"
       ],
       "net/minecraft/class_1832": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/TierExtensions"],
-      "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/LevelExtensions"],
       "net/minecraft/class_2248": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/BlockExtensions"],
       "net/minecraft/class_2311": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/IShearable"],
       "net/minecraft/class_2397": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/IShearable"],
@@ -37,7 +36,6 @@
       "net/minecraft/class_2680": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/BlockStateExtensions"],
       "net/minecraft/class_2960": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/ResourceLocationExtensions"],
       "net/minecraft/class_3491": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/StructureProcessorExtensions"],
-      "net/minecraft/class_3665": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/ModelStateExtensions"],
       "net/minecraft/class_3727": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/EntityCollisionContextExtensions"],
       "net/minecraft/class_4184": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/CameraExtensions"],
       "net/minecraft/class_4538": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/LevelReaderExtensions"],
