@@ -39,7 +39,8 @@
     "common.SignalGetterMixin",
     "common.SpawnerBlockMixin",
     "common.TntBlockMixin",
-    "common.WitherBossMixin"
+    "common.WitherBossMixin",
+    "common.WitherSkullMixin"
   ],
   "client": [
     "client.ClientPacketListenerMixin",
