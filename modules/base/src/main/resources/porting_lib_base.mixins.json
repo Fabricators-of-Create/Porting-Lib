@@ -94,8 +94,10 @@
     "client.PostChainMixin",
     "client.RenderTargetMixin",
     "client.SkullBlockRendererMixin",
+    "client.TextureAtlasSpriteMixin",
     "client.TagCollectorMixin",
     "client.TextureAtlasMixin",
+    "client.TextureAtlasSprite$AnimatedTextureAccessor",
     "client.frex.EntityBlockRenderContextMixin"
   ],
   "injectors": {

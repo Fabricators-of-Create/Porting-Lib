@@ -1,7 +1,0 @@
-{
-  "schemaVersion": 1,
-  "id": "porting_lib_accessors",
-  "version": "${version}",
-  "name": "Porting Lib Accessors",
-  "description": "Opens up access to Minecraft internals for other modules to use."
-}

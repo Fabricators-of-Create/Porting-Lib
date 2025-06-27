@@ -14,6 +14,7 @@
   },
   "custom": {
     "loom:injected_interfaces": {
+      "net/minecraft/class_1058": ["io/github/fabricators_of_create/porting_lib/extensions/client/TextureAtlasSpriteExtension"],
       "net/minecraft/class_1044": ["io/github/fabricators_of_create/porting_lib/extensions/client/AbstractTextureExtension"]
     }
   }

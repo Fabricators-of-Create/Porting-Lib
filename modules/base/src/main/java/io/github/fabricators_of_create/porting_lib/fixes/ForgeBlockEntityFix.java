@@ -12,14 +12,14 @@ import net.minecraft.util.datafix.fixes.References;
 
 public class ForgeBlockEntityFix extends DataFix {
 	public static final String LEGACY_DATA_KEY = "ForgeData";
-	public static final String NEO_DATA_KEY = "NeoForgeData";
+	public static final String NEO_DATA_KEY = BlockEntityHelper.EXTRA_DATA_KEY;
 
 	public ForgeBlockEntityFix(Schema outputSchema, boolean changesType) {
 		super(outputSchema, changesType);
 	}
 
 	public Dynamic<?> fix(Dynamic<?> original) {
-		return original.renameField(LEGACY_DATA_KEY, BlockEntityHelper.EXTRA_DATA_KEY).renameField(NEO_DATA_KEY, BlockEntityHelper.EXTRA_DATA_KEY);
+		return original.renameField(LEGACY_DATA_KEY, NEO_DATA_KEY).renameField(BlockEntityHelper.OLD_EXTRA_DATA_KEY, NEO_DATA_KEY);
 	}
 
 	@Override

@@ -16,8 +16,7 @@
     "client.DimensionSpecialEffectsMixin",
     "client.LevelRendererMixin",
     "client.LightTextureMixin",
-    "client.PoseStackMixin",
-    "client.SpriteContentsMixin"
+    "client.PoseStackMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.mixin.accessors.client.accessor;
+package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;

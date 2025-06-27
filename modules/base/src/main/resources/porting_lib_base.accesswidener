@@ -2,6 +2,7 @@ accessWidener v2 named
 
 transitive-accessible class net/minecraft/client/gui/MapRenderer$MapInstance
 transitive-accessible class net/minecraft/client/renderer/FogRenderer$FogData
+transitive-accessible class net/minecraft/client/renderer/texture/SpriteContents$AnimatedTexture
 transitive-accessible class net/minecraft/world/item/crafting/Ingredient$Value
 transitive-accessible class net/minecraft/world/item/enchantment/EnchantmentHelper$EnchantmentVisitor
 transitive-accessible class net/minecraft/world/level/entity/PersistentEntitySectionManager$Callback
@@ -10,6 +11,9 @@ transitive-accessible class net/minecraft/world/level/lighting/BlockLightSection
 
 transitive-accessible method net/minecraft/client/gui/screens/MenuScreens getConstructor (Lnet/minecraft/world/inventory/MenuType;)Lnet/minecraft/client/gui/screens/MenuScreens$ScreenConstructor;
 transitive-accessible method net/minecraft/commands/synchronization/ArgumentTypeInfos register (Lnet/minecraft/core/Registry;Ljava/lang/String;Ljava/lang/Class;Lnet/minecraft/commands/synchronization/ArgumentTypeInfo;)Lnet/minecraft/commands/synchronization/ArgumentTypeInfo;
+
+transitive-accessible field net/minecraft/client/renderer/texture/SpriteContents animatedTexture Lnet/minecraft/client/renderer/texture/SpriteContents$AnimatedTexture;
+transitive-accessible field net/minecraft/client/renderer/texture/SpriteContents originalImage Lcom/mojang/blaze3d/platform/NativeImage;
 
 transitive-accessible field net/minecraft/world/entity/LivingEntity effectsDirty Z
 
