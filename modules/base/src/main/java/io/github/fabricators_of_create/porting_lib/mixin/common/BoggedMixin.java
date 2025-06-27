@@ -1,11 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.extensions.common.VanillaIShearable;
+import net.minecraft.world.entity.monster.Bogged;
 
 import org.spongepowered.asm.mixin.Mixin;
 
-import net.minecraft.world.entity.animal.MushroomCow;
-
-@Mixin(MushroomCow.class)
-public abstract class MushroomCowMixin implements VanillaIShearable {
+@Mixin(Bogged.class)
+public class BoggedMixin implements VanillaIShearable {
 }

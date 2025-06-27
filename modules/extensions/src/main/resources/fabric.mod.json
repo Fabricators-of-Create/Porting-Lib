@@ -8,13 +8,11 @@
   "custom": {
     "loom:injected_interfaces": {
       "net/minecraft/class_20": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/MapDecorationExtensions"],
-      "net/minecraft/class_276": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/RenderTargetExtensions"],
       "net/minecraft/class_703": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/ParticleExtensions"],
       "net/minecraft/class_1297": ["io/github/fabricators_of_create/porting_lib/core/util/DefaultNbtSerializable<Lnet/minecraft/nbt/CompoundTag;>"],
-      "net/minecraft/class_1438": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/IShearable"],
-      "net/minecraft/class_1472": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/IShearable"],
-      "net/minecraft/class_1473": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/IShearable"],
-      "net/minecraft/class_1735": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/SlotExtensions"],
+
+
+
       "net/minecraft/class_1747": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/BlockItemExtensions"],
       "net/minecraft/class_1792": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/ItemExtensions"],
       "net/minecraft/class_1799": [
@@ -23,13 +21,7 @@
       ],
       "net/minecraft/class_1832": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/TierExtensions"],
       "net/minecraft/class_2248": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/BlockExtensions"],
-      "net/minecraft/class_2311": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/IShearable"],
-      "net/minecraft/class_2397": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/IShearable"],
       "net/minecraft/class_2474$class_5124": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/TagAppenderExtensions"],
-      "net/minecraft/class_2476": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/IShearable"],
-      "net/minecraft/class_2526": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/IShearable"],
-      "net/minecraft/class_2541": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/IShearable"],
-      "net/minecraft/class_2560": ["io/github/fabricators_of_create/porting_lib/extensions/extensions/IShearable"],
       "net/minecraft/class_2586": [
         "io/github/fabricators_of_create/porting_lib/extensions/extensions/BlockEntityExtensions"
       ],

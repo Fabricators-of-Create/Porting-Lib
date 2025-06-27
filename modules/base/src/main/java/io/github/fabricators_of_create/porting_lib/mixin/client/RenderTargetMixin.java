@@ -11,12 +11,12 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.GlStateManager;
-import io.github.fabricators_of_create.porting_lib.extensions.extensions.RenderTargetExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.client.RenderTargetExtension;
 
 import net.minecraft.client.Minecraft;
 
 @Mixin(RenderTarget.class)
-public abstract class RenderTargetMixin implements RenderTargetExtensions {
+public abstract class RenderTargetMixin implements RenderTargetExtension {
 	@Shadow
 	protected int depthBufferId;
 
@@ -32,7 +32,6 @@ public abstract class RenderTargetMixin implements RenderTargetExtensions {
 	@Shadow
 	public int height;
 
-	@Unique
 	private boolean port_lib$stencilEnabled = false;
 
 	@Shadow
@@ -47,7 +46,7 @@ public abstract class RenderTargetMixin implements RenderTargetExtensions {
 					remap = false
 			)
 	)
-	private boolean port_lib$stencilBuffer(int i, int j, int k, int l, int m) {
+	private boolean stencilBuffer(int i, int j, int k, int l, int m) {
 		if (port_lib$stencilEnabled) {
 			GlStateManager._glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, 3553, this.depthBufferId, 0);
 			GlStateManager._glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_STENCIL_ATTACHMENT, 3553, this.depthBufferId, 0);
@@ -99,14 +98,14 @@ public abstract class RenderTargetMixin implements RenderTargetExtensions {
 
 	@Unique
 	@Override
-	public void enableStencil() {
+	public void port_lib$enableStencil() {
 		if (port_lib$stencilEnabled) return;
 		port_lib$stencilEnabled = true;
 		this.resize(viewWidth, viewHeight, Minecraft.ON_OSX);
 	}
 
 	@Override
-	public void disableStencil() {
+	public void port_lib$disableStencil() {
 		if (!port_lib$stencilEnabled) return;
 		port_lib$stencilEnabled = false;
 		this.resize(viewWidth, viewHeight, Minecraft.ON_OSX);
@@ -114,7 +113,7 @@ public abstract class RenderTargetMixin implements RenderTargetExtensions {
 
 	@Unique
 	@Override
-	public boolean isStencilEnabled() {
+	public boolean port_lib$isStencilEnabled() {
 		return this.port_lib$stencilEnabled;
 	}
 }

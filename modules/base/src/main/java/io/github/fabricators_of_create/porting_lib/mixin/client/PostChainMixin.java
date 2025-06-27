@@ -29,8 +29,8 @@ public abstract class PostChainMixin {
 			)
 	)
 	public void port_lib$isStencil(String name, int width, int height, CallbackInfo ci, @Local RenderTarget rendertarget) {
-		if (screenTarget.isStencilEnabled()) {
-			rendertarget.enableStencil();
+		if (screenTarget.port_lib$isStencilEnabled()) {
+			rendertarget.port_lib$enableStencil();
 		}
 	}
 }

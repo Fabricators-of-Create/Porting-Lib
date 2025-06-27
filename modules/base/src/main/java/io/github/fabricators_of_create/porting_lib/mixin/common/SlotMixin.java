@@ -1,26 +1,30 @@
-package io.github.fabricators_of_create.porting_lib.extensions.mixin.common;
+package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import com.mojang.datafixers.util.Pair;
 
-import io.github.fabricators_of_create.porting_lib.extensions.extensions.SlotExtensions;
+import io.github.fabricators_of_create.porting_lib.extensions.common.SlotExtension;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Slot.class)
-public abstract class SlotMixin implements SlotExtensions {
+public abstract class SlotMixin implements SlotExtension {
 	@Shadow
 	@Final
 	private int slot;
-	@Unique
+
+	@Shadow
+	@Final
+	public Container container;
+
 	private Pair<ResourceLocation, ResourceLocation> port_lib$backgroundPair = null;
 
 	@Inject(method = "getNoItemIcon", at = @At("HEAD"), cancellable = true)
@@ -31,14 +35,18 @@ public abstract class SlotMixin implements SlotExtensions {
 	}
 
 	@Override
-	public Slot setBackground(ResourceLocation atlas, ResourceLocation sprite) {
+	public Slot port_lib$setBackground(ResourceLocation atlas, ResourceLocation sprite) {
 		this.port_lib$backgroundPair = Pair.of(atlas, sprite);
 		return (Slot) (Object) this;
 	}
 
-	@Unique
 	@Override
-	public int getSlotIndex() {
+	public int port_lib$getSlotIndex() {
 		return slot;
+	}
+
+	@Override
+	public boolean port_lib$isSameInventory(Slot other) {
+		return this.container == other.container;
 	}
 }

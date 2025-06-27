@@ -6,11 +6,7 @@
   "mixins": [
     "common.BlockMixin",
     "common.ItemMixin",
-    "common.SheepMixin",
-    "common.SlotMixin",
-    "common.TrunkPlacerMixin",
-    "common.VineBlockMixin",
-    "common.WebBlockMixin"
+    "common.TrunkPlacerMixin"
   ],
   "client": [
     "client.DimensionSpecialEffectsMixin",

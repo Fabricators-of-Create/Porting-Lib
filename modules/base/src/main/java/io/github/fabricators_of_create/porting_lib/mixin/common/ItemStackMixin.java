@@ -1,10 +1,19 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.core.util.MutableDataComponentHolder;
+import io.github.fabricators_of_create.porting_lib.extensions.common.IShearable;
+import io.github.fabricators_of_create.porting_lib.extensions.common.VanillaIShearable;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.ItemStackExtensions;
 import io.github.fabricators_of_create.porting_lib.item.DamageableItem;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+
+import net.minecraft.world.level.gameevent.GameEvent;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -14,6 +23,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.world.item.ItemStack;
+
+import java.util.List;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements MutableDataComponentHolder, ItemStackExtensions {
@@ -41,4 +52,33 @@ public abstract class ItemStackMixin implements MutableDataComponentHolder, Item
 			cir.setReturnValue(damagableItem.getDamage((ItemStack) (Object) this));
 		}
 	}
+
+	@Inject(method = "interactLivingEntity", at = @At("HEAD"), cancellable = true)
+	private void checkCustomShearBehavior(Player player, LivingEntity entity, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+		if (entity instanceof IShearable target && !(entity instanceof VanillaIShearable)) {
+			ItemStack stack = (ItemStack) (Object) this;
+			BlockPos pos = entity.blockPosition();
+			boolean isClient = entity.level().isClientSide();
+			// Check isShearable on both sides (mirrors vanilla readyForShearing())
+			if (target.isShearable(player, stack, entity.level(), pos)) {
+				// Call onSheared on both sides (mirrors vanilla shear())
+				List<ItemStack> drops = target.onSheared(player, stack, entity.level(), pos);
+				// Spawn drops on the server side using spawnShearedDrop to retain vanilla mob-specific behavior
+				if (!isClient) {
+					for(ItemStack drop : drops) {
+						target.spawnShearedDrop(entity.level(), pos, drop);
+					}
+				}
+				// Call GameEvent.SHEAR on both sides
+				entity.gameEvent(GameEvent.SHEAR, player);
+				// Damage the shear item stack by 1 on the server side
+				if (!isClient) {
+					stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+				}
+				// Return sided success if the entity was shearable
+				cir.setReturnValue(InteractionResult.sidedSuccess(isClient));
+			}
+		}
+	}
+
 }
