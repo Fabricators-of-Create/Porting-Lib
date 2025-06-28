@@ -27,7 +27,7 @@ import io.github.fabricators_of_create.porting_lib.entity.events.living.ShieldBl
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingFallEvent;
 
 import io.github.fabricators_of_create.porting_lib.entity.events.living.MobEffectEvent;
-import io.github.fabricators_of_create.porting_lib.entity.ext.LivingEntityExt;
+import io.github.fabricators_of_create.porting_lib.entity.injects.LivingEntityInjection;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
@@ -61,7 +61,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 @Mixin(LivingEntity.class)
-public abstract class LivingEntityMixin extends Entity implements LivingEntityExt {
+public abstract class LivingEntityMixin extends Entity implements LivingEntityInjection {
 	@Shadow
 	protected int lastHurtByPlayerTime;
 	@Shadow

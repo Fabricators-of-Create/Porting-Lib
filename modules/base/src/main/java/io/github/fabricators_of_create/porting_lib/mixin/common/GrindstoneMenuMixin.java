@@ -7,7 +7,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import io.github.fabricators_of_create.porting_lib.event.common.GrindstoneEvent;
 import io.github.fabricators_of_create.porting_lib.event.common.GrindstoneEvent.OnTakeItem;
-import io.github.fabricators_of_create.porting_lib.extensions.extensions.GrindstoneMenuExtension;
+import io.github.fabricators_of_create.porting_lib.extensions.common.GrindstoneMenuExtension;
 import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
@@ -52,16 +52,15 @@ public abstract class GrindstoneMenuMixin extends AbstractContainerMenu implemen
 			cancellable = true
 	)
 	private void handleResult(ItemStack top, ItemStack bottom, CallbackInfoReturnable<ItemStack> cir) {
-		this.xp = PortingHooks.onGrindstoneChange(top, bottom, this.resultSlots, -1);
-		if (this.xp != Integer.MIN_VALUE) cir.setReturnValue(ItemStack.EMPTY); // NF Porting 1.20.5 check if this is correct
+		this.port_lib$xp = PortingHooks.onGrindstoneChange(top, bottom, this.resultSlots, -1);
+		if (this.port_lib$xp != Integer.MIN_VALUE) cir.setReturnValue(ItemStack.EMPTY); // NF Porting 1.20.5 check if this is correct
 	}
 
-	@Unique
-	private int xp = -1;
+	private int port_lib$xp = -1;
 
 	@Override
-	public int getXp() {
-		return this.xp;
+	public int port_lib$getXp() {
+		return this.port_lib$xp;
 	}
 
 	@Mixin(targets = "net/minecraft/world/inventory/GrindstoneMenu$4")
@@ -148,7 +147,7 @@ public abstract class GrindstoneMenuMixin extends AbstractContainerMenu implemen
 
 		@Inject(method = "getExperienceAmount", at = @At("HEAD"), cancellable = true)
 		private void customXp(Level level, CallbackInfoReturnable<Integer> cir) {
-			int exp = ((GrindstoneMenuExtension) this.menu).getXp();
+			int exp = ((GrindstoneMenuExtension) this.menu).port_lib$getXp();
 			if (exp > -1)
 				cir.setReturnValue(exp);
 		}

@@ -30,7 +30,6 @@ Just choose a version and use its version number.
 | `core`                   | Core functionality used across other modules                                                   |
 | `data`                   | Additional data generation providers                                                           |
 | `entity`                 | Multipart entities, extra spawn data, removal listening                                        |
-| `extensions`             | Extensions to vanilla classes for additional functionality                                     |
 | `fluids`                 | Api that provides additional fluid attributes for fluids                                       |
 | `gametest`               | Tools to make GameTest creation as easy as possible                                            |
 | `gui_utils`              | Adds additional utility classes and methods for screens and guis                               |

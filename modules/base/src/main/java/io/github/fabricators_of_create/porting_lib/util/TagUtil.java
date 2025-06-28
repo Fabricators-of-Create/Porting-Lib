@@ -38,8 +38,4 @@ public class TagUtil {
 			case NETHERITE -> Tags.Blocks.NEEDS_NETHERITE_TOOL;
 		};
 	}
-
-	public static TagKey<Block> getTagFromTier(Tier tier) {
-		return tier.getTag();
-	}
 }

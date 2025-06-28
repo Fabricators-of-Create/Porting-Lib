@@ -1,9 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.core.util.MutableDataComponentHolder;
-import io.github.fabricators_of_create.porting_lib.extensions.common.IShearable;
-import io.github.fabricators_of_create.porting_lib.extensions.common.VanillaIShearable;
-import io.github.fabricators_of_create.porting_lib.extensions.extensions.ItemStackExtensions;
+import io.github.fabricators_of_create.porting_lib.entity.extensions.IShearable;
+import io.github.fabricators_of_create.porting_lib.entity.extensions.VanillaIShearable;
 import io.github.fabricators_of_create.porting_lib.item.DamageableItem;
 
 import net.minecraft.core.BlockPos;
@@ -27,7 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 
 @Mixin(ItemStack.class)
-public abstract class ItemStackMixin implements MutableDataComponentHolder, ItemStackExtensions {
+public abstract class ItemStackMixin implements MutableDataComponentHolder {
 	@Shadow
 	public abstract Item getItem();
 

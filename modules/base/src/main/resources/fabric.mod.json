@@ -17,12 +17,13 @@
       "net/minecraft/class_276": ["io/github/fabricators_of_create/porting_lib/extensions/client/RenderTargetExtension"],
       "net/minecraft/class_1058": ["io/github/fabricators_of_create/porting_lib/extensions/client/TextureAtlasSpriteExtension"],
       "net/minecraft/class_1044": ["io/github/fabricators_of_create/porting_lib/extensions/client/AbstractTextureExtension"],
-      "net/minecraft/class_1438": ["io/github/fabricators_of_create/porting_lib/extensions/common/VanillaIShearable"],
-      "net/minecraft/class_1472": ["io/github/fabricators_of_create/porting_lib/extensions/common/VanillaIShearable"],
-      "net/minecraft/class_1473": ["io/github/fabricators_of_create/porting_lib/extensions/common/VanillaIShearable"],
       "net/minecraft/class_1735": ["io/github/fabricators_of_create/porting_lib/extensions/common/SlotExtension"],
+      "net/minecraft/class_1834": ["io/github/fabricators_of_create/porting_lib/extensions/common/TiersExtension"],
       "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/extensions/common/LevelExtensions"],
-      "net/minecraft/class_9254": ["io/github/fabricators_of_create/porting_lib/extensions/common/VanillaIShearable"]
+      "net/minecraft/class_2960": ["io/github/fabricators_of_create/porting_lib/extensions/common/ResourceLocationExtension"],
+      "net/minecraft/class_3491": ["io/github/fabricators_of_create/porting_lib/extensions/common/StructureProcessorExtension"],
+      "net/minecraft/class_4587": ["io/github/fabricators_of_create/porting_lib/extensions/client/PoseStackExtension"],
+      "net/minecraft/class_2474$class_5124": ["io/github/fabricators_of_create/porting_lib/extensions/common/TagAppenderExtension"]
     }
   }
 }

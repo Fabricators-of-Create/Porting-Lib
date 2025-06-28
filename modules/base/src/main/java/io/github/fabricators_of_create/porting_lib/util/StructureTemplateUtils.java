@@ -39,7 +39,7 @@ public class StructureTemplateUtils {
 			BlockPos blockpos = StructureTemplate.calculateRelativePosition(settings, entityInfo.blockPos).offset(pos);
 			StructureEntityInfo info = new StructureEntityInfo(entityPos, blockpos, entityInfo.nbt);
 			for (StructureProcessor proc : settings.getProcessors()) {
-				info = proc.processEntity(level, pos, entityInfo, info, settings, template);
+				info = proc.port_lib$processEntity(level, pos, entityInfo, info, settings, template);
 				if (info == null)
 					break;
 			}

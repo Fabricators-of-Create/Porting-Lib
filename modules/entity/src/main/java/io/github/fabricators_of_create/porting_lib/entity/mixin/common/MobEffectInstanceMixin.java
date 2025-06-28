@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 
 import io.github.fabricators_of_create.porting_lib.core.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.entity.EffectCure;
-import io.github.fabricators_of_create.porting_lib.entity.ext.MobEffectInstanceExt;
+import io.github.fabricators_of_create.porting_lib.entity.injects.MobEffectInstanceInjection;
 import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Set;
 
 @Mixin(MobEffectInstance.class)
-public class MobEffectInstanceMixin implements MobEffectInstanceExt {
+public class MobEffectInstanceMixin implements MobEffectInstanceInjection {
 	@Shadow
 	@Final
 	private Holder<MobEffect> effect;

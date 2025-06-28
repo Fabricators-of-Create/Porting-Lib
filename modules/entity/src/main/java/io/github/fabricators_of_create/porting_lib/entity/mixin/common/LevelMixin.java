@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
-import io.github.fabricators_of_create.porting_lib.entity.ext.LevelExt;
+import io.github.fabricators_of_create.porting_lib.entity.injects.LevelInjection;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.world.entity.Entity;
@@ -18,13 +18,12 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.List;
 import java.util.function.Predicate;
 
 @Mixin(value = Level.class, priority = 1100) // need to apply after lithium
-public class LevelMixin implements LevelExt {
+public class LevelMixin implements LevelInjection {
 	@Unique
 	final Int2ObjectMap<PartEntity<?>> port_lib$multiparts = new Int2ObjectOpenHashMap<>();
 

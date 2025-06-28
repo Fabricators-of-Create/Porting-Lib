@@ -13,7 +13,7 @@ import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 import io.github.fabricators_of_create.porting_lib.entity.events.player.CriticalHitEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.player.AttackEntityEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.player.PlayerXpEvent;
-import io.github.fabricators_of_create.porting_lib.entity.ext.PlayerExt;
+import io.github.fabricators_of_create.porting_lib.entity.injects.PlayerInjection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -38,7 +38,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = Player.class, priority = 500)
-public abstract class PlayerMixin extends LivingEntity implements PlayerExt {
+public abstract class PlayerMixin extends LivingEntity implements PlayerInjection {
 	protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level level) {
 		super(entityType, level);
 	}

@@ -1,6 +1,5 @@
 portingLib.addModuleDependencies([
 		"item_abilities",
-		"extensions",
 		"gui_utils",
 		"transfer",
 		"registry",

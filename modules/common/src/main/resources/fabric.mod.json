@@ -11,7 +11,8 @@
   },
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_1076": ["io/github/fabricators_of_create/porting_lib/common/injects/LanguageManagerInjection"]
+      "net/minecraft/class_1076": ["io/github/fabricators_of_create/porting_lib/common/injects/LanguageManagerInjection"],
+      "net/minecraft/class_4538": ["io/github/fabricators_of_create/porting_lib/common/injects/LevelReaderInjection"]
     }
   }
 }

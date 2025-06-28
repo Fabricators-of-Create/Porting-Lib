@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.entity.ext.SlimeExt;
+import io.github.fabricators_of_create.porting_lib.entity.injects.SlimeInjection;
 
 import net.minecraft.world.entity.EntityDimensions;
 
@@ -13,7 +13,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.world.entity.monster.Slime;
 
 @Mixin(Slime.class)
-public class SlimeMixin implements SlimeExt {
+public class SlimeMixin implements SlimeInjection {
 	@WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/EntityDimensions;width()F"))
 	private float handleParticles(EntityDimensions instance, Operation<Float> original) {
 		if (!spawnCustomParticles())

@@ -1,0 +1,18 @@
+package io.github.fabricators_of_create.porting_lib.blocks.extensions;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.state.BlockState;
+
+public interface EnchantmentBonusBlock {
+	/**
+	 * Determines the amount of enchanting power this block can provide to an enchanting table.
+	 * @param level The level
+	 * @param pos Block position in level
+	 * @return The amount of enchanting power this block produces.
+	 */
+	default int getEnchantPowerBonus(BlockState state, LevelReader level, BlockPos pos) {
+		return state.is(BlockTags.ENCHANTMENT_POWER_PROVIDER) ? 1 : 0;
+	}
+}

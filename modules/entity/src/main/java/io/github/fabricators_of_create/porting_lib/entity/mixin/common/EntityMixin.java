@@ -22,7 +22,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityDataEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.MinecartEvents;
-import io.github.fabricators_of_create.porting_lib.entity.ext.EntityExt;
+import io.github.fabricators_of_create.porting_lib.entity.injects.EntityInjection;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -33,7 +33,7 @@ import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.Level;
 
 @Mixin(Entity.class)
-public abstract class EntityMixin implements EntityExt {
+public abstract class EntityMixin implements EntityInjection {
 	@Unique
 	private Collection<ItemEntity> port_lib$captureDrops = null;
 
