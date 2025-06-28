@@ -27,7 +27,7 @@ When mixing into inner classes, use a `$` symbol to separate the outer and inner
 making a regular mixin for the class `ClassA.ClassB`, the mixin class name would be `ClassA$ClassBMixin`.
 
 #### Behavior and Style
-- All mixin-added fields and methods must be private and annotated with `@Unique`. This will prefix them with the
+- All mixin-added fields and methods must be private and have the prefix 'port_lib$'. This will prefix them with the
 mod ID, which is critical for mod compatibility.
 
 - Mixins are to be designed to be as compatible as possible. No Overwrites, Redirects, or Inject Head Unconditional
@@ -53,6 +53,12 @@ must throw an exception. They should also be placed towards the top of the class
 
 - The mixin config JSON file should have all mixins in alphabetical order, with accessor mixins being listed before
 regular mixins.
+
+- All rendering related events must use the callback style, and event and avoid using object related events to avoid unnecessary
+objection allocation every frame unless deemed unrelated.
+
+- All events that aren't rendering related must follow the same Forge style event structure.
+This is to help prevent merge conflicts for mods that use these events.
 
 ### Adding Modules
 - Modules can be added when a new feature doesn't fit in an existing one.
