@@ -12,6 +12,7 @@
     "common.BeaconBlockEntityMixin",
     "common.BlockBehavior$PropertiesMixin",
     "common.BlockBehaviourMixin",
+    "common.BlockEntityMixin",
     "common.BlockGetterMixin",
     "common.BlockLightEngineMixin",
     "common.BlockMixin",
