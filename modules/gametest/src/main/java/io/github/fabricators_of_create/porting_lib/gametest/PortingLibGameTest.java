@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import io.github.fabricators_of_create.porting_lib.gametest.quickexport.AreaSelection;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.gametest.framework.GameTestInstance;
 import net.minecraft.world.item.component.CustomData;
 
 import org.slf4j.Logger;
@@ -30,7 +31,6 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.TestFunction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
@@ -55,7 +55,7 @@ public class PortingLibGameTest implements ModInitializer {
 	 * Get all test functions from the given classes. This enables the functionality
 	 * of {@link CustomGameTestHelper} and {@link GameTestGroup}.
 	 */
-	public static Collection<TestFunction> getTestsFrom(Class<?>... classes) {
+	public static Collection<GameTestInstance> getTestsFrom(Class<?>... classes) {
 		return Stream.of(classes)
 				.map(Class::getDeclaredMethods)
 				.flatMap(Stream::of)

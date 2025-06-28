@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_chunk_loading_testmod",
+  "version": "1.0.0",
+  "name": "Porting Lib Chunk Loading Testmod",
+  "description": "Tests the chunk loading module",
+  "authors": [
+    "The Create Fabric Team"
+  ],
+  "license": "LGPL",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.chunk.loading.testmod.PortingLibChunkManagerTest"
+    ]
+  }
+}

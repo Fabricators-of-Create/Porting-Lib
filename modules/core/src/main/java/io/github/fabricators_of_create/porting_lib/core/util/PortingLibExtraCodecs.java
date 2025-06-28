@@ -11,7 +11,9 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.MapLike;
 import com.mojang.serialization.RecordBuilder;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -210,7 +212,25 @@ public class PortingLibExtraCodecs {
 	 * @param <B>           fallback type
 	 */
 	public static <A, E, B> MapCodec<Either<E, B>> dispatchMapOrElse(Codec<A> typeCodec, Function<? super E, ? extends A> type, Function<? super A, ? extends MapCodec<? extends E>> codec, MapCodec<B> fallbackCodec) {
-		var dispatchCodec = typeCodec.dispatchMap(type, codec);
+		return dispatchMapOrElse("type", typeCodec, type, codec, fallbackCodec);
+	}
+
+	/**
+	 * Map dispatch codec with an alternative.
+	 *
+	 * <p>The alternative will only be used if the provided key is not present in the serialized object.
+	 *
+	 * @param key           key to dispatch on
+	 * @param typeCodec     codec for the dispatch type
+	 * @param type          function to retrieve the dispatch type from the dispatched type
+	 * @param codec         function to retrieve the dispatched type map codec from the dispatch type
+	 * @param fallbackCodec fallback to use when the deserialized object does not have a {@code "type"} key
+	 * @param <A>           dispatch type
+	 * @param <E>           dispatched type
+	 * @param <B>           fallback type
+	 */
+	public static <A, E, B> MapCodec<Either<E, B>> dispatchMapOrElse(String key, Codec<A> typeCodec, Function<? super E, ? extends A> type, Function<? super A, ? extends MapCodec<? extends E>> codec, MapCodec<B> fallbackCodec) {
+		var dispatchCodec = typeCodec.dispatchMap(key, type, codec);
 		return new MapCodec<>() {
 			@Override
 			public <T> Stream<T> keys(DynamicOps<T> ops) {
@@ -219,7 +239,7 @@ public class PortingLibExtraCodecs {
 
 			@Override
 			public <T> DataResult<Either<E, B>> decode(DynamicOps<T> ops, MapLike<T> input) {
-				if (input.get("type") != null) {
+				if (input.get(key) != null) {
 					return dispatchCodec.decode(ops, input).map(Either::left);
 				} else {
 					return fallbackCodec.decode(ops, input).map(Either::right);
@@ -291,5 +311,30 @@ public class PortingLibExtraCodecs {
 		public String toString() {
 			return "XorMapCodec[" + first + ", " + second + "]";
 		}
+	}
+
+	/**
+	 * Creates a codec for an {@linkplain Codec#unboundedMap(Codec, Codec) unbounded map} whose underlying representation is a list of maps, with the given names for each key-element entry. Each key-element entry is encoded as a map with the given key and element names respectively.
+	 * <p>
+	 * This is useful for maps where the key does not encode to a string, which causes errors when trying to serialize to a format that requires maps to have string keys (such as JSON and NBT).
+	 *
+	 * @param keyName      the name of the key in the encoded map for each key-element entry
+	 * @param keyCodec     codec for the key
+	 * @param elementName  the name of the element in the encoded map for each key-element entry
+	 * @param elementCodec codec for the element
+	 * @param <K>          the key type
+	 * @param <V>          the element type
+	 * @return a codec for an unbounded map
+	 */
+	@SuppressWarnings("unchecked")
+	public static <K, V> Codec<Map<K, V>> unboundedMapAsList(String keyName, Codec<K> keyCodec, String elementName, Codec<V> elementCodec) {
+		Codec<Map.Entry<K, V>> entryCodec = RecordCodecBuilder.create(
+				instance -> instance.group(
+						keyCodec.fieldOf(keyName).forGetter(Map.Entry::getKey),
+						elementCodec.fieldOf(elementName).forGetter(Map.Entry::getValue)).apply(instance, Map::entry));
+		return Codec.list(entryCodec)
+				.xmap(
+						entries -> Map.ofEntries(entries.toArray(Map.Entry[]::new)),
+						map -> List.copyOf(map.entrySet()));
 	}
 }

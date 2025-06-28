@@ -4,12 +4,15 @@
   "version": "${version}",
   "name": "Porting Lib Chunk Loading",
   "description": "Chunk Loader API",
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.chunk.loading.PortingLibChunkLoading::init"
+    ]
+  },
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_1932": ["io/github/fabricators_of_create/porting_lib/chunk/loading/extensions/ForcedChunksSavedDataExtension"],
-      "net/minecraft/class_3204": ["io/github/fabricators_of_create/porting_lib/chunk/loading/extensions/DistanceManagerExtension"],
-      "net/minecraft/class_3215": ["io/github/fabricators_of_create/porting_lib/chunk/loading/extensions/ServerChunkCacheExtension"],
-      "net/minecraft/class_3228": ["io/github/fabricators_of_create/porting_lib/chunk/loading/extensions/TicketExtension"]
+      "net/minecraft/class_3230": ["io/github/fabricators_of_create/porting_lib/chunk/loading/extensions/TicketTypeExtension"],
+      "net/minecraft/class_10592": ["io/github/fabricators_of_create/porting_lib/chunk/loading/extensions/TicketStorageExtension"]
     }
   }
 }
