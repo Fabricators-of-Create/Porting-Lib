@@ -91,7 +91,7 @@ public abstract class MinecraftMixin {
 
 	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;reload()V"))
 	private void addClientResources(GameConfig gameConfig, CallbackInfo ci) {
-//		new AddPackFindersEvent(PackType.CLIENT_RESOURCES, this.resourcePackRepository::pl$addPackFinder).sendEvent();
+		new AddPackFindersEvent(PackType.CLIENT_RESOURCES, this.resourcePackRepository::port_lib$addPackFinder, false).sendEvent();
 	}
 
 	@Inject(

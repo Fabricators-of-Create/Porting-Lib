@@ -24,6 +24,7 @@
     "common.LevelMixin",
     "common.MainMixin",
     "common.MinecartItemMixin",
+    "common.PackRepositoryMixin",
     "common.PlayerAdvancementsMixin",
     "common.PlayerChunkSenderMixin",
     "common.PlayerListMixin",
