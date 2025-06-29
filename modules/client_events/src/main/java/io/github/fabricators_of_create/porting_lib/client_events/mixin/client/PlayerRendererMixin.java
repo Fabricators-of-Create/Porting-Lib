@@ -16,15 +16,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerRenderer.class)
 public class PlayerRendererMixin {
-	@Inject(method = "renderLeftHand", at = @At("HEAD"), cancellable = true)
-	private void onRenderLeftArm(PoseStack poseStack, MultiBufferSource buffer, int packedLight, AbstractClientPlayer player, CallbackInfo ci) {
-		if (ClientEventHooks.renderSpecificFirstPersonArm(poseStack, buffer, packedLight, player, HumanoidArm.LEFT))
-			ci.cancel();
-	}
-
-	@Inject(method = "renderRightHand", at = @At("HEAD"), cancellable = true)
-	private void onRenderRightArm(PoseStack poseStack, MultiBufferSource buffer, int packedLight, AbstractClientPlayer player, CallbackInfo ci) {
-		if (ClientEventHooks.renderSpecificFirstPersonArm(poseStack, buffer, packedLight, player, HumanoidArm.RIGHT))
-			ci.cancel();
-	}
+	// TODO: Port We can't inject here anymore because vanilla no longer passes the player and forge patches that so we need to inject into were these methods are actually being called
+//	@Inject(method = "renderLeftHand", at = @At("HEAD"), cancellable = true)
+//	private void onRenderLeftArm(PoseStack poseStack, MultiBufferSource buffer, int packedLight, AbstractClientPlayer player, CallbackInfo ci) {
+//		if (ClientEventHooks.renderSpecificFirstPersonArm(poseStack, buffer, packedLight, player, HumanoidArm.LEFT))
+//			ci.cancel();
+//	}
+//
+//	@Inject(method = "renderRightHand", at = @At("HEAD"), cancellable = true)
+//	private void onRenderRightArm(PoseStack poseStack, MultiBufferSource buffer, int packedLight, AbstractClientPlayer player, CallbackInfo ci) {
+//		if (ClientEventHooks.renderSpecificFirstPersonArm(poseStack, buffer, packedLight, player, HumanoidArm.RIGHT))
+//			ci.cancel();
+//	}
 }

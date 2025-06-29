@@ -6,6 +6,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.sounds.MusicInfo;
 import net.minecraft.sounds.Music;
 
 import org.jetbrains.annotations.Nullable;
@@ -34,11 +35,11 @@ public class SelectMusicEvent extends BaseEvent implements CancellableEvent {
 		}
 	});
 
-	private @Nullable Music music;
-	private final Music originalMusic;
+	private @Nullable MusicInfo music;
+	private final MusicInfo originalMusic;
 	private final @Nullable SoundInstance playingMusic;
 
-	public SelectMusicEvent(Music music, @Nullable SoundInstance playingMusic) {
+	public SelectMusicEvent(MusicInfo music, @Nullable SoundInstance playingMusic) {
 		this.music = music;
 		this.originalMusic = music;
 		this.playingMusic = playingMusic;
@@ -47,7 +48,7 @@ public class SelectMusicEvent extends BaseEvent implements CancellableEvent {
 	/**
 	 * {@return the original situational music that was selected}
 	 */
-	public Music getOriginalMusic() {
+	public MusicInfo getOriginalMusic() {
 		return originalMusic;
 	}
 
@@ -63,7 +64,7 @@ public class SelectMusicEvent extends BaseEvent implements CancellableEvent {
 	 * {@return the Music to be played, or {@code null} if any playing music should be cancelled}
 	 */
 	@Nullable
-	public Music getMusic() {
+	public MusicInfo getMusic() {
 		return music;
 	}
 
@@ -72,7 +73,7 @@ public class SelectMusicEvent extends BaseEvent implements CancellableEvent {
 	 * If this <i>was</i> {@code null} but on the next tick isn't, the music given will be immediately played.<br>
 	 * <br>
 	 */
-	public void setMusic(@Nullable Music newMusic) {
+	public void setMusic(@Nullable MusicInfo newMusic) {
 		this.music = newMusic;
 	}
 
@@ -80,7 +81,7 @@ public class SelectMusicEvent extends BaseEvent implements CancellableEvent {
 	 * Sets the music and then cancels the event so that other listeners will not be invoked.<br>
 	 * Note that listeners using {@link SubscribeEvent#receiveCanceled()} will still be able to override this, but by default they will not
 	 */
-	public void overrideMusic(@Nullable Music newMusic) {
+	public void overrideMusic(@Nullable MusicInfo newMusic) {
 		this.music = newMusic;
 		this.setCanceled(true);
 	}

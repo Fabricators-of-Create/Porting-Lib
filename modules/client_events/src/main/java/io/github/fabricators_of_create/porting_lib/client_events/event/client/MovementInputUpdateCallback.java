@@ -2,7 +2,7 @@ package io.github.fabricators_of_create.porting_lib.client_events.event.client;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.client.player.Input;
+import net.minecraft.client.player.ClientInput;
 import net.minecraft.world.entity.player.Player;
 
 public interface MovementInputUpdateCallback {
@@ -11,5 +11,5 @@ public interface MovementInputUpdateCallback {
 			e.onMovementUpdate(player, input);
 	});
 
-	void onMovementUpdate(Player player, Input input);
+	void onMovementUpdate(Player player, ClientInput input);
 }
