@@ -7,7 +7,7 @@ import com.mojang.datafixers.schemas.Schema;
 
 import net.minecraft.util.datafix.DataFixers;
 
-import net.minecraft.util.datafix.fixes.AttributesRename;
+import net.minecraft.util.datafix.fixes.AttributesRenameLegacy;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,7 +27,7 @@ public abstract class DataFixersMixin {
 	private static BiFunction<Integer, Schema, Schema> SAME_NAMESPACED;
 
 	@Shadow
-	protected static UnaryOperator<String> createRenamer(Map<String, String> map) {
+	private static UnaryOperator<String> createRenamer(Map<String, String> map) {
 		return null;
 	}
 
@@ -37,7 +37,7 @@ public abstract class DataFixersMixin {
 		// Neo: rename neo attributes to new MC attributes
 		// Happens in 24w03a
 		Schema neoSchema3804 = dataFixerBuilder.addSchema(3804, SAME_NAMESPACED);
-		dataFixerBuilder.addFixer(new AttributesRename(
+		dataFixerBuilder.addFixer(new AttributesRenameLegacy(
 				neoSchema3804,
 				"(Neo) Rename reach attributes to vanilla",
 				createRenamer(ImmutableMap.of(
