@@ -7,7 +7,6 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "common.AbstractMinecartAccessor",
     "common.AbstractMinecartMixin",
     "common.BeaconBlockEntityMixin",
     "common.BlockBehavior$PropertiesMixin",
@@ -15,7 +14,6 @@
     "common.BlockEntityMixin",
     "common.BlockGetterMixin",
     "common.BlockLightEngineMixin",
-    "common.BlockMixin",
     "common.BlockStateMixin",
     "common.DataFixersMixin",
     "common.DispenseItemBehaviorMixin",
@@ -35,9 +33,11 @@
     "common.PistonMovingBlockEntityMixin",
     "common.PistonStructureResolverMixin",
     "common.PlayerMixin",
+    "common.ProtoChunkMixin",
     "common.RailStateMixin",
     "common.RedStoneOreBlockMixin",
     "common.RedStoneWireBlockMixin",
+    "common.RemoveBlockGoalMixin",
     "common.SculkCatalystBlockMixin",
     "common.SculkSensorBlockMixin",
     "common.SculkShriekerBlockMixin",

@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.blocks.mixin.common;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
+import io.github.fabricators_of_create.porting_lib.blocks.ClientBlockHooks;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.ChunkUnloadListeningBlockEntity;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.CustomUpdateTagHandlingBlockEntity;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.OnLoadBlockEntity;
@@ -29,6 +30,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LevelChunk.class)
 public abstract class LevelChunkMixin extends ChunkAccess {
@@ -75,5 +77,11 @@ public abstract class LevelChunkMixin extends ChunkAccess {
 	@Inject(method = "registerAllBlockEntitiesAfterLevelLoad", at = @At("HEAD"))
 	public void port_lib$addPendingBlockEntities(CallbackInfo ci) {
 		this.level.port_lib$addFreshBlockEntities(this.blockEntities.values());
+	}
+
+	@Inject(method = "setBlockState", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/lighting/LightEngine;hasDifferentLightProperties(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;)Z"))
+	private void setLevelAndPosContext(BlockPos pos, BlockState state, int flags, CallbackInfoReturnable<BlockState> cir) {
+		ClientBlockHooks.lightEngineLevelContextHack.set(this);
+		ClientBlockHooks.lightEngineBlockPosContextHack.set(pos);
 	}
 }

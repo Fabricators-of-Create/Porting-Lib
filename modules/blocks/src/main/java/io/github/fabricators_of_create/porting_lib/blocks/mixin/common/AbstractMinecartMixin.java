@@ -27,34 +27,36 @@ public abstract class AbstractMinecartMixin extends Entity {
 		super(entityType, world);
 	}
 
-	@Inject(method = "moveAlongTrack", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;floor(D)I", ordinal = 4))
-	protected void onMoveAlongTrack(BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
-		if (blockState.getBlock() instanceof MinecartPassHandlerBlock handler) {
-			handler.onMinecartPass(blockState, level(), blockPos, (AbstractMinecart) (Object) this);
-		}
-	}
-
-	@ModifyExpressionValue(method = "moveAlongTrack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getValue(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;", ordinal = 1))
-	protected Comparable<?> getRailShape(Comparable<?> original, BlockPos pos, BlockState state) {
-		if (state.getBlock() instanceof CustomRailDirectionBlock block) {
-			return block.getRailDirection(state, level(), pos, (AbstractMinecart) (Object) this);
-		}
-		return original;
-	}
-
-	@ModifyExpressionValue(method = "getPosOffs", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getValue(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;"))
-	protected Comparable<?> getRailShape1(Comparable original, double x, double y, double z, @Local BlockState state) {
-		if (state.getBlock() instanceof CustomRailDirectionBlock block) {
-			return block.getRailDirection(state, level(), new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), (AbstractMinecart) (Object) this);
-		}
-		return original;
-	}
-
-	@ModifyExpressionValue(method = "getPos", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getValue(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;"))
-	protected Comparable<?> getRailShape2(Comparable original, double x, double y, double z, @Local BlockState state) {
-		if (state.getBlock() instanceof CustomRailDirectionBlock block) {
-			return block.getRailDirection(state, level(), new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), (AbstractMinecart) (Object) this);
-		}
-		return original;
-	}
+//	Uhh 1.21.5 neo doesn't even call this anymore even though it still has the method...
+//	@Inject(method = "moveAlongTrack", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;floor(D)I", ordinal = 4))
+//	protected void onMoveAlongTrack(BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
+//		if (blockState.getBlock() instanceof MinecartPassHandlerBlock handler) {
+//			handler.onMinecartPass(blockState, level(), blockPos, (AbstractMinecart) (Object) this);
+//		}
+//	}
+//
+//	TODO: PORT
+//	@ModifyExpressionValue(method = "moveAlongTrack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getValue(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;", ordinal = 1))
+//	protected Comparable<?> getRailShape(Comparable<?> original, BlockPos pos, BlockState state) {
+//		if (state.getBlock() instanceof CustomRailDirectionBlock block) {
+//			return block.getRailDirection(state, level(), pos, (AbstractMinecart) (Object) this);
+//		}
+//		return original;
+//	}
+//
+//	@ModifyExpressionValue(method = "getPosOffs", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getValue(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;"))
+//	protected Comparable<?> getRailShape1(Comparable original, double x, double y, double z, @Local BlockState state) {
+//		if (state.getBlock() instanceof CustomRailDirectionBlock block) {
+//			return block.getRailDirection(state, level(), new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), (AbstractMinecart) (Object) this);
+//		}
+//		return original;
+//	}
+//
+//	@ModifyExpressionValue(method = "getPos", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getValue(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;"))
+//	protected Comparable<?> getRailShape2(Comparable original, double x, double y, double z, @Local BlockState state) {
+//		if (state.getBlock() instanceof CustomRailDirectionBlock block) {
+//			return block.getRailDirection(state, level(), new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z)), (AbstractMinecart) (Object) this);
+//		}
+//		return original;
+//	}
 }

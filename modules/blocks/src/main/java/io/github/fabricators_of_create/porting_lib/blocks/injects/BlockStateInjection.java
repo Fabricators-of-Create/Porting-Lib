@@ -3,7 +3,6 @@ package io.github.fabricators_of_create.porting_lib.blocks.injects;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.BeaconColorMultiplierBlock;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.CustomSlimeBlock;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.EntityDestroyBlock;
-import io.github.fabricators_of_create.porting_lib.blocks.extensions.FaceHidingBlock;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.OnTreeGrowBlock;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.PlayerDestroyBlock;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.StateViewpointBlock;
@@ -11,7 +10,6 @@ import io.github.fabricators_of_create.porting_lib.blocks.extensions.StickToBloc
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.StickyBlock;
 import net.minecraft.client.Camera;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -179,34 +177,5 @@ public interface BlockStateInjection {
 		if (((BlockState)this).getBlock() instanceof StateViewpointBlock block)
 			return block.getStateAtViewpoint((BlockState) this, level, pos, viewpoint);
 		return (BlockState) this;
-	}
-
-	/**
-	 * Whether this block hides the neighbors face pointed towards by the given direction.
-	 * <p>
-	 * This method should only be used for blocks you don't control, for your own blocks override
-	 * {@link net.minecraft.world.level.block.Block#skipRendering(BlockState, BlockState, Direction)}
-	 * on the respective block instead
-	 *
-	 * @param level The world
-	 * @param pos The blocks position in the world
-	 * @param neighborState The neighboring blocks {@link BlockState}
-	 * @param dir The direction towards the neighboring block
-	 */
-	default boolean port_lib$hidesNeighborFace(BlockGetter level, BlockPos pos, BlockState neighborState, Direction dir) {
-		if (((BlockState) this).getBlock() instanceof FaceHidingBlock block)
-			return block.hidesNeighborFace(level, pos, ((BlockState)this), neighborState, dir);
-		return false;
-	}
-
-	/**
-	 * Whether this block allows a neighboring block to hide the face of this block it touches.
-	 * If this returns true, {@link BlockStateInjection#port_lib$hidesNeighborFace(BlockGetter, BlockPos, BlockState, Direction)}
-	 * will be called on the neighboring block.
-	 */
-	default boolean port_lib$supportsExternalFaceHiding() {
-		if (((BlockState)this).getBlock() instanceof FaceHidingBlock block)
-			return block.supportsExternalFaceHiding((BlockState) this);
-		return false;
 	}
 }

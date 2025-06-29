@@ -61,23 +61,30 @@ public interface FlammableBlock {
 
 	/**
 	 * If the block is flammable, this is called when it gets lit on fire.
+	 * <p>
+	 * The return value determines whether a flint-and-steel in a dispenser was used successfully and should be damaged
 	 *
-	 * @param state The current state
-	 * @param level The current level
-	 * @param pos Block position in level
+	 * @param state     The current state
+	 * @param level     The current level
+	 * @param pos       Block position in level
 	 * @param direction The direction that the fire is coming from
-	 * @param igniter The entity that lit the fire
+	 * @param igniter   The entity that lit the fire
+	 * @return whether the block was successfully set on fire (i.e. TNT is allowed to explode and was primed)
 	 */
-	default void onCaughtFire(BlockState state, Level level, BlockPos pos, @Nullable Direction direction, @Nullable LivingEntity igniter) {}
+	default boolean onCaughtFire(BlockState state, Level level, BlockPos pos, @org.jetbrains.annotations.Nullable Direction direction, @org.jetbrains.annotations.Nullable LivingEntity igniter) {
+		return true;
+	}
 
 	/**
 	 * Helper method for mods which also handles vanilla
 	 */
-	static void onCaughtFireVanilla(BlockState state, Level level, BlockPos pos, @Nullable Direction direction, @Nullable LivingEntity igniter) {
+	static boolean onCaughtFireVanilla(BlockState state, Level level, BlockPos pos, @Nullable Direction direction, @Nullable LivingEntity igniter) {
 		if (state.getBlock() instanceof FlammableBlock block) {
-			block.onCaughtFire(state, level, pos, direction, igniter);
+			return block.onCaughtFire(state, level, pos, direction, igniter);
 		} else if (state.getBlock() == Blocks.TNT) {
-			TntBlock.explode(level, pos);
+			return TntBlock.prime(level, pos);
 		}
+
+		return false;
 	}
 }

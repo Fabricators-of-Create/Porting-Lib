@@ -1,7 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.blocks.mixin.common;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.EntityDestroyBlock;
@@ -14,10 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WitherBoss.class)
 public abstract class WitherBossMixin extends Entity {
@@ -25,25 +22,12 @@ public abstract class WitherBossMixin extends Entity {
 	public WitherBossMixin(EntityType<?> entityType, Level level) {
 		super(entityType, level);
 	}
-	@Unique
-	private boolean customLogic = false;
-	@Unique
-	private boolean shouldBreak = false;
 
-	@ModifyExpressionValue(method = "customServerAiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/boss/wither/WitherBoss;canDestroy(Lnet/minecraft/world/level/block/state/BlockState;)Z"))
-	public boolean port_lib$canDestroy(boolean original) {
-		if (customLogic)
-			return shouldBreak;
-		return original;
-	}
-
-	@Inject(method = "customServerAiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;", shift = At.Shift.AFTER))
-	public void port_lib$shouldDestroy(CallbackInfo ci, @Local(index = 5) BlockPos blockPos) {
-		BlockState blockState = this.level().getBlockState(blockPos);
-		if (blockState.getBlock() instanceof EntityDestroyBlock destroyBlock) {
-			customLogic = true;
-			shouldBreak = destroyBlock.canEntityDestroy(blockState, this.level(), blockPos, this);
-		} else
-			customLogic = false;
+	@WrapOperation(method = "customServerAiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/boss/wither/WitherBoss;canDestroy(Lnet/minecraft/world/level/block/state/BlockState;)Z"))
+	public boolean shouldDestroy(BlockState state, Operation<Boolean> original, @Local(ordinal = 0) BlockPos pos) {
+		if (state.getBlock() instanceof EntityDestroyBlock destroyBlock) {
+			return destroyBlock.canEntityDestroy(state, this.level(), pos, this);
+		}
+		return original.call(state);
 	}
 }

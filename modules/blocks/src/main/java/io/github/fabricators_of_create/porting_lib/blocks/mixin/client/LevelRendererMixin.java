@@ -7,6 +7,7 @@ import io.github.fabricators_of_create.porting_lib.blocks.CullingBlockEntityIter
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.LightEmissiveBlock;
 import net.minecraft.client.renderer.LevelRenderer;
 
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.culling.Frustum;
 
 import net.minecraft.core.BlockPos;
@@ -16,6 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,8 +35,12 @@ public class LevelRendererMixin {
 	@Nullable
 	private Frustum capturedFrustum;
 
+	@Shadow
+	@Final
+	private BlockEntityRenderDispatcher blockEntityRenderDispatcher;
+
 	@ModifyVariable(
-			method = "renderLevel",
+			method = "renderBlockEntities",
 			slice = @Slice(
 					from = @At(
 							value = "INVOKE",
@@ -42,27 +48,27 @@ public class LevelRendererMixin {
 					),
 					to = @At(
 							value = "INVOKE",
-							target = "Lnet/minecraft/client/renderer/OutlineBufferSource;endOutlineBatch()V"
+							target = "Lnet/minecraft/world/level/block/entity/BlockEntity;getBlockPos()Lnet/minecraft/core/BlockPos;",
+							ordinal = 1
 					)
 			),
 			at = @At("STORE")
 	)
-	private Iterator<BlockEntity> port_lib$wrapBlockEntityIterator(Iterator<BlockEntity> iterator) {
-		return new CullingBlockEntityIterator(iterator, capturedFrustum != null ? capturedFrustum : cullingFrustum);
+	private Iterator<BlockEntity> wrapBlockEntityIterator(Iterator<BlockEntity> iterator) {
+		return new CullingBlockEntityIterator(this.blockEntityRenderDispatcher, iterator, capturedFrustum != null ? capturedFrustum : cullingFrustum);
 	}
 
 	@WrapOperation(
-			method = "getLightColor(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)I",
+			method = "getLightColor(Lnet/minecraft/client/renderer/LevelRenderer$BrightnessGetter;Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)I",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/block/state/BlockState;getLightEmission()I"
 			)
 	)
-	private static int port_lib$customLight(BlockState state, Operation<Integer> original,
-											BlockAndTintGetter world, BlockState state2, BlockPos pos) {
-		if (state.getBlock() instanceof LightEmissiveBlock custom) {
-			return custom.getLightEmission(state, world, pos);
+	private static int customLight(BlockState instance, Operation<Integer> original, LevelRenderer.BrightnessGetter brightnessGetter, BlockAndTintGetter level, BlockState state, BlockPos pos) {
+		if (instance.getBlock() instanceof LightEmissiveBlock custom) {
+			return custom.getLightEmission(instance, level, pos);
 		}
-		return original.call(state);
+		return original.call(instance);
 	}
 }

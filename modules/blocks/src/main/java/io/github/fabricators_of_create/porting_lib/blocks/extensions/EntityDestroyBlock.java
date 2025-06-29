@@ -16,12 +16,12 @@ public interface EntityDestroyBlock {
 	 *
 	 * @param state The current state
 	 * @param level The current level
-	 * @param pos Block position in level
+	 * @param pos   Block position in level
 	 * @return True to allow the ender dragon to destroy this block
 	 */
 	default boolean canEntityDestroy(BlockState state, BlockGetter level, BlockPos pos, Entity entity) {
 		if (entity instanceof EnderDragon) {
-			return !((Block)this).defaultBlockState().is(BlockTags.DRAGON_IMMUNE);
+			return !((Block) this).defaultBlockState().is(BlockTags.DRAGON_IMMUNE);
 		} else if ((entity instanceof WitherBoss) ||
 				(entity instanceof WitherSkull)) {
 			return state.isAir() || WitherBoss.canDestroy(state);

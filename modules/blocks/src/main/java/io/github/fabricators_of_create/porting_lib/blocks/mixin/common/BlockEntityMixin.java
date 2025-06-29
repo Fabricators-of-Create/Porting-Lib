@@ -18,18 +18,16 @@ public abstract class BlockEntityMixin implements BlockEntityInjection {
 	@Unique
 	private CompoundTag port_lib$extraData = null;
 
-	@Inject(at = @At("RETURN"), method = "saveMetadata")
-	private void port_lib$saveMetadata(CompoundTag nbt, CallbackInfo ci) {
-		if (port_lib$extraData != null && !port_lib$extraData.isEmpty()) {
-			nbt.put(BlockEntityDataKeys.EXTRA_DATA_KEY, port_lib$extraData);
+	@Inject(at = @At("RETURN"), method = "saveAdditional")
+	private void saveCustomData(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
+		if (port_lib$extraData != null) {
+			tag.put(BlockEntityDataKeys.EXTRA_DATA_KEY, port_lib$extraData.copy());
 		}
 	}
 
-	@Inject(at = @At("RETURN"), method = "loadWithComponents")
-	private void port_lib$load(CompoundTag tag, HolderLookup.Provider provider, CallbackInfo ci) {
-		if (tag.contains(BlockEntityDataKeys.EXTRA_DATA_KEY)) {
-			port_lib$extraData = tag.getCompound(BlockEntityDataKeys.EXTRA_DATA_KEY);
-		}
+	@Inject(at = @At("RETURN"), method = "loadAdditional")
+	private void loadCustomData(CompoundTag tag, HolderLookup.Provider provider, CallbackInfo ci) {
+		tag.getCompound(BlockEntityDataKeys.EXTRA_DATA_KEY).ifPresent(data -> this.port_lib$extraData = data);
 	}
 
 	@Override
