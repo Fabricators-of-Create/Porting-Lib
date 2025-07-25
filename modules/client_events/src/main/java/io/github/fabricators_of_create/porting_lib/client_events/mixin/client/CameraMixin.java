@@ -30,6 +30,6 @@ public abstract class CameraMixin {
 
 	@ModifyArg(method = "setRotation", at = @At(value = "INVOKE", target = "Lorg/joml/Quaternionf;rotationYXZ(FFF)Lorg/joml/Quaternionf;"), index = 2)
 	private float port_lib$setRollValue(float value) {
-		return -roll * Mth.DEG_TO_RAD;
+		return value + (-roll * Mth.DEG_TO_RAD);
 	}
 }
