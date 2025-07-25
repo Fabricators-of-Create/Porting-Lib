@@ -4,7 +4,6 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.CustomHitEffectsBlock;
-import io.github.fabricators_of_create.porting_lib.event.common.AddPackFindersEvent;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.server.packs.PackType;
@@ -87,11 +86,6 @@ public abstract class MinecraftMixin {
 	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Ljava/lang/Thread;currentThread()Ljava/lang/Thread;"))
 	public void port_lib$modsLoaded(GameConfig gameConfig, CallbackInfo ci) {
 		ModsLoadedCallback.EVENT.invoker().onAllModsLoaded(EnvType.CLIENT);
-	}
-
-	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;reload()V"))
-	private void addClientResources(GameConfig gameConfig, CallbackInfo ci) {
-		new AddPackFindersEvent(PackType.CLIENT_RESOURCES, this.resourcePackRepository::port_lib$addPackFinder, false).sendEvent();
 	}
 
 	@Inject(

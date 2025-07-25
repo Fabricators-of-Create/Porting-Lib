@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_resources",
+  "version": "${version}",
+  "name": "Porting Lib Resources",
+  "description": "An extension to Fabric's resource conditions API and an implementation of NeoForge's Data Maps API.",
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.resources.PortingLibResources::init"
+    ]
+  },
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_5350": ["io/github/fabricators_of_create/porting_lib/resources/injections/ReloadableServerResourcesInjection"],
+      "net/minecraft/class_2378": ["io/github/fabricators_of_create/porting_lib/resources/injections/RegistryInjection"],
+      "net/minecraft/class_6880": ["io/github/fabricators_of_create/porting_lib/resources/injections/HolderInjection"],
+      "net/minecraft/class_3283": ["io/github/fabricators_of_create/porting_lib/resources/injections/PackRepositoryInjection"]
+    }
+  }
+}

@@ -191,7 +191,7 @@ public final class FluidStack implements MutableDataComponentHolder {
 	}
 
 	private FluidStack(@Nullable Void unused, @Nullable Void unused1) {
-		this.fluid = null;
+		this.fluid = Fluids.EMPTY;
 		this.components = new PatchedDataComponentMap(DataComponentMap.EMPTY);
 	}
 

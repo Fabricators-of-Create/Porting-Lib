@@ -1,5 +1,14 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
+import io.github.fabricators_of_create.porting_lib.core.util.ServerLifecycleHooks;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ExperienceOrb;
 
@@ -11,6 +20,8 @@ import io.github.fabricators_of_create.porting_lib.event.common.GrindstoneEvent;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
@@ -50,5 +61,36 @@ public class PortingHooks {
 			inputSlots.setChanged();
 		});
 		return true;
+	}
+
+	/**
+	 * Attempts to resolve a {@link HolderLookup.RegistryLookup} using the current global state.
+	 * <p>
+	 * Prioritizes the server's lookup, only attempting to retrieve it from the client if the server is unavailable.
+	 *
+	 * @param <T> The type of registry being looked up
+	 * @param key The resource key for the target registry
+	 * @return A registry access, if one was available.
+	 */
+	@Nullable
+	public static <T> HolderLookup.RegistryLookup<T> resolveLookup(ResourceKey<? extends Registry<T>> key) {
+		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+		if (server != null) {
+			return server.registryAccess().lookup(key).orElse(null);
+		} else if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+			return resolveLookupClient(key);
+		}
+
+		return null;
+	}
+
+	@Nullable
+	public static <T> HolderLookup.RegistryLookup<T> resolveLookupClient(ResourceKey<? extends Registry<T>> key) {
+		ClientLevel level = Minecraft.getInstance().level;
+		if (level != null) {
+			return level.registryAccess().lookup(key).orElse(null);
+		}
+
+		return null;
 	}
 }

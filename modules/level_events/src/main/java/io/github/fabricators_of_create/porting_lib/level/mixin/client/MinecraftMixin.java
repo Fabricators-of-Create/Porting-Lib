@@ -32,6 +32,8 @@ public class MinecraftMixin {
 			shift = At.Shift.AFTER
 	))
 	private void onDisconnect(Screen screen, boolean bl, CallbackInfo ci) {
-		new LevelEvent.Unload(this.level).sendEvent();
+		if (this.level != null) {
+			new LevelEvent.Unload(this.level).sendEvent();
+		}
 	}
 }

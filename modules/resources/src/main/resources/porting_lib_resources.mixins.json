@@ -1,0 +1,25 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "io.github.fabricators_of_create.porting_lib.resources.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "common.MappedRegistryMixin",
+    "common.PackRepositoryMixin",
+    "common.RecipeManagerMixin",
+    "common.RegistryMixin",
+    "common.ReloadableServerResourcesMixin",
+    "common.ServerAdvancementManagerMixin",
+    "common.ServerPacksSourceMixin",
+    "common.SimplePreparableReloadListenerMixin"
+  ],
+  "client": [
+    "client.ClientPacketListenerMixin",
+    "client.CreateWorldScreenMixin",
+    "client.MinecraftMixin",
+    "client.TagCollectorMixin"
+  ]
+}

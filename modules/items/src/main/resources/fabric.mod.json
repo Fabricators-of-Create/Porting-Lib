@@ -11,7 +11,8 @@
   },
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_1799": ["io/github/fabricators_of_create/porting_lib/item/injects/ItemStackInjection"]
+      "net/minecraft/class_1799": ["io/github/fabricators_of_create/porting_lib/item/injects/ItemStackInjection"],
+      "net/minecraft/class_9288": ["io/github/fabricators_of_create/porting_lib/item/injects/ItemContainerContentsInjection"]
     }
   }
 }

@@ -4,34 +4,31 @@
   "priority": 951,
   "package": "io.github.fabricators_of_create.porting_lib.mixin",
   "plugin": "io.github.fabricators_of_create.porting_lib.mixin.PortingLibMixinPlugin",
-  "minMixinExtrasVersion": "0.5.0-beta.3",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "client.BoatRendererMixin",
-    "client.CreateWorldScreenMixin",
     "common.AnvilMenuMixin",
     "common.BeardifierMixin",
     "common.BlockStateMixin",
     "common.BoatMixin",
     "common.ChunkMapMixin",
     "common.ConnectionMixin",
+    "common.EnchantmentHelperMixin",
     "common.EntityMixin",
     "common.ExplosionMixin",
     "common.FlyingMobMixin",
     "common.GrindstoneMenuMixin",
     "common.GrindstoneMenuMixin$GrindstoneMenuOutputSlotMixin",
+    "common.ItemEnchantmentsPredicate$EnchantmentsMixin",
     "common.ItemStackMixin",
     "common.LevelMixin",
     "common.MainMixin",
     "common.MinecartItemMixin",
-    "common.PackRepositoryMixin",
     "common.PlayerAdvancementsMixin",
     "common.PlayerChunkSenderMixin",
     "common.PlayerListMixin",
     "common.PlayerMixin",
-    "common.ReloadableServerResourcesMixin",
     "common.ResourceLocationMixin",
-    "common.ServerPacksSourceMixin",
     "common.ShapedRecipePattern$DataMixin",
     "common.ShapelessRecipe$SerializerMixin",
     "common.ShapelessRecipeMixin",
@@ -71,7 +68,6 @@
     "client.PostChainMixin",
     "client.RenderTargetMixin",
     "client.SkullBlockRendererMixin",
-    "client.TagCollectorMixin",
     "client.TextureAtlasMixin",
     "client.TextureAtlasSprite$AnimatedTextureAccessor",
     "client.TextureAtlasSpriteMixin",
@@ -80,5 +76,8 @@
   "injectors": {
     "defaultRequire": 1,
     "maxShiftBy": 5
+  },
+  "mixinextras": {
+    "minVersion": "0.5.0-rc.2"
   }
 }

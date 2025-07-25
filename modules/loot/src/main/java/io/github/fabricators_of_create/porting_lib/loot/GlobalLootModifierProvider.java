@@ -14,8 +14,8 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import io.github.fabricators_of_create.porting_lib.conditions.ICondition;
-import io.github.fabricators_of_create.porting_lib.conditions.WithConditions;
+import io.github.fabricators_of_create.porting_lib.resources.conditions.ICondition;
+import io.github.fabricators_of_create.porting_lib.resources.conditions.WithConditions;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;

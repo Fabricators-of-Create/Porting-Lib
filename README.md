@@ -25,26 +25,26 @@ Just choose a version and use its version number.
 | `chunk_loading`          | Custom chunk loading api                                                                       |
 | `client_events`          | Useful client-side events                                                                      |
 | `common`                 | Miscellaneous utilities for other modules                                                      |
-| `conditions`             | NeoForge's conditions system                                                                   |
-| `config`                 | A minimal port of forge's config api                                                           |
+| `config`                 | A minimal port of Forge's config api                                                           |
 | `core`                   | Core functionality used across other modules                                                   |
 | `data`                   | Additional data generation providers                                                           |
 | `entity`                 | Multipart entities, extra spawn data, removal listening                                        |
-| `fluids`                 | Api that provides additional fluid attributes for fluids                                       |
+| `fluids`                 | API that provides additional fluid attributes for fluids                                       |
 | `gametest`               | Tools to make GameTest creation as easy as possible                                            |
 | `gui_utils`              | Adds additional utility classes and methods for screens and guis                               |
 | `item_abilities`         | Utilities for item abilities                                                                   |
 | `items`                  | Adds extra item extensions                                                                     |
-| `registry`               | A implementation of neoforge's DeferredRegister and DeferredHolder system rewritten for fabric |
 | `level_events`           | Provides common level events for mods.                                                         |
 | `loot`                   | A small library to modify mob loot                                                             |
 | `mixin_extensions`       | More features for Mixins                                                                       |
-| `model_data`             | Addon to model api to make building model data easier.                                         |
+| `model_data`             | Addon to model API to make building model data easier.                                         |
 | `model_loader`           | Base loader for custom model types                                                             |
 | `models`                 | Model implementations, ModelData, RenderTypes                                                  |
 | `obj_loader`             | Loading .obj models                                                                            |
 | `recipe_book_categories` | Allows mods to add additional recipe book categories                                           |
+| `registry`               | A implementation of NeoForge's DeferredRegister and DeferredHolder system rewritten for Fabric |
 | `render_types`           | Custom render types for models and entities                                                    |
+| `resources`              | NeoForge's conditions and data maps system, with useful resource events                        |
 | `tags`                   | Forge tags                                                                                     |
 | `transfer`               | Storage implementations, client-side lookup, FluidStack, assorted transfer utilities           |
 

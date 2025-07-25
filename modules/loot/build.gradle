@@ -1,1 +1,1 @@
-portingLib.addModuleDependencies(["conditions", "registry"])
+portingLib.addModuleDependencies(["registry", "resources"])

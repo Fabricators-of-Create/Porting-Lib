@@ -6,7 +6,6 @@ import com.llamalad7.mixinextras.sugar.Share;
 
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 
-import io.github.fabricators_of_create.porting_lib.event.common.RecipesUpdatedCallback;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
 import net.minecraft.client.multiplayer.CommonListenerCookie;
@@ -30,9 +29,6 @@ import net.minecraft.network.Connection;
 @Environment(EnvType.CLIENT)
 @Mixin(ClientPacketListener.class)
 public abstract class ClientPacketListenerMixin extends ClientCommonPacketListenerImpl {
-	@Shadow
-	@Final
-	private RecipeManager recipeManager;
 
 	protected ClientPacketListenerMixin(Minecraft client, Connection connection, CommonListenerCookie commonListenerCookie) {
 		super(client, connection, commonListenerCookie);
@@ -45,8 +41,4 @@ public abstract class ClientPacketListenerMixin extends ClientCommonPacketListen
 		return true;
 	}
 
-	@Inject(method = "handleUpdateRecipes", at = @At("TAIL"))
-	public void port_lib$updateRecipes(ClientboundUpdateRecipesPacket packet, CallbackInfo ci) {
-		RecipesUpdatedCallback.EVENT.invoker().onRecipesUpdated(this.recipeManager);
-	}
 }
