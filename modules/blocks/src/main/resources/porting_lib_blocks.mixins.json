@@ -47,7 +47,8 @@
         "common.TntBlockMixin",
         "common.TrunkPlacerMixin",
         "common.WitherBossMixin",
-        "common.WitherSkullMixin"
+        "common.WitherSkullMixin",
+        "compat.sodium.FabricBlockAccessMixin"
     ],
     "client": [
         "client.CameraMixin",
