@@ -21,7 +21,6 @@
       "net/minecraft/class_1834": ["io/github/fabricators_of_create/porting_lib/extensions/common/TiersExtension"],
       "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/extensions/common/LevelExtensions"],
       "net/minecraft/class_2960": ["io/github/fabricators_of_create/porting_lib/extensions/common/ResourceLocationExtension"],
-      "net/minecraft/class_3283": ["io/github/fabricators_of_create/porting_lib/extensions/common/PackRepositoryExtension"],
       "net/minecraft/class_3491": ["io/github/fabricators_of_create/porting_lib/extensions/common/StructureProcessorExtension"],
       "net/minecraft/class_4587": ["io/github/fabricators_of_create/porting_lib/extensions/client/PoseStackExtension"],
       "net/minecraft/class_2474$class_5124": ["io/github/fabricators_of_create/porting_lib/extensions/common/TagAppenderExtension"]

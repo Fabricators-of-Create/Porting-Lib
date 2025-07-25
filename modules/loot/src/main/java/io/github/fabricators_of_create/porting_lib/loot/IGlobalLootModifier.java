@@ -3,8 +3,8 @@ package io.github.fabricators_of_create.porting_lib.loot;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 
-import io.github.fabricators_of_create.porting_lib.conditions.ConditionalOps;
-import io.github.fabricators_of_create.porting_lib.conditions.WithConditions;
+import io.github.fabricators_of_create.porting_lib.resources.conditions.ConditionalOps;
+import io.github.fabricators_of_create.porting_lib.resources.conditions.WithConditions;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.List;
 import java.util.Optional;

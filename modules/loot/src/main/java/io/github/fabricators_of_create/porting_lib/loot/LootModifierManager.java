@@ -19,23 +19,20 @@ import java.util.function.Function;
 
 import com.mojang.serialization.JsonOps;
 
-import io.github.fabricators_of_create.porting_lib.conditions.ConditionalOps;
-import io.github.fabricators_of_create.porting_lib.conditions.ICondition;
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
+import io.github.fabricators_of_create.porting_lib.resources.conditions.ConditionalOps;
+import io.github.fabricators_of_create.porting_lib.resources.conditions.ICondition;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.util.ParticleUtils;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.ApiStatus;
 
 public class LootModifierManager extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();

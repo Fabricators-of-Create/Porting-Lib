@@ -11,6 +11,9 @@
   },
   "mixins": [
     "DynamicRegistriesMixin",
+    "RecipeOutputMixin",
+    "RecipeProvider$RecipeOutputMixin",
+    "RecipeProviderAccessor",
     "RegistryPatchGeneratorMixin",
     "RegistrySetBuilderMixin"
   ]

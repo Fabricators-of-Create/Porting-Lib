@@ -2,6 +2,8 @@ package io.github.fabricators_of_create.porting_lib.models.obj;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Sets;
 import com.mojang.math.Transformation;
 import java.io.IOException;
@@ -31,6 +33,7 @@ import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
 import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
+import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadView;
 import net.minecraft.client.renderer.LightTexture;
@@ -82,7 +85,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> {
 			new Vec2(1, 0),
 	};
 
-	private final Map<String, ModelGroup> parts = Maps.newLinkedHashMap();
+	private final Multimap<String, ModelGroup> parts = MultimapBuilder.linkedHashKeys().arrayListValues().build();
 	private final Set<String> rootComponentNames = Collections.unmodifiableSet(parts.keySet());
 	private Set<String> allComponentNames;
 
@@ -333,7 +336,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> {
 		return allComponentNames = Collections.unmodifiableSet(names);
 	}
 
-	private Pair<BakedQuad, Direction> makeQuad(int[][] indices, int tintIndex, Vector4f colorTint, Vector4f ambientColor, TextureAtlasSprite texture, Transformation transform) {
+	private Pair<BakedQuad, Direction> makeQuad(int[][] indices, int tintIndex, Vector4f colorTint, Vector4f ambientColor, TextureAtlasSprite texture, Transformation transform, MeshBuilder meshBuilder) {
 		boolean needsNormalRecalculation = false;
 		for (int[] ints : indices) {
 			needsNormalRecalculation |= ints.length < 3;
@@ -352,7 +355,6 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> {
 			faceNormal = abs;
 		}
 
-		var meshBuilder = renderer.meshBuilder();
 		var quadBaker = meshBuilder.getEmitter();
 
 		quadBaker.spriteBake(texture, MutableQuadView.BAKE_ROTATE_NONE);
@@ -452,6 +454,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> {
 			}
 		}
 
+		quadBaker.emit(); // Must be called to ensure the mesh isn't empty.
 		Mesh mesh = meshBuilder.build();
 
 		AtomicReference<QuadView> quad = new AtomicReference<>();
@@ -474,10 +477,10 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> {
 	public CompositeRenderable bakeRenderable(IGeometryBakingContext configuration) {
 		var builder = CompositeRenderable.builder();
 
-		for (var entry : parts.entrySet()) {
-			var name = entry.getKey();
-			var part = entry.getValue();
-			part.bake(builder.child(name), configuration);
+		for (String name : parts.keys()) {
+			for (ModelGroup part : parts.get(name)) {
+				part.bake(builder.child(name), configuration);
+			}
 		}
 
 		return builder.get();
@@ -585,8 +588,9 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> {
 
 			var rootTransform = owner.getRootTransform();
 			var transform = rootTransform.isIdentity() ? modelTransform.getRotation() : modelTransform.getRotation().compose(rootTransform);
+			var meshBuilder = renderer.meshBuilder();
 			for (int[][] face : faces) {
-				Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, texture, transform);
+				Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, texture, transform, meshBuilder);
 				if (quad.getRight() == null)
 					modelBuilder.addUnculledFace(quad.getLeft());
 				else
@@ -602,9 +606,10 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> {
 			Vector4f colorTint = mat.diffuseColor;
 
 			final List<BakedQuad> quads = new ArrayList<>();
+			var meshBuilder = renderer.meshBuilder();
 
 			for (var face : this.faces) {
-				var pair = makeQuad(face, tintIndex, colorTint, mat.ambientColor, UnitTextureAtlasSprite.INSTANCE, Transformation.identity());
+				var pair = makeQuad(face, tintIndex, colorTint, mat.ambientColor, UnitTextureAtlasSprite.INSTANCE, Transformation.identity(), meshBuilder);
 				quads.add(pair.getLeft());
 			}
 

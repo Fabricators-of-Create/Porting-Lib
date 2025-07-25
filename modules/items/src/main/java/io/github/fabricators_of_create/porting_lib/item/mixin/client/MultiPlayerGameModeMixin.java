@@ -2,7 +2,13 @@ package io.github.fabricators_of_create.porting_lib.item.mixin.client;
 
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
+import com.llamalad7.mixinextras.sugar.Local;
+
 import io.github.fabricators_of_create.porting_lib.item.extensions.BlockUseBypassingItem;
+import io.github.fabricators_of_create.porting_lib.item.extensions.SneakBypassUseItem;
 import io.github.fabricators_of_create.porting_lib.item.extensions.UseFirstBehaviorItem;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 
@@ -25,6 +31,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MultiPlayerGameMode.class)
@@ -62,5 +69,13 @@ public class MultiPlayerGameModeMixin {
 				}
 			}
 		}
+	}
+
+	@WrapOperation(method = "performUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z"), slice = @Slice(to = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isSecondaryUseActive()Z")))
+	private boolean checkDoesSneakBypassUse(ItemStack instance, Operation<Boolean> original, @Local(argsOnly = true) LocalPlayer player, @Local BlockPos pos) {
+		if (instance.getItem() instanceof SneakBypassUseItem bypassUseItem)
+			return bypassUseItem.doesSneakBypassUse(instance, player.level(), pos, player);
+
+		return original.call(instance);
 	}
 }

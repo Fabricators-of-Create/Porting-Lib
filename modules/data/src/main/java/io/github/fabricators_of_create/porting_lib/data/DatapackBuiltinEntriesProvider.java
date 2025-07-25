@@ -18,9 +18,9 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Encoder;
 import com.mojang.serialization.JsonOps;
 
-import io.github.fabricators_of_create.porting_lib.conditions.ConditionalOps;
-import io.github.fabricators_of_create.porting_lib.conditions.ICondition;
-import io.github.fabricators_of_create.porting_lib.conditions.WithConditions;
+import io.github.fabricators_of_create.porting_lib.resources.conditions.ConditionalOps;
+import io.github.fabricators_of_create.porting_lib.resources.conditions.ICondition;
+import io.github.fabricators_of_create.porting_lib.resources.conditions.WithConditions;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.minecraft.core.HolderLookup;
@@ -171,10 +171,10 @@ public class DatapackBuiltinEntriesProvider extends RegistriesDatapackGenerator 
 		var conditionalCodec = ConditionalOps.createConditionalCodecWithConditions(data.elementCodec());
 		return provider.lookup(resourcekey)
 				.map(
-						p_349921_ -> {
+						registryLookup -> {
 							PackOutput.PathProvider packoutput$pathprovider = createRegistryElementsPathProvider(resourcekey);
 							return CompletableFuture.allOf(
-									p_349921_.listElements()
+									registryLookup.listElements()
 											.filter(holder -> this.namespacePredicate.test(holder.key().location().getNamespace()))
 											.map(
 													ref -> dumpValueF(

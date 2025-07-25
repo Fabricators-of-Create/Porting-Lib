@@ -21,6 +21,7 @@ public class RegistryBuilder<T> {
 	private ResourceLocation defaultKey;
 	private int maxId = -1;
 	private boolean sync = false;
+	private boolean intrusiveHolders = false;
 
 	public RegistryBuilder(ResourceKey<? extends Registry<T>> registryKey) {
 		this.registryKey = registryKey;
@@ -33,6 +34,16 @@ public class RegistryBuilder<T> {
 
 	public RegistryBuilder<T> defaultKey(ResourceKey<T> key) {
 		this.defaultKey = key.location();
+		return this;
+	}
+
+	/**
+	 * @deprecated Vanilla has deprecated intrusive holders and is in the process of moving away from them,
+	 *             you should not use this unless you have no better option.
+	 */
+	@Deprecated
+	public RegistryBuilder<T> withIntrusiveHolders() {
+		intrusiveHolders = true;
 		return this;
 	}
 
@@ -85,8 +96,8 @@ public class RegistryBuilder<T> {
 	 */
 	public Registry<T> create() {
 		FabricRegistryBuilder<T, MappedRegistry<T>> registry = FabricRegistryBuilder.from(this.defaultKey != null
-				? new DefaultedMappedRegistry<>(this.defaultKey.toString(), this.registryKey, Lifecycle.stable(), false)
-				: new MappedRegistry<>(this.registryKey, Lifecycle.stable(), false));
+				? new DefaultedMappedRegistry<>(this.defaultKey.toString(), this.registryKey, Lifecycle.stable(), intrusiveHolders)
+				: new MappedRegistry<>(this.registryKey, Lifecycle.stable(), intrusiveHolders));
 //		this.callbacks.forEach(registry::addCallback); TODO: PORT not sure if this is even used but i'll just leave a todo here incase
 //		if (this.maxId != -1)
 //			registry.setMaxId(this.maxId);

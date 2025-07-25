@@ -1,5 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.item.mixin.common;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
+import io.github.fabricators_of_create.porting_lib.item.extensions.SneakBypassUseItem;
 import io.github.fabricators_of_create.porting_lib.item.extensions.UseFirstBehaviorItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,6 +21,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayerGameMode.class)
@@ -50,5 +54,16 @@ public class ServerPlayerGameModeMixin {
 				}
 			}
 		}
+	}
+
+	@ModifyVariable(method = "useItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;copy()Lnet/minecraft/world/item/ItemStack;"), ordinal = 1)
+	private boolean checkShouldSneakBypassUse(boolean original, @Local(argsOnly = true) ServerPlayer player, @Local(argsOnly = true) Level level, @Local BlockPos pos) {
+		return original && !(
+				(player.getMainHandItem().getItem() instanceof SneakBypassUseItem mainBypassUseItem
+						&& mainBypassUseItem.doesSneakBypassUse(player.getMainHandItem(), level, pos, player))
+				&&
+				(player.getOffhandItem().getItem() instanceof SneakBypassUseItem offhandBypassUseItem
+						&& offhandBypassUseItem.doesSneakBypassUse(player.getOffhandItem(), level, pos, player))
+		);
 	}
 }
