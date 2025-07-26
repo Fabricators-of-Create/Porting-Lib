@@ -62,7 +62,11 @@ public abstract class LivingEntityMixin extends Entity {
 	@Inject(method = "getEquipmentSlotForItem", at = @At("HEAD"), cancellable = true)
 	private void getSlotForItemStack(ItemStack itemStack, CallbackInfoReturnable<EquipmentSlot> cir) {
 		if (itemStack.getItem() instanceof EquipmentItem equipment) {
-			cir.setReturnValue(equipment.getEquipmentSlot(itemStack));
+			EquipmentSlot slot = equipment.getEquipmentSlot(itemStack);
+
+			if (slot != null) {
+				cir.setReturnValue(slot);
+			}
 		}
 	}
 
