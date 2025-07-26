@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.item.extensions;
 
+import net.fabricmc.fabric.api.item.v1.EquipmentSlotProvider;
+import net.fabricmc.fabric.api.item.v1.FabricItem;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -14,6 +16,8 @@ public interface EquipmentItem {
 	 * @return the armor slot of the ItemStack, or {@code null} to let the default
 	 *         vanilla logic as per {@code LivingEntity.getSlotForItemStack(stack)}
 	 *         decide
+	 * @apiNote Try to use {@link FabricItem.Settings#equipmentSlot(EquipmentSlotProvider)} for acquiring an equipment slot instead,
+	 * 			as it also provides entity information.
 	 */
 	default EquipmentSlot getEquipmentSlot(ItemStack stack) {
 		return null;
