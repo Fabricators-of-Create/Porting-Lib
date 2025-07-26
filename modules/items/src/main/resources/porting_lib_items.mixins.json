@@ -14,7 +14,9 @@
     "client.MultiPlayerGameModeMixin"
   ],
   "mixins": [
+    "client.AbstractFurnaceMenuMixin",
     "client.CreativeModeInventoryScreenMixin",
+    "common.AbstractFurnaceBlockEntityMixin",
     "common.AbstractSkeletonMixin",
     "common.AnvilMenuMixin",
     "common.ArmorItemMixin",
