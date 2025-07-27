@@ -86,7 +86,7 @@ public final class SizedFluidIngredient {
 			SizedFluidIngredient::amount,
 			SizedFluidIngredient::new);
 
-	public static SizedFluidIngredient of(Fluid fluid, int amount) {
+	public static SizedFluidIngredient of(Fluid fluid, long amount) {
 		return new SizedFluidIngredient(FluidIngredient.of(fluid), amount);
 	}
 
@@ -100,7 +100,7 @@ public final class SizedFluidIngredient {
 	/**
 	 * Helper method to create a simple sized ingredient that matches fluids in a tag.
 	 */
-	public static SizedFluidIngredient of(TagKey<Fluid> tag, int amount) {
+	public static SizedFluidIngredient of(TagKey<Fluid> tag, long amount) {
 		return new SizedFluidIngredient(FluidIngredient.tag(tag), amount);
 	}
 
