@@ -11,6 +11,7 @@
   },
   "custom": {
     "loom:injected_interfaces": {
+      "net/minecraft/class_1856": ["io/github/fabricators_of_create/porting_lib/resources/injections/IngredientInjection"],
       "net/minecraft/class_5350": ["io/github/fabricators_of_create/porting_lib/resources/injections/ReloadableServerResourcesInjection"],
       "net/minecraft/class_2378": ["io/github/fabricators_of_create/porting_lib/resources/injections/RegistryInjection<TT;>"],
       "net/minecraft/class_6880": ["io/github/fabricators_of_create/porting_lib/resources/injections/HolderInjection<TT;>"],

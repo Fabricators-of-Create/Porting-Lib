@@ -1,3 +1,4 @@
 portingLib.addModuleDependencies([
-		"registry"
+		"registry",
+		"fluids"
 ])

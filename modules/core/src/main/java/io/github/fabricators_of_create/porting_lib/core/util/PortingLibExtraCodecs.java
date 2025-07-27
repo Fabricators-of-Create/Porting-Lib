@@ -210,6 +210,23 @@ public class PortingLibExtraCodecs {
 	 * @param <B>           fallback type
 	 */
 	public static <A, E, B> MapCodec<Either<E, B>> dispatchMapOrElse(Codec<A> typeCodec, Function<? super E, ? extends A> type, Function<? super A, ? extends MapCodec<? extends E>> codec, MapCodec<B> fallbackCodec) {
+		return dispatchMapOrElse("type", typeCodec, type, codec, fallbackCodec);
+	}
+
+	/**
+	 * Map dispatch codec with an alternative.
+	 *
+	 * <p>The alternative will only be used if there is no {@code "type"} key in the serialized object.
+	 *
+	 * @param typeCodec     codec for the dispatch type
+	 * @param type          function to retrieve the dispatch type from the dispatched type
+	 * @param codec         function to retrieve the dispatched type map codec from the dispatch type
+	 * @param fallbackCodec fallback to use when the deserialized object does not have a {@code "type"} key
+	 * @param <A>           dispatch type
+	 * @param <E>           dispatched type
+	 * @param <B>           fallback type
+	 */
+	public static <A, E, B> MapCodec<Either<E, B>> dispatchMapOrElse(String typeField, Codec<A> typeCodec, Function<? super E, ? extends A> type, Function<? super A, ? extends MapCodec<? extends E>> codec, MapCodec<B> fallbackCodec) {
 		var dispatchCodec = typeCodec.dispatchMap(type, codec);
 		return new MapCodec<>() {
 			@Override
@@ -219,7 +236,7 @@ public class PortingLibExtraCodecs {
 
 			@Override
 			public <T> DataResult<Either<E, B>> decode(DynamicOps<T> ops, MapLike<T> input) {
-				if (input.get("type") != null) {
+				if (input.get(typeField) != null) {
 					return dispatchCodec.decode(ops, input).map(Either::left);
 				} else {
 					return fallbackCodec.decode(ops, input).map(Either::right);
@@ -291,5 +308,17 @@ public class PortingLibExtraCodecs {
 		public String toString() {
 			return "XorMapCodec[" + first + ", " + second + "]";
 		}
+	}
+
+	// Porting lib added
+
+	public static final Codec<Long> POSITIVE_LONG = longRangeWithMessage(1, Long.MAX_VALUE, (value) -> "Value must be positive: " + value);
+
+	private static Codec<Long> longRangeWithMessage(long min, long max, Function<Long, String> errorMessage) {
+		return Codec.LONG.validate((value) -> value.compareTo(min) >= 0 && value.compareTo(max) <= 0 ? DataResult.success(value) : DataResult.error(() -> errorMessage.apply(value)));
+	}
+
+	public static Codec<Long> intRange(long min, long max) {
+		return longRangeWithMessage(min, max, (value) -> "Value must be within range [" + min + ";" + max + "]: " + value);
 	}
 }

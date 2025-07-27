@@ -3,3 +3,12 @@ accessWidener v2 named
 accessible field net/minecraft/resources/RegistryOps lookupProvider Lnet/minecraft/resources/RegistryOps$RegistryInfoLookup;
 accessible method net/minecraft/resources/RegistryOps <init> (Lcom/mojang/serialization/DynamicOps;Lnet/minecraft/resources/RegistryOps$RegistryInfoLookup;)V
 accessible class net/minecraft/server/ReloadableServerResources$ConfigurableRegistryLookup
+
+transitive-accessible class net/minecraft/world/item/crafting/Ingredient$Value
+transitive-accessible class net/minecraft/world/item/crafting/Ingredient$ItemValue
+transitive-accessible class net/minecraft/world/item/crafting/Ingredient$TagValue
+
+accessible method net/minecraft/world/item/crafting/Ingredient fromValues (Ljava/util/stream/Stream;)Lnet/minecraft/world/item/crafting/Ingredient;
+
+accessible method net/minecraft/world/item/crafting/Ingredient$ItemValue <init> (Lnet/minecraft/world/item/ItemStack;)V
+accessible method net/minecraft/world/item/crafting/Ingredient$TagValue <init> (Lnet/minecraft/tags/TagKey;)V

@@ -10,6 +10,7 @@
     "common.HolderLookupRegistryLookupMixin",
     "common.HolderLookupRegistryLookupMixin$DelegateMixin",
     "common.HolderReferenceMixin",
+    "common.IngredientMixin",
     "common.MappedRegistryMixin",
     "common.MappedRegistryMixin$MappedRegistryLookupMixin",
     "common.PackRepositoryMixin",
