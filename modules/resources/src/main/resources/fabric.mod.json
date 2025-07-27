@@ -12,9 +12,10 @@
   "custom": {
     "loom:injected_interfaces": {
       "net/minecraft/class_5350": ["io/github/fabricators_of_create/porting_lib/resources/injections/ReloadableServerResourcesInjection"],
-      "net/minecraft/class_2378": ["io/github/fabricators_of_create/porting_lib/resources/injections/RegistryInjection"],
-      "net/minecraft/class_6880": ["io/github/fabricators_of_create/porting_lib/resources/injections/HolderInjection"],
-      "net/minecraft/class_3283": ["io/github/fabricators_of_create/porting_lib/resources/injections/PackRepositoryInjection"]
+      "net/minecraft/class_2378": ["io/github/fabricators_of_create/porting_lib/resources/injections/RegistryInjection<TT;>"],
+      "net/minecraft/class_6880": ["io/github/fabricators_of_create/porting_lib/resources/injections/HolderInjection<TT;>"],
+      "net/minecraft/class_3283": ["io/github/fabricators_of_create/porting_lib/resources/injections/PackRepositoryInjection"],
+      "net/minecraft/class_7225\u0024class_7226": ["io/github/fabricators_of_create/porting_lib/resources/injections/RegistryLookupInjection<TT;>"]
     }
   }
 }

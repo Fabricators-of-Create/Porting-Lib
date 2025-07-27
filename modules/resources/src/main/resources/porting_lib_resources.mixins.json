@@ -7,14 +7,19 @@
     "defaultRequire": 1
   },
   "mixins": [
+    "common.HolderLookupRegistryLookupMixin",
+    "common.HolderLookupRegistryLookupMixin$DelegateMixin",
+    "common.HolderReferenceMixin",
     "common.MappedRegistryMixin",
+    "common.MappedRegistryMixin$MappedRegistryLookupMixin",
     "common.PackRepositoryMixin",
     "common.RecipeManagerMixin",
     "common.RegistryMixin",
     "common.ReloadableServerResourcesMixin",
     "common.ServerAdvancementManagerMixin",
     "common.ServerPacksSourceMixin",
-    "common.SimplePreparableReloadListenerMixin"
+    "common.SimplePreparableReloadListenerMixin",
+    "porting_lib.DeferredHolderMixin"
   ],
   "client": [
     "client.ClientPacketListenerMixin",

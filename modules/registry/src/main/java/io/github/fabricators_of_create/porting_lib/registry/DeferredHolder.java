@@ -239,15 +239,6 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T>, D
 		return this.holder != null && this.holder.is(holder);
 	}
 
-//	/**
-//	 * {@inheritDoc}
-//	 */
-//	@Override
-//	public <Z> @Nullable Z getData(DataMapType<R, Z> type) {
-//		bind(false);
-//		return holder == null ? null : holder.getData(type);
-//	}
-
 	/**
 	 * {@return all tags present on the underlying object}
 	 *
