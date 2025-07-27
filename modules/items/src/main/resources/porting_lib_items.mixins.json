@@ -1,38 +1,44 @@
 {
-    "required": true,
-    "minVersion": "0.8",
-    "package": "io.github.fabricators_of_create.porting_lib.item.mixin",
-    "compatibilityLevel": "JAVA_17",
-    "injectors": {
-        "defaultRequire": 1
-    },
-    "client": [
-        "client.GuiGraphicsMixin",
-        "client.HumanoidArmorLayerMixin",
-        "client.ItemFrameRendererMixin",
-        "client.ItemInHandRendererMixin",
-        "client.MultiPlayerGameModeMixin"
-    ],
-    "mixins": [
-        "client.CreativeModeInventoryScreenMixin",
-        "common.AbstractSkeletonMixin",
-        "common.AnvilMenuMixin",
-        "common.BlockBehaviour$BlockStateBaseMixin",
-        "common.BucketItemMixin",
-        "common.CreativeModeTabMixin",
-        "common.EnchantCommandMixin",
-        "common.EnchantmentHelperMixin",
-        "common.EnchantRandomlyFunctionMixin",
-        "common.ExperienceOrbMixin",
-        "common.IllusionerMixin",
-        "common.InventoryMixin",
-        "common.ItemContainerContentsMixin",
-        "common.ItemEntityMixin",
-        "common.LivingEntityMixin",
-        "common.PiglinAiMixin",
-        "common.PowderSnowBlockMixin",
-        "common.ProjectileWeaponItemMixin",
-        "common.RepairItemRecipeMixin",
-        "common.ServerPlayerGameModeMixin"
-    ]
+  "required": true,
+  "minVersion": "0.8",
+  "package": "io.github.fabricators_of_create.porting_lib.item.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "client.GuiGraphicsMixin",
+    "client.HumanoidArmorLayerMixin",
+    "client.ItemFrameRendererMixin",
+    "client.ItemInHandRendererMixin",
+    "client.MultiPlayerGameModeMixin"
+  ],
+  "mixins": [
+    "client.AbstractFurnaceMenuMixin",
+    "client.CreativeModeInventoryScreenMixin",
+    "common.AbstractFurnaceBlockEntityMixin",
+    "common.AbstractSkeletonMixin",
+    "common.AnvilMenuMixin",
+    "common.ArmorItemMixin",
+    "common.ArmorSlotMixin",
+    "common.BlockBehaviour$BlockStateBaseMixin",
+    "common.BucketItemMixin",
+    "common.CreativeModeTabMixin",
+    "common.EnchantCommandMixin",
+    "common.EnchantmentHelperMixin",
+    "common.EnchantRandomlyFunctionMixin",
+    "common.EnderManMixin",
+    "common.ExperienceOrbMixin",
+    "common.IllusionerMixin",
+    "common.InventoryMixin",
+    "common.ItemContainerContentsMixin",
+    "common.ItemEntityMixin",
+    "common.ItemStackMixin",
+    "common.LivingEntityMixin",
+    "common.PiglinAiMixin",
+    "common.PowderSnowBlockMixin",
+    "common.ProjectileWeaponItemMixin",
+    "common.RepairItemRecipeMixin",
+    "common.ServerPlayerGameModeMixin"
+  ]
 }

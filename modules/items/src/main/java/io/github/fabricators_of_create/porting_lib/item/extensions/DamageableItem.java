@@ -6,11 +6,13 @@ import net.minecraft.world.item.ItemStack;
 public interface DamageableItem {
 
 	/**
-	 * Called by CraftingManager to determine if an item is reparable.
+	 * Called by CraftingManager to determine if an item is repairable.
 	 *
 	 * @return True if reparable
 	 */
-	boolean isRepairable(ItemStack stack);
+	default boolean isRepairable(ItemStack stack) {
+		return isDamageable(stack);
+	}
 
 	/**
 	 * Used to test if this item can be damaged, but with the ItemStack in question.
