@@ -147,7 +147,8 @@ allprojects {
 				// property replacement is a bit too eager
 				class_5124: "\$class_5124",
 				class_56: "\$class_56",
-                class_9665: "\$class_9665"
+                class_9665: "\$class_9665",
+				class_7226: "\$class_7226"
 		]
 
 		properties.forEach(inputs::property)
