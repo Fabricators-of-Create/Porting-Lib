@@ -6,6 +6,8 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
 import io.github.fabricators_of_create.porting_lib.registry.DelegatedHolder;
 
+import io.github.fabricators_of_create.porting_lib.registry.injections.RegistryInjection;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -18,7 +20,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 
 @Mixin(Registry.class)
-public interface RegistryMixin {
+public interface RegistryMixin<T> extends RegistryInjection<T> {
 	@Definition(id = "value", local = @Local(type = Holder.class, argsOnly = true))
 	@Definition(id = "Reference", type = Holder.Reference.class)
 	@Expression("value instanceof Reference")

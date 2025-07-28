@@ -3,5 +3,11 @@
   "id": "porting_lib_registry",
   "version": "${version}",
   "name": "Porting Lib Registry",
-  "description": "A lazier way of registering things."
+  "description": "A lazier way of registering things.",
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_2378": ["io/github/fabricators_of_create/porting_lib/registry/injections/RegistryInjection<TT;>"],
+      "net/minecraft/class_6880": ["io/github/fabricators_of_create/porting_lib/registry/injections/HolderInjection<TT;>"]
+    }
+  }
 }

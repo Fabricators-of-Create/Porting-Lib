@@ -161,7 +161,7 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T>, D
 	/**
 	 * @return The ResourceKey of the object pointed to by this DeferredHolder.
 	 */
-//	@Override
+	@Override
 	public ResourceKey<R> getKey() {
 		return this.key;
 	}
