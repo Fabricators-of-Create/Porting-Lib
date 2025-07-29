@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(Holder.class)
-public class HolderMixin<T> implements HolderInjection<T> {
+public interface HolderMixin<T> extends HolderInjection<T> {
 	@Mixin(Holder.Reference.class)
 	public abstract static class ReferenceMixin<T> implements Holder<T> {
 		@Shadow
