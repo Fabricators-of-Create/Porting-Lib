@@ -525,7 +525,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> {
 	}
 
 	public class ModelGroup extends ModelObject {
-		final Map<String, ModelObject> parts = Maps.newLinkedHashMap();
+		final Multimap<String, ModelObject> parts = MultimapBuilder.linkedHashKeys().arrayListValues().build();
 
 		ModelGroup(String name) {
 			super(name);
@@ -543,7 +543,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> {
 		public void bake(CompositeRenderable.PartBuilder<?> builder, IGeometryBakingContext configuration) {
 			super.bake(builder, configuration);
 
-			for (var entry : parts.entrySet()) {
+			for (var entry : parts.entries()) {
 				var name = entry.getKey();
 				var part = entry.getValue();
 				part.bake(builder.child(name), configuration);

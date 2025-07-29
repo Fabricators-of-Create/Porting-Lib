@@ -5,6 +5,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
+import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
+import net.fabricmc.fabric.api.renderer.v1.model.SpriteFinder;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -45,12 +47,14 @@ public class MeshBakedModel implements BakedModel {
 		}
 
 		// Vanilla fallback
-		mesh.forEach(quadView -> {
-			if (quadView.cullFace() != null)
-				culledFaces.get(quadView.cullFace()).add(quadView.toBakedQuad(particleIcon)); // Using the particle icon isn't correct here but eh
-			else
-				unculledFaces.add(quadView.toBakedQuad(particleIcon));
-		});
+		List<BakedQuad>[] legacyQuads = ModelHelper.toQuadLists(mesh);
+		for (int i = 0; i < 7; i++) {
+			if (i == ModelHelper.NULL_FACE_ID) {
+				unculledFaces.addAll(legacyQuads[i]);
+			} else {
+				culledFaces.put(Direction.from3DDataValue(i), legacyQuads[i]);
+			}
+		}
 		this.hasAmbientOcclusion = hasAmbientOcclusion;
 		this.isGui3d = isGui3d;
 		this.usesBlockLight = usesBlockLight;
