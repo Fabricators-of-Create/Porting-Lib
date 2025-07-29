@@ -1,12 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.models;
 
-import com.google.common.collect.Lists;
-
-import com.google.common.collect.Maps;
-
 import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
 import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
-import net.fabricmc.fabric.api.renderer.v1.model.SpriteFinder;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -23,7 +18,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -31,8 +25,6 @@ import java.util.function.Supplier;
  */
 public class MeshBakedModel implements BakedModel {
 	protected final Mesh mesh;
-	protected final List<BakedQuad> unculledFaces = Lists.newArrayList();
-	protected final Map<Direction, List<BakedQuad>> culledFaces = Maps.newEnumMap(Direction.class);
 	protected final boolean hasAmbientOcclusion;
 	protected final boolean isGui3d;
 	protected final boolean usesBlockLight;
@@ -42,19 +34,6 @@ public class MeshBakedModel implements BakedModel {
 
 	public MeshBakedModel(Mesh mesh, boolean hasAmbientOcclusion, boolean usesBlockLight, boolean isGui3d, TextureAtlasSprite particleIcon, ItemTransforms transforms, ItemOverrides overrides) {
 		this.mesh = mesh;
-		for (Direction direction : Direction.values()) {
-			this.culledFaces.put(direction, Lists.newArrayList());
-		}
-
-		// Vanilla fallback
-		List<BakedQuad>[] legacyQuads = ModelHelper.toQuadLists(mesh);
-		for (int i = 0; i < 7; i++) {
-			if (i == ModelHelper.NULL_FACE_ID) {
-				unculledFaces.addAll(legacyQuads[i]);
-			} else {
-				culledFaces.put(Direction.from3DDataValue(i), legacyQuads[i]);
-			}
-		}
 		this.hasAmbientOcclusion = hasAmbientOcclusion;
 		this.isGui3d = isGui3d;
 		this.usesBlockLight = usesBlockLight;
@@ -65,7 +44,7 @@ public class MeshBakedModel implements BakedModel {
 
 	@Override
 	public List<BakedQuad> getQuads(@Nullable BlockState blockState, @Nullable Direction direction, RandomSource randomSource) {
-		return direction == null ? this.unculledFaces : this.culledFaces.get(direction);
+		return ModelHelper.toQuadLists(mesh)[ModelHelper.toFaceIndex(direction)];
 	}
 
 	@Override
