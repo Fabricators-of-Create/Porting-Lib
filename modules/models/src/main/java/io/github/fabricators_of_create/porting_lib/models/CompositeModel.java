@@ -145,6 +145,11 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel> {
 		}
 
 		@Override
+		public boolean isVanillaAdapter() {
+			return false;
+		}
+
+		@Override
 		public boolean useAmbientOcclusion() {
 			return isAmbientOcclusion;
 		}
