@@ -52,9 +52,13 @@ public abstract class MouseHandlerMixin {
 		}
 	}
 
-	@Inject(method = "onScroll", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isSpectator()Z", ordinal = 0))
+	@Inject(method = "onScroll", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isSpectator()Z", ordinal = 0), cancellable = true)
 	private void port_lib$onMouseScroll(long windowPointer, double xOffset, double yOffset, CallbackInfo ci, @Local(ordinal = 3) double scrollDeltaX, @Local(ordinal = 4) double scrollDeltaY) {
 		InputEvent.MouseScrollingEvent event = new InputEvent.MouseScrollingEvent(scrollDeltaX, scrollDeltaY, this.isLeftPressed(), this.isMiddlePressed(), this.isRightPressed(), this.xpos(), this.ypos());
 		event.sendEvent();
+
+		if (event.isCanceled()) {
+			ci.cancel();
+		}
 	}
 }
