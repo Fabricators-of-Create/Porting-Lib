@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.attributes.mixin;
+package io.github.fabricators_of_create.porting_lib.attributes.mixin.common;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.DataFixerBuilder;

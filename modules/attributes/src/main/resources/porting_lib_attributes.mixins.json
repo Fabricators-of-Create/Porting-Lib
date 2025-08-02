@@ -5,10 +5,15 @@
   "package": "io.github.fabricators_of_create.porting_lib.attributes.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "AttributeMapMixin",
-    "DataFixersMixin",
-    "LivingEntityMixin",
-    "PlayerMixin"
+    "common.AttributeMapMixin",
+    "common.DataFixersMixin",
+    "common.LivingEntityMixin",
+    "common.PlayerMixin",
+    "common.ServerGamePacketListenerImplMixin",
+    "common.ServerPlayerMixin"
+  ],
+  "client": [
+    "client.LocalPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1,

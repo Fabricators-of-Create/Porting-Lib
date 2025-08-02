@@ -12,7 +12,7 @@
   "custom": {
     "loom:injected_interfaces": {
       "net/minecraft/class_1657": [
-        "io/github/fabricators_of_create/porting_lib/attributes/extensions/PlayerAttributesExtensions"
+        "io/github/fabricators_of_create/porting_lib/attributes/injections/PlayerAttributesInjection"
       ]
     }
   }

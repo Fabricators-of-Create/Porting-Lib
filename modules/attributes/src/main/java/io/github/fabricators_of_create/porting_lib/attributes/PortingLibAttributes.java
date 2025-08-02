@@ -10,6 +10,7 @@ import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 
 public class PortingLibAttributes implements ModInitializer {
 	public static final Holder<Attribute> SWIM_SPEED = register("swim_speed", new RangedAttribute("porting_lib.swim_speed", 1.0D, 0.0D, 1024.0D).setSyncable(true));
+	public static final Holder<Attribute> CREATIVE_FLIGHT = register("creative_flight", new BooleanAttribute("porting_lib.creative_flight", false).setSyncable(true));
 
 	public static Holder<Attribute> register(String id, Attribute attribute) {
 		return Registry.registerForHolder(BuiltInRegistries.ATTRIBUTE, PortingLib.id(id), attribute);

@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.attributes.mixin;
+package io.github.fabricators_of_create.porting_lib.attributes.mixin.common;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 
@@ -6,7 +6,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 

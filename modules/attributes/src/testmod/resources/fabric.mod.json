@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_attributes_testmod",
+  "version": "1.0.0",
+  "name": "Porting Lib Attributes Testmod",
+  "description": "Tests the attributes module",
+  "authors": [
+    "The Create Fabric Team"
+  ],
+  "license": "LGPL",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.attributes.testmod.MayFlyAttributeTest::init"
+    ]
+  }
+}
