@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.config;
 
+import com.electronwill.nightconfig.core.CommentedConfig;
 import java.nio.file.Path;
 import java.util.Locale;
 import java.util.concurrent.locks.Lock;
@@ -45,6 +46,15 @@ public final class ModConfig {
 
 	public String getModId() {
 		return container.getMetadata().getId();
+	}
+
+	/**
+	 * Retrieve the currently loaded config, for direct manipulation of the underlying {@link CommentedConfig}.
+	 * Note that the config will change on reloads, and will be {@code null} when the config is not loaded.
+	 */
+	@Nullable
+	public IConfigSpec.ILoadedConfig getLoadedConfig() {
+		return loadedConfig;
 	}
 
 	// TODO: remove from public API?

@@ -10,6 +10,9 @@
     ],
     "client": [
       "io.github.fabricators_of_create.porting_lib.config.client.PortingLibConfigClient"
+    ],
+    "modmenu": [
+      "io.github.fabricators_of_create.porting_lib.config.client.compat.PortingLibModMenuCompat"
     ]
   }
 }

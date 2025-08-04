@@ -22,6 +22,13 @@ public interface IConfigSpec {
 	boolean isEmpty();
 
 	/**
+	 * Validate this specification in the context of the given {@code config}.
+	 *
+	 * @param config the configuration this spec is used by
+	 */
+	void validateSpec(ModConfig config);
+
+	/**
 	 * Checks that a config is correct.
 	 * If this function returns {@code false},
 	 * a backup is made (except for initial creation) then the config is fed through {@link #correct}.

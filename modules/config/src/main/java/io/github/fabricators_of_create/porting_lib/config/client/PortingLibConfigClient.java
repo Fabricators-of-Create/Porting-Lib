@@ -1,5 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.config.client;
 
+import io.github.fabricators_of_create.porting_lib.config.ConfigRegistry;
+import io.github.fabricators_of_create.porting_lib.config.ModConfig;
+import io.github.fabricators_of_create.porting_lib.config.PortingLibConfig;
 import io.github.fabricators_of_create.porting_lib.config.network.ConfigSync;
 import io.github.fabricators_of_create.porting_lib.config.network.payload.ConfigFilePayload;
 
@@ -12,5 +15,6 @@ public class PortingLibConfigClient implements ClientModInitializer {
 		ClientConfigurationNetworking.registerGlobalReceiver(ConfigFilePayload.TYPE, (payload, context) -> {
 			ConfigSync.receiveSyncedConfig(payload.contents(), payload.fileName());
 		});
+		ConfigRegistry.registerConfig(PortingLibConfig.ID, ModConfig.Type.CLIENT, PortingLibClientConfig.clientSpec);
 	}
 }

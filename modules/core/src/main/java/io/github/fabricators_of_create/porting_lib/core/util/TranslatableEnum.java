@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.common;
+package io.github.fabricators_of_create.porting_lib.core.util;
 
 import net.minecraft.network.chat.Component;
 
