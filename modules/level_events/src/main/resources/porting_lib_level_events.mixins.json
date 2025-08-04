@@ -8,6 +8,8 @@
   },
   "mixins": [
     "client.ClientLevelMixin",
+    "common.ChunkMapMixin",
+    "common.ChunkSerializerMixin",
     "common.DiodeBlockMixin",
     "common.LavaFluidMixin",
     "common.LevelMixin",
