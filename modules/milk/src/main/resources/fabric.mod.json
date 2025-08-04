@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_milk",
+  "version": "${version}",
+  "name": "Porting Lib Milk",
+  "description": "A small that adds milk as an actual fluid",
+  "entrypoints": {
+    "client": [
+      "io.github.fabricators_of_create.porting_lib.milk.client.PortingLibMilkClient::init"
+    ],
+    "fabric-datagen": [
+      "io.github.fabricators_of_create.porting_lib.milk.data.PortingLibMilkData"
+    ]
+  }
+}

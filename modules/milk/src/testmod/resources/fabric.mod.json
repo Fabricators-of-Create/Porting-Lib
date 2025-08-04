@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_milk_testmod",
+  "version": "1.0.0",
+  "name": "Porting Lib Milk Testmod",
+  "description": "Tests the milk module",
+  "authors": [
+    "The Create Fabric Team"
+  ],
+  "license": "LGPL",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.milk.testmod.PortingLibMilkTest"
+    ]
+  }
+}

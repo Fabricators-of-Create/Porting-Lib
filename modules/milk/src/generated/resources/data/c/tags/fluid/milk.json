@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "porting_lib:milk",
+      "required": false
+    },
+    {
+      "id": "porting_lib:flowing_milk",
+      "required": false
+    }
+  ]
+}

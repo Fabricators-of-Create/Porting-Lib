@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -41,6 +42,16 @@ public abstract class SoundDefinitionsProvider implements DataProvider {
 		this.output = output;
 		this.modId = modId;
 		this.helper = helper;
+	}
+
+	/**
+	 * Creates a new instance of this data provider.
+	 *
+	 * @param output The {@linkplain FabricDataOutput} instance provided by the data generator.
+	 * @param helper The existing file helper provided by the event you are initializing this provider in.
+	 */
+	protected SoundDefinitionsProvider(final FabricDataOutput output, final ExistingFileHelper helper) {
+		this(output, output.getModId(), helper);
 	}
 
 	/**

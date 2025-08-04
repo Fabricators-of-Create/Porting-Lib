@@ -1,0 +1,3 @@
+portingLib.addModuleDependencies(["data", "fluids"])
+portingLib.enableDatagen()
+portingLib.enableTestMod()
