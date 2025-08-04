@@ -6,8 +6,8 @@
   "description": "Adds a API for safely registering entity data serializers.",
   "entrypoints": {
     "main": [
-      "io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity"
-    ],
+      "io.github.fabricators_of_create.porting_lib.entity.data.PortingLibEntityDataSerializers::init"
+    ]
   },
   "custom": {
     "loom:injected_interfaces": {

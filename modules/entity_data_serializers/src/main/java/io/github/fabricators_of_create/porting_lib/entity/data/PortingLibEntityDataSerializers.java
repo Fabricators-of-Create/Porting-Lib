@@ -16,9 +16,7 @@ public class PortingLibEntityDataSerializers {
 	public static final ResourceKey<Registry<EntityDataSerializer<?>>> ENTITY_DATA_SERIALIZERS_KEY = PortingLib.key("entity_data_serializers");
 	public static final Registry<EntityDataSerializer<?>> ENTITY_DATA_SERIALIZERS = FabricRegistryBuilder.createSimple(ENTITY_DATA_SERIALIZERS_KEY).attribute(RegistryAttribute.SYNCED).buildAndRegister();
 
-	public static void init() {
-
-	}
+	public static void init() {}
 
 	public static final int VANILLA_SERIALIZER_LIMIT = 256;
 
