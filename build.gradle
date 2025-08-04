@@ -110,7 +110,8 @@ allprojects {
 		})
 		modImplementation("net.fabricmc:fabric-loader:$loader_version")
 
-		modImplementation("com.terraformersmc:modmenu:$modmenu_version") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
+		modCompileOnly("com.terraformersmc:modmenu:$modmenu_version") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
+		modLocalRuntime("com.terraformersmc:modmenu:$modmenu_version") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
 
 		// common dependencies
 		// each module can also specify additional ones
