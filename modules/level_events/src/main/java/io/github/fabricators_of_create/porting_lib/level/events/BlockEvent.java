@@ -94,7 +94,7 @@ public abstract class BlockEvent extends BaseEvent {
 		}
 
 		public interface Callback {
-			void onBlockBreak(BlockEvent event);
+			void onBlockBreak(BreakEvent event);
 		}
 	}
 
