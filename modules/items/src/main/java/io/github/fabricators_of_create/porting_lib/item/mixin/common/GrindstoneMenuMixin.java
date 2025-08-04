@@ -20,6 +20,6 @@ public class GrindstoneMenuMixin {
 
 	@WrapWithCondition(method = "mergeItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;setDamageValue(I)V"))
 	private boolean checkRepairable(ItemStack instance, int damage) {
-		return instance.isRepairable(); // Different from forge because the still mutate the stack then set the damage back for some reason
+		return instance.isRepairable(); // Different from forge because forge still mutates the stack then sets the damage back for some reason
 	}
 }
