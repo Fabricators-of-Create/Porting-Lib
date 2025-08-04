@@ -10,10 +10,10 @@ public interface ItemStackInjection {
 	 * @return True if reparable
 	 */
 	default boolean isRepairable() {
-		var stack = (ItemStack) (Object) this;
+		var stack = (ItemStack) this;
 		if (stack.getItem() instanceof DamageableItem repairableItem) {
 			return repairableItem.isRepairable(stack);
 		}
-		return true;/*stack.getItem().canRepair && isDamageable(stack);*/
+		return ((ItemInjection) stack.getItem()).port_lib$canRepair();
 	}
 }

@@ -33,6 +33,8 @@
     "common.InventoryMixin",
     "common.ItemContainerContentsMixin",
     "common.ItemEntityMixin",
+    "common.ItemMixin",
+    "common.ItemMixin$PropertiesMixin",
     "common.ItemStackMixin",
     "common.LivingEntityMixin",
     "common.PiglinAiMixin",

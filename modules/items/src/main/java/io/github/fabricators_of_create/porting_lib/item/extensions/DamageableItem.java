@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.item.extensions;
 
+import io.github.fabricators_of_create.porting_lib.item.injects.ItemInjection;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 
@@ -11,7 +12,7 @@ public interface DamageableItem {
 	 * @return True if reparable
 	 */
 	default boolean isRepairable(ItemStack stack) {
-		return isDamageable(stack);
+		return ((ItemInjection) this).port_lib$canRepair() && isDamageable(stack);
 	}
 
 	/**
