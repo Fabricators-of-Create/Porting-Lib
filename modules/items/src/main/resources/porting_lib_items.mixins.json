@@ -29,6 +29,7 @@
     "common.EnchantRandomlyFunctionMixin",
     "common.EnderManMixin",
     "common.ExperienceOrbMixin",
+    "common.GrindstoneMenuMixin",
     "common.IllusionerMixin",
     "common.InventoryMixin",
     "common.ItemContainerContentsMixin",

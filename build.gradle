@@ -148,7 +148,8 @@ allprojects {
 				class_5124: "\$class_5124",
 				class_56: "\$class_56",
                 class_9665: "\$class_9665",
-				class_7226: "\$class_7226"
+				class_7226: "\$class_7226",
+				class_1793: "\$class_1793"
 		]
 
 		properties.forEach(inputs::property)
