@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_entity_data_serializers",
+  "version": "${version}",
+  "name": "Porting Lib Entity Data Serializers",
+  "description": "Adds a API for safely registering entity data serializers.",
+  "entrypoints": {
+    "main": [
+      "io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity"
+    ],
+  },
+  "custom": {
+    "loom:injected_interfaces": {
+
+    }
+  }
+}
