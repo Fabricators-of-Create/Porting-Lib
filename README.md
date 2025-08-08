@@ -24,6 +24,7 @@ Just choose a version and use its version number.
 | `brewing`                 | A potion recipe api                                                                            |
 | `chunk_loading`           | Custom chunk loading api                                                                       |
 | `client_events`           | Useful client-side events                                                                      |
+| `client_extensions`       | Client extensions for various things in mc                                                     |
 | `common`                  | Miscellaneous utilities for other modules                                                      |
 | `config`                  | A minimal port of Forge's config api                                                           |
 | `core`                    | Core functionality used across other modules                                                   |

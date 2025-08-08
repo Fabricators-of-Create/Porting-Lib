@@ -1,15 +1,26 @@
-package io.github.fabricators_of_create.porting_lib.blocks.extensions;
+package io.github.fabricators_of_create.porting_lib.client_extensions;
 
+import net.fabricmc.api.EnvType;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 
 /**
- * Use client extensions module implementing this on a blocks is dangerous and hacky
+ * {@linkplain EnvType#CLIENT Client-only} extensions to {@link Block}.
  */
-@Deprecated(forRemoval = true)
-public interface CustomHitEffectsBlock {
+public interface IClientBlockExtensions {
+	IClientBlockExtensions DEFAULT = new IClientBlockExtensions() {};
+
+	static IClientBlockExtensions of(BlockState state) {
+		return of(state.getBlock());
+	}
+
+	static IClientBlockExtensions of(Block block) {
+		return ClientExtensionsRegistry.BLOCK_EXTENSIONS.getOrDefault(block, DEFAULT);
+	}
+
 	/**
 	 * Spawn a digging particle effect in the level, this is a wrapper
 	 * around EffectRenderer.addBlockHitEffects to allow the block more
