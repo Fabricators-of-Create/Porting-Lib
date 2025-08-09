@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.client_extensions;
 
 import net.fabricmc.api.EnvType;
 import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,6 +22,14 @@ public interface IClientBlockExtensions {
 		return ClientExtensionsRegistry.BLOCK_EXTENSIONS.getOrDefault(block, DEFAULT);
 	}
 
+	static boolean exists(BlockState state) {
+		return exists(state.getBlock());
+	}
+
+	static boolean exists(Block block) {
+		return ClientExtensionsRegistry.BLOCK_EXTENSIONS.containsKey(block);
+	}
+
 	/**
 	 * Spawn a digging particle effect in the level, this is a wrapper
 	 * around EffectRenderer.addBlockHitEffects to allow the block more
@@ -35,5 +44,20 @@ public interface IClientBlockExtensions {
 	 */
 	default boolean addHitEffects(BlockState state, Level level, HitResult target, ParticleEngine manager) {
 		return false;
+	}
+
+	/**
+	 * Spawn particles for when the block is destroyed. Due to the nature
+	 * of how this is invoked, the x/y/z locations are not always guaranteed
+	 * to host your block. So be sure to do proper sanity checks before assuming
+	 * that the location is this block.
+	 *
+	 * @param Level   The current Level
+	 * @param pos     Position to spawn the particle
+	 * @param manager A reference to the current particle manager.
+	 * @return True to prevent vanilla break particles from spawning.
+	 */
+	default boolean addDestroyEffects(BlockState state, Level Level, BlockPos pos, ParticleEngine manager) {
+		return !state.shouldSpawnTerrainParticles();
 	}
 }

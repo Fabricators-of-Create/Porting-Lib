@@ -1,0 +1,177 @@
+package io.github.fabricators_of_create.porting_lib.gui.layered;
+
+import io.github.fabricators_of_create.porting_lib.gui.events.RegisterGuiLayersEvent;
+import io.github.fabricators_of_create.porting_lib.gui.events.RenderGuiEvent;
+import io.github.fabricators_of_create.porting_lib.gui.events.RenderGuiLayerEvent;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.LayeredDraw;
+
+import net.minecraft.resources.ResourceLocation;
+
+import org.jetbrains.annotations.ApiStatus;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
+
+/**
+ * Adaptation of {@link LayeredDraw} that is used for {@link Gui} rendering specifically,
+ * to give layers a name and fire appropriate events.
+ *
+ * <p>Overlays can be registered using the {@link RegisterGuiLayersEvent} event.
+ */
+@ApiStatus.Internal
+public class GuiLayerManager {
+	public static final float Z_SEPARATION = LayeredDraw.Z_SEPARATION;
+	private final List<NamedLayer> layers = new ArrayList<>();
+	private boolean initialized = false;
+
+	public record NamedLayer(ResourceLocation name, LayeredDraw.Layer layer, boolean isVanilla) {
+		public NamedLayer(ResourceLocation name, LayeredDraw.Layer layer) {
+			this(name, layer, false);
+		}
+	}
+
+	public GuiLayerManager add(ResourceLocation name, LayeredDraw.Layer layer) {
+		this.layers.add(new NamedLayer(name, layer));
+		return this;
+	}
+
+	public GuiLayerManager add(ResourceLocation name, LayeredDraw.Layer layer, boolean isVanilla) {
+		this.layers.add(new NamedLayer(name, layer, isVanilla));
+		return this;
+	}
+
+	public GuiLayerManager add(GuiLayerManager child, BooleanSupplier shouldRender) {
+		// Flatten the layers to allow mods to insert layers between vanilla layers.
+		for (var entry : child.layers) {
+			add(entry.name(), (guiGraphics, partialTick) -> {
+				if (shouldRender.getAsBoolean()) {
+					entry.layer().render(guiGraphics, partialTick);
+				}
+			}, entry.isVanilla());
+		}
+		return this;
+	}
+
+	public GuiLayerManager addVanilla(ResourceLocation name) {
+		add(name, (guiGraphics, deltaTracker) -> {}, true);
+		return this;
+	}
+
+	public GuiLayerManager addVanilla(ResourceLocation name, LayeredDraw.Layer layer) {
+		add(name, layer, true);
+		return this;
+	}
+
+	// Doesn't actually get called, but if another mod for whatever reason uses this, welp.
+	public void render(GuiGraphics guiGraphics, DeltaTracker partialTick) {
+		if ((new RenderGuiEvent.Pre(guiGraphics, partialTick)).post()) {
+			return;
+		}
+
+		renderInner(guiGraphics, partialTick);
+
+		(new RenderGuiEvent.Post(guiGraphics, partialTick)).sendEvent();
+	}
+
+	private void renderInner(GuiGraphics guiGraphics, DeltaTracker partialTick) {
+		guiGraphics.pose().pushPose();
+
+		for (var layer : this.layers) {
+			renderLayer(guiGraphics, partialTick, layer);
+		}
+
+		guiGraphics.pose().popPose();
+	}
+
+	/**
+	 * Renders layers starting from one render layer until the next Vanilla layer is reached.
+	 * @param start The ID of the rendering layer to start from
+	 */
+	public void renderFrom(ResourceLocation start, GuiGraphics guiGraphics, DeltaTracker partialTick) {
+		NamedLayer startingLayer = getLayer(start);
+
+		if (startingLayer == null) {
+			throw new IllegalArgumentException("Layer " + start + " does not exist!");
+		}
+
+		guiGraphics.pose().pushPose();
+		boolean hasStartedRendering = false;
+
+		for (NamedLayer layer : layers) {
+			if (layer == startingLayer) {
+				hasStartedRendering = true;
+			}
+
+			if (!hasStartedRendering) {
+				continue;
+			}
+
+			// Stop rendering entirely if this layer is a Vanilla layer that isn't the starting layer.
+			if (layer.isVanilla() && layer != startingLayer) {
+				break;
+			}
+
+			// Render only non-Vanilla layers - we may end up double-rendering otherwise.
+			if (!layer.isVanilla()) {
+				renderLayer(guiGraphics, partialTick, layer);
+			}
+		}
+		guiGraphics.pose().popPose();
+	}
+
+	public boolean callPreRenderEvent(ResourceLocation id, GuiGraphics guiGraphics, DeltaTracker partialTick) {
+		NamedLayer layer = getLayer(id);
+
+		if (layer == null) {
+			throw new IllegalArgumentException("Layer " + id + " does not exist!");
+		}
+
+		return (new RenderGuiLayerEvent.Pre(guiGraphics, partialTick, layer.name(), layer.layer())).post();
+	}
+
+	public void callPostRenderEvent(ResourceLocation id, GuiGraphics guiGraphics, DeltaTracker partialTick) {
+		NamedLayer layer = getLayer(id);
+
+		if (layer == null) {
+			throw new IllegalArgumentException("Layer " + id + " does not exist!");
+		}
+
+		(new RenderGuiLayerEvent.Post(guiGraphics, partialTick, layer.name(), layer.layer())).sendEvent();
+	}
+
+	private void renderLayer(GuiGraphics guiGraphics, DeltaTracker partialTick, NamedLayer layer) {
+		if (!(new RenderGuiLayerEvent.Pre(guiGraphics, partialTick, layer.name(), layer.layer())).post()) {
+			layer.layer().render(guiGraphics, partialTick);
+			(new RenderGuiLayerEvent.Post(guiGraphics, partialTick, layer.name(), layer.layer())).sendEvent();
+		}
+
+		guiGraphics.pose().translate(0.0F, 0.0F, Z_SEPARATION);
+	}
+
+	public NamedLayer getLayer(ResourceLocation id) {
+		for (NamedLayer layer : layers) {
+			if (layer.name().equals(id)) {
+				return layer;
+			}
+		}
+
+		return null;
+	}
+
+	public void initModdedLayers() {
+		if (initialized) {
+			throw new IllegalStateException("Duplicate initialization of GuiLayerManager");
+		}
+		initialized = true;
+		(new RegisterGuiLayersEvent(this.layers)).sendEvent();
+	}
+
+	public int getLayerCount() {
+		return this.layers.size();
+	}
+}
