@@ -26,6 +26,7 @@
         "common.LivingEntityMixin",
         "common.LlamaSpitMixin",
         "common.MagmaCubeMixin",
+        "common.MobEffectInstance$DetailsMixin",
         "common.MobEffectInstanceMixin",
         "common.MobEffectMixin",
         "common.MobMixin",
