@@ -136,4 +136,25 @@ public interface BlockExtensions {
 		}
 		return true;
 	}
+
+	/**
+	 * Used by the neighbouring blocks to notify this block that that neighbour updated
+	 * @param level The world
+	 * @param pos Block position
+	 * @param neighbor Neighbour position
+	 */
+	default void onNeighborChange(BlockState state, LevelReader level, BlockPos pos, BlockPos neighbor) {
+		//do nothing by default
+	}
+
+	/**
+ 	 * Check if this block should be notified of weak changes. <br>
+ 	 * Weak changes are changes 1 block away through a solid block. Similar to comparators.
+ 	 * @param level The world
+ 	 * @param pos Block position
+ 	 * @return true if there are weak changes to check. False otherwise
+ 	 */
+	default boolean getWeakChanges(BlockState state, LevelReader level, BlockPos pos) {
+		return false;
+	}
 }

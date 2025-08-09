@@ -1,4 +1,5 @@
 portingLib {
 	addModuleDependency("mixin_extensions")
+	addModuleDependency("fluids")
 	enableTestMod()
 }

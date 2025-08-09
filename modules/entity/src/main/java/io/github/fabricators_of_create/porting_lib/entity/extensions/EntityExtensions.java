@@ -1,6 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.entity.extensions;
 
 import io.github.fabricators_of_create.porting_lib.entity.ITeleporter;
+import io.github.fabricators_of_create.porting_lib.fluids.FluidType;
+import io.github.fabricators_of_create.porting_lib.fluids.PortingLibFluids;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -33,5 +35,9 @@ public interface EntityExtensions {
 
 	default Entity changeDimension(ServerLevel p_20118_, ITeleporter teleporter) {
 		throw new RuntimeException("this should be overridden via mixin. what?");
+	}
+
+	default FluidType getEyeInFluidType() {
+		return PortingLibFluids.EMPTY_TYPE;
 	}
 }

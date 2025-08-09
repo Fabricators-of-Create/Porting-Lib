@@ -21,6 +21,7 @@ import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingDa
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingHurtEvent;
 
 import io.github.fabricators_of_create.porting_lib.entity.events.living.MobEffectEvent;
+import io.github.fabricators_of_create.porting_lib.entity.extensions.LivingEntityExtensions;
 import net.minecraft.world.effect.MobEffect;
 
 import net.minecraft.world.effect.MobEffectInstance;
@@ -57,7 +58,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 @Mixin(LivingEntity.class)
-public abstract class LivingEntityMixin extends Entity implements EntityExtensions {
+public abstract class LivingEntityMixin extends Entity implements LivingEntityExtensions {
 	@Shadow
 	protected int lastHurtByPlayerTime;
 	@Shadow
