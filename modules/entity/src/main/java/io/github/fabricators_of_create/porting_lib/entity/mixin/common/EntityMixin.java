@@ -48,6 +48,8 @@ import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.PortalInfo;
 
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
 @Mixin(Entity.class)
 public abstract class EntityMixin implements EntityExtensions {
 	@Unique
@@ -304,32 +306,17 @@ public abstract class EntityMixin implements EntityExtensions {
 		EntityDataEvents.LOAD.invoker().onLoad((Entity) (Object) this, nbt);
 	}
 
-	@Inject(method = "baseTick", at = @At("HEAD"))
-	public void updateFluidOnEyesInBaseTick(CallbackInfo ci) {
-		this.updateFluidOnEyes();
-	}
-
 	@Unique
 	private FluidType fluidTypeOnEyes = PortingLibFluids.EMPTY_TYPE;
 
-	@Unique
-	private void updateFluidOnEyes() {
-		this.wasEyeInWater = this.isEyeInFluidType(PortingLibFluids.WATER_TYPE);
+	@Inject(method = "updateFluidOnEyes", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/material/FluidState;getTags()Ljava/util/stream/Stream;"))
+	private void updateFluidOnEyesSetFluidTypeOnEyes(CallbackInfo ci, @Local FluidState fluidState) {
+		this.fluidTypeOnEyes = fluidState.getFluidType();
+	}
+
+	@Inject(method = "updateFluidOnEyes", at = @At("HEAD"))
+	private void updateFluidOnEyesResetFluidTypeOnEyes(CallbackInfo ci) {
 		this.fluidTypeOnEyes = PortingLibFluids.EMPTY_TYPE;
-		double d0 = this.getEyeY() - (double)0.11111111F;
-		if (this.getVehicle() instanceof Boat boat) {
-			if (!boat.isUnderWater() && boat.getBoundingBox().maxY >= d0 && boat.getBoundingBox().minY <= d0) {
-				return;
-			}
-		}
-
-		BlockPos blockpos = BlockPos.containing(this.getX(), d0, this.getZ());
-		FluidState fluidstate = this.level().getFluidState(blockpos);
-		double d1 = (double)((float)blockpos.getY() + fluidstate.getHeight(this.level(), blockpos));
-		if (d1 > d0) {
-			this.fluidTypeOnEyes = fluidstate.getFluidType();
-		}
-
 	}
 
 	@Override
