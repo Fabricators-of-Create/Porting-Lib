@@ -29,6 +29,7 @@
     "common.ChunkMapMixin",
     "common.ChunkStatusMixin",
     "common.ClipContextMixin",
+    "common.ComparatorBlockMixin",
     "common.ConnectionMixin",
     "common.DeadBushBlockMixin",
     "common.DiodeBlockMixin",
