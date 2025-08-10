@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.resources.mixin.common;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
@@ -34,8 +35,13 @@ public abstract class RecipeManagerMixin {
 
 		DataResult<Optional<WithConditions<Recipe<?>>>> decoded = PortingLibConditions.CONDITIONAL_RECIPES_CODEC.parse(conditionalOps.get(), entry.getValue());
 
-		if (decoded.isSuccess() && decoded.getOrThrow().isPresent()) {
-			return (R) decoded.getOrThrow().orElseThrow().carrier();
+		if (decoded.isSuccess()) {
+			if (decoded.getOrThrow().isPresent()) {
+				if (!decoded.getOrThrow().orElseThrow().conditions().isEmpty())
+					return (R) decoded.getOrThrow().orElseThrow().carrier();
+			} else {
+				throw new JsonParseException("Skipping loading recipe as its conditions were not met");
+			}
 		}
 
 		return original.call(instance, stringEFunction);
