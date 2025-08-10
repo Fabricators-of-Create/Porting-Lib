@@ -38,6 +38,10 @@ public interface EntityExtensions {
 	}
 
 	default FluidType getEyeInFluidType() {
-		return PortingLibFluids.EMPTY_TYPE;
+		throw new RuntimeException("This should be overridden in the EntityMixin");
+	}
+
+	default boolean isEyeInFluidType(FluidType type) {
+		return type == this.getEyeInFluidType();
 	}
 }

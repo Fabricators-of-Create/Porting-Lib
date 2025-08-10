@@ -2,6 +2,13 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
 import java.util.Collection;
 
+import io.github.fabricators_of_create.porting_lib.fluids.FluidType;
+import io.github.fabricators_of_create.porting_lib.fluids.PortingLibFluids;
+import net.minecraft.core.BlockPos;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.level.material.FluidState;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -125,6 +132,9 @@ public abstract class EntityMixin implements EntityExtensions {
 	private Level level;
 
 	@Shadow
+	protected boolean wasEyeInWater;
+
+	@Shadow
 	public abstract void unRide();
 
 	@Shadow
@@ -157,6 +167,24 @@ public abstract class EntityMixin implements EntityExtensions {
 
 	@Shadow
 	public abstract float getEyeHeight();
+
+	@Shadow
+	public abstract double getX();
+
+	@Shadow
+	public abstract double getY();
+
+	@Shadow
+	public abstract double getZ();
+
+	@Shadow
+	public abstract double getEyeY();
+
+	@Shadow
+	public abstract Entity getVehicle();
+
+	@Shadow
+	public abstract Level level();
 
 	@Inject(
 			method = "startRiding(Lnet/minecraft/world/entity/Entity;Z)Z",
@@ -274,5 +302,38 @@ public abstract class EntityMixin implements EntityExtensions {
 	@Inject(method = "load", at = @At("RETURN"))
 	public void afterLoad(CompoundTag nbt, CallbackInfo ci) {
 		EntityDataEvents.LOAD.invoker().onLoad((Entity) (Object) this, nbt);
+	}
+
+	@Inject(method = "baseTick", at = @At("HEAD"))
+	public void updateFluidOnEyesInBaseTick(CallbackInfo ci) {
+		this.updateFluidOnEyes();
+	}
+
+	@Unique
+	private FluidType fluidTypeOnEyes = PortingLibFluids.EMPTY_TYPE;
+
+	@Unique
+	private void updateFluidOnEyes() {
+		this.wasEyeInWater = this.isEyeInFluidType(PortingLibFluids.WATER_TYPE);
+		this.fluidTypeOnEyes = PortingLibFluids.EMPTY_TYPE;
+		double d0 = this.getEyeY() - (double)0.11111111F;
+		if (this.getVehicle() instanceof Boat boat) {
+			if (!boat.isUnderWater() && boat.getBoundingBox().maxY >= d0 && boat.getBoundingBox().minY <= d0) {
+				return;
+			}
+		}
+
+		BlockPos blockpos = BlockPos.containing(this.getX(), d0, this.getZ());
+		FluidState fluidstate = this.level().getFluidState(blockpos);
+		double d1 = (double)((float)blockpos.getY() + fluidstate.getHeight(this.level(), blockpos));
+		if (d1 > d0) {
+			this.fluidTypeOnEyes = fluidstate.getFluidType();
+		}
+
+	}
+
+	@Override
+	public FluidType getEyeInFluidType() {
+		return this.fluidTypeOnEyes;
 	}
 }
