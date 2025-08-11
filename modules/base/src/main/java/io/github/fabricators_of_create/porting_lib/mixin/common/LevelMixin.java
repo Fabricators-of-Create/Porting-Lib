@@ -7,25 +7,22 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 
-import io.github.fabricators_of_create.porting_lib.block.LightEmissiveBlock;
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockEntityExtensions;
 import io.github.fabricators_of_create.porting_lib.extensions.extensions.LevelExtensions;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
-import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.FullChunkStatus;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 
@@ -43,7 +40,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import io.github.fabricators_of_create.porting_lib.block.NeighborChangeListeningBlock;
-import io.github.fabricators_of_create.porting_lib.block.WeakPowerCheckingBlock;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -155,21 +151,41 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		}
 	}
 
-	@Inject(
-			method = "updateNeighbourForOutputSignal",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/Level;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;",
-					shift = Shift.BY,
-					by = 2,
-					ordinal = 0
-			),
-			locals = LocalCapture.CAPTURE_FAILHARD
+	/** Force cancel check for comparator and always say it is not. The comparator now implements
+	 * NeighborChangeListeningBlock so code specific for comparators in {@link Level#updateNeighbourForOutputSignal(BlockPos, Block)}
+	 * should be unreachable and instead handled via {@link LevelMixin#port_lib$updateNeighbourForOutputSignal(BlockPos, Block, CallbackInfo, BlockPos, BlockState)}
+	 * and {@link LevelMixin#port_lib$updateNeighbourForOutputSignal2(BlockPos, Block, CallbackInfo, BlockPos, BlockState)}
+	 * which call {@link NeighborChangeListeningBlock#onNeighborChange(BlockState, LevelReader, BlockPos, BlockPos)}
+	 */
+	@Redirect(method = "updateNeighbourForOutputSignal",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z")
 	)
-	public void port_lib$updateNeighbourForOutputSignal(BlockPos pos, Block block, CallbackInfo ci,
-														Iterator<?> var3, Direction direction, BlockPos offset,
-														BlockState state) {
+	public boolean port_lib$updateNeighbourForOutputSignalCancelCompChk(BlockState instance, Block block) {
+		return false;
+	}
+
+	/** Runs on first invocation of {@link Level#getBlockState(BlockPos)} in {@link Level#updateNeighbourForOutputSignal(BlockPos, Block)}
+	 */
+	@Inject(method = "updateNeighbourForOutputSignal",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;",
+					shift = Shift.BY, by = 2, ordinal = 0)
+	)
+	public void port_lib$updateNeighbourForOutputSignal(BlockPos pos, Block block, CallbackInfo ci, @Local(ordinal = 1) BlockPos offset, @Local BlockState state) {
 		if (state.getBlock() instanceof NeighborChangeListeningBlock listener) {
+			listener.onNeighborChange(state, this, offset, pos);
+		}
+	}
+
+	/** Runs on second invocation of {@link Level#getBlockState(BlockPos)} in {@link Level#updateNeighbourForOutputSignal(BlockPos, Block)}
+	 * (i.e. the one checking for changes through a block. So should only update for weak change listeners only
+	 * (see {@link NeighborChangeListeningBlock#getWeakChanges(BlockState, LevelReader, BlockPos)}))
+	 */
+	@Inject(method = "updateNeighbourForOutputSignal",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;",
+					shift = Shift.BY, by = 2, ordinal = 1)
+	)
+	public void port_lib$updateNeighbourForOutputSignal2(BlockPos pos, Block block, CallbackInfo ci, @Local(ordinal = 1) BlockPos offset, @Local BlockState state) {
+		if (state.getBlock() instanceof NeighborChangeListeningBlock listener && listener.getWeakChanges(state, this, pos)) {
 			listener.onNeighborChange(state, this, offset, pos);
 		}
 	}
