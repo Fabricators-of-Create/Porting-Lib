@@ -1,8 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.gui.layered;
 
 import com.google.common.base.Preconditions;
-import io.github.fabricators_of_create.porting_lib.gui.events.RenderGuiEvent;
-import io.github.fabricators_of_create.porting_lib.gui.events.RenderGuiLayerEvent;
+import io.github.fabricators_of_create.porting_lib.gui.events.RenderGuiCallback;
+import io.github.fabricators_of_create.porting_lib.gui.events.RenderGuiLayerCallback;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BooleanSupplier;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
 
@@ -72,13 +71,13 @@ public class GuiLayerManager {
 
 	// Doesn't actually get called, but if another mod for whatever reason uses this, welp.
 	public void render(GuiGraphics guiGraphics, DeltaTracker partialTick) {
-		if ((new RenderGuiEvent.Pre(guiGraphics, partialTick)).post()) {
+		if (RenderGuiCallback.PRE.invoker().preRenderGui(guiGraphics, partialTick)) {
 			return;
 		}
 
 		renderInner(guiGraphics, partialTick);
 
-		(new RenderGuiEvent.Post(guiGraphics, partialTick)).sendEvent();
+		RenderGuiCallback.POST.invoker().postRenderGui(guiGraphics, partialTick);
 	}
 
 	private void renderInner(GuiGraphics guiGraphics, DeltaTracker partialTick) {
@@ -134,7 +133,7 @@ public class GuiLayerManager {
 			throw new IllegalArgumentException("Layer " + id + " does not exist!");
 		}
 
-		return (new RenderGuiLayerEvent.Pre(guiGraphics, partialTick, layer.name(), layer.layer())).post();
+		return RenderGuiLayerCallback.PRE.invoker().preRenderGuiLayer(guiGraphics, partialTick, layer.name(), layer.layer());
 	}
 
 	public void callPostRenderEvent(ResourceLocation id, GuiGraphics guiGraphics, DeltaTracker partialTick) {
@@ -144,13 +143,13 @@ public class GuiLayerManager {
 			throw new IllegalArgumentException("Layer " + id + " does not exist!");
 		}
 
-		(new RenderGuiLayerEvent.Post(guiGraphics, partialTick, layer.name(), layer.layer())).sendEvent();
+		RenderGuiLayerCallback.POST.invoker().postRenderGuiLayer(guiGraphics, partialTick, layer.name(), layer.layer());
 	}
 
 	private void renderLayer(GuiGraphics guiGraphics, DeltaTracker partialTick, NamedLayer layer) {
-		if (!(new RenderGuiLayerEvent.Pre(guiGraphics, partialTick, layer.name(), layer.layer())).post()) {
+		if (!RenderGuiLayerCallback.PRE.invoker().preRenderGuiLayer(guiGraphics, partialTick, layer.name(), layer.layer())) {
 			layer.layer().render(guiGraphics, partialTick);
-			(new RenderGuiLayerEvent.Post(guiGraphics, partialTick, layer.name(), layer.layer())).sendEvent();
+			RenderGuiLayerCallback.POST.invoker().postRenderGuiLayer(guiGraphics, partialTick, layer.name(), layer.layer());
 		}
 
 		guiGraphics.pose().translate(0.0F, 0.0F, Z_SEPARATION);

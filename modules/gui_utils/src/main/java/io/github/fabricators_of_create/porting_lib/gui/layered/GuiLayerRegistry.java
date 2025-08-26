@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.gui.layered;
 
-import io.github.fabricators_of_create.porting_lib.gui.events.RenderGuiLayerEvent;
+import io.github.fabricators_of_create.porting_lib.gui.events.RenderGuiLayerCallback;
 import io.github.fabricators_of_create.porting_lib.gui.mixin.GuiAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -14,7 +14,7 @@ import static io.github.fabricators_of_create.porting_lib.gui.layered.VanillaGui
 /**
  * Allows users to register custom {@link LayeredDraw.Layer layers} for GUI rendering.
  *
- * <p>See also {@link RenderGuiLayerEvent} to intercept rendering of registered layers.
+ * <p>See also {@link RenderGuiLayerCallback} to intercept rendering of registered layers.
  */
 public class GuiLayerRegistry {
 	private static final GuiLayerManager layerManager = new GuiLayerManager();

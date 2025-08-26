@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 
+import io.github.fabricators_of_create.porting_lib.gui.events.RenderGuiCallback;
 import io.github.fabricators_of_create.porting_lib.gui.layered.GuiLayerManager;
 import io.github.fabricators_of_create.porting_lib.gui.layered.GuiLayerRegistry;
 import net.minecraft.client.DeltaTracker;
@@ -12,9 +13,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
-
-import net.minecraft.client.gui.components.SubtitleOverlay;
 
 import net.minecraft.client.gui.components.spectator.SpectatorGui;
 
@@ -26,7 +24,6 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -230,5 +227,16 @@ public abstract class GuiMixin {
 	@WrapMethod(method = "renderSleepOverlay")
 	private void tryRenderSleepOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker, Operation<Void> original) {
 		port_lib$tryRenderLayer(SLEEP_OVERLAY, guiGraphics, deltaTracker, () -> original.call(guiGraphics, deltaTracker));
+	}
+
+	@WrapMethod(method = "render")
+	private void callGuiRenderEvents(GuiGraphics guiGraphics, DeltaTracker deltaTracker, Operation<Void> original) {
+		if (RenderGuiCallback.PRE.invoker().preRenderGui(guiGraphics, deltaTracker)) {
+			return;
+		}
+
+		original.call(guiGraphics, deltaTracker);
+
+		RenderGuiCallback.POST.invoker().postRenderGui(guiGraphics, deltaTracker);
 	}
 }
