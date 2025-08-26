@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import io.github.fabricators_of_create.porting_lib.gui.layered.GuiLayerManager;
+import io.github.fabricators_of_create.porting_lib.gui.layered.GuiLayerRegistry;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -35,98 +36,11 @@ import static io.github.fabricators_of_create.porting_lib.gui.layered.VanillaGui
 @Mixin(Gui.class)
 public abstract class GuiMixin {
 	@Shadow
-	protected abstract void renderCameraOverlays(GuiGraphics guiGraphics, DeltaTracker deltaTracker);
-
-	@Shadow
-	protected abstract void renderCrosshair(GuiGraphics guiGraphics, DeltaTracker deltaTracker);
-
-	@Shadow
-	protected abstract void renderEffects(GuiGraphics guiGraphics, DeltaTracker deltaTracker);
-
-	@Shadow
-	protected abstract void renderExperienceLevel(GuiGraphics guiGraphics, DeltaTracker deltaTracker);
-
-	@Shadow
-	protected abstract void renderDemoOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker);
-
-	@Shadow
-	protected abstract void renderScoreboardSidebar(GuiGraphics guiGraphics, DeltaTracker deltaTracker);
-
-	@Shadow
-	protected abstract void renderOverlayMessage(GuiGraphics guiGraphics, DeltaTracker deltaTracker);
-
-	@Shadow
-	protected abstract void renderTitle(GuiGraphics guiGraphics, DeltaTracker deltaTracker);
-
-	@Shadow
-	protected abstract void renderChat(GuiGraphics guiGraphics, DeltaTracker deltaTracker);
-
-	@Shadow
-	public abstract void renderSavingIndicator(GuiGraphics guiGraphics, DeltaTracker deltaTracker);
-
-	@Shadow
-	protected abstract void renderSleepOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker);
-
-	@Shadow
-	protected abstract void renderTabList(GuiGraphics guiGraphics, DeltaTracker deltaTracker);
-
-	@Shadow
 	@Final
 	private Minecraft minecraft;
 
-	@Accessor
-	public abstract SubtitleOverlay getSubtitleOverlay();
-
 	@Unique
-	private final GuiLayerManager port_lib$layerManager = new GuiLayerManager();
-
-	@Inject(method = "<init>", at = @At("TAIL"))
-	private void initCustomLayers(Minecraft minecraft, CallbackInfo ci, @Local(ordinal = 0) LayeredDraw layeredDraw) {
-		GuiLayerManager playerHealthComponents = new GuiLayerManager()
-				.addVanilla(PLAYER_HEALTH)
-				.addVanilla(ARMOR_LEVEL)
-				.addVanilla(FOOD_LEVEL);
-
-		// Otherwise, GuiMixin is used as a param in the lambdas instead of Gui when used as a local.
-		Gui gui = (Gui) (Object) this;
-
-		GuiLayerManager mainLayers = new GuiLayerManager()
-				.addVanilla(CAMERA_OVERLAYS, this::renderCameraOverlays)
-				.addVanilla(CROSSHAIR, this::renderCrosshair)
-				.addVanilla(HOTBAR)
-				.addVanilla(JUMP_METER)
-				.addVanilla(EXPERIENCE_BAR)
-				.add(playerHealthComponents, () -> minecraft.gameMode.canHurtPlayer())
-				.addVanilla(VEHICLE_HEALTH)
-				.addVanilla(AIR_LEVEL)
-				.addVanilla(SELECTED_ITEM_NAME)
-				.addVanilla(SPECTATOR_TOOLTIP)
-				.addVanilla(EXPERIENCE_LEVEL, this::renderExperienceLevel)
-				.addVanilla(EFFECTS, this::renderEffects)
-				.addVanilla(BOSS_OVERLAY, (guiGraphics, tickDelta) -> gui.getBossOverlay().render(guiGraphics));
-
-		GuiLayerManager additionalLayers = new GuiLayerManager()
-				.addVanilla(DEMO_OVERLAY, this::renderDemoOverlay)
-				.addVanilla(DEBUG_OVERLAY, (guiGraphics, deltaTracker) -> {
-					if (gui.getDebugOverlay().showDebugScreen()) {
-						gui.getDebugOverlay().render(guiGraphics);
-					}
-				})
-				.addVanilla(SCOREBOARD_SIDEBAR, this::renderScoreboardSidebar)
-				.addVanilla(OVERLAY_MESSAGE, this::renderOverlayMessage)
-				.addVanilla(TITLE, this::renderTitle)
-				.addVanilla(CHAT, this::renderChat)
-				.addVanilla(TAB_LIST, this::renderTabList)
-				.addVanilla(SUBTITLE_OVERLAY, (guiGraphics, deltaTracker) -> ((GuiMixin) (Object) gui).getSubtitleOverlay().render(guiGraphics))
-				.addVanilla(SAVING_INDICATOR, this::renderSavingIndicator);
-
-		port_lib$layerManager
-				.add(mainLayers, () -> !minecraft.options.hideGui)
-				.addVanilla(SLEEP_OVERLAY, this::renderSleepOverlay)
-				.add(additionalLayers, () -> !minecraft.options.hideGui);
-
-		port_lib$layerManager.initModdedLayers();
-	}
+	private final GuiLayerManager port_lib$layerManager = GuiLayerRegistry.getLayerManager();
 
 	@Unique
 	private void port_lib$tryRenderLayer(ResourceLocation layerId, GuiGraphics guiGraphics, DeltaTracker deltaTracker, Runnable renderCallback) {

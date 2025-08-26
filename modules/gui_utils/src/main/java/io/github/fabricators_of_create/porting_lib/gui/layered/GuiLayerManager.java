@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.gui.layered;
 
-import io.github.fabricators_of_create.porting_lib.gui.events.RegisterGuiLayersEvent;
+import com.google.common.base.Preconditions;
 import io.github.fabricators_of_create.porting_lib.gui.events.RenderGuiEvent;
 import io.github.fabricators_of_create.porting_lib.gui.events.RenderGuiLayerEvent;
 import net.minecraft.client.DeltaTracker;
@@ -11,23 +11,26 @@ import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.resources.ResourceLocation;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
+import java.util.stream.IntStream;
 
 /**
  * Adaptation of {@link LayeredDraw} that is used for {@link Gui} rendering specifically,
  * to give layers a name and fire appropriate events.
  *
- * <p>Overlays can be registered using the {@link RegisterGuiLayersEvent} event.
+ * <p>Overlays can be registered using the {@link GuiLayerRegistry}.
  */
 @ApiStatus.Internal
 public class GuiLayerManager {
 	public static final float Z_SEPARATION = LayeredDraw.Z_SEPARATION;
 	private final List<NamedLayer> layers = new ArrayList<>();
-	private boolean initialized = false;
 
 	public record NamedLayer(ResourceLocation name, LayeredDraw.Layer layer, boolean isVanilla) {
 		public NamedLayer(ResourceLocation name, LayeredDraw.Layer layer) {
@@ -163,15 +166,56 @@ public class GuiLayerManager {
 		return null;
 	}
 
-	public void initModdedLayers() {
-		if (initialized) {
-			throw new IllegalStateException("Duplicate initialization of GuiLayerManager");
-		}
-		initialized = true;
-		(new RegisterGuiLayersEvent(this.layers)).sendEvent();
+	public int getLayerCount() {
+		return layers.size();
 	}
 
-	public int getLayerCount() {
-		return this.layers.size();
+	/**
+	 * Wrap the layer with the given {@code id} in a new layer.
+	 * <p>
+	 * This can be used, for instance, to apply pose stack transformations to move the layer or resize it.
+	 *
+	 * @param id      the id of the layer to wrap
+	 * @param wrapper an unary operator which takes in the old layer and returns the new layer that wraps the old one
+	 * @throws IllegalArgumentException if a layer with the given {@code id} is not yet registered
+	 */
+	public void wrapLayer(ResourceLocation id, UnaryOperator<LayeredDraw.Layer> wrapper) {
+		Objects.requireNonNull(id);
+		Objects.requireNonNull(wrapper);
+
+		for (int i = 0; i < layers.size(); i++) {
+			var layer = layers.get(i);
+			if (layer.name().equals(id)) {
+				var wrapped = wrapper.apply(layer.layer());
+				Objects.requireNonNull(wrapped, "wrapping layer must not be null");
+				layers.set(i, new GuiLayerManager.NamedLayer(id, wrapped));
+				return;
+			}
+		}
+
+		throw new IllegalArgumentException("Attempted to wrap layer with id '" + id + "', which does not exist!");
+	}
+
+	public void register(GuiLayerRegistry.Ordering ordering, @Nullable ResourceLocation other, ResourceLocation key, LayeredDraw.Layer layer) {
+		Objects.requireNonNull(key);
+		for (var namedLayer : layers) {
+			Preconditions.checkArgument(!namedLayer.name().equals(key), "Layer already registered: " + key);
+		}
+
+		int insertPosition;
+		if (other == null) {
+			insertPosition = ordering == GuiLayerRegistry.Ordering.BEFORE ? 0 : layers.size();
+		} else {
+			var otherIndex = IntStream.range(0, layers.size())
+					.filter(i -> layers.get(i).name().equals(other))
+					.findFirst();
+			if (otherIndex.isEmpty()) {
+				throw new IllegalArgumentException("Attempted to order against an unregistered layer " + other + ". Only order against vanilla's and your own.");
+			}
+
+			insertPosition = otherIndex.getAsInt() + (ordering == GuiLayerRegistry.Ordering.BEFORE ? 0 : 1);
+		}
+
+		layers.add(insertPosition, new GuiLayerManager.NamedLayer(key, layer));
 	}
 }
