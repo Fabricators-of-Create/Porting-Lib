@@ -49,7 +49,7 @@ public class ClientExtensionsRegistry {
 	 * Register the given {@link IClientBlockExtensions} for the given {@link Block}s
 	 */
 	@SafeVarargs
-	public final void registerBlock(IClientBlockExtensions extensions, Holder<Block>... blocks) {
+	public static void registerBlock(IClientBlockExtensions extensions, Holder<Block>... blocks) {
 		registerBlock(extensions, Arrays.stream(blocks).map(Holder::value).toArray(Block[]::new));
 	}
 
