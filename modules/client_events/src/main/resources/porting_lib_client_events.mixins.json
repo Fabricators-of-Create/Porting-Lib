@@ -9,6 +9,7 @@
     "CameraMixin",
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
+    "EntityRenderDispatcherMixin",
     "FogRendererMixin",
     "GameRendererMixin",
     "ItemInHandRendererMixin",
@@ -18,6 +19,7 @@
     "MouseHandlerMixin",
     "MusicManagerMixin",
     "PlayerRendererMixin",
+    "SkullBlockRendererMixin",
     "SoundEngineMixin"
   ],
   "injectors": {
