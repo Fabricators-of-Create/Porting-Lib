@@ -235,6 +235,7 @@ public abstract class GuiMixin {
 			return;
 		}
 
+		port_lib$layerManager.renderFrom((GuiLayerManager.NamedLayer) null, guiGraphics, minecraft.getTimer());
 		original.call(guiGraphics, deltaTracker);
 
 		RenderGuiCallback.POST.invoker().postRenderGui(guiGraphics, deltaTracker);

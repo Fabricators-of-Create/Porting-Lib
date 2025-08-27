@@ -96,16 +96,19 @@ public class GuiLayerManager {
 	 */
 	public void renderFrom(ResourceLocation start, GuiGraphics guiGraphics, DeltaTracker partialTick) {
 		NamedLayer startingLayer = getLayer(start);
-
 		if (startingLayer == null) {
 			throw new IllegalArgumentException("Layer " + start + " does not exist!");
 		}
 
+		renderFrom(startingLayer, guiGraphics, partialTick);
+	}
+
+	public void renderFrom(NamedLayer startingLayer, GuiGraphics guiGraphics, DeltaTracker partialTick) {
 		guiGraphics.pose().pushPose();
 		boolean hasStartedRendering = false;
 
 		for (NamedLayer layer : layers) {
-			if (layer == startingLayer) {
+			if (layer == startingLayer || startingLayer == null) {
 				hasStartedRendering = true;
 			}
 
