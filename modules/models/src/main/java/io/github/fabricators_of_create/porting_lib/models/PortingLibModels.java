@@ -8,9 +8,16 @@ import io.github.fabricators_of_create.porting_lib.models.util.TransformationHel
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 
 public class PortingLibModels implements ClientModInitializer {
+	public static final String STANDALONE_VARIANT = "standalone";
+
+	public static ModelResourceLocation standalone(ResourceLocation id) {
+		return new ModelResourceLocation(id, STANDALONE_VARIANT);
+	}
+
 	@Override
 	public void onInitializeClient() {
 		ModelLoadingPlugin.register(PortingLibModelLoadingRegistry.INSTANCE);
