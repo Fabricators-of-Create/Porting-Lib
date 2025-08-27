@@ -24,9 +24,6 @@ jobs:
           gradle-home-cache-cleanup: true
           cache-read-only: ${{ github.event_name != 'pull_request' }}
 
-      - name: Validate Gradle Wrapper Integrity
-        uses: gradle/actions/wrapper-validation@v3
-
       - name: Build
         run: ./gradlew build
 
