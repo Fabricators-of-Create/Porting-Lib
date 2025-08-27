@@ -11,6 +11,8 @@
     "client.ItemRendererMixin",
     "client.ItemTransformDeserializerMixin",
     "client.ItemTransformMixin",
+    "client.ModelBakeryMixin",
+    "client.ModelManagerMixin",
     "client.ParticleEngineMixin",
     "client.ScreenEffectRendererMixin",
     "client.TerrainParticle$ProviderMixin",
