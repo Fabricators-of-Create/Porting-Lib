@@ -3,6 +3,9 @@ package io.github.fabricators_of_create.porting_lib.models.mixin.client;
 import java.util.Map;
 import java.util.function.Function;
 
+import com.google.common.base.Preconditions;
+
+import io.github.fabricators_of_create.porting_lib.models.injections.ModelManagerInjection;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 
@@ -10,6 +13,7 @@ import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -29,13 +33,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.profiling.ProfilerFiller;
 
 @Mixin(ModelManager.class)
-public abstract class ModelManagerMixin {
+public abstract class ModelManagerMixin implements ModelManagerInjection {
 	@Shadow
 	@Final
 	private static Logger LOGGER;
 
 	@Shadow
 	private Map<ModelResourceLocation, BakedModel> bakedRegistry;
+
+	@Unique
+	private ModelBakery port_lib$modelBakery;
 
 	@Definition(id = "popPush", method = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V")
 	@Definition(id = "profilerFiller", local = @Local(type = ProfilerFiller.class, argsOnly = true))
@@ -62,6 +69,12 @@ public abstract class ModelManagerMixin {
 	@Expression("profiler.popPush('cache')")
 	@Inject(method = "apply", at = @At("MIXINEXTRAS:EXPRESSION"))
 	private void callBakingCompletedEvent(ModelManager.ReloadState reloadState, ProfilerFiller profiler, CallbackInfo ci, @Local ModelBakery modelBakery) {
+		port_lib$modelBakery = modelBakery;
 		(new ModelEvent.BakingCompleted((ModelManager) (Object) this, this.bakedRegistry, modelBakery)).sendEvent();
+	}
+
+	@Override
+	public ModelBakery port_lib$getModelBakery() {
+		return Preconditions.checkNotNull(port_lib$modelBakery, "Attempted to query model bakery before it has been initialized.");
 	}
 }

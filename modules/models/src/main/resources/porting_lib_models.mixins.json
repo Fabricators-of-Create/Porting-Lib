@@ -11,6 +11,8 @@
     "client.ItemRendererMixin",
     "client.ItemTransformDeserializerMixin",
     "client.ItemTransformMixin",
+    "client.ModelBakerMixin",
+    "client.ModelBakeryAccessor",
     "client.ModelBakeryMixin",
     "client.ModelManagerMixin",
     "client.ParticleEngineMixin",
@@ -26,7 +28,8 @@
   "mixins": [
     "BlockParticleOptionMixin",
     "EntityMixin",
-    "LivingEntityMixin"
+    "LivingEntityMixin",
+    "client.ModelBakery$ModelBakerImplMixin"
   ],
   "mixinextras": {
     "minVersion": "0.5.0-rc.2"
