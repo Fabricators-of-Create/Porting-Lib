@@ -5,12 +5,15 @@ import io.github.fabricators_of_create.porting_lib.fluids.BaseFlowingFluid;
 import io.github.fabricators_of_create.porting_lib.fluids.FluidType;
 import io.github.fabricators_of_create.porting_lib.fluids.PortingLibFluids;
 import io.github.fabricators_of_create.porting_lib.fluids.sound.SoundActions;
+import io.github.fabricators_of_create.porting_lib.milk.client.PortingLibMilkClient;
 import io.github.fabricators_of_create.porting_lib.registry.DeferredHolder;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.base.FullItemFluidStorage;
 import net.fabricmc.fabric.mixin.transfer.BucketItemAccessor;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -62,6 +65,10 @@ public class PortingLibMilk {
 
 				return null;
 			});
+
+			if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+				PortingLibMilkClient.init();
+			}
 		}
 		enableMilkFluid = true;
 	}

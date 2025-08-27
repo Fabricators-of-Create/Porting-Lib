@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_gui_utils_testmod",
+  "version": "1.0.0",
+  "name": "Porting Lib GUI Utils Testmod",
+  "description": "Tests the GUI utils module",
+  "authors": [
+    "The Create Fabric Team"
+  ],
+  "license": "LGPL",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "io.github.fabricators_of_create.porting_lib.gui.testmod.PortingLibGuiUtilsTest"
+    ]
+  }
+}
