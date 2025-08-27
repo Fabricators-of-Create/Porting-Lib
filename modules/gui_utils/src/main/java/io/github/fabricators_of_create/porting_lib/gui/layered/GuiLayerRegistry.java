@@ -30,8 +30,8 @@ public class GuiLayerRegistry {
 				.addVanilla(FOOD_LEVEL);
 
 		GuiLayerManager mainLayers = new GuiLayerManager()
-				.addVanilla(CAMERA_OVERLAYS, ((GuiAccessor) getGui())::callRenderCameraOverlays)
-				.addVanilla(CROSSHAIR, ((GuiAccessor) getGui())::callRenderCrosshair)
+				.addVanilla(CAMERA_OVERLAYS, (guiGraphics, deltaTracker) -> ((GuiAccessor) getGui()).callRenderCameraOverlays(guiGraphics, deltaTracker))
+				.addVanilla(CROSSHAIR, (guiGraphics, deltaTracker) -> ((GuiAccessor) getGui()).callRenderCrosshair(guiGraphics, deltaTracker))
 				.addVanilla(HOTBAR)
 				.addVanilla(JUMP_METER)
 				.addVanilla(EXPERIENCE_BAR)
@@ -40,29 +40,29 @@ public class GuiLayerRegistry {
 				.addVanilla(AIR_LEVEL)
 				.addVanilla(SELECTED_ITEM_NAME)
 				.addVanilla(SPECTATOR_TOOLTIP)
-				.addVanilla(EXPERIENCE_LEVEL, ((GuiAccessor) getGui())::callRenderExperienceLevel)
-				.addVanilla(EFFECTS, ((GuiAccessor) getGui())::callRenderEffects)
+				.addVanilla(EXPERIENCE_LEVEL, (guiGraphics, deltaTracker) -> ((GuiAccessor) getGui()).callRenderExperienceLevel(guiGraphics, deltaTracker))
+				.addVanilla(EFFECTS, (guiGraphics, deltaTracker) -> ((GuiAccessor) getGui()).callRenderEffects(guiGraphics, deltaTracker))
 				.addVanilla(BOSS_OVERLAY, (guiGraphics, tickDelta) -> getGui().getBossOverlay().render(guiGraphics));
 
 		GuiLayerManager additionalLayers = new GuiLayerManager()
-				.addVanilla(DEMO_OVERLAY, ((GuiAccessor) getGui())::callRenderDemoOverlay)
+				.addVanilla(DEMO_OVERLAY, (guiGraphics, deltaTracker) -> ((GuiAccessor) getGui()).callRenderDemoOverlay(guiGraphics, deltaTracker))
 				.addVanilla(DEBUG_OVERLAY, (guiGraphics, deltaTracker) -> {
 					Gui gui = getGui();
 					if (gui.getDebugOverlay().showDebugScreen()) {
 						gui.getDebugOverlay().render(guiGraphics);
 					}
 				})
-				.addVanilla(SCOREBOARD_SIDEBAR, ((GuiAccessor) getGui())::callRenderScoreboardSidebar)
-				.addVanilla(OVERLAY_MESSAGE, ((GuiAccessor) getGui())::callRenderOverlayMessage)
-				.addVanilla(TITLE, ((GuiAccessor) getGui())::callRenderTitle)
-				.addVanilla(CHAT, ((GuiAccessor) getGui())::callRenderChat)
-				.addVanilla(TAB_LIST, ((GuiAccessor) getGui())::callRenderTabList)
+				.addVanilla(SCOREBOARD_SIDEBAR, (guiGraphics, deltaTracker) -> ((GuiAccessor) getGui()).callRenderScoreboardSidebar(guiGraphics, deltaTracker))
+				.addVanilla(OVERLAY_MESSAGE, (guiGraphics, deltaTracker) -> ((GuiAccessor) getGui()).callRenderOverlayMessage(guiGraphics, deltaTracker))
+				.addVanilla(TITLE, (guiGraphics, deltaTracker) -> ((GuiAccessor) getGui()).callRenderTitle(guiGraphics, deltaTracker))
+				.addVanilla(CHAT, (guiGraphics, deltaTracker) -> ((GuiAccessor) getGui()).callRenderChat(guiGraphics, deltaTracker))
+				.addVanilla(TAB_LIST, (guiGraphics, deltaTracker) -> ((GuiAccessor) getGui()).callRenderTabList(guiGraphics, deltaTracker))
 				.addVanilla(SUBTITLE_OVERLAY, (guiGraphics, deltaTracker) -> ((GuiAccessor) getGui()).getSubtitleOverlay().render(guiGraphics))
-				.addVanilla(SAVING_INDICATOR, getGui()::renderSavingIndicator);
+				.addVanilla(SAVING_INDICATOR, (guiGraphics, deltaTracker) -> getGui().renderSavingIndicator(guiGraphics, deltaTracker));
 
 		layerManager
 				.add(mainLayers, () -> !Minecraft.getInstance().options.hideGui)
-				.addVanilla(SLEEP_OVERLAY, ((GuiAccessor) getGui())::callRenderSleepOverlay)
+				.addVanilla(SLEEP_OVERLAY, (guiGraphics, deltaTracker) -> ((GuiAccessor) getGui()).callRenderSleepOverlay(guiGraphics, deltaTracker))
 				.add(additionalLayers, () -> !Minecraft.getInstance().options.hideGui);
 	}
 
