@@ -8,6 +8,10 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 
+/**
+ * @deprecated Use {@link io.github.fabricators_of_create.porting_lib.client_events.event.client.EntityRenderersEvent.AddLayers} in the {@code client_events} module.
+ */
+@Deprecated(forRemoval = true)
 @FunctionalInterface
 public interface EntityAddedLayerCallback {
 
