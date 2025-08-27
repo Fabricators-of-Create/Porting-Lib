@@ -36,7 +36,7 @@ import java.util.Set;
  * Fired for on different events/actions relating to {@linkplain EntityRenderer entity renderers}.
  * See the various subclasses for listening to different events.
  *
- * <p>These events are fired on the mod-specific event bus, only on the {@linkplain EnvType#CLIENT logical client}.</p>
+ * <p>These events are fired only on the {@linkplain EnvType#CLIENT logical client}.</p>
  *
  * @see EntityRenderersEvent.AddLayers
  */
@@ -50,8 +50,7 @@ public abstract class EntityRenderersEvent extends BaseEvent {
 	 *
 	 * <p>This event is not {@linkplain CancellableEvent cancellable}, and does not have a result.</p>
 	 *
-	 * <p>This event is fired on the mod-specific event bus,
-	 * only on the {@linkplain EnvType#CLIENT logical client}.</p>
+	 * <p>This event is fired only on the {@linkplain EnvType#CLIENT logical client}.</p>
 	 */
 	public static class AddLayers extends EntityRenderersEvent {
 		public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
@@ -143,12 +142,11 @@ public abstract class EntityRenderersEvent extends BaseEvent {
 	}
 
 	/**
-	 * Fired for registering additional {@linkplain net.minecraft.client.model.SkullModelBase skull models} at the appropriate time.
+	 * Fired for registering additional {@linkplain SkullModelBase skull models} at the appropriate time.
 	 *
 	 * <p>This event is not {@linkplain CancellableEvent cancellable}, and does not have a result.</p>
 	 *
-	 * <p>This event is fired on the mod-specific event bus,
-	 * only on the {@linkplain EnvType#CLIENT logical client}.</p>
+	 * <p>This event is fired only on the {@linkplain EnvType#CLIENT logical client}.</p>
 	 */
 	public static class CreateSkullModels extends EntityRenderersEvent {
 		public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
