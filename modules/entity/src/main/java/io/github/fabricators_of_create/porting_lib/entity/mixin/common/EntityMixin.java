@@ -2,9 +2,14 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
 import java.util.Collection;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
+
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityInvulnerabilityCheckEvent;
+
+import net.minecraft.world.damagesource.DamageSource;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -189,5 +194,14 @@ public abstract class EntityMixin implements EntityInjection {
 			original.call(instance);
 			EntityHooks.fireEntityTickPost(instance);
 		}
+	}
+
+	// damage events
+	@ModifyReturnValue(method = "isInvulnerableTo", at = @At("RETURN"))
+	private boolean checkEntityInvulnerableEvent(boolean original, @Local(argsOnly = true) DamageSource damageSource) {
+		EntityInvulnerabilityCheckEvent event = new EntityInvulnerabilityCheckEvent((Entity) (Object) this, damageSource, original);
+		event.sendEvent();
+
+		return event.isInvulnerable();
 	}
 }
