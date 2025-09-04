@@ -4,35 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-
-import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.Share;
-
-import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
-import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-
-import io.github.fabricators_of_create.porting_lib.core.util.MixinHelper;
-import io.github.fabricators_of_create.porting_lib.entity.EffectCure;
-import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingKnockBackEvent;
-import io.github.fabricators_of_create.porting_lib.entity.events.living.ShieldBlockEvent;
-
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingFallEvent;
-
-import io.github.fabricators_of_create.porting_lib.entity.events.living.MobEffectEvent;
-import io.github.fabricators_of_create.porting_lib.entity.injects.LivingEntityInjection;
-import net.minecraft.core.Holder;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.effect.MobEffect;
-
-import net.minecraft.world.effect.MobEffectInstance;
+import java.util.Stack;
 
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
@@ -48,10 +20,38 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
+import com.llamalad7.mixinextras.expression.Definition;
+import com.llamalad7.mixinextras.expression.Expression;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
+import io.github.fabricators_of_create.porting_lib.core.util.MixinHelper;
+import io.github.fabricators_of_create.porting_lib.entity.EffectCure;
+import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
+import io.github.fabricators_of_create.porting_lib.entity.damage.DamageContainer;
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingFallEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingIncomingDamageEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingKnockBackEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingShieldBlockEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.living.MobEffectEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.living.ShieldBlockEvent;
+import io.github.fabricators_of_create.porting_lib.entity.injects.LivingEntityInjection;
+import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -92,6 +92,9 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
 
 	@Shadow
 	protected int useItemRemaining;
+
+	@Shadow
+	protected float lastHurt;
 
 	public LivingEntityMixin(EntityType<?> variant, Level world) {
 		super(variant, world);
@@ -362,5 +365,134 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
 			return getUseItemRemainingTicks() > 0;
 		}
 		return true;
+	}
+
+	// damage events & containers
+
+	@Unique
+	protected Stack<DamageContainer> port_lib$damageContainers = new Stack<>();
+
+	@Inject(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isSleeping()Z"), cancellable = true)
+	private void pushNewDamageContainer(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+		port_lib$damageContainers.push(new DamageContainer(source, amount));
+
+		if ((new LivingIncomingDamageEvent((LivingEntity) (Object) this, port_lib$damageContainers.peek())).post())
+			cir.setReturnValue(false);
+	}
+
+	@Definition(id = "amount", local = @Local(type = float.class, ordinal = 0, argsOnly = true))
+	@Expression("amount > 0.0")
+	@ModifyVariable(method = "hurt", at = @At("MIXINEXTRAS:EXPRESSION"), argsOnly = true)
+	private float modifyDamageToNewAmount(float original) {
+		DamageContainer container = port_lib$damageContainers.peek();
+
+		if (container.getOriginalDamage() != container.getNewDamage()) {
+			return container.getNewDamage();
+		}
+
+		return original;
+	}
+
+	@ModifyExpressionValue(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isDamageSourceBlocked(Lnet/minecraft/world/damagesource/DamageSource;)Z"))
+	private boolean checkIsDamageBlocked(boolean original, @Share("shieldEvent") LocalRef<LivingShieldBlockEvent> shieldEvent) {
+		shieldEvent.set(new LivingShieldBlockEvent((LivingEntity) (Object) this, port_lib$damageContainers.peek(), original));
+		shieldEvent.get().post();
+
+		return shieldEvent.get().getBlocked();
+	}
+
+	@Inject(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;hurtCurrentlyUsedShield(F)V"))
+	private void setBlockedDamageToContainer(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir, @Share("shieldEvent") LocalRef<LivingShieldBlockEvent> shieldEvent) {
+		port_lib$damageContainers.peek().setBlockedDamage(shieldEvent.get());
+	}
+
+	@WrapOperation(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;hurtCurrentlyUsedShield(F)V"))
+	private void checkShouldHurtCurrentShield(LivingEntity instance, float damageAmount, Operation<Void> original, @Share("shieldEvent") LocalRef<LivingShieldBlockEvent> shieldEvent) {
+		if (damageAmount != shieldEvent.get().getOriginalBlockedDamage()) {
+			original.call(instance, damageAmount); // Ensure modded damage goes through instead of ours.
+		} else if (shieldEvent.get().shieldDamage() > 0) {
+			original.call(instance, shieldEvent.get().shieldDamage());
+		}
+	}
+
+	@Definition(id = "f", local = @Local(type = float.class, ordinal = 2))
+	@Definition(id = "amount", local = @Local(type = float.class, ordinal = 0, argsOnly = true))
+	@Expression("f = @(amount)")
+	@ModifyExpressionValue(method = "hurt", at = @At("MIXINEXTRAS:EXPRESSION"))
+	private float modifyTotalBlockedDamage(float original, @Share("shieldEvent") LocalRef<LivingShieldBlockEvent> shieldEvent) {
+		if (shieldEvent.get().getBlockedDamage() != shieldEvent.get().getOriginalBlockedDamage()) {
+			return shieldEvent.get().getBlockedDamage();
+		}
+
+		return original;
+	}
+
+	@Definition(id = "amount", local = @Local(type = float.class, ordinal = 0, argsOnly = true))
+	@Expression("amount = @(0.0)")
+	@ModifyExpressionValue(method = "hurt", at = @At("MIXINEXTRAS:EXPRESSION"))
+	private float modifyTotalDamage(float original, @Share("shieldEvent") LocalRef<LivingShieldBlockEvent> shieldEvent) {
+		if (shieldEvent.get().getDamageContainer().getNewDamage() != shieldEvent.get().getDamageContainer().getOriginalDamage()) {
+			return shieldEvent.get().getDamageContainer().getNewDamage();
+		}
+
+		return original;
+	}
+
+	@Definition(id = "bl", local = @Local(type = boolean.class, ordinal = 0))
+	@Expression("bl = @(true)")
+	@ModifyExpressionValue(method = "hurt", at = @At("MIXINEXTRAS:EXPRESSION"))
+	private boolean checkIsDamageAmountFullyBlocked(boolean original, @Local(argsOnly = true) float damage) {
+		return original && damage <= 0;
+	}
+
+	@Inject(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/WalkAnimationState;setSpeed(F)V"))
+	private void updateContainerWithVanillaChanges(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+		port_lib$damageContainers.peek().setNewDamage(amount);
+	}
+
+	@Inject(method = "hurt", at = @At("RETURN"))
+	private void popContainerFromStack(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+		port_lib$damageContainers.pop();
+	}
+
+	@Inject(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;actuallyHurt(Lnet/minecraft/world/damagesource/DamageSource;F)V", ordinal = 0))
+	private void setContainerReductionByInvulnerability(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+		port_lib$damageContainers.peek().setReduction(DamageContainer.Reduction.INVULNERABILITY, lastHurt);
+	}
+
+	@Definition(id = "invulnerableTime", field = "Lnet/minecraft/world/entity/LivingEntity;invulnerableTime:I")
+	@Expression("this.invulnerableTime = @(20)")
+	@ModifyExpressionValue(method = "hurt", at = @At("MIXINEXTRAS:EXPRESSION"))
+	private int modifyPostAttackInvulnerabilityTicks(int original) {
+		DamageContainer container = port_lib$damageContainers.peek();
+		if (container.getPostAttackInvulnerabilityTicks() != 20) {
+			return container.getPostAttackInvulnerabilityTicks();
+		}
+
+		return original;
+	}
+
+	@ModifyVariable(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/DamageSource;getEntity()Lnet/minecraft/world/entity/Entity;"), argsOnly = true)
+	private float updateLocalAmountWithContainer(float original) {
+		DamageContainer container = port_lib$damageContainers.peek();
+		if (container.getNewDamage() != container.getOriginalDamage()) {
+			return container.getNewDamage();
+		}
+
+		return original;
+	}
+
+	@Definition(id = "ServerPlayer", type = ServerPlayer.class)
+	@Expression("this instanceof ServerPlayer")
+	@Inject(method = "getDamageAfterMagicAbsorb", at = @At("MIXINEXTRAS:EXPRESSION"))
+	private void addDamageReductionByMobEffect(DamageSource damageSource, float damageAmount, CallbackInfoReturnable<Float> cir, @Local(ordinal = 3) float resistedDamage) {
+		port_lib$damageContainers.peek().setReduction(DamageContainer.Reduction.MOB_EFFECTS, resistedDamage);
+	}
+
+	@ModifyExpressionValue(method = "getDamageAfterMagicAbsorb", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/CombatRules;getDamageAfterMagicAbsorb(FF)F"))
+	private float addDamageReductionByEnchantment(float original) {
+		DamageContainer container = port_lib$damageContainers.peek();
+		container.setReduction(DamageContainer.Reduction.ENCHANTMENTS, container.getNewDamage() - original);
+		return original;
 	}
 }
