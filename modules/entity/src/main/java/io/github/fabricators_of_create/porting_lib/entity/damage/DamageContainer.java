@@ -18,6 +18,10 @@ import java.util.List;
  * relevant context related to damage dealt is accessible throughout the entire
  * sequence.
  * <p>Note: certain values will be defaults until the stage in the sequence when they are set.</p>
+ * <h3>Porting Lib changes (Fabric)</h3>
+ * <br>In order to be more mod compatible with mods that don't rely on porting lib, we supply {@link DamageConflictResolver} which is only used if {@link DamageContainer#getOriginalDamage()} != vanillaDamage when applying new damage,
+ * <br>indicating that some mod has modified the damage outside the scope of the damage container.
+ * <br>By default, the modified damage from outside the container will be applied, and the external damage will be set as the {@link DamageContainer#newDamage} in the container.
  * <h3>The Damage Sequence</h3>
  * <ol>
  * <li>{@link LivingEntity#hurt} is invoked on the recipient from the source of
@@ -55,6 +59,11 @@ public class DamageContainer {
 	private float blockedDamage = 0f;
 	private float shieldDamage = 0;
 	private int invulnerabilityTicksAfterAttack = 20;
+
+	private DamageConflictResolver conflictResolver = modifiedDamage -> {
+		setNewDamage(modifiedDamage);
+		return modifiedDamage;
+	};
 
 	public DamageContainer(DamageSource source, float originalDamage) {
 		this.source = source;
@@ -142,6 +151,25 @@ public class DamageContainer {
 		return reductions.getOrDefault(type, 0f);
 	}
 
+	// Fabric only
+
+	/**
+	 * The conflict resolver is only used if the original damage in vanilla != originalDamage in the damage container, meaning an external mod has modified the damage.
+	 * By default, the modified external damage will be applied and {@link DamageContainer#getNewDamage()} will be ignored.
+	 * Setting the conflict resolver can be used to change this behavior.
+	 * @param conflictResolver The damage resolver to use.
+	 */
+	public void setConflictResolver(DamageConflictResolver conflictResolver) {
+		this.conflictResolver = conflictResolver;
+	}
+
+	/**
+	 * @return The damage resolver to use see {@link DamageContainer#setConflictResolver(DamageConflictResolver)} and {@link DamageContainer}
+	 */
+	public DamageConflictResolver getConflictResolver() {
+		return this.conflictResolver;
+	}
+
 	//=============INTERNAL METHODS - DO NOT USE===================
 
 	@ApiStatus.Internal
@@ -165,5 +193,10 @@ public class DamageContainer {
 			reduction = func.modify(this, reduction);
 		}
 		return reduction;
+	}
+
+	@FunctionalInterface
+	public interface DamageConflictResolver {
+		float resolve(float modifiedDamage);
 	}
 }

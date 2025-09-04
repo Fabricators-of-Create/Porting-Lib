@@ -39,7 +39,6 @@ import io.github.fabricators_of_create.porting_lib.entity.EffectCure;
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 import io.github.fabricators_of_create.porting_lib.entity.damage.DamageContainer;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingFallEvent;
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingIncomingDamageEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingKnockBackEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingShieldBlockEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.MobEffectEvent;
@@ -378,6 +377,14 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
 
 		if (EntityHooks.onEntityIncomingDamage((LivingEntity) (Object) this, port_lib$damageContainers.peek()))
 			cir.setReturnValue(false);
+	}
+
+	@ModifyVariable(method = "hurt", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/LivingEntity;noActionTime:I", shift = At.Shift.AFTER), argsOnly = true)
+	private float modifyDamage(float value) {
+		DamageContainer container = this.port_lib$damageContainers.peek();
+		if (value != container.getOriginalDamage())
+			return container.getConflictResolver().resolve(value);
+		return container.getNewDamage();
 	}
 
 	@Definition(id = "amount", local = @Local(type = float.class, ordinal = 0, argsOnly = true))
