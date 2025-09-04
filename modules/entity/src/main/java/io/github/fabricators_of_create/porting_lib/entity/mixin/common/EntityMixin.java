@@ -199,9 +199,6 @@ public abstract class EntityMixin implements EntityInjection {
 	// damage events
 	@ModifyReturnValue(method = "isInvulnerableTo", at = @At("RETURN"))
 	private boolean checkEntityInvulnerableEvent(boolean original, @Local(argsOnly = true) DamageSource damageSource) {
-		EntityInvulnerabilityCheckEvent event = new EntityInvulnerabilityCheckEvent((Entity) (Object) this, damageSource, original);
-		event.sendEvent();
-
-		return event.isInvulnerable();
+		return EntityHooks.isEntityInvulnerableTo((Entity) (Object) this, damageSource, original);
 	}
 }

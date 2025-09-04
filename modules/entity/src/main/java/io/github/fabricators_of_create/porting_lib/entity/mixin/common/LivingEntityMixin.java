@@ -376,7 +376,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
 	private void pushNewDamageContainer(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
 		port_lib$damageContainers.push(new DamageContainer(source, amount));
 
-		if ((new LivingIncomingDamageEvent((LivingEntity) (Object) this, port_lib$damageContainers.peek())).post())
+		if (EntityHooks.onEntityIncomingDamage((LivingEntity) (Object) this, port_lib$damageContainers.peek()))
 			cir.setReturnValue(false);
 	}
 

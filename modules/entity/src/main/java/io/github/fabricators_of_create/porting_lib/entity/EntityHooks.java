@@ -1,6 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.entity;
 
+import io.github.fabricators_of_create.porting_lib.entity.damage.DamageContainer;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvents;
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityInvulnerabilityCheckEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityMountEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityStruckByLightningEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityTeleportEvent;
@@ -9,6 +11,7 @@ import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingAt
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingDropsEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityUseItemEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingExperienceDropEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingIncomingDamageEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingKnockBackEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.MobEffectEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.ShieldBlockEvent;
@@ -106,6 +109,36 @@ public final class EntityHooks {
 
 	public static boolean onPlayerAttack(LivingEntity entity, DamageSource src, float amount) {
 		return !new LivingAttackEvent(entity, src, amount).post();
+	}
+
+	/**
+	 * Creates and posts an {@link EntityInvulnerabilityCheckEvent}. This is invoked in
+	 * {@link Entity#isInvulnerableTo(DamageSource)} and returns a post-listener result
+	 * to the invulnerability status of the entity to the damage source.
+	 *
+	 * @param entity  the entity being checked for invulnerability
+	 * @param source  the damage source being applied for this check
+	 * @param isInvul whether this entity is invulnerable according to preceding/vanilla logic
+	 * @return if this entity is invulnerable
+	 */
+	public static boolean isEntityInvulnerableTo(Entity entity, DamageSource source, boolean isInvul) {
+		var event = new EntityInvulnerabilityCheckEvent(entity, source, isInvul);
+		event.sendEvent();
+		return event.isInvulnerable();
+	}
+
+	/**
+	 * Called after invulnerability checks in {@link LivingEntity#hurt(DamageSource, float)},
+	 * this method creates and posts the first event in the LivingEntity damage sequence,
+	 * {@link LivingIncomingDamageEvent}.
+	 *
+	 * @param entity    the entity to receive damage
+	 * @param container the newly instantiated container for damage to be dealt. Most properties of
+	 *                  the container will be empty at this stage.
+	 * @return if the event is cancelled and no damage will be applied to the entity
+	 */
+	public static boolean onEntityIncomingDamage(LivingEntity entity, DamageContainer container) {
+		return new LivingIncomingDamageEvent(entity, container).post();
 	}
 
 	public static LivingKnockBackEvent onLivingKnockBack(LivingEntity target, float strength, double ratioX, double ratioZ) {
