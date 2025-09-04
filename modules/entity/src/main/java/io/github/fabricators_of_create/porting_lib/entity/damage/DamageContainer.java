@@ -60,9 +60,20 @@ public class DamageContainer {
 	private float shieldDamage = 0;
 	private int invulnerabilityTicksAfterAttack = 20;
 
-	private DamageConflictResolver conflictResolver = modifiedDamage -> {
-		setNewDamage(modifiedDamage);
-		return modifiedDamage;
+	private DamageConflictResolver conflictResolver = (type, modifiedDamage, ctx) -> switch (type) {
+		case NORMAL, SHIELD_DAMAGE -> {
+			setNewDamage(modifiedDamage);
+			yield modifiedDamage;
+		}
+		case SHIELD -> {
+			shieldDamage = modifiedDamage;
+			yield modifiedDamage;
+		}
+		case BLOCKED -> {
+			blockedDamage = modifiedDamage;
+			newDamage -= modifiedDamage;
+			yield modifiedDamage;
+		}
 	};
 
 	public DamageContainer(DamageSource source, float originalDamage) {
@@ -195,8 +206,15 @@ public class DamageContainer {
 		return reduction;
 	}
 
+	public enum DamageConflictType {
+		NORMAL,
+		BLOCKED,
+		SHIELD,
+		SHIELD_DAMAGE
+	}
+
 	@FunctionalInterface
 	public interface DamageConflictResolver {
-		float resolve(float modifiedDamage);
+		float resolve(DamageConflictType type, float modifiedDamage, Object context);
 	}
 }

@@ -13,6 +13,7 @@ import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEn
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingExperienceDropEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingIncomingDamageEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingKnockBackEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingShieldBlockEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.MobEffectEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.ShieldBlockEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.player.AttackEntityEvent;
@@ -420,6 +421,23 @@ public final class EntityHooks {
 
 	public static void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos) {
 		new EntityEvents.EnteringSection(entity, packedOldPos, packedNewPos).sendEvent();
+	}
+
+	/**
+	 * Creates, posts, and returns a {@link LivingShieldBlockEvent}. This method is invoked in
+	 * {@link LivingEntity#hurt(DamageSource, float)} and requires internal access to the top entry
+	 * in the protected field {@link LivingEntity#damageContainers} as a parameter.
+	 *
+	 * @param blocker         the entity performing the block
+	 * @param container       the entity's internal damage container for accessing current values
+	 *                        in the damage pipeline at the time of this invocation.
+	 * @param originalBlocked whether this entity is blocking according to preceding/vanilla logic
+	 * @return the event object after event listeners have been invoked.
+	 */
+	public static LivingShieldBlockEvent onDamageBlock(LivingEntity blocker, DamageContainer container, boolean originalBlocked) {
+		LivingShieldBlockEvent e = new LivingShieldBlockEvent(blocker, container, originalBlocked);
+		e.sendEvent();
+		return e;
 	}
 
 	public static ShieldBlockEvent onShieldBlock(LivingEntity blocker, DamageSource source, float blocked) {

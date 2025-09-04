@@ -383,27 +383,13 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
 	private float modifyDamage(float value) {
 		DamageContainer container = this.port_lib$damageContainers.peek();
 		if (value != container.getOriginalDamage())
-			return container.getConflictResolver().resolve(value);
+			return container.getConflictResolver().resolve(DamageContainer.DamageConflictType.NORMAL, value, null);
 		return container.getNewDamage();
-	}
-
-	@Definition(id = "amount", local = @Local(type = float.class, ordinal = 0, argsOnly = true))
-	@Expression("amount > 0.0")
-	@ModifyVariable(method = "hurt", at = @At("MIXINEXTRAS:EXPRESSION"), argsOnly = true)
-	private float modifyDamageToNewAmount(float original) {
-		DamageContainer container = port_lib$damageContainers.peek();
-
-		if (container.getOriginalDamage() != container.getNewDamage()) {
-			return container.getNewDamage();
-		}
-
-		return original;
 	}
 
 	@ModifyExpressionValue(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isDamageSourceBlocked(Lnet/minecraft/world/damagesource/DamageSource;)Z"))
 	private boolean checkIsDamageBlocked(boolean original, @Share("shieldEvent") LocalRef<LivingShieldBlockEvent> shieldEvent) {
-		shieldEvent.set(new LivingShieldBlockEvent((LivingEntity) (Object) this, port_lib$damageContainers.peek(), original));
-		shieldEvent.get().post();
+		shieldEvent.set(EntityHooks.onDamageBlock((LivingEntity) (Object) this, port_lib$damageContainers.peek(), original));
 
 		return shieldEvent.get().getBlocked();
 	}
@@ -416,7 +402,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
 	@WrapOperation(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;hurtCurrentlyUsedShield(F)V"))
 	private void checkShouldHurtCurrentShield(LivingEntity instance, float damageAmount, Operation<Void> original, @Share("shieldEvent") LocalRef<LivingShieldBlockEvent> shieldEvent) {
 		if (damageAmount != shieldEvent.get().getOriginalBlockedDamage()) {
-			original.call(instance, damageAmount); // Ensure modded damage goes through instead of ours.
+			original.call(instance, shieldEvent.get().getDamageContainer().getConflictResolver().resolve(DamageContainer.DamageConflictType.SHIELD, damageAmount, shieldEvent.get())); // Ensure modded damage goes through instead of ours.
 		} else if (shieldEvent.get().shieldDamage() > 0) {
 			original.call(instance, shieldEvent.get().shieldDamage());
 		}
@@ -427,22 +413,22 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
 	@Expression("f = @(amount)")
 	@ModifyExpressionValue(method = "hurt", at = @At("MIXINEXTRAS:EXPRESSION"))
 	private float modifyTotalBlockedDamage(float original, @Share("shieldEvent") LocalRef<LivingShieldBlockEvent> shieldEvent) {
-		if (shieldEvent.get().getBlockedDamage() != shieldEvent.get().getOriginalBlockedDamage()) {
-			return shieldEvent.get().getBlockedDamage();
+		if (original != shieldEvent.get().getOriginalBlockedDamage()) {
+			return shieldEvent.get().getDamageContainer().getConflictResolver().resolve(DamageContainer.DamageConflictType.SHIELD, original, shieldEvent.get());
 		}
 
-		return original;
+		return shieldEvent.get().getBlockedDamage();
 	}
 
 	@Definition(id = "amount", local = @Local(type = float.class, ordinal = 0, argsOnly = true))
 	@Expression("amount = @(0.0)")
 	@ModifyExpressionValue(method = "hurt", at = @At("MIXINEXTRAS:EXPRESSION"))
 	private float modifyTotalDamage(float original, @Share("shieldEvent") LocalRef<LivingShieldBlockEvent> shieldEvent) {
-		if (shieldEvent.get().getDamageContainer().getNewDamage() != shieldEvent.get().getDamageContainer().getOriginalDamage()) {
-			return shieldEvent.get().getDamageContainer().getNewDamage();
+		if (original != 0.0) {
+			return shieldEvent.get().getDamageContainer().getConflictResolver().resolve(DamageContainer.DamageConflictType.SHIELD_DAMAGE, original, shieldEvent.get());
 		}
 
-		return original;
+		return shieldEvent.get().getDamageContainer().getNewDamage();
 	}
 
 	@Definition(id = "bl", local = @Local(type = boolean.class, ordinal = 0))
@@ -454,10 +440,10 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
 
 	@Inject(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/WalkAnimationState;setSpeed(F)V"))
 	private void updateContainerWithVanillaChanges(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-		port_lib$damageContainers.peek().setNewDamage(amount);
+		port_lib$damageContainers.peek().setNewDamage(amount); //update container with vanilla changes
 	}
 
-	@Inject(method = "hurt", at = @At("RETURN"))
+	@Inject(method = "hurt", at = {@At(value = "RETURN", ordinal = 4), @At(value = "RETURN", ordinal = 5)})
 	private void popContainerFromStack(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
 		port_lib$damageContainers.pop();
 	}
@@ -482,11 +468,12 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
 	@ModifyVariable(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/DamageSource;getEntity()Lnet/minecraft/world/entity/Entity;"), argsOnly = true)
 	private float updateLocalAmountWithContainer(float original) {
 		DamageContainer container = port_lib$damageContainers.peek();
-		if (container.getNewDamage() != container.getOriginalDamage()) {
-			return container.getNewDamage();
-		}
+		// TODO: I don't know if getOriginalDamage would be the same of the argument
+//		if (original != container.getOriginalDamage()) {
+//			return container.getConflictResolver().resolve(DamageContainer.DamageConflictType.NORMAL, original, null);
+//		}
 
-		return original;
+		return container.getNewDamage();
 	}
 
 	@Definition(id = "ServerPlayer", type = ServerPlayer.class)
