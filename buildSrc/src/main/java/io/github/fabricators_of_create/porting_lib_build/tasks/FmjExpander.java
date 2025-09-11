@@ -19,6 +19,8 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class FmjExpander extends FilterReader {
@@ -29,12 +31,14 @@ public class FmjExpander extends FilterReader {
 
 	public static final String PROJECT_NAME_PARAM = "projectName";
 	public static final String PROJECT_DIR_PARAM = "projectDir";
+	public static final String PROJECT_MODULES_PARAM = "projectModules";
 	public static final String ROOT_PROJECT_DIR_PARAM = "rootProjectDir";
 
 	private boolean hasExpanded = false;
 
 	private String projectName;
 	private String projectDir;
+	private String projectModules;
 	private String rootProjectDir;
 
 	private Path projectDirPath;
@@ -70,6 +74,8 @@ public class FmjExpander extends FilterReader {
 			throw new IllegalStateException("projectName is null");
 		} else if (this.projectDir == null) {
 			throw new IllegalStateException("projectDir is null");
+		} else if (this.projectModules == null) {
+			throw new IllegalStateException("projectModules is null");
 		} else if (this.rootProjectDir == null) {
 			throw new IllegalStateException("rootProjectDir is null");
 		}
@@ -103,6 +109,12 @@ public class FmjExpander extends FilterReader {
 		Path aw = resources.resolve(awFileName);
 		if (Files.exists(aw)) {
 			template.addProperty("accessWidener", awFileName);
+		}
+		// and modules
+		String[] modules = this.projectModules.split(",");
+		JsonObject depends = template.get("depends").getAsJsonObject();
+		for (String module : modules) {
+			depends.addProperty(module, "*");
 		}
 
 		return template;
@@ -153,9 +165,12 @@ public class FmjExpander extends FilterReader {
 	public record Applicator(Project project) implements Action<FileCopyDetails> {
 		@Override
 		public void execute(FileCopyDetails details) {
+			Object modules = project.getDependencies().getExtensions().findByName("porting_lib_modules");
+			List<String> moduleNames = modules != null ? (List<String>) modules : List.of();
 			Map<String, String> params = Map.of(
 					PROJECT_NAME_PARAM, this.project.getName(),
 					PROJECT_DIR_PARAM, getDir(this.project),
+					PROJECT_MODULES_PARAM, String.join(",", moduleNames),
 					ROOT_PROJECT_DIR_PARAM, getDir(this.project.getRootProject())
 			);
 

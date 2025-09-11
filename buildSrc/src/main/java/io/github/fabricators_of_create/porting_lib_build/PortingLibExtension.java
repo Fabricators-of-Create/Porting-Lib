@@ -3,9 +3,6 @@ package io.github.fabricators_of_create.porting_lib_build;
 import net.fabricmc.loom.LoomGradleExtension;
 import net.fabricmc.loom.api.LoomGradleExtensionAPI;
 
-import net.fabricmc.loom.configuration.FabricApiExtension;
-import net.fabricmc.loom.util.fmj.FabricModJson;
-import net.fabricmc.loom.util.fmj.FabricModJsonFactory;
 import net.fabricmc.loom.util.gradle.SourceSetHelper;
 
 import org.gradle.api.Action;
@@ -29,7 +26,7 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin;
 import javax.inject.Inject;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -54,8 +51,15 @@ public abstract class PortingLibExtension {
 				"path", ":" + name,
 				"configuration", "namedElements"
 		));
+		List<String> modules;
+		if (dependencies.getExtensions().findByName("porting_lib_modules") == null) {
+			modules = new ArrayList<>();
+			dependencies.getExtensions().add("porting_lib_modules", modules);
+		} else {
+			modules = (List<String>) dependencies.getExtensions().getByName("porting_lib_modules");
+		}
+		modules.add("porting_lib_" + name);
 		dependencies.add("api", dependency);
-		dependencies.add("include", dependencies.project(Map.of("path", ":" + name)));
 
 		if (name.equals("mixin_extensions")) {
 			// special case, also an AP
