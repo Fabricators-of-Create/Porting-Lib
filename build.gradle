@@ -137,7 +137,7 @@ allprojects {
 		resolutionStrategy.force("net.fabricmc:fabric-loader:$loader_version")
 	}
 
-	processResources {
+	tasks.withType(ProcessResources).configureEach {
 		Map<String, ?> properties = [
 				version: version,
 				loader_version: loader_version,
@@ -148,7 +148,7 @@ allprojects {
 				// property replacement is a bit too eager
 				class_5124: "\$class_5124",
 				class_56: "\$class_56",
-                class_9665: "\$class_9665",
+				class_9665: "\$class_9665",
 				class_7226: "\$class_7226",
 				class_1793: "\$class_1793"
 		]
@@ -198,6 +198,7 @@ subprojects {
 		projectName = project.name
 		readMe.set(rootProject.file("README.md"))
 		resources.set(project.file("src/main/resources"))
+		clientResources.set(project.file("src/client/resources"))
 	}
 
 	sortAccessWidener {

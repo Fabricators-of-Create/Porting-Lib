@@ -71,6 +71,7 @@ public abstract class PortingLibExtension {
 			Project depProject = project.project(":" + name);
 			SourceSetContainer sourceSets = depProject.getExtensions().getByType(SourceSetContainer.class);
 			settings.sourceSet(sourceSets.getByName("main"), depProject);
+//			settings.sourceSet(sourceSets.getByName("client"), depProject);
 		}));
 	}
 

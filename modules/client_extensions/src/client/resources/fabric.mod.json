@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "id": "porting_lib_client_extensions",
   "version": "${version}",
+  "environment": "client",
   "name": "Porting Lib Client Extensions",
   "description": "Client extensions for various things in mc"
 }

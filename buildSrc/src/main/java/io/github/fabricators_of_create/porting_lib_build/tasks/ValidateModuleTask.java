@@ -37,16 +37,28 @@ public abstract class ValidateModuleTask extends DefaultTask {
 	@InputDirectory
 	public abstract DirectoryProperty getResources();
 
+	@InputDirectory
+	public abstract DirectoryProperty getClientResources();
+
 	@TaskAction
 	public void validateModule() throws IOException {
 		String name = this.getProjectName().get();
 		boolean ignoreName = this.getIgnoreName().getOrElse(Boolean.FALSE);
 		Path resources = this.getResources().get().getAsFile().toPath();
+		Path clientResources = this.getClientResources().get().getAsFile().toPath();
 		Path readme = this.getReadMe().get().getAsFile().toPath();
 
-		Path fmj = resources.resolve("fabric.mod.json");
-		if (!Files.exists(fmj))
-			throw new IllegalStateException(name + " does not have a fabric.mod.json");
+		Path fmj;
+		Path commonFmjPath = resources.resolve("fabric.mod.json");
+		Path clientFmjPath = clientResources.resolve("fabric.mod.json");
+		if (Files.exists(commonFmjPath) && !Files.exists(clientFmjPath)) {
+			fmj = commonFmjPath;
+		} else if (Files.exists(clientFmjPath) && !Files.exists(commonFmjPath)) {
+			fmj = clientFmjPath;
+		} else {
+			throw new IllegalStateException(name + " does not have a fabric.mod.json or has a duplicate fabric.mod.json");
+		}
+
 		JsonObject json = Utils.jsonFromPath(fmj);
 
 		if (!ignoreName) {
