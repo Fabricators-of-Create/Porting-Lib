@@ -111,6 +111,7 @@ public class FmjExpander extends FilterReader {
 				JsonObject clientConfig = new JsonObject();
 				clientConfig.addProperty("config", clientMixinsFileName);
 				clientConfig.addProperty("environment", "client");
+				array.add(clientConfig);
 			}
 			template.add("mixins", array);
 		}
