@@ -19,12 +19,12 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class FmjExpander extends FilterReader {
 	public static final String RESOURCES = "src/main/resources";
+	public static final String CLIENT_RESOURCES = "src/client/resources";
 	public static final String FMJ = "fabric.mod.json";
 	public static final String TEMPLATE_FMJ = RESOURCES + "/template." + FMJ;
 
@@ -95,14 +95,16 @@ public class FmjExpander extends FilterReader {
 
 		String name = "porting_lib_" + this.projectName;
 		Path resources = this.projectDirPath.resolve(RESOURCES);
+		Path clientResources = this.projectDirPath.resolve(CLIENT_RESOURCES);
 
 		// fill in mixins
 		String commonMixinsFileName = name + ".mixins.json";
 		Path commonMixins = resources.resolve(commonMixinsFileName);
 		String clientMixinsFileName = name + ".client.mixins.json";
-		Path clientMixins = resources.resolve(clientMixinsFileName);
-		boolean hasCommon, hasClient = false;
-		if ((hasCommon = Files.exists(commonMixins)) || (hasClient = Files.exists(clientMixins))) {
+		Path clientMixins = clientResources.resolve(clientMixinsFileName);
+		boolean hasCommon = Files.exists(commonMixins);
+		boolean hasClient = Files.exists(clientMixins);
+		if (hasCommon || hasClient) {
 			JsonArray array = new JsonArray();
 			if (hasCommon) {
 				array.add(commonMixinsFileName);
@@ -116,11 +118,6 @@ public class FmjExpander extends FilterReader {
 			template.add("mixins", array);
 		}
 
-		if (Files.exists(clientMixins)) {
-			JsonArray array = new JsonArray();
-			array.add(clientMixinsFileName);
-			template.add("mixins", array);
-		}
 		// and AW
 		String awFileName = name + ".accesswidener";
 		Path aw = resources.resolve(awFileName);

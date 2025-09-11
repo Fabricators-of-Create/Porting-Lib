@@ -7,9 +7,6 @@
   "entrypoints": {
     "main": [
       "io.github.fabricators_of_create.porting_lib.core.util.ServerLifecycleHooks::init"
-    ],
-    "client": [
-      "io.github.fabricators_of_create.porting_lib.core.client.PortingLibClient"
     ]
   }
 }

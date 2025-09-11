@@ -2,7 +2,6 @@ package io.github.fabricators_of_create.porting_lib.entity;
 
 import com.mojang.logging.LogUtils;
 
-import io.github.fabricators_of_create.porting_lib.core.util.LogicalSidedProvider;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityJoinLevelEvent;
 import io.github.fabricators_of_create.porting_lib.entity.network.AdvancedAddEntityPayload;
 import net.fabricmc.api.EnvType;

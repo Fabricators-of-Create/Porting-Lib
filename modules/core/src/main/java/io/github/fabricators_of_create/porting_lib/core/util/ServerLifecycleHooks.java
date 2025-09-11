@@ -9,7 +9,6 @@ public class ServerLifecycleHooks {
 	public static void init() {
 		ServerLifecycleEvents.SERVER_STARTING.register(server -> {
 			currentServer = server;
-			LogicalSidedProvider.setServer(() -> server);
 		});
 	}
 
