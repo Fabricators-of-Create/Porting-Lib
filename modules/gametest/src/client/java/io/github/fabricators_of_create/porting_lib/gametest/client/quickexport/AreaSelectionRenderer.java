@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.gametest.quickexport;
+package io.github.fabricators_of_create.porting_lib.gametest.client.quickexport;
 
 import java.util.Objects;
 
@@ -6,6 +6,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import io.github.fabricators_of_create.porting_lib.gametest.PortingLibGameTest;
+import io.github.fabricators_of_create.porting_lib.gametest.quickexport.AreaSelection;
+import io.github.fabricators_of_create.porting_lib.gametest.quickexport.AreaSelectorItem;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents.AfterEntities;
 import net.minecraft.client.Camera;

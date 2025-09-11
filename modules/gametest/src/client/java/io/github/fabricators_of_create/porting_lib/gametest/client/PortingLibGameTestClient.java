@@ -1,7 +1,8 @@
-package io.github.fabricators_of_create.porting_lib.gametest;
+package io.github.fabricators_of_create.porting_lib.gametest.client;
 
-import io.github.fabricators_of_create.porting_lib.gametest.quickexport.AreaSelectionRenderer;
-import io.github.fabricators_of_create.porting_lib.gametest.quickexport.AreaSelectorTooltipProvider;
+import io.github.fabricators_of_create.porting_lib.gametest.PortingLibGameTest;
+import io.github.fabricators_of_create.porting_lib.gametest.client.quickexport.AreaSelectionRenderer;
+import io.github.fabricators_of_create.porting_lib.gametest.client.quickexport.AreaSelectorTooltipProvider;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;

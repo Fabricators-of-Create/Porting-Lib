@@ -1,8 +1,10 @@
-package io.github.fabricators_of_create.porting_lib.gametest.quickexport;
+package io.github.fabricators_of_create.porting_lib.gametest.client.quickexport;
 
 import java.util.List;
 
 import io.github.fabricators_of_create.porting_lib.gametest.PortingLibGameTest;
+import io.github.fabricators_of_create.porting_lib.gametest.quickexport.AreaSelection;
+import io.github.fabricators_of_create.porting_lib.gametest.quickexport.AreaSelectorItem;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
