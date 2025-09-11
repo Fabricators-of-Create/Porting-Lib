@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.blocks.mixin.client;
+package io.github.fabricators_of_create.porting_lib.blocks.client.mixin;
 
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;

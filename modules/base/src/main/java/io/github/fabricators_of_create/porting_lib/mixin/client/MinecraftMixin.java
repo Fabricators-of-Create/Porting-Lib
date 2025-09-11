@@ -3,10 +3,8 @@ package io.github.fabricators_of_create.porting_lib.mixin.client;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 
-import io.github.fabricators_of_create.porting_lib.blocks.extensions.CustomHitEffectsBlock;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.world.item.ItemStack;
 

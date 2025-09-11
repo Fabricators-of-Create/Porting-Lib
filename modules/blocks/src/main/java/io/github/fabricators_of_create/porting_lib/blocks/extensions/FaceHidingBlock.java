@@ -1,8 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.blocks.extensions;
 
-import io.github.fabricators_of_create.porting_lib.blocks.ClientBlockHooks;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
+import io.github.fabricators_of_create.porting_lib.blocks.SidedHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -16,10 +14,7 @@ public interface FaceHidingBlock {
 	 * will be called on the neighboring block.
 	 */
 	default boolean supportsExternalFaceHiding(BlockState state) {
-		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-			return ClientBlockHooks.isBlockInSolidLayer(state);
-		}
-		return true;
+		return SidedHelper.INSTANCE.isBlockInSolidLayer(state);
 	}
 
 	/**

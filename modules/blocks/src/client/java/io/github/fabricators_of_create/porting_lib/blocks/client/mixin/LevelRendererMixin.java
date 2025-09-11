@@ -1,12 +1,13 @@
-package io.github.fabricators_of_create.porting_lib.blocks.mixin.client;
+package io.github.fabricators_of_create.porting_lib.blocks.client.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
-import io.github.fabricators_of_create.porting_lib.blocks.CullingBlockEntityIterator;
+import io.github.fabricators_of_create.porting_lib.blocks.client.CullingBlockEntityIterator;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.LightEmissiveBlock;
 import net.minecraft.client.renderer.LevelRenderer;
 
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.culling.Frustum;
 
 import net.minecraft.core.BlockPos;
@@ -16,6 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,6 +35,10 @@ public class LevelRendererMixin {
 	@Nullable
 	private Frustum capturedFrustum;
 
+	@Shadow
+	@Final
+	private BlockEntityRenderDispatcher blockEntityRenderDispatcher;
+
 	@ModifyVariable(
 			method = "renderLevel",
 			slice = @Slice(
@@ -48,7 +54,7 @@ public class LevelRendererMixin {
 			at = @At("STORE")
 	)
 	private Iterator<BlockEntity> port_lib$wrapBlockEntityIterator(Iterator<BlockEntity> iterator) {
-		return new CullingBlockEntityIterator(iterator, capturedFrustum != null ? capturedFrustum : cullingFrustum);
+		return new CullingBlockEntityIterator(this.blockEntityRenderDispatcher, iterator, capturedFrustum != null ? capturedFrustum : cullingFrustum);
 	}
 
 	@WrapOperation(

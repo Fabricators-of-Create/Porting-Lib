@@ -1,9 +1,8 @@
-package io.github.fabricators_of_create.porting_lib.blocks.mixin.client;
+package io.github.fabricators_of_create.porting_lib.blocks.client.mixin;
 
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.CustomDisplayFluidOverlayBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.block.state.BlockState;
 
 import net.minecraft.world.level.material.FluidState;
 

@@ -9,7 +9,6 @@ import io.github.fabricators_of_create.porting_lib.blocks.extensions.PlayerDestr
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.StateViewpointBlock;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.StickToBlock;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.StickyBlock;
-import net.minecraft.client.Camera;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
@@ -167,7 +166,7 @@ public interface BlockStateInjection {
 
 	/**
 	 * Used to determine the state 'viewed' by an entity (see
-	 * {@link Camera#port_lib$getBlockAtCamera()}).
+	 * {@link net.minecraft.client.Camera#port_lib$getBlockAtCamera()}).
 	 * Can be used by fluid blocks to determine if the viewpoint is within the fluid or not.
 	 *
 	 * @param level     the level

@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.blocks.mixin.compat.sodium;
+package io.github.fabricators_of_create.porting_lib.blocks.client.mixin.compat.sodium;
 
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.CustomDisplayFluidOverlayBlock;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.LightEmissiveBlock;

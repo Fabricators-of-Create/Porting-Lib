@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.blocks.mixin;
+package io.github.fabricators_of_create.porting_lib.blocks.client.mixin;
 
 import net.fabricmc.loader.api.FabricLoader;
 

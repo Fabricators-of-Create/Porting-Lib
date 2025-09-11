@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.blocks;
+package io.github.fabricators_of_create.porting_lib.blocks.client;
 
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;

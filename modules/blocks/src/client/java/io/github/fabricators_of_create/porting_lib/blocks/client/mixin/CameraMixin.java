@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.blocks.mixin.client;
+package io.github.fabricators_of_create.porting_lib.blocks.client.mixin;
 
 import net.minecraft.world.level.block.Blocks;
 
@@ -17,11 +17,6 @@ import net.minecraft.world.level.BlockGetter;
 
 @Mixin(Camera.class)
 public abstract class CameraMixin implements CameraInjection {
-	@Shadow
-	private float yRot;
-
-	@Shadow
-	private float xRot;
 
 	@Shadow
 	private boolean initialized;
