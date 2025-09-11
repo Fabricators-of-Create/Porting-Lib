@@ -97,11 +97,27 @@ public class FmjExpander extends FilterReader {
 		Path resources = this.projectDirPath.resolve(RESOURCES);
 
 		// fill in mixins
-		String mixinsFileName = name + ".mixins.json";
-		Path mixins = resources.resolve(mixinsFileName);
-		if (Files.exists(mixins)) {
+		String commonMixinsFileName = name + ".mixins.json";
+		Path commonMixins = resources.resolve(commonMixinsFileName);
+		String clientMixinsFileName = name + ".client.mixins.json";
+		Path clientMixins = resources.resolve(clientMixinsFileName);
+		boolean hasCommon, hasClient = false;
+		if ((hasCommon = Files.exists(commonMixins)) || (hasClient = Files.exists(clientMixins))) {
 			JsonArray array = new JsonArray();
-			array.add(mixinsFileName);
+			if (hasCommon) {
+				array.add(commonMixinsFileName);
+			}
+			if (hasClient) {
+				JsonObject clientConfig = new JsonObject();
+				clientConfig.addProperty("config", clientMixinsFileName);
+				clientConfig.addProperty("environment", "client");
+			}
+			template.add("mixins", array);
+		}
+
+		if (Files.exists(clientMixins)) {
+			JsonArray array = new JsonArray();
+			array.add(clientMixinsFileName);
 			template.add("mixins", array);
 		}
 		// and AW

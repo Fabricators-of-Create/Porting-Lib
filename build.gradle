@@ -177,8 +177,10 @@ subprojects {
 			File output = file("src/main/resources/data/porting_lib_$name/structures/gametest")
 			property("porting_lib.gametest.quickexport.output", output.absolutePath)
 		}
+		splitEnvironmentSourceSets()
 		mods.register("porting_lib_" + name) {
 			sourceSet sourceSets.main
+			sourceSet sourceSets.client
 		}
 		File aw = file("src/main/resources/porting_lib_${name}.accesswidener")
 		if (aw.exists())

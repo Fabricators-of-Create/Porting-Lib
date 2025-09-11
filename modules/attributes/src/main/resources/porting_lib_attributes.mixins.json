@@ -12,9 +12,6 @@
     "common.ServerGamePacketListenerImplMixin",
     "common.ServerPlayerMixin"
   ],
-  "client": [
-    "client.LocalPlayerMixin"
-  ],
   "injectors": {
     "defaultRequire": 1,
     "maxShiftBy": 5
