@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.resources.mixin.client;
+package io.github.fabricators_of_create.porting_lib.resources.client.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 

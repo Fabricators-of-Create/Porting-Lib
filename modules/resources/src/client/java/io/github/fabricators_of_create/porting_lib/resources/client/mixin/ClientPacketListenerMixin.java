@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.resources.mixin.client;
+package io.github.fabricators_of_create.porting_lib.resources.client.mixin;
 
 import io.github.fabricators_of_create.porting_lib.resources.events.RecipesUpdatedEvent;
 import net.minecraft.client.multiplayer.ClientPacketListener;
