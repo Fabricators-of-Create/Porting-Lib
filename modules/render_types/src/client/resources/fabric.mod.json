@@ -3,6 +3,7 @@
   "schemaVersion": 1,
   "id": "porting_lib_render_types",
   "version": "${version}",
+  "environment": "client",
   "name": "Porting Lib Render Types",
   "description": "Custom render types for models and entities.",
   "entrypoints": {
