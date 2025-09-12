@@ -6,7 +6,7 @@
   "description": "Utilities for transferring items and fluids.",
   "entrypoints": {
     "client": [
-      "io.github.fabricators_of_create.porting_lib.PortingLibTransfer"
+      "io.github.fabricators_of_create.porting_lib.transfer.client.PortingLibTransferClient"
     ]
   }
 }

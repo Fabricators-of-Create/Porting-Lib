@@ -1,6 +1,7 @@
-package io.github.fabricators_of_create.porting_lib.transfer.internal.cache;
+package io.github.fabricators_of_create.porting_lib.transfer.client.internal.cache;
 
-import io.github.fabricators_of_create.porting_lib.transfer.internal.extensions.ClientLevelExtensions;
+import io.github.fabricators_of_create.porting_lib.transfer.internal.cache.EmptyItemLookupCache;
+import io.github.fabricators_of_create.porting_lib.transfer.client.internal.injects.ClientLevelInjection;
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import io.github.fabricators_of_create.porting_lib.util.StorageProvider;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
@@ -37,7 +38,7 @@ public class ClientItemLookupCache implements BlockApiCache<Storage<ItemVariant>
 	}
 
 	public ClientItemLookupCache(ClientLevel world, BlockPos pos) {
-		((ClientLevelExtensions) world).port_lib$registerCache(pos ,this);
+		((ClientLevelInjection) world).port_lib$registerCache(pos ,this);
 		this.world = world;
 		this.pos = pos.immutable();
 	}

@@ -1,10 +1,10 @@
-package io.github.fabricators_of_create.porting_lib.transfer.mixin.client;
+package io.github.fabricators_of_create.porting_lib.transfer.client.mixin;
 
-import io.github.fabricators_of_create.porting_lib.transfer.internal.extensions.ClientLevelExtensions;
-import io.github.fabricators_of_create.porting_lib.transfer.internal.extensions.LevelExtensions;
-import io.github.fabricators_of_create.porting_lib.transfer.internal.cache.ClientBlockApiCache;
-import io.github.fabricators_of_create.porting_lib.transfer.internal.cache.ClientFluidLookupCache;
-import io.github.fabricators_of_create.porting_lib.transfer.internal.cache.ClientItemLookupCache;
+import io.github.fabricators_of_create.porting_lib.transfer.client.internal.injects.ClientLevelInjection;
+import io.github.fabricators_of_create.porting_lib.transfer.internal.injects.LevelInjection;
+import io.github.fabricators_of_create.porting_lib.transfer.client.internal.cache.ClientBlockApiCache;
+import io.github.fabricators_of_create.porting_lib.transfer.client.internal.cache.ClientFluidLookupCache;
+import io.github.fabricators_of_create.porting_lib.transfer.client.internal.cache.ClientItemLookupCache;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @Mixin(ClientLevel.class)
-public class ClientLevelMixin implements LevelExtensions, ClientLevelExtensions {
+public class ClientLevelMixin implements LevelInjection, ClientLevelInjection {
 	// lookup stuff, from FAPI
 
 	@Unique

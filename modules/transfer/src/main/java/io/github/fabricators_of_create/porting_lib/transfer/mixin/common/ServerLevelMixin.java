@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.transfer.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.transfer.internal.extensions.LevelExtensions;
+import io.github.fabricators_of_create.porting_lib.transfer.internal.injects.LevelInjection;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -14,7 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(ServerLevel.class)
-public class ServerLevelMixin implements LevelExtensions {
+public class ServerLevelMixin implements LevelInjection {
 	@Override
 	public BlockApiCache<Storage<ItemVariant>, Direction> port_lib$getItemCache(BlockPos pos) {
 		return BlockApiCache.create(ItemStorage.SIDED, ((ServerLevel) (Object) this), pos);
