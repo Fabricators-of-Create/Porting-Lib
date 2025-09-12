@@ -125,10 +125,12 @@ public class FmjExpander extends FilterReader {
 		}
 
 		// and modules
-		String[] modules = this.projectModules.split(",");
-		JsonObject depends = template.get("depends").getAsJsonObject();
-		for (String module : modules) {
-			depends.addProperty(module, "*");
+		if (!this.projectModules.isEmpty()) {
+			String[] modules = this.projectModules.split(",");
+			JsonObject depends = template.get("depends").getAsJsonObject();
+			for (String module : modules) {
+				depends.addProperty(module, "*");
+			}
 		}
 
 		return template;

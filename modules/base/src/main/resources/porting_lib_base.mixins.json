@@ -35,8 +35,7 @@
     "common.SpawnEggItemMixin",
     "common.StructureProcessorMixin",
     "common.StructureTemplateMixin",
-    "common.TagAppenderMixin",
-    "common.TiersMixin"
+    "common.TagAppenderMixin"
   ],
   "injectors": {
     "defaultRequire": 1,

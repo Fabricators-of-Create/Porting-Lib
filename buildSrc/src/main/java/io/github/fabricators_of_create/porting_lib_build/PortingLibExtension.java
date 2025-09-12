@@ -14,11 +14,13 @@ import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Delete;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
+import org.gradle.api.tasks.SourceSetOutput;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.jvm.tasks.Jar;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
@@ -46,6 +48,7 @@ public abstract class PortingLibExtension {
 	public void addModuleDependency(String name) {
 		Project project = this.getProject();
 		DependencyHandler dependencies = project.getDependencies();
+		SourceSetOutput clientOutput = project.findProject(":" + name).getExtensions().findByType(JavaPluginExtension.class).getSourceSets().getByName("client").getOutput();
 
 		Dependency dependency = dependencies.project(Map.of(
 				"path", ":" + name,
@@ -60,6 +63,7 @@ public abstract class PortingLibExtension {
 		}
 		modules.add("porting_lib_" + name);
 		dependencies.add("api", dependency);
+		dependencies.add("clientImplementation", clientOutput);
 
 		if (name.equals("mixin_extensions")) {
 			// special case, also an AP

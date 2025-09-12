@@ -172,6 +172,9 @@ subprojects {
 
 	archivesBaseName = "porting_lib_" + name
 
+	// Must be added before the split source sets are setup.
+	java.withSourcesJar()
+
 	loom {
 		runs.configureEach {
 			File output = file("src/main/resources/data/porting_lib_$name/structures/gametest")
@@ -191,9 +194,11 @@ subprojects {
 	}
 
 	// these two modules are used by all others automatically.
-	if (name != "core" && name != "gametest") {
-		portingLib {
-			addModuleDependency("core") // core depends on gametest
+	afterEvaluate {
+		if (name != "core" && name != "gametest") {
+			portingLib {
+				addModuleDependency("core") // core depends on gametest
+			}
 		}
 	}
 
@@ -225,8 +230,6 @@ subprojects {
 			from(rootProject.file("src/main/resources/assets/porting_lib/icon.png"))
 		}
 	}
-
-	java.withSourcesJar()
 
 	publishing {
 		repositories {
