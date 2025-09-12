@@ -1,7 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.client_events.mixin.client;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 

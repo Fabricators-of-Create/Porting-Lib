@@ -120,10 +120,10 @@ public class FmjExpander extends FilterReader {
 
 		// and AW
 		String awFileName = name + ".accesswidener";
-		Path aw = resources.resolve(awFileName);
-		if (Files.exists(aw)) {
+		if (Files.exists(resources.resolve(awFileName)) || Files.exists(clientResources.resolve(awFileName))) {
 			template.addProperty("accessWidener", awFileName);
 		}
+
 		// and modules
 		String[] modules = this.projectModules.split(",");
 		JsonObject depends = template.get("depends").getAsJsonObject();

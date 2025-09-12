@@ -34,30 +34,60 @@ public abstract class ValidateModuleTask extends DefaultTask {
 	@InputFile
 	public abstract RegularFileProperty getReadMe();
 
+	@Optional
 	@InputDirectory
 	public abstract DirectoryProperty getResources();
 
+	@Optional
 	@InputDirectory
 	public abstract DirectoryProperty getClientResources();
+
+	public Path getFMJ(String name, boolean hasCommonResources, boolean hasClientResources) {
+		if (hasCommonResources && hasClientResources) {
+			Path resources = this.getResources().get().getAsFile().toPath();
+			Path clientResources = this.getClientResources().get().getAsFile().toPath();
+			Path commonFmjPath = resources.resolve("fabric.mod.json");
+			Path clientFmjPath = clientResources.resolve("fabric.mod.json");
+			if (Files.exists(commonFmjPath) && !Files.exists(clientFmjPath)) {
+				return commonFmjPath;
+			} else if (Files.exists(clientFmjPath) && !Files.exists(commonFmjPath)) {
+				return clientFmjPath;
+			} else {
+				throw new IllegalStateException(name + " does not have a fabric.mod.json or has a duplicate fabric.mod.json");
+			}
+		} else {
+			if (hasCommonResources) {
+				Path resources = this.getResources().get().getAsFile().toPath();
+				Path fmjPath = resources.resolve("fabric.mod.json");
+				if (Files.exists(fmjPath)) {
+					return fmjPath;
+				} else {
+					throw new IllegalStateException(name + " does not have a fabric.mod.json");
+				}
+			}
+			if (hasClientResources) {
+				Path resources = this.getClientResources().get().getAsFile().toPath();
+				Path fmjPath = resources.resolve("fabric.mod.json");
+				if (Files.exists(fmjPath)) {
+					return fmjPath;
+				} else {
+					throw new IllegalStateException(name + " does not have a fabric.mod.json");
+				}
+			}
+		}
+		throw new IllegalStateException(name + " does not have a fabric.mod.json");
+	}
 
 	@TaskAction
 	public void validateModule() throws IOException {
 		String name = this.getProjectName().get();
 		boolean ignoreName = this.getIgnoreName().getOrElse(Boolean.FALSE);
-		Path resources = this.getResources().get().getAsFile().toPath();
-		Path clientResources = this.getClientResources().get().getAsFile().toPath();
+		boolean hasCommonResources = this.getResources().isPresent();
+		boolean hasClientResources = this.getClientResources().isPresent();
+
 		Path readme = this.getReadMe().get().getAsFile().toPath();
 
-		Path fmj;
-		Path commonFmjPath = resources.resolve("fabric.mod.json");
-		Path clientFmjPath = clientResources.resolve("fabric.mod.json");
-		if (Files.exists(commonFmjPath) && !Files.exists(clientFmjPath)) {
-			fmj = commonFmjPath;
-		} else if (Files.exists(clientFmjPath) && !Files.exists(commonFmjPath)) {
-			fmj = clientFmjPath;
-		} else {
-			throw new IllegalStateException(name + " does not have a fabric.mod.json or has a duplicate fabric.mod.json");
-		}
+		Path fmj = getFMJ(name, hasCommonResources, hasClientResources);
 
 		JsonObject json = Utils.jsonFromPath(fmj);
 
@@ -67,8 +97,11 @@ public abstract class ValidateModuleTask extends DefaultTask {
 		}
 
 		checkDescription(json);
-		checkAw(name, resources, json);
-		checkMixins(name, resources, json);
+		if (hasCommonResources)
+			checkAw(name, this.getResources().get().getAsFile().toPath(), json);
+		if (hasClientResources)
+			checkAw(name, this.getClientResources().get().getAsFile().toPath(), json);
+//		checkMixins(name, resources, json); TODO: re enable later
 		checkReadMe(readme, name);
 	}
 

@@ -182,9 +182,12 @@ subprojects {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}
-		File aw = file("src/main/resources/porting_lib_${name}.accesswidener")
-		if (aw.exists())
-			accessWidenerPath.set(aw)
+		File commonAW = file("src/main/resources/porting_lib_${name}.accesswidener")
+		File clientAW = file("src/client/resources/porting_lib_${name}.accesswidener")
+		if (commonAW.exists() && !clientAW.exists())
+			accessWidenerPath.set(commonAW)
+		else if (clientAW.exists() && !commonAW.exists())
+			accessWidenerPath.set(clientAW)
 	}
 
 	// these two modules are used by all others automatically.
@@ -197,14 +200,23 @@ subprojects {
 	validateModule {
 		projectName = project.name
 		readMe.set(rootProject.file("README.md"))
-		resources.set(project.file("src/main/resources"))
-		clientResources.set(project.file("src/client/resources"))
+		var resourcesDir = project.file("src/main/resources")
+		if (resourcesDir.exists()) {
+			resources.set(resourcesDir)
+		}
+		var clientResourcesDir = project.file("src/client/resources")
+		if (clientResourcesDir.exists()) {
+			clientResources.set(clientResourcesDir)
+		}
 	}
 
 	sortAccessWidener {
-		File awFile = project.file("src/main/resources/${project.name}.accesswidener")
-		if (awFile.exists())
-			aw.set(awFile)
+		File commonAWFile = project.file("src/main/resources/${project.name}.accesswidener")
+		if (commonAWFile.exists())
+			aw.set(commonAWFile)
+		File clientAWFile = project.file("src/client/resources/${project.name}.accesswidener")
+		if (clientAWFile.exists())
+			aw.set(clientAWFile)
 	}
 
 	processResources {
