@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "id": "porting_lib_obj_loader",
   "version": "${version}",
+  "environment": "client",
   "name": "Porting Lib Obj Loader",
   "description": "Loads .obj models.",
   "entrypoints": {
