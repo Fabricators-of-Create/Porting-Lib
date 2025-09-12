@@ -12,7 +12,6 @@
     "BlockStateMixin",
     "BuilderAccessor",
     "FishingHookMixin",
-    "FishingHookRendererMixin",
     "CompositeEntryBaseAccessor",
     "CompositeLootItemConditionAccessor",
     "FishingRodItemMixin",

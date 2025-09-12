@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.tool.mixin;
+package io.github.fabricators_of_create.porting_lib.tool.client.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 

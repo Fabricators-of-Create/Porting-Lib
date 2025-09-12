@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "priority": 951,
+  "package": "io.github.fabricators_of_create.porting_lib.tool.client.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "FishingHookRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1,
+    "maxShiftBy": 5
+  }
+}
