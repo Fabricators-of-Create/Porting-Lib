@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import io.github.fabricators_of_create.porting_lib.tags.extensions.DyeExtension;
+import io.github.fabricators_of_create.porting_lib.tags.injects.DyeColorInjection;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -18,7 +18,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 
 @Mixin(DyeColor.class)
-public class DyeColorMixin implements DyeExtension {
+public class DyeColorMixin implements DyeColorInjection {
 	@Shadow
 	@Final
 	private String name;

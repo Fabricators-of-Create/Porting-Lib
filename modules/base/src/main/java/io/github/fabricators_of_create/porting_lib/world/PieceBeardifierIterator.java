@@ -4,8 +4,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import it.unimi.dsi.fastutil.objects.ObjectList;
-import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.levelgen.Beardifier;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;

@@ -14,7 +14,8 @@
   },
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_1767": ["io/github/fabricators_of_create/porting_lib/tags/extensions/DyeExtension"]
+      "net/minecraft/class_1767": ["io/github/fabricators_of_create/porting_lib/tags/injects/DyeColorInjection"],
+      "net/minecraft/class_1834": ["io/github/fabricators_of_create/porting_lib/tags/injects/TiersInjection"]
     }
   }
 }

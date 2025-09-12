@@ -10,6 +10,9 @@ public class ServerLifecycleHooks {
 		ServerLifecycleEvents.SERVER_STARTING.register(server -> {
 			currentServer = server;
 		});
+		ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
+			currentServer = null;
+		});
 	}
 
 	public static MinecraftServer getCurrentServer() {
