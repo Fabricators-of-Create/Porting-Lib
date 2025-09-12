@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.config.mixin.client;
+package io.github.fabricators_of_create.porting_lib.config.client.mixin;
 
 import io.github.fabricators_of_create.porting_lib.config.ConfigTracker;
 import io.github.fabricators_of_create.porting_lib.config.ModConfig;

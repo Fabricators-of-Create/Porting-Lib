@@ -8,12 +8,13 @@ import io.github.fabricators_of_create.porting_lib.config.network.payload.Config
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
+import net.minecraft.client.Minecraft;
 
 public class PortingLibConfigClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ClientConfigurationNetworking.registerGlobalReceiver(ConfigFilePayload.TYPE, (payload, context) -> {
-			ConfigSync.receiveSyncedConfig(payload.contents(), payload.fileName());
+			ConfigSync.receiveSyncedConfig(Minecraft.getInstance().isLocalServer(), payload.contents(), payload.fileName());
 		});
 		ConfigRegistry.registerConfig(PortingLibConfig.ID, ModConfig.Type.CLIENT, PortingLibClientConfig.clientSpec);
 	}
