@@ -1,7 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.models.mixin.client;
 
 import io.github.fabricators_of_create.porting_lib.models.CustomParticleIconModel;
-import io.github.fabricators_of_create.porting_lib.models.extensions.TerrainParticleExtensions;
+import io.github.fabricators_of_create.porting_lib.models.injects.TerrainParticleInjection;
 import net.fabricmc.fabric.api.renderer.v1.model.WrapperBakedModel;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,13 +15,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 
 @Mixin(TerrainParticle.class)
-public abstract class TerrainParticleMixin extends TextureSheetParticle implements TerrainParticleExtensions {
+public abstract class TerrainParticleMixin extends TextureSheetParticle implements TerrainParticleInjection {
 	protected TerrainParticleMixin(ClientLevel clientLevel, double d, double e, double f) {
 		super(clientLevel, d, e, f);
 	}
 
 	@Override
-	public TerrainParticle updateSprite(BlockState state, BlockPos pos) {
+	public TerrainParticle port_lib$updateSprite(BlockState state, BlockPos pos) {
 		Minecraft mc = Minecraft.getInstance();
 		BakedModel model = mc.getModelManager().getBlockModelShaper().getBlockModel(state);
 

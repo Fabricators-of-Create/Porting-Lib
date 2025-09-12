@@ -267,7 +267,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 				JsonObject transform = new JsonObject();
 				ItemTransform vec = e.getValue();
 				if (vec.equals(ItemTransform.NO_TRANSFORM)) continue;
-				var hasRightRotation = !vec.getRightRotation().equals(ItemTransform.Deserializer.DEFAULT_ROTATION);
+				var hasRightRotation = !vec.port_lib$getRightRotation().equals(ItemTransform.Deserializer.DEFAULT_ROTATION);
 				if (!vec.translation.equals(ItemTransform.Deserializer.DEFAULT_TRANSLATION)) {
 					transform.add("translation", serializeVector3f(e.getValue().translation));
 				}
@@ -278,7 +278,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 					transform.add("scale", serializeVector3f(e.getValue().scale));
 				}
 				if (hasRightRotation) {
-					transform.add("right_rotation", serializeVector3f(vec.getRightRotation()));
+					transform.add("right_rotation", serializeVector3f(vec.port_lib$getRightRotation()));
 				}
 				display.add(e.getKey().getSerializedName(), transform);
 			}
@@ -814,7 +814,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
 			ItemTransform build() {
 				var transform = new ItemTransform(rotation, translation, scale);
-				transform.setRightRotation(rightRotation);
+				transform.port_lib$setRightRotation(rightRotation);
 				return transform;
 			}
 

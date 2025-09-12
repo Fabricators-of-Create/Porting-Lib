@@ -1,15 +1,15 @@
-package io.github.fabricators_of_create.porting_lib.models.extensions;
+package io.github.fabricators_of_create.porting_lib.models.injects;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 
 import org.joml.Vector3f;
 
-public interface ItemTransformExtensions {
-	default Vector3f getRightRotation() {
+public interface ItemTransformInjection {
+	default Vector3f port_lib$getRightRotation() {
 		throw PortingLib.createMixinException("ItemTransformExtensions.getRightRotation() not implemented");
 	}
 
-	default void setRightRotation(Vector3f rightRotation) {
+	default void port_lib$setRightRotation(Vector3f rightRotation) {
 		throw PortingLib.createMixinException("ItemTransformExtensions.setRightRotation(Vector3f) not implemented");
 	}
 }

@@ -30,6 +30,6 @@ public abstract class ItemTransformDeserializerMixin {
 	private void port_lib$rightRotation(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext, CallbackInfoReturnable<ItemTransform> cir) {
 		Vector3f rightRotation = this.getVector3f(jsonElement.getAsJsonObject(), "right_rotation", DEFAULT_ROTATION);
 		// why is this cast required???
-		cir.getReturnValue().setRightRotation(rightRotation);
+		cir.getReturnValue().port_lib$setRightRotation(rightRotation);
 	}
 }

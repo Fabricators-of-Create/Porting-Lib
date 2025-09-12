@@ -26,7 +26,7 @@ public class ParticleEngineMixin {
 	private void updateSpriteOnCrack(Args args, BlockPos pos, Direction side, @Local(ordinal = 0) BlockState state) {
 		Particle particle = args.get(0);
 		if (particle instanceof TerrainParticle terrainParticle)
-			terrainParticle.updateSprite(state, pos);
+			terrainParticle.port_lib$updateSprite(state, pos);
 	}
 
 	@ModifyArgs(
@@ -40,6 +40,6 @@ public class ParticleEngineMixin {
 									   double dx, double e, double f, double g, double h, double i) {
 		Particle particle = args.get(0);
 		if (particle instanceof TerrainParticle terrainParticle)
-			terrainParticle.updateSprite(state, pos);
+			terrainParticle.port_lib$updateSprite(state, pos);
 	}
 }

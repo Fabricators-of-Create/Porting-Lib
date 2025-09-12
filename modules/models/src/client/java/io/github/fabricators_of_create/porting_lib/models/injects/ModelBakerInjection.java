@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.models.injections;
+package io.github.fabricators_of_create.porting_lib.models.injects;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;

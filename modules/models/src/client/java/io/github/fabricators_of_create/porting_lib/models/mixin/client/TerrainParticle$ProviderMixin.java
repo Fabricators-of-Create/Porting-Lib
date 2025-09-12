@@ -19,9 +19,9 @@ public class TerrainParticle$ProviderMixin {
 	)
 	private Particle updateSprite(Particle particle,
 								  BlockParticleOption type, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-		BlockPos source = type.getSourcePos();
+		BlockPos source = type.port_lib$getSourcePos();
 		if (source != null && particle instanceof TerrainParticle terrainParticle) {
-			terrainParticle.updateSprite(type.getState(), source);
+			terrainParticle.port_lib$updateSprite(type.getState(), source);
 		}
 		return particle;
 	}

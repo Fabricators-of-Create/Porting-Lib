@@ -22,7 +22,7 @@ public abstract class EntityMixin {
 	)
 	private ParticleOptions addSourcePos(ParticleOptions options, @Local(ordinal = 0) BlockPos onPos) {
 		if (options instanceof BlockParticleOption block) {
-			block.setSourcePos(onPos);
+			block.port_lib$setSourcePos(onPos);
 		}
 		return options;
 	}

@@ -2,35 +2,15 @@
   "required": true,
   "minVersion": "0.8",
   "package": "io.github.fabricators_of_create.porting_lib.models.mixin",
-  "plugin": "io.github.fabricators_of_create.porting_lib.models.mixin.PortingLibModelsPlugin",
   "compatibilityLevel": "JAVA_17",
-  "client": [
-    "BlockElementFaceDeserializerMixin",
-    "client.BlockModelDeserializerMixin",
-    "client.BlockModelMixin",
-    "client.ItemRendererMixin",
-    "client.ItemTransformDeserializerMixin",
-    "client.ItemTransformMixin",
-    "client.ModelBakerMixin",
-    "client.ModelBakeryAccessor",
-    "client.ModelBakeryMixin",
-    "client.ModelManagerMixin",
-    "client.ParticleEngineMixin",
-    "client.ScreenEffectRendererMixin",
-    "client.TerrainParticle$ProviderMixin",
-    "client.TerrainParticleMixin",
-    "client.TextureSheetParticleAccessor",
-    "client.frex.ItemRenderContextMixin"
+  "mixins": [
+    "BlockParticleOptionMixin",
+    "EntityMixin",
+    "LivingEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
-  "mixins": [
-    "BlockParticleOptionMixin",
-    "EntityMixin",
-    "LivingEntityMixin",
-    "client.ModelBakery$ModelBakerImplMixin"
-  ],
   "mixinextras": {
     "minVersion": "0.5.0-rc.2"
   }

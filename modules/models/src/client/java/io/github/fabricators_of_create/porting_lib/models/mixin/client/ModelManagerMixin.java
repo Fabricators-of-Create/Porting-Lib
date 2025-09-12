@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import com.google.common.base.Preconditions;
 
-import io.github.fabricators_of_create.porting_lib.models.injections.ModelManagerInjection;
+import io.github.fabricators_of_create.porting_lib.models.injects.ModelManagerInjection;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 

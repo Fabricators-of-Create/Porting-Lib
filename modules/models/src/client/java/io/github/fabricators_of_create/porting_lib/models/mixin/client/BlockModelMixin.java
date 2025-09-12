@@ -1,7 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.models.mixin.client;
 
-import java.util.function.Function;
-
 import io.github.fabricators_of_create.porting_lib.models.CustomBlendModeModel;
 import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
@@ -13,17 +11,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import io.github.fabricators_of_create.porting_lib.models.RenderMaterialModel;
-import io.github.fabricators_of_create.porting_lib.models.extensions.BlockModelExtensions;
+import io.github.fabricators_of_create.porting_lib.models.injects.BlockModelInjection;
 import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBaker;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.resources.ResourceLocation;
 
 @Mixin(BlockModel.class)
-public class BlockModelMixin implements BlockModelExtensions {
+public class BlockModelMixin implements BlockModelInjection {
 	@Unique
 	private RenderMaterial material;
 	@Unique

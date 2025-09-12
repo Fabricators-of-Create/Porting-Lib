@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.models.mixin.client;
 
-import io.github.fabricators_of_create.porting_lib.models.injections.ModelBakerInjection;
+import io.github.fabricators_of_create.porting_lib.models.injects.ModelBakerInjection;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;

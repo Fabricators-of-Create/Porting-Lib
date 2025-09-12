@@ -24,6 +24,6 @@ public class LivingEntityMixin {
 	private void addSourcePos(Args args, double y, boolean onGround, BlockState state, BlockPos pos) {
 		ParticleOptions options = args.get(0);
 		if (options instanceof BlockParticleOption block)
-			block.setSourcePos(pos);
+			block.port_lib$setSourcePos(pos);
 	}
 }

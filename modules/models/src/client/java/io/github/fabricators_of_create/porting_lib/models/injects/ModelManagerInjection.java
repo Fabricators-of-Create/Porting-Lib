@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.models.injections;
+package io.github.fabricators_of_create.porting_lib.models.injects;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import net.minecraft.client.resources.model.ModelBakery;

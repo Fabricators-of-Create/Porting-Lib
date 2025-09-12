@@ -15,7 +15,7 @@ import com.google.gson.JsonObject;
 
 import io.github.fabricators_of_create.porting_lib.models.PortingLibModelLoadingRegistry;
 import io.github.fabricators_of_create.porting_lib.models.util.RenderTypeUtil;
-import io.github.fabricators_of_create.porting_lib.models.extensions.BlockModelExtensions;
+import io.github.fabricators_of_create.porting_lib.models.injects.BlockModelInjection;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
@@ -32,13 +32,13 @@ public class BlockModelDeserializerMixin {
 		if (modelJson.has("render_material")) {
 			JsonObject materialObj = GsonHelper.getAsJsonObject(modelJson, "render_material");
 			RenderMaterial material = PortingLibModelLoadingRegistry.GSON.fromJson(materialObj, RenderMaterial.class);
-			((BlockModelExtensions) model).port_lib$setRenderMaterial(material);
+			((BlockModelInjection) model).port_lib$setRenderMaterial(material);
 		} else if (modelJson.has("render_type")) {
 			Renderer renderer = RendererAccess.INSTANCE.getRenderer();
 			if (renderer != null) {
 				String typeName = GsonHelper.getAsString(modelJson, "render_type");
 				BlendMode blendMode = BlendMode.fromRenderLayer(RenderTypeUtil.get(ResourceLocation.parse(typeName)));
-				((BlockModelExtensions) model).port_lib$setBlendMode(blendMode);
+				((BlockModelInjection) model).port_lib$setBlendMode(blendMode);
 			}
 		}
 
