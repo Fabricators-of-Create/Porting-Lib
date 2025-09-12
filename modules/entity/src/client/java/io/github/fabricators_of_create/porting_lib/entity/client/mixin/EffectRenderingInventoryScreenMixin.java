@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.entity.mixin.client;
+package io.github.fabricators_of_create.porting_lib.entity.client.mixin;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -37,7 +37,7 @@ public class EffectRenderingInventoryScreenMixin {
 
 		return effectInstances.stream().filter(mobEffectInstance -> {
 			if (mobEffectInstance.getEffect().isBound()) {
-				MobEffectRenderer renderer = mobEffectInstance.getEffect().value().getRenderer();
+				MobEffectRenderer renderer = MobEffectRenderer.of(mobEffectInstance);
 				if (renderer != null)
 					return renderer.isVisibleInInventory(mobEffectInstance);
 			}
@@ -51,7 +51,7 @@ public class EffectRenderingInventoryScreenMixin {
 		if (offset.get() == null)
 			offset.set(0);
 		if (mobEffectInstance.getEffect().isBound()) {
-			MobEffectRenderer renderer = mobEffectInstance.getEffect().value().getRenderer();
+			MobEffectRenderer renderer = MobEffectRenderer.of(mobEffectInstance);
 			if (renderer != null && renderer.renderInventoryIcon(mobEffectInstance, (EffectRenderingInventoryScreen) (Object) this, graphics, x + (wide ? 6 : 7), offset.get() + i, 0)) {
 				offset.set(offset.get() + offsetDelta);
 				return;
@@ -63,7 +63,7 @@ public class EffectRenderingInventoryScreenMixin {
 	@Inject(method = "renderLabels", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/EffectRenderingInventoryScreen;getEffectName(Lnet/minecraft/world/effect/MobEffectInstance;)Lnet/minecraft/network/chat/Component;"))
 	private void renderCustomInventoryText(GuiGraphics graphics, int x, int height, Iterable<MobEffectInstance> statusEffects, CallbackInfo ci, @Local(index = 7) MobEffectInstance mobEffectInstance, @Local(index = 5) int i, @Share("custom") LocalRef<Boolean> cancelled) {
 		if (mobEffectInstance.getEffect().isBound()) {
-			MobEffectRenderer renderer = mobEffectInstance.getEffect().value().getRenderer();
+			MobEffectRenderer renderer = MobEffectRenderer.of(mobEffectInstance);
 			if (renderer != null && renderer.renderInventoryText(mobEffectInstance, (EffectRenderingInventoryScreen<?>) (Object) this, graphics, x, i, 0)) {
 				cancelled.set(true);
 				return;

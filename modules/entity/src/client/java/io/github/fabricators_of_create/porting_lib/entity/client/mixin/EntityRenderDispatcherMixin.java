@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.entity.mixin.client;
+package io.github.fabricators_of_create.porting_lib.entity.client.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

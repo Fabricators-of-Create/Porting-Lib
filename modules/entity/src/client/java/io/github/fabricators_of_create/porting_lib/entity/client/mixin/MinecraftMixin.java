@@ -1,9 +1,8 @@
-package io.github.fabricators_of_create.porting_lib.entity.mixin.client;
+package io.github.fabricators_of_create.porting_lib.entity.client.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
-import io.github.fabricators_of_create.porting_lib.entity.events.player.PlayerInteractEvent;
 import net.minecraft.client.Minecraft;
 
 import net.minecraft.client.player.LocalPlayer;

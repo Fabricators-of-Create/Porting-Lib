@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.entity.mixin.client;
+package io.github.fabricators_of_create.porting_lib.entity.client.mixin;
 
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 import net.minecraft.client.player.LocalPlayer;

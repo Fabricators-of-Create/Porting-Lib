@@ -1,12 +1,51 @@
 package io.github.fabricators_of_create.porting_lib.entity.client;
 
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+
+/**
+ * Will eventually be removed in favor of the client extensions module
+ */
+@Deprecated
 public interface MobEffectRenderer {
+	Map<MobEffect, MobEffectRenderer> MOB_EFFECT_EXTENSIONS = new Reference2ObjectOpenHashMap<>();
 	MobEffectRenderer DEFAULT = new MobEffectRenderer() { };
+
+	static MobEffectRenderer of(MobEffectInstance instance) {
+		return of(instance.getEffect().value());
+	}
+
+	static MobEffectRenderer of(MobEffect effect) {
+		return MOB_EFFECT_EXTENSIONS.getOrDefault(effect, DEFAULT);
+	}
+
+	static void register(MobEffectRenderer extensions, MobEffect... effects) {
+		if (effects.length == 0) {
+			throw new IllegalArgumentException("At least one target must be provided");
+		}
+		Objects.requireNonNull(extensions, "Extensions must not be null");
+
+		for (MobEffect object : effects) {
+			Objects.requireNonNull(effects, "Target must not be null");
+			MobEffectRenderer oldExtensions = MOB_EFFECT_EXTENSIONS.put(object, extensions);
+			if (oldExtensions != null) {
+				throw new IllegalStateException(String.format(
+						Locale.ROOT,
+						"Duplicate client extensions registration for %s (old: %s, new: %s)",
+						object,
+						oldExtensions,
+						extensions));
+			}
+		}
+	}
 
 	/**
 	 * Queries whether the given effect should be shown in the player's inventory.

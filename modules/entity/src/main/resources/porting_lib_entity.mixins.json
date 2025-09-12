@@ -63,15 +63,15 @@
         "maxShiftBy": 5
     },
     "client": [
-        "client.ClientLevel$EntityCallbacksMixin",
-        "client.ClientLevelMixin",
-        "client.EffectRenderingInventoryScreenMixin",
-        "client.EntityRenderDispatcherMixin",
-        "client.GuiMixin",
-        "client.LocalPlayerMixin",
-        "client.MinecraftMixin",
-        "client.MultiPlayerGameModeMixin",
-        "client.RemotePlayerMixin"
+      "io.github.fabricators_of_create.porting_lib.entity.client.mixin.ClientLevel$EntityCallbacksMixin",
+      "io.github.fabricators_of_create.porting_lib.entity.client.mixin.ClientLevelMixin",
+      "io.github.fabricators_of_create.porting_lib.entity.client.mixin.EffectRenderingInventoryScreenMixin",
+      "io.github.fabricators_of_create.porting_lib.entity.client.mixin.EntityRenderDispatcherMixin",
+      "io.github.fabricators_of_create.porting_lib.entity.client.mixin.GuiMixin",
+      "io.github.fabricators_of_create.porting_lib.entity.client.mixin.LocalPlayerMixin",
+      "io.github.fabricators_of_create.porting_lib.entity.client.mixin.MinecraftMixin",
+      "io.github.fabricators_of_create.porting_lib.entity.client.mixin.MultiPlayerGameModeMixin",
+      "io.github.fabricators_of_create.porting_lib.entity.client.mixin.RemotePlayerMixin"
     ],
     "mixinextras": {
         "minVersion": "0.5.0-rc.2"

@@ -5,8 +5,6 @@ import io.github.fabricators_of_create.porting_lib.core.event.entity.player.Play
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.client.multiplayer.MultiPlayerGameMode;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
@@ -21,9 +19,9 @@ import org.jetbrains.annotations.Nullable;
 /**
  * PlayerDestroyItemEvent is fired when a player destroys an item.<br>
  * This event is fired whenever a player destroys an item in
- * {@link MultiPlayerGameMode#destroyBlock(BlockPos)},
- * {@link MultiPlayerGameMode#useItem(Player, InteractionHand)},
- * {@link MultiPlayerGameMode#useItemOn(LocalPlayer, InteractionHand, BlockHitResult)} ,
+ * {@link net.minecraft.client.multiplayer.MultiPlayerGameMode#destroyBlock(BlockPos)},
+ * {@link net.minecraft.client.multiplayer.MultiPlayerGameMode#useItem(Player, InteractionHand)},
+ * {@link net.minecraft.client.multiplayer.MultiPlayerGameMode#useItemOn(net.minecraft.client.player.LocalPlayer, InteractionHand, BlockHitResult)} ,
  * {@link Player#attack(Entity)},
  * {@code Player#hurtCurrentlyUsedShield(float)},
  * {@link Player#interactOn(Entity, InteractionHand)},

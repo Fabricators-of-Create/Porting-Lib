@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.entity;
 
 import com.mojang.logging.LogUtils;
 
+import io.github.fabricators_of_create.porting_lib.core.util.PortingLibProxy;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityJoinLevelEvent;
 import io.github.fabricators_of_create.porting_lib.entity.network.AdvancedAddEntityPayload;
 import net.fabricmc.api.EnvType;
@@ -11,6 +12,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 
 import net.minecraft.server.TickTask;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
@@ -57,7 +60,7 @@ public class PortingLibEntity implements ModInitializer {
 				if (newEntity != null) {
 					entity.discard();
 					event.setCanceled(true);
-					var executor = LogicalSidedProvider.WORKQUEUE.get(event.getLevel().isClientSide ? EnvType.CLIENT : EnvType.SERVER);
+					BlockableEventLoop<? super TickTask> executor = event.getLevel() instanceof ServerLevel serverLevel ? serverLevel.getServer() : PortingLibProxy.INSTANCE.getClientExecutor();
 					executor.tell(new TickTask(0, () -> event.getLevel().addFreshEntity(newEntity)));
 				}
 			}

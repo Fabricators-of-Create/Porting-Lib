@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.entity.mixin.client;
+package io.github.fabricators_of_create.porting_lib.entity.client.mixin;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -6,7 +6,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import com.llamalad7.mixinextras.sugar.Local;
 
-import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 import io.github.fabricators_of_create.porting_lib.entity.events.player.PlayerInteractEvent;
 import net.fabricmc.api.EnvType;
@@ -26,7 +25,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameType;
 
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -43,7 +41,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Environment(EnvType.CLIENT)
 @Mixin(MultiPlayerGameMode.class)
