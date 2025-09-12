@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.level.mixin.client;
+package io.github.fabricators_of_create.porting_lib.level.client.mixin;
 
 import io.github.fabricators_of_create.porting_lib.level.events.LevelEvent;
 import net.minecraft.client.Minecraft;

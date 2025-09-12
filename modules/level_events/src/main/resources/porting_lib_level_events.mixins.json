@@ -7,7 +7,6 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "client.ClientLevelMixin",
     "common.BlockItemMixin",
     "common.ChunkMapMixin",
     "common.ChunkSerializerMixin",
@@ -18,8 +17,5 @@
     "common.NaturalSpawnerMixin",
     "common.ServerLevelMixin",
     "common.ServerPlayerGameModeMixin"
-  ],
-  "client": [
-    "client.MinecraftMixin"
   ]
 }
