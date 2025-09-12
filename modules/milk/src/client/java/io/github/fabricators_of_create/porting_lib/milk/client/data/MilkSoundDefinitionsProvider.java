@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.milk.data;
+package io.github.fabricators_of_create.porting_lib.milk.client.data;
 
 import io.github.fabricators_of_create.porting_lib.data.ExistingFileHelper;
 import io.github.fabricators_of_create.porting_lib.data.SoundDefinitionsProvider;
