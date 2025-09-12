@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.item.mixin.client;
+package io.github.fabricators_of_create.porting_lib.item.client.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;

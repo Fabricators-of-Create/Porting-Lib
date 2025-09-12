@@ -3,11 +3,10 @@ package io.github.fabricators_of_create.porting_lib.item.client;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ItemLike;
 
 /**
  * An ItemDecorator that is used to render something on specific items, when the DurabilityBar and StackCount is rendered.
- * Add it to an item using {@linkplain RegisterItemDecorationsEvent#register(ItemLike, IItemDecorator)}.
+ * Add it to an item using {@linkplain io.github.fabricators_of_create.porting_lib.item.client.callbacks.ItemDecorationsCallback}.
  */
 public interface IItemDecorator {
 	/**

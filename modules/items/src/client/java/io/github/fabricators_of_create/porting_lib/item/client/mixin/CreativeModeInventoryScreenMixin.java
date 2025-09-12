@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.item.mixin.client;
+package io.github.fabricators_of_create.porting_lib.item.client.mixin;
 
 import io.github.fabricators_of_create.porting_lib.item.extensions.CreativeModeTabExt;
 import io.github.fabricators_of_create.porting_lib.item.itemgroup.PortingLibCreativeTab;

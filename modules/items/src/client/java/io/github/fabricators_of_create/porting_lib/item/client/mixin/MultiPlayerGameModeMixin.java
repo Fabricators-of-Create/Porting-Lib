@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.item.mixin.client;
+package io.github.fabricators_of_create.porting_lib.item.client.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
 
@@ -7,6 +7,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import com.llamalad7.mixinextras.sugar.Local;
 
+import io.github.fabricators_of_create.porting_lib.item.extensions.BlockBreakResetItem;
 import io.github.fabricators_of_create.porting_lib.item.extensions.BlockUseBypassingItem;
 import io.github.fabricators_of_create.porting_lib.item.extensions.SneakBypassUseItem;
 import io.github.fabricators_of_create.porting_lib.item.extensions.UseFirstBehaviorItem;
@@ -36,6 +37,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MultiPlayerGameMode.class)
 public class MultiPlayerGameModeMixin {
+	@WrapOperation(method = "sameDestroyTarget", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isSameItemSameComponents(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
+	private boolean checkShouldResetBlockBreak(ItemStack stack, ItemStack other, Operation<Boolean> original) {
+		if (other.getItem() instanceof BlockBreakResetItem blockBreakResetItem) {
+			return !blockBreakResetItem.shouldCauseBlockBreakReset(other, stack);
+		}
+
+		return original.call(stack, other);
+	}
+
 	@ModifyReceiver(method = "performUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;useItemOn(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/ItemInteractionResult;"))
 	public BlockState bypassBlockUse(BlockState instance, ItemStack itemStack, Level level, Player player, InteractionHand hand, BlockHitResult blockHitResult) {
 		Item held = player.getItemInHand(hand).getItem();

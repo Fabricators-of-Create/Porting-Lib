@@ -6,17 +6,7 @@
     "injectors": {
         "defaultRequire": 1
     },
-    "client": [
-        "client.GuiGraphicsMixin",
-        "client.HumanoidArmorLayerMixin",
-        "client.ItemFrameRendererMixin",
-        "client.ItemInHandRendererMixin",
-        "client.MultiPlayerGameModeMixin",
-        "common.MultiPlayerGameModeMixin"
-    ],
     "mixins": [
-        "client.AbstractFurnaceMenuMixin",
-        "client.CreativeModeInventoryScreenMixin",
         "common.AbstractFurnaceBlockEntityMixin",
         "common.AbstractSkeletonMixin",
         "common.AnvilMenuMixin",
