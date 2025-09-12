@@ -7,9 +7,9 @@
         "defaultRequire": 1
     },
     "client": [
-        "GuiAccessor",
-        "GuiGraphicsMixin",
-        "GuiMixin",
-        "MapRendererMapInstanceMixin"
+      "GuiAccessor",
+      "GuiGraphicsMixin",
+      "GuiMixin",
+      "MapRendererMapInstanceMixin"
     ]
 }
