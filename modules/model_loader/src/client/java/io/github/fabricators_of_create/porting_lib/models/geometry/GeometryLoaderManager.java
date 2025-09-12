@@ -11,8 +11,6 @@ import com.google.gson.JsonObject;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 
-import net.minecraft.util.GsonHelper;
-
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 

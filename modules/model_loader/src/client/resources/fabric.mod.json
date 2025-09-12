@@ -3,6 +3,7 @@
   "schemaVersion": 1,
   "id": "porting_lib_model_loader",
   "version": "${version}",
+  "environment": "client",
   "name": "Porting Lib Model Loader",
   "description": "Adds the framework for loading more types of models.",
 
