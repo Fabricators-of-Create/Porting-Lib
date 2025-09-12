@@ -1,6 +1,6 @@
-package io.github.fabricators_of_create.porting_lib.data.mixin;
+package io.github.fabricators_of_create.porting_lib.data.client.mixin;
 
-import io.github.fabricators_of_create.porting_lib.data.extensions.MinecraftExtension;
+import io.github.fabricators_of_create.porting_lib.data.client.injects.MinecraftInjection;
 import net.minecraft.client.Minecraft;
 
 import net.minecraft.client.main.GameConfig;
@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
-public class MinecraftMixin implements MinecraftExtension {
+public class MinecraftMixin implements MinecraftInjection {
 	private GameConfig port_lib$gameConfig;
 
 	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/Util;getNanos()J"))

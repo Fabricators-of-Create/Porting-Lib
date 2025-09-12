@@ -4,23 +4,15 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import io.github.fabricators_of_create.porting_lib.data.extensions.MinecraftExtension;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.main.GameConfig;
-import net.minecraft.client.resources.ClientPackSource;
-import net.minecraft.client.resources.IndexedAssetSource;
 import net.minecraft.data.DataProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -81,7 +73,7 @@ public class ExistingFileHelper {
 		}
 	}
 
-	private final MultiPackResourceManager clientResources, serverData;
+	private final MultiPackResourceManager serverData;
 	private final boolean enable;
 	private final Multimap<PackType, ResourceLocation> generated = HashMultimap.create();
 
@@ -90,42 +82,6 @@ public class ExistingFileHelper {
 	public static final String EXISTING_RESOURCES = "porting_lib.datagen.existing_resources";
 
 	public static final String EXISTING_MODS = "porting_lib.datagen.existing-mod";
-
-	/**
-	 * Create a helper with existing resources provided from a JVM argument.
-	 * To use, a JVM argument mapping {@link ExistingFileHelper#EXISTING_RESOURCES the key}
-	 * to the desired resource directory is required.
-	 */
-	public static ExistingFileHelper withResourcesFromArg() {
-		String property = System.getProperty(EXISTING_RESOURCES);
-		if (property == null)
-			throw new IllegalArgumentException("Existing resources not specified with '" + EXISTING_RESOURCES + "' argument");
-		Path path = Paths.get(property);
-		if (!Files.isDirectory(path))
-			throw new IllegalStateException("Path " + property + " is not a directory or does not exist");
-		String mods = System.getProperty(EXISTING_MODS);
-		if (mods == null)
-			mods = "";
-		return withResources(new HashSet<>(List.of(mods.split(","))), path);
-	}
-
-	/**
-	 * Create a helper with the provided paths being used for resources.
-	 */
-	public static ExistingFileHelper withResources(Path... paths) {
-		GameConfig gameConfig = ((MinecraftExtension) Minecraft.getInstance()).port_lib$getGameConfig();
-		List<Path> resources = List.of(paths);
-		return new ExistingFileHelper(resources, Set.of(), true, gameConfig.location.assetIndex, gameConfig.location.assetDirectory);
-	}
-
-	/**
-	 * Create a helper with the provided paths being used for resources.
-	 */
-	public static ExistingFileHelper withResources(Set<String> mods, Path... paths) {
-		GameConfig gameConfig = ((MinecraftExtension) Minecraft.getInstance()).port_lib$getGameConfig();
-		List<Path> resources = List.of(paths);
-		return new ExistingFileHelper(resources, mods, true, gameConfig.location.assetIndex, gameConfig.location.assetDirectory);
-	}
 
 	/**
 	 * Create a new helper. This should probably <em>NOT</em> be used by mods, as
@@ -138,23 +94,16 @@ public class ExistingFileHelper {
 	 * @param existingPacks a collection of paths to existing packs
 	 * @param existingMods  a set of mod IDs for existing mods
 	 * @param enable        {@code true} if validation is enabled
-	 * @param assetIndex    the identifier for the asset index, generally Minecraft's current major version
-	 * @param assetsDir     the directory in which to find vanilla assets and indexes
 	 */
 	public ExistingFileHelper(Collection<Path> existingPacks, final Set<String> existingMods, boolean enable, @Nullable final String assetIndex, @Nullable final File assetsDir) {
-		List<PackResources> candidateClientResources = new ArrayList<>();
 		List<PackResources> candidateServerResources = new ArrayList<>();
 
-		if (assetIndex != null && assetsDir != null && assetsDir.exists()) {
-			candidateClientResources.add(ClientPackSource.createVanillaPackSource(IndexedAssetSource.createIndexFs(assetsDir.toPath(), assetIndex)));
-		}
 		candidateServerResources.add(ServerPacksSource.createVanillaPackSource());
 		for (Path existing : existingPacks) {
 			File file = existing.toFile();
 			if (!file.exists())
 				continue;
 			PackResources pack = file.isDirectory() ? new PathPackResources(new PackLocationInfo(file.getName(), Component.empty(), PackSource.BUILT_IN, Optional.empty()), file.toPath()) : new FilePackResources(new PackLocationInfo(file.getName(), Component.empty(), PackSource.BUILT_IN, Optional.empty()), new FilePackResources.SharedZipFileAccess(file), "");
-			candidateClientResources.add(pack);
 			candidateServerResources.add(pack);
 		}
 		for (String existingMod : existingMods) {
@@ -162,12 +111,10 @@ public class ExistingFileHelper {
 			modFileInfo.ifPresent(modContainer -> {
 				// Only opens primary packs - overlays are not currently considered for datagen
 				final String name = "mod/" + existingMod;
-				candidateClientResources.add(createPackForMod(modContainer).openPrimary(new PackLocationInfo(name, Component.empty(), PackSource.BUILT_IN, Optional.empty())));
 				candidateServerResources.add(createPackForMod(modContainer).openPrimary(new PackLocationInfo(name, Component.empty(), PackSource.BUILT_IN, Optional.empty())));
 			});
 		}
 
-		this.clientResources = new MultiPackResourceManager(PackType.CLIENT_RESOURCES, candidateClientResources);
 		this.serverData = new MultiPackResourceManager(PackType.SERVER_DATA, candidateServerResources);
 
 		this.enable = enable;
@@ -177,8 +124,8 @@ public class ExistingFileHelper {
 		return new PathPackResources.PathResourcesSupplier(mf.getRootPath());
 	}
 
-	private ResourceManager getManager(PackType packType) {
-		return packType == PackType.CLIENT_RESOURCES ? clientResources : serverData;
+	protected ResourceManager getManager(PackType packType) {
+		return serverData;
 	}
 
 	private ResourceLocation getLocation(ResourceLocation base, String suffix, String prefix) {
