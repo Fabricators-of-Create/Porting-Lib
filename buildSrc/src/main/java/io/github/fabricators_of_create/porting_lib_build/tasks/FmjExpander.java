@@ -93,6 +93,10 @@ public class FmjExpander extends FilterReader {
 			tryMerge(template, key, value);
 		}
 
+		if (template.get("id").getAsString().endsWith("-datagen")) {
+			return template;
+		}
+
 		String name = "porting_lib_" + this.projectName;
 		Path resources = this.projectDirPath.resolve(RESOURCES);
 		Path clientResources = this.projectDirPath.resolve(CLIENT_RESOURCES);

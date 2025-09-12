@@ -1,2 +1,10 @@
-portingLib.enableDatagen()
+//portingLib.enableDatagen()
+fabricApi {
+	configureDataGeneration() {
+		outputDirectory = file("src/generated/resources")
+		client = true
+		createSourceSet = true
+		modId = "porting_lib_tags-datagen"
+	}
+}
 // Is keeping this module even worth it?
