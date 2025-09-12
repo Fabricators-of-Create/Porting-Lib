@@ -34,12 +34,12 @@ public class DyeColorMixin implements DyeExtension {
 	}
 
 	@Override
-	public TagKey<Item> getTag() {
+	public TagKey<Item> port_lib$getTag() {
 		return dyesTag;
 	}
 
 	@Override
-	public TagKey<Item> getDyedTag() {
+	public TagKey<Item> port_lib$getDyedTag() {
 		return dyedTag;
 	}
 }

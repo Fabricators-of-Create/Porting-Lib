@@ -2,14 +2,12 @@ package io.github.fabricators_of_create.porting_lib.util;
 
 import javax.annotation.Nullable;
 
-import io.github.fabricators_of_create.porting_lib.tags.Tags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.Block;
 
@@ -22,7 +20,7 @@ public class TagUtil {
 		}
 
 		for (DyeColor color : DyeColor.values()) {
-			if (stack.is(color.getTag())) return color;
+			if (stack.is(color.port_lib$getTag())) return color;
 		}
 
 		return null;

@@ -9,7 +9,7 @@ public interface DyeExtension {
 	 * Gets the tag key representing the set of items which provide this dye color.
 	 * @return A {@link net.minecraft.tags.TagKey<Item>} representing the set of items which provide this dye color.
 	 */
-	default TagKey<Item> getTag() {
+	default TagKey<Item> port_lib$getTag() {
 		throw PortingLib.createMixinException(this.getClass().getSimpleName() + " does not support getTag()");
 	}
 
@@ -17,7 +17,7 @@ public interface DyeExtension {
 	 * Gets the tag key representing the set of items which are dyed with this color.
 	 * @return A {@link net.minecraft.tags.TagKey<Item>} representing the set of items which are dyed with this color.
 	 */
-	default TagKey<Item> getDyedTag() {
+	default TagKey<Item> port_lib$getDyedTag() {
 		throw PortingLib.createMixinException(this.getClass().getSimpleName() + " does not support getDyedTag()");
 	}
 }
