@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.common.mixin.client;
+package io.github.fabricators_of_create.porting_lib.common.client.mixin;
 
 import java.util.Locale;
 
