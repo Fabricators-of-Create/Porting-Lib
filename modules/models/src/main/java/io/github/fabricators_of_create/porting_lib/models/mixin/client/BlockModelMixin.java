@@ -2,15 +2,16 @@ package io.github.fabricators_of_create.porting_lib.models.mixin.client;
 
 import java.util.function.Function;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+
 import io.github.fabricators_of_create.porting_lib.models.CustomBlendModeModel;
 import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import io.github.fabricators_of_create.porting_lib.models.RenderMaterialModel;
 import io.github.fabricators_of_create.porting_lib.models.extensions.BlockModelExtensions;
@@ -39,16 +40,17 @@ public class BlockModelMixin implements BlockModelExtensions {
 		this.blendMode = blendMode;
 	}
 
-	@ModifyReturnValue(method = "bake(Lnet/minecraft/client/resources/model/ModelBaker;Lnet/minecraft/client/renderer/block/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/resources/model/BakedModel;", at = @At("RETURN"))
-	private BakedModel useCustomRendering(BakedModel model, ModelBaker modelBaker, BlockModel blockModel,
-										  Function<Material, TextureAtlasSprite> function, ModelState modelState,
-										  ResourceLocation resourceLocation, boolean bl) {
+	// use a WrapMethod to make sure we catch any injected cancels too (ex. the model_loader module)
+	@WrapMethod(method = "bake(Lnet/minecraft/client/resources/model/ModelBaker;Lnet/minecraft/client/renderer/block/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/resources/model/BakedModel;")
+	private BakedModel useCustomRenderMaterial(ModelBaker baker, BlockModel model, Function<Material, TextureAtlasSprite> spriteGetter, ModelState state, ResourceLocation id, boolean bl, Operation<BakedModel> original) {
+		BakedModel baked = original.call(baker, model, spriteGetter, state, id, bl);
+
 		if (this.material != null) {
-			return new RenderMaterialModel(model, this.material);
-		} else if (blendMode != null) {
-			return new CustomBlendModeModel(model, blendMode);
+			return new RenderMaterialModel(baked, this.material);
+		} else if (this.blendMode != null) {
+			return new CustomBlendModeModel(baked, this.blendMode);
 		} else {
-			return model;
+			return baked;
 		}
 	}
 }
