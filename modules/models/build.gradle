@@ -4,5 +4,5 @@ portingLib {
 }
 
 dependencies {
-	modCompileOnly("io.vram:frex-fabric:$frex_version")
+	modCompileOnly("maven.modrinth:frex:$frex_version")
 }
