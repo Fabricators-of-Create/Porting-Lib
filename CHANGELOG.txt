@@ -1,1 +1,0 @@
-- made sure custom render materials on block models are always used
