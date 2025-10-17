@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Sets;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -30,25 +32,17 @@ public class MobEffectInstanceMixin implements MobEffectInstanceInjection {
 	private Holder<MobEffect> effect;
 
 	@Unique
-	private final Set<EffectCure> porting_lib$cures = Sets.newIdentityHashSet();
+	private final Supplier<Set<EffectCure>> porting_lib$cures = Suppliers.memoize(() -> {
+		var set = Sets.<EffectCure>newIdentityHashSet();
+		this.effect.value().fillEffectCures(set, MixinHelper.cast(this));
+		return set;
+	});
 
 	/**
 	 * {@return the {@link EffectCure}s which can cure the {@link MobEffect} held by this {@link MobEffectInstance}}
 	 */
 	public Set<EffectCure> getCures() {
-		return porting_lib$cures;
-	}
-
-	@Inject(method = "<init>(Lnet/minecraft/core/Holder;IIZZZLnet/minecraft/world/effect/MobEffectInstance;)V", at = @At("TAIL"))
-	private void addEffects(Holder<MobEffect> holder, int duration, int amplifier, boolean ambient, boolean visible, boolean showIcon, MobEffectInstance hiddenEffect, CallbackInfo ci) {
-		this.effect.value().fillEffectCures(this.porting_lib$cures, MixinHelper.cast(this));
-	}
-
-	@Inject(method = "<init>(Lnet/minecraft/core/Holder;Lnet/minecraft/world/effect/MobEffectInstance$Details;)V", at = @At("TAIL"))
-	private void loadEffects(Holder<MobEffect> effect, MobEffectInstance.Details details, CallbackInfo ci) {
-		Set<EffectCure> cures = getCures();
-		cures.clear();
-		((MobEffectInstance$DetailsInjection) (Object) details).port_lib$getCures().ifPresent(cures::addAll);
+		return porting_lib$cures.get();
 	}
 
 	@ModifyReturnValue(method = "asDetails", at = @At("RETURN"))
