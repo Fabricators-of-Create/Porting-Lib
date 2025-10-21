@@ -141,6 +141,7 @@
     "client.RenderTargetMixin",
     "client.SkullBlockRendererMixin",
     "client.TextureAtlasMixin",
+    "client.TooltipRenderUtilMixin",
     "client.frex.EntityBlockRenderContextMixin",
     "common.AbstractButtonAccessor"
   ],

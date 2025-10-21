@@ -1,7 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
 import java.util.List;
-import java.util.Optional;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -11,10 +13,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -27,9 +26,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 
 @Environment(EnvType.CLIENT)
@@ -64,45 +60,20 @@ public abstract class GuiGraphicsMixin {
 		port_lib$cachedStack = ItemStack.EMPTY;
 	}
 
-	@Inject(method = "renderTooltipInternal", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack$Pose;pose()Lorg/joml/Matrix4f;"))
-	private void port_lib$cacheBorderColors(Font font, List<ClientTooltipComponent> list, int i, int j, ClientTooltipPositioner clientTooltipPositioner, CallbackInfo ci) {
-		ScreenHelper.CURRENT_COLOR = RenderTooltipBorderColorCallback.EVENT.invoker()
-				.onTooltipBorderColor(port_lib$cachedStack, ScreenHelper.DEFAULT_BORDER_COLOR_START, ScreenHelper.DEFAULT_BORDER_COLOR_END);
-	}
+	@WrapOperation(
+			method = "renderTooltipInternal",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/gui/GuiGraphics;drawManaged(Ljava/lang/Runnable;)V"
+			)
+	)
+	private void modifyTooltipBorderColors(GuiGraphics self, Runnable runnable, Operation<Void> original) {
+		ScreenHelper.CURRENT_COLOR = RenderTooltipBorderColorCallback.EVENT.invoker().onTooltipBorderColor(
+				this.port_lib$cachedStack, ScreenHelper.DEFAULT_BORDER_COLOR_START, ScreenHelper.DEFAULT_BORDER_COLOR_END
+		);
 
-	@Inject(method = "renderTooltipInternal", at = @At("RETURN"))
-	private void port_lib$clearBorderColors(Font font, List<ClientTooltipComponent> list, int i, int j, ClientTooltipPositioner clientTooltipPositioner, CallbackInfo ci) {
+		original.call(self, runnable);
+
 		ScreenHelper.CURRENT_COLOR = null;
-	}
-
-	@ModifyVariable(
-			method = "fillGradient(Lcom/mojang/blaze3d/vertex/VertexConsumer;IIIIIII)V",
-			at = @At("HEAD"),
-			index = 4,
-			argsOnly = true
-	)
-	private int replaceA(int a) {
-		return port_lib$getColor(a);
-	}
-
-	@ModifyVariable(
-			method = "fillGradient(Lcom/mojang/blaze3d/vertex/VertexConsumer;IIIIIII)V",
-			at = @At("HEAD"),
-			index = 5,
-			argsOnly = true
-	)
-	private int replaceB(int b) {
-		return port_lib$getColor(b);
-	}
-
-	private static int port_lib$getColor(int original) {
-		if (ScreenHelper.CURRENT_COLOR != null) {
-			if (original == ScreenHelper.DEFAULT_BORDER_COLOR_START) {
-				return ScreenHelper.CURRENT_COLOR.getBorderColorStart();
-			} else if (original == ScreenHelper.DEFAULT_BORDER_COLOR_END) {
-				return ScreenHelper.CURRENT_COLOR.getBorderColorEnd();
-			}
-		}
-		return original;
 	}
 }
