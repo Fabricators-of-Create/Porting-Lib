@@ -1,1 +1,0 @@
-- fix RenderTooltipBorderColorCallback always getting an empty stack
