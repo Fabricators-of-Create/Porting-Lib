@@ -1,1 +1,0 @@
-- fixed RenderTooltipBorderColorCallback not doing anything
