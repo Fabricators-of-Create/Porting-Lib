@@ -15,7 +15,8 @@
   "custom": {
     "loom:injected_interfaces": {
       "net/minecraft/class_3283": ["io/github/fabricators_of_create/porting_lib/extensions/PackRepositoryExtension"],
-      "net/minecraft/class_2680": ["io/github/fabricators_of_create/porting_lib/extensions/BaseBlockStateExtension"]
+      "net/minecraft/class_2680": ["io/github/fabricators_of_create/porting_lib/extensions/BaseBlockStateExtension"],
+      "net/minecraft/class_2286": ["io/github/fabricators_of_create/porting_lib/extensions/ComparatorBlockExtension"]
     }
   }
 }

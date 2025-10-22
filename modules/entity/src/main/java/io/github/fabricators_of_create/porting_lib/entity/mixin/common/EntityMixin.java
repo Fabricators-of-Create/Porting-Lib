@@ -2,6 +2,13 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
 import java.util.Collection;
 
+import io.github.fabricators_of_create.porting_lib.fluids.FluidType;
+import io.github.fabricators_of_create.porting_lib.fluids.PortingLibFluids;
+import net.minecraft.core.BlockPos;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.level.material.FluidState;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -40,6 +47,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.PortalInfo;
+
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin implements EntityExtensions {
@@ -125,6 +134,9 @@ public abstract class EntityMixin implements EntityExtensions {
 	private Level level;
 
 	@Shadow
+	protected boolean wasEyeInWater;
+
+	@Shadow
 	public abstract void unRide();
 
 	@Shadow
@@ -157,6 +169,24 @@ public abstract class EntityMixin implements EntityExtensions {
 
 	@Shadow
 	public abstract float getEyeHeight();
+
+	@Shadow
+	public abstract double getX();
+
+	@Shadow
+	public abstract double getY();
+
+	@Shadow
+	public abstract double getZ();
+
+	@Shadow
+	public abstract double getEyeY();
+
+	@Shadow
+	public abstract Entity getVehicle();
+
+	@Shadow
+	public abstract Level level();
 
 	@Inject(
 			method = "startRiding(Lnet/minecraft/world/entity/Entity;Z)Z",
@@ -274,5 +304,23 @@ public abstract class EntityMixin implements EntityExtensions {
 	@Inject(method = "load", at = @At("RETURN"))
 	public void afterLoad(CompoundTag nbt, CallbackInfo ci) {
 		EntityDataEvents.LOAD.invoker().onLoad((Entity) (Object) this, nbt);
+	}
+
+	@Unique
+	private FluidType fluidTypeOnEyes = PortingLibFluids.EMPTY_TYPE;
+
+	@Inject(method = "updateFluidOnEyes", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/material/FluidState;getTags()Ljava/util/stream/Stream;"))
+	private void updateFluidOnEyesSetFluidTypeOnEyes(CallbackInfo ci, @Local FluidState fluidState) {
+		this.fluidTypeOnEyes = fluidState.getFluidType();
+	}
+
+	@Inject(method = "updateFluidOnEyes", at = @At("HEAD"))
+	private void updateFluidOnEyesResetFluidTypeOnEyes(CallbackInfo ci) {
+		this.fluidTypeOnEyes = PortingLibFluids.EMPTY_TYPE;
+	}
+
+	@Override
+	public FluidType getEyeInFluidType() {
+		return this.fluidTypeOnEyes;
 	}
 }

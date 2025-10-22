@@ -20,7 +20,8 @@
       "net/minecraft/class_1657": ["io/github/fabricators_of_create/porting_lib/entity/extensions/PlayerExtension"],
       "net/minecraft/class_1688": ["io/github/fabricators_of_create/porting_lib/entity/extensions/AbstractMinecartExtensions"],
       "net/minecraft/class_1792": ["io/github/fabricators_of_create/porting_lib/entity/extensions/ItemExtensions"],
-      "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/entity/extensions/LevelExtensions"]
+      "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/entity/extensions/LevelExtensions"],
+      "net/minecraft/class_1309": ["io/github/fabricators_of_create/porting_lib/entity/extensions/LivingEntityExtensions"]
     }
   }
 }
