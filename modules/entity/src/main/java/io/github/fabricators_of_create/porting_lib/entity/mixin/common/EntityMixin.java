@@ -41,22 +41,21 @@ import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.PortalInfo;
 
-@Mixin(Entity.class)
+// higher priority to apply after CCA
+@Mixin(value = Entity.class, priority = 1759)
 public abstract class EntityMixin implements EntityExtensions {
 	@Unique
 	private Collection<ItemEntity> port_lib$captureDrops = null;
 
-	@Inject(at = @At("TAIL"), method = "<init>")
-	public void port_lib$entityInit(EntityType<?> entityType, Level world, CallbackInfo ci) {
-		eyeHeight = EntityEvents.EYE_HEIGHT.invoker().onEntitySize((Entity) (Object) this, eyeHeight);
-	}
+	@Inject(method = "<init>", at = @At("TAIL"))
+	private void handleSizeEvent(EntityType<?> type, Level level, CallbackInfo ci) {
+		// fire deprecated event first
+		float eyeHeight = EntityEvents.EYE_HEIGHT.invoker().onEntitySize((Entity) (Object) this, this.eyeHeight);
 
-	@WrapOperation(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getEyeHeight(Lnet/minecraft/world/entity/Pose;Lnet/minecraft/world/entity/EntityDimensions;)F"))
-	private float entitySizeConstructEvent(Entity instance, Pose pose, EntityDimensions dimensions, Operation<Float> original) {
-		EntityEvents.Size sizeEvent = new EntityEvents.Size((Entity) (Object) this, Pose.STANDING, this.dimensions, original.call(instance, pose, dimensions));
+		EntityEvents.Size sizeEvent = new EntityEvents.Size((Entity) (Object) this, Pose.STANDING, this.dimensions, eyeHeight);
 		sizeEvent.sendEvent();
 		this.dimensions = sizeEvent.getNewSize();
-		return sizeEvent.getNewEyeHeight();
+		this.eyeHeight = sizeEvent.getNewEyeHeight();
 	}
 
 	@WrapOperation(method = "refreshDimensions", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getEyeHeight(Lnet/minecraft/world/entity/Pose;Lnet/minecraft/world/entity/EntityDimensions;)F"))

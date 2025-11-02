@@ -1,0 +1,1 @@
+- adjusted EntityEvent.Size hook to improve compatibility
