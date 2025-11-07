@@ -24,6 +24,7 @@ import net.minecraft.world.entity.LivingEntity;
  *
  * @see LivingDamageEvent
  **/
+@Deprecated(forRemoval = true)
 public class LivingHurtEvent extends LivingEvent implements CancellableEvent {
 	public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
 		for (final Callback callback : callbacks)

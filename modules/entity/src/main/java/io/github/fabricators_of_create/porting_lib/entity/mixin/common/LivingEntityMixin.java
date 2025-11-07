@@ -243,26 +243,6 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
 		return pAmount - eventRef.get().getBlockedDamage();
 	}
 
-	@ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 0), index = 2, argsOnly = true)
-	private float livingHurtEvent(float amount, DamageSource pDamageSource) {
-		return EntityHooks.onLivingHurt((LivingEntity) (Object) this, pDamageSource, amount);
-	}
-
-	@Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getDamageAfterArmorAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"), cancellable = true)
-	private void shouldCancelHurt(DamageSource damageSource, float amount, CallbackInfo ci) {
-		if (amount <= 0)
-			ci.cancel();
-	}
-
-//	@ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 6), index = 2) TODO: PORT
-//	private float livingDamageEvent(float value, DamageSource pDamageSource) {
-//		LivingDamageEvent event = new LivingDamageEvent((LivingEntity) (Object) this, pDamageSource, value);
-//		event.sendEvent();
-//		if (event.isCanceled())
-//			return 0;
-//		return event.getAmount();
-//	}
-
 	@Inject(method = "removeEffect", at = @At("HEAD"), cancellable = true)
 	private void onRemoveEffect(Holder<MobEffect> effect, CallbackInfoReturnable<Boolean> cir) {
 		if (EntityHooks.onEffectRemoved((LivingEntity) (Object) this, effect, null))
@@ -474,6 +454,26 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
 //		}
 
 		return container.getNewDamage();
+	}
+
+	@ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 0), index = 2, argsOnly = true)
+	private float livingHurtEvent(float amount, DamageSource pDamageSource) {
+		return EntityHooks.onLivingHurt((LivingEntity) (Object) this, pDamageSource, amount);
+	}
+
+	@Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getDamageAfterArmorAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"), cancellable = true)
+	private void shouldCancelHurt(DamageSource damageSource, float amount, CallbackInfo ci) {
+		if (amount <= 0)
+			ci.cancel();
+	}
+
+	@ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 6), index = 2)
+	private float livingDamageEvent(float value, DamageSource pDamageSource) {
+		LivingDamageEvent event = new LivingDamageEvent((LivingEntity) (Object) this, pDamageSource, value);
+		event.sendEvent();
+		if (event.isCanceled())
+			return 0;
+		return event.getAmount();
 	}
 
 	@Definition(id = "ServerPlayer", type = ServerPlayer.class)

@@ -6,6 +6,7 @@ import io.github.fabricators_of_create.porting_lib.entity.events.EntityInvulnera
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityMountEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityStruckByLightningEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityTeleportEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingDamageEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingDeathEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingAttackEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingDropsEvent;
@@ -152,6 +153,35 @@ public final class EntityHooks {
 		LivingUseTotemEvent event = new LivingUseTotemEvent(entity, damageSource, totem, hand);
 		event.sendEvent();
 		return !event.isCanceled();
+	}
+
+	/**
+	 * Creates and posts an {@link LivingDamageEvent.Pre}. This is invoked in
+	 * {@link LivingEntity#actuallyHurt(DamageSource, float)} and {@link Player#actuallyHurt(DamageSource, float)}
+	 * and requires access to the internal field {@link LivingEntity#damageContainers} as a parameter.
+	 *
+	 * @param entity    the entity to receive damage
+	 * @param container the container object holding the final values of the damage pipeline while they are still mutable
+	 * @return the current damage value to be applied to the entity's health
+	 *
+	 */
+	public static float onLivingDamagePre(LivingEntity entity, DamageContainer container) {
+		var event = new LivingDamageEvent.Pre(entity, container);
+		event.sendEvent();
+		return event.getNewDamage();
+	}
+
+	/**
+	 * Creates and posts a {@link LivingDamageEvent.Post}. This is invoked in
+	 * {@link LivingEntity#actuallyHurt(DamageSource, float)} and {@link Player#actuallyHurt(DamageSource, float)}
+	 * and requires access to the internal field {@link LivingEntity#damageContainers} as a parameter.
+	 *
+	 * @param entity    the entity to receive damage
+	 * @param container the container object holding the truly final values of the damage pipeline. The values
+	 *                  of this container and used to instantiate final fields in the event.
+	 */
+	public static void onLivingDamagePost(LivingEntity entity, DamageContainer container) {
+		new LivingDamageEvent.Post(entity, container).sendEvent();
 	}
 
 	public static float onLivingHurt(LivingEntity entity, DamageSource src, float amount) {

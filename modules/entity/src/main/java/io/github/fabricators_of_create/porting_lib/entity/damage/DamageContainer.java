@@ -8,6 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -215,6 +216,6 @@ public class DamageContainer {
 
 	@FunctionalInterface
 	public interface DamageConflictResolver {
-		float resolve(DamageConflictType type, float modifiedDamage, Object context);
+		float resolve(DamageConflictType type, float modifiedDamage, @Nullable Object context);
 	}
 }
