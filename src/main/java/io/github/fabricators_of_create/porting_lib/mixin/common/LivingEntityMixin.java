@@ -182,8 +182,7 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
 	@ModifyArgs(method = "dropExperience", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ExperienceOrb;award(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/phys/Vec3;I)V"))
 	private void create$dropExperience(Args args) {
 		int amount = args.get(2);
-		int newAmount = LivingEntityEvents.EXPERIENCE_DROP.invoker().onLivingEntityExperienceDrop(amount, lastHurtByPlayer);
-		newAmount = LivingEntityEvents.EXPERIENCE_DROP_WITH_ENTITY.invoker().onLivingEntityExperienceDrop(newAmount, lastHurtByPlayer, (LivingEntity) (Object) this);
+		int newAmount = PortingHooks.getExperienceDrop((LivingEntity) (Object) this, lastHurtByPlayer, amount);
 		if (amount != newAmount) args.set(2, newAmount);
 	}
 

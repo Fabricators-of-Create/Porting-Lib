@@ -4,6 +4,7 @@ import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.EntityEvents;
+import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEvents;
 import io.github.fabricators_of_create.porting_lib.event.common.ModsLoadedCallback;
 import io.github.fabricators_of_create.porting_lib.extensions.BlockItemExtensions;
 import io.github.fabricators_of_create.porting_lib.loot.IGlobalLootModifier;
@@ -13,6 +14,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryRemovedCallback;
+import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributeHandler;
@@ -30,6 +32,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -166,6 +169,9 @@ public class PortingHooks {
 					FluidVariantAttributes.register(fluid, new FluidVariantFluidAttributesHandler(fluid.getAttributes()));
 			});
 		});
+		LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
+			tableBuilder.setPortingLibLootTableId(id);
+		});
 	}
 
 	public static FluidAttributes getFluidAttributesFromVariant(Fluid fluid) {
@@ -206,5 +212,10 @@ public class PortingHooks {
 		if (killer instanceof LivingEntity)
 			return EnchantmentHelper.getMobLooting((LivingEntity)killer);
 		return 0;
+	}
+
+	public static int getExperienceDrop(LivingEntity entity, Player attackingPlayer, int originalExperience) {
+		int newAmount = LivingEntityEvents.EXPERIENCE_DROP.invoker().onLivingEntityExperienceDrop(originalExperience, attackingPlayer);
+		return LivingEntityEvents.EXPERIENCE_DROP_WITH_ENTITY.invoker().onLivingEntityExperienceDrop(newAmount, attackingPlayer, entity);
 	}
 }
