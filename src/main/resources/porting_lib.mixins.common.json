@@ -57,6 +57,7 @@
     "LiquidBlockMixin",
     "LivingEntityMixin",
     "LootContextMixin",
+    "LootingEnchantFunctionMixin",
     "LootPoolMixin",
     "LootPoolMixin$LootPoolBuilderMixin",
     "LootPoolMixin$LootPoolSerializerMixin",
