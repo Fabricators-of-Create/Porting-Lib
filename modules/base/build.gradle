@@ -6,5 +6,6 @@ portingLib.addModuleDependencies([
 		"entity",
 		"common",
 		"config",
+		"loot",
 		"tags"
 ])
