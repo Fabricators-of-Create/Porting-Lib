@@ -24,6 +24,8 @@
     "common.LightningBoltMixin",
     "common.LivingEntityMixin",
     "common.LlamaSpitMixin",
+    "common.LootingEnchantFunctionMixin",
+    "common.LootItemRandomChanceWithLootingConditionMixin",
     "common.MagmaCubeMixin",
     "common.MobEffectMixin",
     "common.MobMixin",
