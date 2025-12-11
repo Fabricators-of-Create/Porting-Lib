@@ -8,7 +8,6 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
-import io.github.fabricators_of_create.porting_lib.core.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 import io.github.fabricators_of_create.porting_lib.entity.events.player.CriticalHitEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.player.AttackEntityEvent;
@@ -45,12 +44,12 @@ public abstract class PlayerMixin extends LivingEntity implements PlayerInjectio
 
 	@Inject(method = "tick", at = @At("HEAD"))
 	public void playerStartTickEvent(CallbackInfo ci) {
-		EntityHooks.firePlayerTickPre(MixinHelper.cast(this));
+		EntityHooks.firePlayerTickPre((Player) (Object) this);
 	}
 
 	@Inject(method = "tick", at = @At("TAIL"))
 	public void playerEndTickEvent(CallbackInfo ci) {
-		EntityHooks.firePlayerTickPost(MixinHelper.cast(this));
+		EntityHooks.firePlayerTickPost((Player) (Object) this);
 	}
 
 	@Inject(method = "interactOn", at = @At(
@@ -59,7 +58,7 @@ public abstract class PlayerMixin extends LivingEntity implements PlayerInjectio
 			ordinal = 0
 	), cancellable = true)
 	public void onEntityInteract(Entity entityToInteractOn, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
-		InteractionResult cancelResult = EntityHooks.onInteractEntity(MixinHelper.cast(this), entityToInteractOn, hand);
+		InteractionResult cancelResult = EntityHooks.onInteractEntity((Player) (Object) this, entityToInteractOn, hand);
 		if (cancelResult != null) cir.setReturnValue(cancelResult);
 	}
 

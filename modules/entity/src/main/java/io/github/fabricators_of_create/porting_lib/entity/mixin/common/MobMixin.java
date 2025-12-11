@@ -1,6 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.core.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingChangeTargetEvent;
@@ -22,7 +21,7 @@ public abstract class MobMixin {
 
 	@ModifyVariable(method = "setTarget", at = @At("HEAD"), argsOnly = true)
 	private LivingEntity port_lib$onChangeTarget(LivingEntity value) {
-		LivingChangeTargetEvent changeTargetEvent = EntityHooks.onLivingChangeTarget(MixinHelper.cast(this), value, LivingChangeTargetEvent.LivingTargetType.MOB_TARGET);
+		LivingChangeTargetEvent changeTargetEvent = EntityHooks.onLivingChangeTarget((LivingEntity) (Object) this, value, LivingChangeTargetEvent.LivingTargetType.MOB_TARGET);
 		if(!changeTargetEvent.isCanceled()) {
 			return changeTargetEvent.getNewTarget();
 		}

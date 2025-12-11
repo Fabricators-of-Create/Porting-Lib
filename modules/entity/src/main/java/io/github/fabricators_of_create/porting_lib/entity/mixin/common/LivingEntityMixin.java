@@ -18,7 +18,6 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
-import io.github.fabricators_of_create.porting_lib.core.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.entity.EffectCure;
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingKnockBackEvent;
@@ -105,7 +104,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
 	@Inject(method = "dropAllDeathLoot", at = @At("TAIL"))
 	private void port_lib$dropCapturedDrops(ServerLevel level, DamageSource source, CallbackInfo ci) {
 		Collection<ItemEntity> drops = this.captureDrops(null);
-		if (!EntityHooks.onLivingDrops(MixinHelper.cast(this), source, drops, lastHurtByPlayerTime > 0))
+		if (!EntityHooks.onLivingDrops((LivingEntity) (Object) this, source, drops, lastHurtByPlayerTime > 0))
 			drops.forEach(e -> level().addFreshEntity(e));
 	}
 
@@ -146,7 +145,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
 
 	@ModifyVariable(method = "knockback", at = @At("HEAD"), ordinal = 0, argsOnly = true)
 	private double modifyKnockbackStrength(double strength, double ogstrength, double xRatio, double zRatio, @Share("event") LocalRef<LivingKnockBackEvent> eventRef) {
-		LivingKnockBackEvent event = EntityHooks.onLivingKnockBack(MixinHelper.cast(this), (float) strength, xRatio, zRatio);
+		LivingKnockBackEvent event = EntityHooks.onLivingKnockBack((LivingEntity) (Object) this, (float) strength, xRatio, zRatio);
 		eventRef.set(event);
 		if (!event.isCanceled() && event.getOriginalStrength() != event.getStrength()) {
 			return event.getStrength();
@@ -178,13 +177,13 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
 
 	@Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
 	private void onHurt(DamageSource damageSource, float amount, CallbackInfoReturnable<Boolean> cir) {
-		if (!EntityHooks.onLivingAttack(MixinHelper.cast(this), damageSource, amount))
+		if (!EntityHooks.onLivingAttack((LivingEntity) (Object) this, damageSource, amount))
 			cir.setReturnValue(false);
 	}
 
 	@Inject(method = "jumpFromGround", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/LivingEntity;hasImpulse:Z", shift = At.Shift.AFTER))
 	public void onJump(CallbackInfo ci) {
-		EntityHooks.onLivingJump(MixinHelper.cast(this));
+		EntityHooks.onLivingJump((LivingEntity) (Object) this);
 	}
 
 	@WrapOperation(method = "completeUsingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;finishUsingItem(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/item/ItemStack;"))
@@ -205,12 +204,12 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
 
 	@ModifyReturnValue(method = "getVisibilityPercent", at = @At("RETURN"))
 	private double modifyVisibility(double original, @javax.annotation.Nullable Entity pLookingEntity) {
-		return EntityHooks.getEntityVisibilityMultiplier(MixinHelper.cast(this), pLookingEntity, original);
+		return EntityHooks.getEntityVisibilityMultiplier((LivingEntity) (Object) this, pLookingEntity, original);
 	}
 
 	@Inject(method = "die", at = @At("HEAD"), cancellable = true)
 	private void onLivingDeath(DamageSource cause, CallbackInfo ci) {
-		if (EntityHooks.onLivingDeath(MixinHelper.cast(this), cause))
+		if (EntityHooks.onLivingDeath((LivingEntity) (Object) this, cause))
 			ci.cancel();
 	}
 

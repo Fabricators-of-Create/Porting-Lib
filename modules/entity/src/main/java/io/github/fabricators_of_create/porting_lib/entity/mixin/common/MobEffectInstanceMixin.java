@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
-import io.github.fabricators_of_create.porting_lib.core.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.entity.EffectCure;
 import io.github.fabricators_of_create.porting_lib.entity.injects.MobEffectInstance$DetailsInjection;
 import io.github.fabricators_of_create.porting_lib.entity.injects.MobEffectInstanceInjection;
@@ -41,7 +40,7 @@ public class MobEffectInstanceMixin implements MobEffectInstanceInjection {
 
 	@Inject(method = "<init>(Lnet/minecraft/core/Holder;IIZZZLnet/minecraft/world/effect/MobEffectInstance;)V", at = @At("TAIL"))
 	private void addEffects(Holder<MobEffect> holder, int duration, int amplifier, boolean ambient, boolean visible, boolean showIcon, MobEffectInstance hiddenEffect, CallbackInfo ci) {
-		this.effect.value().fillEffectCures(this.porting_lib$cures, MixinHelper.cast(this));
+		this.effect.value().fillEffectCures(this.porting_lib$cures, (MobEffectInstance) (Object) this);
 	}
 
 	@Inject(method = "<init>(Lnet/minecraft/core/Holder;Lnet/minecraft/world/effect/MobEffectInstance$Details;)V", at = @At("TAIL"))

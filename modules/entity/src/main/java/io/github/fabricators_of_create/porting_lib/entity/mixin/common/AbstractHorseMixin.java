@@ -1,9 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.core.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
 
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.phys.Vec3;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(AbstractHorse.class)
 public class AbstractHorseMixin {
-	@Inject(method = "executeRidersJump", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/animal/horse/AbstractHorse;hasImpulse:Z", shift = At.Shift.AFTER))
+	@Inject(method = "executeRidersJump", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/animal/equine/AbstractHorse;needsSync:Z", shift = At.Shift.AFTER))
 	private void onHorseJump(float f, Vec3 vec3, CallbackInfo ci) {
-		EntityHooks.onLivingJump(MixinHelper.cast(this));
+		EntityHooks.onLivingJump((LivingEntity) (Object) this);
 	}
 }

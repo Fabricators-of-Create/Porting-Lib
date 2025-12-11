@@ -4,13 +4,11 @@ import com.llamalad7.mixinextras.sugar.Share;
 
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
-import io.github.fabricators_of_create.porting_lib.core.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityTeleportEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
-import net.minecraft.world.entity.projectile.ThrownEnderpearl;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownEnderpearl;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 
@@ -30,7 +28,7 @@ public abstract class ThrownEnderpearlMixin extends ThrowableItemProjectile {
 
 	@Inject(method = "onHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/RandomSource;nextFloat()F"), cancellable = true)
 	private void onEnderPearlLand(HitResult result, CallbackInfo ci, @Share("teleport") LocalRef<EntityTeleportEvent.EnderPearl> eventRef) {
-		EntityTeleportEvent.EnderPearl event = EntityHooks.onEnderPearlLand((ServerPlayer) getOwner(), this.getX(), this.getY(), this.getZ(), MixinHelper.cast(this), 5.0F, result);
+		EntityTeleportEvent.EnderPearl event = EntityHooks.onEnderPearlLand((ServerPlayer) getOwner(), this.getX(), this.getY(), this.getZ(), (ThrownEnderpearl) (Object) this, 5.0F, result);
 		eventRef.set(event);
 		if (event.isCanceled()) {
 			discard();

@@ -1,11 +1,11 @@
 package io.github.fabricators_of_create.porting_lib.entity.injects;
 
-import io.github.fabricators_of_create.porting_lib.core.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.entity.IEntityWithComplexSpawn;
 import io.github.fabricators_of_create.porting_lib.entity.network.AdvancedAddEntityPayload;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 
 import java.util.Collection;
@@ -42,7 +42,7 @@ public interface EntityInjection {
 	 */
 	default void sendPairingData(ServerPlayer serverPlayer, Consumer<CustomPacketPayload> bundleBuilder) {
 		if (this instanceof IEntityWithComplexSpawn) {
-			bundleBuilder.accept(new AdvancedAddEntityPayload(MixinHelper.cast(this)));
+			bundleBuilder.accept(new AdvancedAddEntityPayload((Entity) this));
 		}
 	}
 }

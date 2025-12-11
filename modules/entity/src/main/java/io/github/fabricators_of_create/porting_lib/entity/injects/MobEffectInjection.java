@@ -1,6 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.entity.injects;
 
-import io.github.fabricators_of_create.porting_lib.core.util.MixinHelper;
 import io.github.fabricators_of_create.porting_lib.entity.EffectCure;
 import io.github.fabricators_of_create.porting_lib.entity.EffectCures;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -14,7 +13,7 @@ public interface MobEffectInjection {
 	 */
 	default void fillEffectCures(Set<EffectCure> cures, MobEffectInstance effectInstance) {
 		cures.addAll(EffectCures.DEFAULT_CURES);
-		if (MixinHelper.cast(this) == MobEffects.POISON.value()) {
+		if (this == MobEffects.POISON.value()) {
 			cures.add(EffectCures.HONEY);
 		}
 	}
