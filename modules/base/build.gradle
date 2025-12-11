@@ -8,7 +8,3 @@ portingLib.addModuleDependencies([
 		"config",
 		"tags"
 ])
-
-dependencies {
-	modCompileOnly("io.vram:frex-fabric:$frex_version")
-}

@@ -2,7 +2,6 @@
   "required": true,
   "minVersion": "0.8",
   "package": "io.github.fabricators_of_create.porting_lib.models.mixin",
-  "plugin": "io.github.fabricators_of_create.porting_lib.models.mixin.PortingLibModelsPlugin",
   "compatibilityLevel": "JAVA_17",
   "client": [
     "BlockElementFaceDeserializerMixin",
@@ -19,8 +18,7 @@
     "client.ScreenEffectRendererMixin",
     "client.TerrainParticle$ProviderMixin",
     "client.TerrainParticleMixin",
-    "client.TextureSheetParticleAccessor",
-    "client.frex.ItemRenderContextMixin"
+    "client.TextureSheetParticleAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

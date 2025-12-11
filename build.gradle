@@ -80,7 +80,6 @@ allprojects {
 		maven { url = "https://mvn.devos.one/snapshots/" }
 		maven { url = "https://maven.wispforest.io" }
 		maven { url = "https://cursemaven.com" }
-		maven { url = "https://maven.vram.io" }
 		maven {
 			url = "https://jitpack.io"
 			content {

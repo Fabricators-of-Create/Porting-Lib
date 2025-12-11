@@ -4,7 +4,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import io.github.fabricators_of_create.porting_lib.models.internal.TransformTypeDependentModelHelper;
-import io.github.fabricators_of_create.porting_lib.models.mixin.client.frex.ItemRenderContextMixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,9 +20,6 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
-/**
- * @see ItemRenderContextMixin
- */
 @Mixin(ItemRenderer.class)
 public class ItemRendererMixin {
 	@WrapOperation(
