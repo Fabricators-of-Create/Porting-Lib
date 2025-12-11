@@ -56,8 +56,9 @@ public class AddPackFindersEvent extends BaseEvent {
 	}
 
 	@Override
-	public void sendEvent() {
+	public AddPackFindersEvent sendEvent() {
 		EVENT.invoker().findPacks(this);
+		return this;
 	}
 
 	public interface Callback {

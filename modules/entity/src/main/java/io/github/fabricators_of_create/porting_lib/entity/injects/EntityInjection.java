@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.function.Consumer;
 
 public interface EntityInjection {
-	default CompoundTag getCustomData() {
+	default CompoundTag getPortLibPersistentData() {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 

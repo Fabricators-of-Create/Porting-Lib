@@ -4,7 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import com.llamalad7.mixinextras.sugar.Local;
 
-import io.github.fabricators_of_create.porting_lib.client_events.EntityShaderManager;
+import io.github.fabricators_of_create.porting_lib.client_events.EntitySpectatorShaderManager;
 import io.github.fabricators_of_create.porting_lib.client_events.event.client.ViewportEvent;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.GameRenderer;
@@ -26,7 +26,7 @@ public abstract class GameRendererMixin {
 	@Inject(method = "checkEntityPostEffect", at = @At("TAIL"))
 	private void addCustomShader(Entity entity, CallbackInfo ci) {
 		if (entity != null) {
-			var shader = EntityShaderManager.get(entity.getType());
+			var shader = EntitySpectatorShaderManager.get(entity.getType());
 			if (shader != null)
 				loadEffect(shader);
 		}

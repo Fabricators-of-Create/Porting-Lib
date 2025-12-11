@@ -3,13 +3,16 @@ package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 import java.util.Collection;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
+import io.github.fabricators_of_create.porting_lib.entity.EntityDataKeys;
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityInvulnerabilityCheckEvent;
 
 import net.minecraft.world.damagesource.DamageSource;
+
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,9 +27,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.EntityDataEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvents;
-import io.github.fabricators_of_create.porting_lib.entity.events.MinecartEvents;
 import io.github.fabricators_of_create.porting_lib.entity.injects.EntityInjection;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
@@ -37,6 +38,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.Level;
 
+@SuppressWarnings("DiscouragedShift") // Why the fuck was this added
 @Mixin(Entity.class)
 public abstract class EntityMixin implements EntityInjection {
 	@Unique
@@ -55,37 +57,6 @@ public abstract class EntityMixin implements EntityInjection {
 		EntityDimensions newD = original.call(instance, pose);
 		EntityEvents.Size sizeEvent = EntityHooks.getEntitySizeForge(instance, pose, old, newD, newD.eyeHeight());
 		return sizeEvent.getNewSize();
-	}
-
-	// CAPTURE DROPS
-
-	@WrapWithCondition(
-			method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
-			)
-	)
-	public boolean port_lib$captureDrops(Level level, Entity entity) {
-		if (port_lib$captureDrops != null && entity instanceof ItemEntity item) {
-			port_lib$captureDrops.add(item);
-			return false;
-		}
-		return true;
-	}
-
-	@Unique
-	@Override
-	public Collection<ItemEntity> captureDrops() {
-		return port_lib$captureDrops;
-	}
-
-	@Unique
-	@Override
-	public Collection<ItemEntity> captureDrops(Collection<ItemEntity> value) {
-		Collection<ItemEntity> ret = port_lib$captureDrops;
-		port_lib$captureDrops = value;
-		return ret;
 	}
 
 	@Shadow
@@ -111,7 +82,7 @@ public abstract class EntityMixin implements EntityInjection {
 	private float eyeHeight;
 
 	@Inject(
-			method = "startRiding(Lnet/minecraft/world/entity/Entity;Z)Z",
+			method = "startRiding(Lnet/minecraft/world/entity/Entity;ZZ)Z",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/entity/Entity;canRide(Lnet/minecraft/world/entity/Entity;)Z",
@@ -119,73 +90,51 @@ public abstract class EntityMixin implements EntityInjection {
 			),
 			cancellable = true
 	)
-	public void port_lib$startRiding(Entity entity, boolean bl, CallbackInfoReturnable<Boolean> cir) {
+	public void startRiding(Entity entity, boolean force, boolean sendGameEvent, CallbackInfoReturnable<Boolean> cir) {
 		if (!EntityHooks.canMountEntity((Entity) (Object) this, entity, true))
 			cir.setReturnValue(false);
 	}
 
 	@Inject(method = "removeVehicle", at = @At(value = "CONSTANT", args = "nullValue=true"), cancellable = true)
-	public void port_lib$removeRidingEntity(CallbackInfo ci) {
+	public void removeRidingEntity(CallbackInfo ci) {
 		if (!EntityHooks.canMountEntity((Entity) (Object) this, this.vehicle, false))
 			ci.cancel();
-	}
-
-	@Inject(method = "remove", at = @At("TAIL"))
-	public void port_lib$onEntityRemove(Entity.RemovalReason reason, CallbackInfo ci) {
-//		EntityEvent.ON_REMOVE.invoker().onRemove((Entity) (Object) this, reason); TODO: PORT
-		if ((Object) this instanceof AbstractMinecart cart) {
-			MinecartEvents.REMOVE.invoker().minecartRemove(cart, level);
-		}
 	}
 
 	// custom data
 
 	@Unique
-	private CompoundTag customData;
+	private CompoundTag port_lib$persistentData;
 
 	@Inject(
 			method = "saveWithoutId",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/world/entity/Entity;addAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"
+					target = "Lnet/minecraft/world/entity/Entity;addAdditionalSaveData(Lnet/minecraft/world/level/storage/ValueOutput;)V",
+					shift = At.Shift.BEFORE
 			)
 	)
-	private void saveCustomData(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
-		if (customData != null && !customData.isEmpty()) {
-			tag.put("ForgeData", customData);
-		}
+	private void saveCustomData(ValueOutput output, CallbackInfo ci) {
+		output.storeNullable(EntityDataKeys.EXTRA_DATA_KEY, CompoundTag.CODEC, port_lib$persistentData);
 	}
 
 	@Inject(
 			method = "load",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/world/entity/Entity;readAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"
+					target = "Lnet/minecraft/world/entity/Entity;readAdditionalSaveData(Lnet/minecraft/world/level/storage/ValueInput;)V",
+					shift = At.Shift.BEFORE
 			)
 	)
-	private void loadCustomData(CompoundTag tag, CallbackInfo ci) {
-		if (tag.contains("ForgeData")) {
-			customData = tag.getCompound("ForgeData");
-		}
+	private void loadCustomData(ValueInput input, CallbackInfo ci) {
+		input.read(EntityDataKeys.EXTRA_DATA_KEY, CompoundTag.CODEC).ifPresent(neoData -> this.port_lib$persistentData = neoData);
 	}
 
 	@Override
-	public CompoundTag getCustomData() {
-		if (customData == null)
-			customData = new CompoundTag();
-		return customData;
-	}
-
-	// data events
-
-	@Inject(method = "saveWithoutId", at = @At("RETURN"))
-	public void afterSave(CompoundTag nbt, CallbackInfoReturnable<CompoundTag> cir) {
-		EntityDataEvents.SAVE.invoker().onSave((Entity) (Object) this, nbt);
-	}
-
-	@Inject(method = "load", at = @At("RETURN"))
-	public void afterLoad(CompoundTag nbt, CallbackInfo ci) {
-		EntityDataEvents.LOAD.invoker().onLoad((Entity) (Object) this, nbt);
+	public CompoundTag getPortLibPersistentData() {
+		if (port_lib$persistentData == null)
+			port_lib$persistentData = new CompoundTag();
+		return port_lib$persistentData;
 	}
 
 	@WrapOperation(method = "rideTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"))

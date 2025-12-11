@@ -1,3 +1,1 @@
-dependencies {
-	modImplementation(include("com.github.Chocohead:Fabric-ASM:v2.3"))
-}
+portingLib.addModuleDependency("client_extensions")

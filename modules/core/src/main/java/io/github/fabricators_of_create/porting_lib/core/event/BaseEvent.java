@@ -16,5 +16,5 @@ package io.github.fabricators_of_create.porting_lib.core.event;
 public abstract class BaseEvent {
 	boolean isCanceled;
 
-	public abstract void sendEvent();
+	public abstract BaseEvent sendEvent();
 }

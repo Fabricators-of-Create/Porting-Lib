@@ -1,16 +1,19 @@
 package io.github.fabricators_of_create.porting_lib.client_events.mixin.client;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import io.github.fabricators_of_create.porting_lib.client_events.ClientEventHooks;
 import io.github.fabricators_of_create.porting_lib.client_events.event.client.ViewportEvent;
 import net.minecraft.client.Camera;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.FogRenderer;
 
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.fog.FogRenderer;
 import net.minecraft.world.level.material.FogType;
 
+import org.joml.Vector4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,23 +22,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(FogRenderer.class)
 public abstract class FogRendererMixin {
-	@Shadow
-	private static float fogRed;
-
-	@Shadow
-	private static float fogGreen;
-
-	@Shadow
-	private static float fogBlue;
-
-	@Inject(method = "setupColor", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clearColor(FFFF)V", ordinal = 1))
-	private static void port_lib$setupColorEvent(Camera activeRenderInfo, float partialTicks, ClientLevel level, int renderDistanceChunks, float bossColorModifier, CallbackInfo ci) {
-		ViewportEvent.ComputeFogColor event = new ViewportEvent.ComputeFogColor(activeRenderInfo, partialTicks, fogRed, fogGreen, fogBlue);
-		event.sendEvent();
-
-		fogRed = event.getRed();
-		fogGreen = event.getGreen();
-		fogBlue = event.getBlue();
+	@ModifyReturnValue(method = "computeFogColor", at = @At("RETURN"))
+	private static Vector4f computeFogColorEvent(Vector4f original, Camera p_423439_, float p_423466_, ClientLevel p_423475_, int p_423484_, float p_423652_) {
+		return ClientEventHooks.getFogColor(p_423439_, p_423466_, p_423475_, p_423484_, p_423652_, original.x, original.y, original.z);
 	}
 
 	@Inject(method = "setupFog", at = @At("TAIL"))

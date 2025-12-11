@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.entity;
 
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityEvents;
+import io.github.fabricators_of_create.porting_lib.entity.events.EntityInvulnerabilityCheckEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityMountEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityStruckByLightningEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.EntityTeleportEvent;
@@ -83,11 +84,10 @@ public final class EntityHooks {
 	}
 
 	public static boolean canMountEntity(Entity entityMounting, Entity entityBeingMounted, boolean isMounting) {
-		EntityMountEvent event = new EntityMountEvent(entityMounting, entityBeingMounted, entityMounting.level(), isMounting);
-		event.sendEvent();
+		boolean isCanceled = new EntityMountEvent(entityMounting, entityBeingMounted, entityMounting.level(), isMounting).post();
 
-		if (event.isCanceled()) {
-			entityMounting.absMoveTo(entityMounting.getX(), entityMounting.getY(), entityMounting.getZ(), entityMounting.yRotO, entityMounting.xRotO);
+		if (isCanceled) {
+			entityMounting.absSnapTo(entityMounting.getX(), entityMounting.getY(), entityMounting.getZ(), entityMounting.yRotO, entityMounting.xRotO);
 			return false;
 		} else
 			return true;
@@ -98,6 +98,20 @@ public final class EntityHooks {
 		event.sendEvent();
 
 		return event;
+	}
+
+	/**
+	 * Creates and posts an {@link EntityInvulnerabilityCheckEvent}. This is invoked in
+	 * {@link Entity#isInvulnerableToBase(DamageSource)} and returns a post-listener result
+	 * to the invulnerability status of the entity to the damage source.
+	 *
+	 * @param entity  the entity being checked for invulnerability
+	 * @param source  the damage source being applied for this check
+	 * @param isInvul whether this entity is invulnerable according to preceding/vanilla logic
+	 * @return if this entity is invulnerable
+	 */
+	public static boolean isEntityInvulnerableTo(Entity entity, DamageSource source, boolean isInvul) {
+		return NeoForge.EVENT_BUS.post(new EntityInvulnerabilityCheckEvent(entity, source, isInvul)).isInvulnerable();
 	}
 
 	public static boolean onLivingAttack(LivingEntity entity, DamageSource src, float amount) {

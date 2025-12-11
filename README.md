@@ -51,6 +51,12 @@ Just choose a version and use its version number.
 | `tags`                    | Forge tags                                                                                     |
 | `transfer`                | Storage implementations, client-side lookup, FluidStack, assorted transfer utilities           |
 
+### Compatibility Modules
+#### These modules are for compat between modules (This is experimental and may be removed)
+| Module                    | Description                                                                                    |
+|---------------------------|------------------------------------------------------------------------------------------------|
+
+
 ### Contributing
 See [the contribution information](CONTRIBUTING.md).
 

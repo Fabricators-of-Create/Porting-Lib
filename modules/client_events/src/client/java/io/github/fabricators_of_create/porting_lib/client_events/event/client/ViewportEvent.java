@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.level.material.FogType;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.joml.Vector4f;
 
 /**
  * Fired for hooking into the entity view rendering in {@link GameRenderer}.
@@ -192,9 +193,13 @@ public abstract class ViewportEvent extends BaseEvent {
 	 * <p>This event is fired only on the {@linkplain EnvType#CLIENT logical client}.</p>
 	 */
 	public static class ComputeFogColor extends ViewportEvent {
-		private float red;
-		private float green;
-		private float blue;
+		private Vector4f fogColor;
+
+		@ApiStatus.Internal
+		public ComputeFogColor(Camera camera, float partialTicks, Vector4f fogColor) {
+			super(Minecraft.getInstance().gameRenderer, camera, partialTicks);
+			this.setFogColor(fogColor);
+		}
 
 		@ApiStatus.Internal
 		public ComputeFogColor(Camera camera, float partialTicks, float red, float green, float blue) {
@@ -204,11 +209,19 @@ public abstract class ViewportEvent extends BaseEvent {
 			this.setBlue(blue);
 		}
 
+		public Vector4f getFogColor() {
+			return fogColor;
+		}
+
+		public void setFogColor(Vector4f fogColor) {
+			this.fogColor = fogColor;
+		}
+
 		/**
 		 * {@return the red color value of the fog}
 		 */
 		public float getRed() {
-			return red;
+			return fogColor.x;
 		}
 
 		/**
@@ -217,14 +230,14 @@ public abstract class ViewportEvent extends BaseEvent {
 		 * @param red the new red color value
 		 */
 		public void setRed(float red) {
-			this.red = red;
+			this.fogColor.x = red;
 		}
 
 		/**
 		 * {@return the green color value of the fog}
 		 */
 		public float getGreen() {
-			return green;
+			return fogColor.y;
 		}
 
 		/**
@@ -233,14 +246,14 @@ public abstract class ViewportEvent extends BaseEvent {
 		 * @param green the new blue color value
 		 */
 		public void setGreen(float green) {
-			this.green = green;
+			this.fogColor.y = green;
 		}
 
 		/**
 		 * {@return the blue color value of the fog}
 		 */
 		public float getBlue() {
-			return blue;
+			return fogColor.z;
 		}
 
 		/**
@@ -249,7 +262,7 @@ public abstract class ViewportEvent extends BaseEvent {
 		 * @param blue the new blue color value
 		 */
 		public void setBlue(float blue) {
-			this.blue = blue;
+			this.fogColor.z = blue;
 		}
 
 		public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
@@ -259,8 +272,9 @@ public abstract class ViewportEvent extends BaseEvent {
 		});
 
 		@Override
-		public void sendEvent() {
+		public ComputeFogColor sendEvent() {
 			EVENT.invoker().onComputeFogColor(this);
+			return this;
 		}
 
 		public interface Callback {

@@ -17,6 +17,15 @@ for (File file in getFile("modules").listFiles()) {
 	}
 }
 
+for (File file in getFile("modules_compat").listFiles()) {
+	if (isModuleDir(file)) {
+		String name = file.name
+		include(name)
+		ProjectDescriptor project = project(":" + name)
+		project.projectDir = getFile("modules_compat/" + name)
+	}
+}
+
 // jank! why is this needed??
 def getFile(String name) {
 	return file(name)
