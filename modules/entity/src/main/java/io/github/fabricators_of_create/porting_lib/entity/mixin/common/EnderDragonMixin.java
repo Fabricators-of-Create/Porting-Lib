@@ -1,13 +1,11 @@
-package io.github.fabricators_of_create.porting_lib.mixin.common;
+package io.github.fabricators_of_create.porting_lib.entity.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
+import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 
 import net.minecraft.world.entity.player.Player;
-
 import net.minecraft.world.level.Level;
 
 import org.jetbrains.annotations.Nullable;
@@ -40,9 +38,9 @@ public abstract class EnderDragonMixin extends Mob {
 	}
 
 	@ModifyArgs(method = "tickDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ExperienceOrb;award(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/phys/Vec3;I)V"))
-	private void create$dropExperience(Args args) {
+	private void dropExperience(Args args) {
 		int amount = args.get(2);
-		int newAmount = PortingHooks.getExperienceDrop(this, port_lib$unlimitedLastHurtByPlayer, amount);
+		int newAmount = EntityHooks.getExperienceDrop(this, port_lib$unlimitedLastHurtByPlayer, amount);
 		if (amount != newAmount) args.set(2, newAmount);
 	}
 }
