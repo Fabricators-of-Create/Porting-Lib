@@ -8,6 +8,8 @@ import net.minecraft.core.HolderLookup;
 
 import net.minecraft.nbt.Tag;
 
+import net.minecraft.world.ItemStackWithSlot;
+
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
@@ -81,18 +83,8 @@ public class ItemStackHandlerSlot extends SingleStackStorage {
 		handler.onContentsChanged(index);
 	}
 
-	/**
-	 * Save this slot to a new NBT tag.
-	 * Note that "Slot" is a reserved key.
-	 * @return null to skip saving this slot
-	 */
-	@Nullable
-	public Tag save(HolderLookup.Provider provider, Tag tag) {
-		return stack.save(provider, tag);
-	}
-
-	public void load(HolderLookup.Provider provider, CompoundTag tag) {
-		ItemStack.parse(provider, tag).ifPresent(this::setStack);
+	public void load(ItemStackWithSlot slot) {
+		setStack(slot.stack());
 		onStackChange();
 		// intentionally do not notify handler, matches forge
 	}

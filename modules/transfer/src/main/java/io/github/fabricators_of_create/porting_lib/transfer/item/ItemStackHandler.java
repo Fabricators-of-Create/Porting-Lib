@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
-import io.github.fabricators_of_create.porting_lib.core.util.INBTSerializable;
+import io.github.fabricators_of_create.porting_lib.core.util.ValueIOSerializable;
 import io.github.fabricators_of_create.porting_lib.util.DualSortedSetIterator;
 import io.github.fabricators_of_create.porting_lib.util.EmptySortedSet;
 import io.github.fabricators_of_create.porting_lib.util.ItemStackUtil;
@@ -10,14 +10,13 @@ import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.world.ItemStackWithSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,7 +30,8 @@ import java.util.SortedSet;
 /**
  * An implementation of a item storage designed for ease of use and speed.
  */
-public class ItemStackHandler implements SlottedStackStorage, INBTSerializable<CompoundTag> {
+@Deprecated(forRemoval = true) // fabric notice I've never liked this implementation and neo is removing it for a more "fabric" based implementation
+public class ItemStackHandler implements SlottedStackStorage, ValueIOSerializable {
 	private final List<ItemStackHandlerSlot> slots;
 	private final SortedSet<ItemStackHandlerSlot> nonEmptySlots;
 	private final Map<Item, SortedSet<ItemStackHandlerSlot>> lookup;
@@ -191,35 +191,25 @@ public class ItemStackHandler implements SlottedStackStorage, INBTSerializable<C
 	// serialization
 
 	@Override
-	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
-		CompoundTag nbt = new CompoundTag();
-		nbt.putInt("Size", this.slots.size());
-
-		ListTag slots = new ListTag();
+	public void serialize(ValueOutput output) {
+		ValueOutput.TypedOutputList<ItemStackWithSlot> itemList = output.list("Items", ItemStackWithSlot.CODEC);
 		for (ItemStackHandlerSlot slot : this.slots) {
-			if (!slot.getStack().isEmpty()) {
-				CompoundTag itemTag = new CompoundTag();
-				itemTag.putInt("Slot", slot.getIndex());
-				slots.add(slot.save(provider, itemTag));
+			var stack = slot.getStack();
+			if (!stack.isEmpty()) {
+				itemList.add(new ItemStackWithSlot(slot.getIndex(), stack));
 			}
 		}
-
-		nbt.put("Items", slots);
-		return nbt;
+		output.putInt("Size", this.slots.size());
 	}
 
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
-		setSize(nbt.contains("Size", Tag.TAG_INT) ? nbt.getInt("Size") : slots.size()); // also clears
-		ListTag slots = nbt.getList("Items", Tag.TAG_COMPOUND);
-		for (int i = 0; i < slots.size(); i++) {
-			CompoundTag slotTag = slots.getCompound(i);
-			int index = slotTag.getInt("Slot");
-
-			if (index >= 0 && index < this.slots.size()) {
-				this.slots.get(index).load(provider, slotTag);
+	public void deserialize(ValueInput input) {
+		setSize(input.getIntOr("Size", slots.size()));
+		input.listOrEmpty("Items", ItemStackWithSlot.CODEC).forEach(slot -> {
+			if (slot.isValidInContainer(slots.size())) {
+				this.slots.get(slot.slot()).load(slot);
 			}
-		}
+		});
 		onLoad();
 	}
 

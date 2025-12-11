@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.core.util.INBTSerializable;
+import io.github.fabricators_of_create.porting_lib.core.util.ValueIOSerializable;
 import net.minecraft.core.HolderLookup;
 
 import org.jetbrains.annotations.Nullable;
@@ -13,7 +13,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 @Mixin(Entity.class)
-public abstract class EntityMixin implements INBTSerializable<CompoundTag> {
+public abstract class EntityMixin implements ValueIOSerializable<CompoundTag> {
 	@Shadow
 	private Level level;
 	@Shadow
