@@ -9,8 +9,6 @@ import io.github.fabricators_of_create.porting_lib.models.TransformTypeDependent
 
 import io.github.fabricators_of_create.porting_lib.models.mixin.client.ItemRendererMixin;
 
-import io.github.fabricators_of_create.porting_lib.models.mixin.client.frex.ItemRenderContextMixin;
-
 import org.jetbrains.annotations.ApiStatus.Internal;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -19,7 +17,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.item.ItemDisplayContext;
 
 /**
- * Common code used in {@link ItemRendererMixin} and {@link ItemRenderContextMixin}
+ * Common code used in {@link ItemRendererMixin}
  */
 @Internal
 public class TransformTypeDependentModelHelper {

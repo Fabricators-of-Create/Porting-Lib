@@ -15,8 +15,11 @@ import net.minecraft.world.item.ItemStack;
 public class PiglinAiMixin {
 	@Inject(method = "isWearingGold", at = @At("HEAD"), cancellable = true)
 	private static void isNeutralItem(LivingEntity entity, CallbackInfoReturnable<Boolean> cir) {
-		for(ItemStack armor : entity.getArmorSlots())
-			if(armor.getItem() instanceof PiglinsNeutralItem piglinsNeutralItem)
+		for(ItemStack armor : entity.getArmorSlots()) {
+			if(armor.getItem() instanceof PiglinsNeutralItem piglinsNeutralItem) {
 				cir.setReturnValue(piglinsNeutralItem.makesPiglinsNeutral(armor, entity));
+				return;
+			}
+		}
 	}
 }

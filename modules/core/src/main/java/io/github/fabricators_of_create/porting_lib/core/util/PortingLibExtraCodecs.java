@@ -312,6 +312,7 @@ public class PortingLibExtraCodecs {
 
 	// Porting lib added
 
+	public static final Codec<Long> NON_NEGATIVE_LONG = longRangeWithMessage(0, Long.MAX_VALUE, (value) -> "Value must be non-negative: " + value);
 	public static final Codec<Long> POSITIVE_LONG = longRangeWithMessage(1, Long.MAX_VALUE, (value) -> "Value must be positive: " + value);
 
 	private static Codec<Long> longRangeWithMessage(long min, long max, Function<Long, String> errorMessage) {

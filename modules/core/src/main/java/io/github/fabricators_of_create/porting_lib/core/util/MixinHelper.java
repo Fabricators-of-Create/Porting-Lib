@@ -2,6 +2,10 @@ package io.github.fabricators_of_create.porting_lib.core.util;
 
 import org.jetbrains.annotations.Contract;
 
+/**
+ * Use of this class is discouraged because mixin automatically removes casting for you.
+ */
+@Deprecated(forRemoval = true)
 public final class MixinHelper {
 	/**
 	 * A simple utility method that casts an object to a type.
