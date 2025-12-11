@@ -60,8 +60,10 @@ import net.minecraft.world.level.block.state.BlockState;
 @SuppressWarnings({"removal", "unused"})
 public class TransferUtil {
 	/**
+	 * @deprecated This should not be use, and you should favor passing transactions down the stack
 	 * @return Either an outer transaction or a nested one in the current open one
 	 */
+	@Deprecated(forRemoval = true)
 	public static Transaction getTransaction() {
 		if (Transaction.isOpen()) {
 			//noinspection deprecation
