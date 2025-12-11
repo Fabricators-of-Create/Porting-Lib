@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import io.github.fabricators_of_create.porting_lib.command.ModIdArgument;
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
-import io.github.fabricators_of_create.porting_lib.transfer.item.ItemItemStorages;
-import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 
@@ -24,7 +22,6 @@ public class PortingLibBase implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("Porting Lib Base");
 	@Override
 	public void onInitialize() {
-		ItemItemStorages.init();
 		UsernameCache.load();
 		// can be used to force all mixins to apply
 		// MixinEnvironment.getCurrentEnvironment().audit();
