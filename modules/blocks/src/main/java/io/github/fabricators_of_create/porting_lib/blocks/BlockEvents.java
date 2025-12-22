@@ -65,8 +65,9 @@ public final class BlockEvents {
 		}
 
 		@Override
-		public void sendEvent() {
+		public HarvestCheck sendEvent() {
 			EVENT.invoker().onHarvest(this);
+			return this;
 		}
 	}
 
