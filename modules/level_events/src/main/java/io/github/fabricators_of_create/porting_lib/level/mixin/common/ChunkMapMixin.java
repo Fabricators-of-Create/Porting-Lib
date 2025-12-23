@@ -6,6 +6,7 @@ import io.github.fabricators_of_create.porting_lib.level.events.ChunkDataEvent;
 import io.github.fabricators_of_create.porting_lib.level.events.ChunkTicketLevelUpdatedEvent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.ChunkLevel;
 import net.minecraft.server.level.ChunkMap;
 
 import net.minecraft.server.level.ServerLevel;
@@ -27,9 +28,9 @@ public class ChunkMapMixin {
 	@Final
 	private ServerLevel level;
 
-	@Inject(method = "updateChunkScheduling", at = @At(value = "RETURN", ordinal = 1))
+	@Inject(method = "updateChunkScheduling", at = @At(value = "RETURN"))
 	private void callChunkTicketLevelUpdated(long chunkPos, int newLevel, ChunkHolder holder, int oldLevel, CallbackInfoReturnable<ChunkHolder> cir) {
-		if (oldLevel != newLevel) {
+		if ((ChunkLevel.isLoaded(oldLevel) || ChunkLevel.isLoaded(newLevel)) && oldLevel != newLevel) {
 			(new ChunkTicketLevelUpdatedEvent(level, chunkPos, oldLevel, newLevel, holder)).sendEvent();
 		}
 	}
