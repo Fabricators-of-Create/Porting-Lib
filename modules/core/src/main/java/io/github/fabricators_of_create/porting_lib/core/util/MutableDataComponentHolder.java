@@ -7,6 +7,7 @@ import net.minecraft.core.component.DataComponentHolder;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 public interface MutableDataComponentHolder extends DataComponentHolder {
@@ -14,7 +15,19 @@ public interface MutableDataComponentHolder extends DataComponentHolder {
 	 * Sets a data component.
 	 */
 	@Nullable
-	<T> T set(DataComponentType<? super T> componentType, @Nullable T value);
+	default <T> T set(DataComponentType<? super T> componentType, @Nullable T value) {
+		return this.method_57379(componentType, value);
+	}
+
+	/**
+	 * Just like {@link MutableDataComponentHolder#set(Supplier, Object)}, except this runs in production environments.
+	 */
+	@Deprecated(forRemoval = true)
+	@ApiStatus.NonExtendable
+	@Nullable
+	default <T> T method_57379(DataComponentType<? super T> componentType, @Nullable T value) {
+		return this.set(componentType, value);
+	}
 
 	/**
 	 * Sets a data component.
@@ -60,7 +73,19 @@ public interface MutableDataComponentHolder extends DataComponentHolder {
 	 * Removes a data component.
 	 */
 	@Nullable
-	<T> T remove(DataComponentType<? extends T> componentType);
+	default <T> T remove(DataComponentType<? extends T> componentType) {
+		return this.method_57381(componentType);
+	}
+
+	/**
+	 * Just like {@link MutableDataComponentHolder#remove(DataComponentType)}, except this runs in production environments.
+	 */
+	@Deprecated(forRemoval = true)
+	@ApiStatus.NonExtendable
+	@Nullable
+	default <T> T method_57381(DataComponentType<? extends T> componentType) {
+		return this.remove(componentType);
+	}
 
 	/**
 	 * Removes a data component.
@@ -95,12 +120,34 @@ public interface MutableDataComponentHolder extends DataComponentHolder {
 	/**
 	 * Applies a set of component changes to this stack.
 	 */
-	void applyComponents(DataComponentPatch patch);
+	default void applyComponents(DataComponentPatch patch) {
+		this.method_57366(patch);
+	}
+
+	/**
+	 * Just like {@link MutableDataComponentHolder#applyComponents(DataComponentPatch)}, except this runs in production environments.
+	 */
+	@Deprecated(forRemoval = true)
+	@ApiStatus.NonExtendable
+	default void method_57366(DataComponentPatch patch) {
+		this.applyComponents(patch);
+	}
 
 	/**
 	 * Applies a set of component changes to this stack.
 	 */
-	void applyComponents(DataComponentMap components);
+	default void applyComponents(DataComponentMap components) {
+		this.method_57365(components);
+	}
+
+	/**
+	 * Just like {@link MutableDataComponentHolder#applyComponents(DataComponentMap)}, except this runs in production environments.
+	 */
+	@Deprecated(forRemoval = true)
+	@ApiStatus.NonExtendable
+	default void method_57365(DataComponentMap patch) {
+		this.applyComponents(patch);
+	}
 
 	private <T> void copyFrom(DataComponentType<T> componentType, DataComponentHolder src) {
 		set(componentType, src.get(componentType));
