@@ -7,7 +7,6 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "StructureBlockEntityMixin",
-    "TestCommandMixin"
+    "StructureBlockEntityMixin"
   ]
 }

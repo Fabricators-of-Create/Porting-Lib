@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_gametest_test",
+  "version": "${version}",
+  "name": "Porting Lib GameTest Test",
+  "description": "Testing of Porting Lib GameTest module.",
+  "entrypoints": {
+    "fabric-gametest": [
+      "io.github.fabricators_of_create.porting_lib.gametest.tests.PortingLibGameTestTests"
+    ]
+  }
+}

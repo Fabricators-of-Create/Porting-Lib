@@ -1,22 +1,15 @@
 package io.github.fabricators_of_create.porting_lib.gametest.quickexport;
 
 import io.github.fabricators_of_create.porting_lib.gametest.PortingLibGameTest;
-import net.minecraft.core.component.DataComponents;
-
-import net.minecraft.network.chat.contents.NbtContents;
-import net.minecraft.world.item.component.CustomData;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -40,15 +33,15 @@ public class AreaSelectorItem extends Item {
 
 	@Override
 	@NotNull
-	public InteractionResultHolder<ItemStack> use(@NotNull Level world, @NotNull Player user, @NotNull InteractionHand hand) {
+	public InteractionResult use(@NotNull Level world, @NotNull Player user, @NotNull InteractionHand hand) {
 		ItemStack held = user.getItemInHand(hand);
 		if (!(user instanceof ServerPlayer player))
-			return InteractionResultHolder.success(held);
+			return InteractionResult.SUCCESS;
 		InteractionResult baseResult = baseUse(player, held);
 		if (baseResult != null)
-			return new InteractionResultHolder<>(baseResult, held);
+			return baseResult;
 		selectArea(player, held, getLookTarget(player));
-		return InteractionResultHolder.success(held);
+		return InteractionResult.SUCCESS;
 	}
 
 	@Override

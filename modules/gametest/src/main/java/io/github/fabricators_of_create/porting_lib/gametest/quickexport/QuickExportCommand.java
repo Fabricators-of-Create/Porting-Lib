@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
@@ -21,6 +22,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
@@ -47,7 +49,7 @@ public class QuickExportCommand {
 						literal("porting_lib")
 								.then(literal("quickexport")
 										.then(argument("path", StringArgumentType.greedyString())
-												.requires(source -> source.hasPermission(2))
+												.requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
 												.suggests(QuickExportCommand::getSuggestions)
 												.executes(
 														ctx -> handleExport(ctx.getSource(), StringArgumentType.getString(ctx, "path"))
@@ -105,7 +107,7 @@ public class QuickExportCommand {
 
 		ServerLevel level = source.getLevel();
 		StructureTemplate structure = new StructureTemplate();
-		structure.fillFromWorld(level, origin, bounds, true, Blocks.AIR);
+		structure.fillFromWorld(level, origin, bounds, true, List.of(Blocks.AIR));
 		CompoundTag data = structure.save(new CompoundTag());
 
 		if (!path.endsWith(".nbt"))

@@ -39,7 +39,6 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * An extension to vanilla's {@link GameTestHelper} that provides many more helper methods.
- * To use this, see {@link ExtendedTestFunction}.
  */
 public class PortingLibGameTestHelper extends GameTestHelper {
 	public static final int TICKS_PER_SECOND = 20;
@@ -83,24 +82,6 @@ public class PortingLibGameTestHelper extends GameTestHelper {
 		if (getBlockState(pos).getValue(LeverBlock.POWERED)) {
 			pullLever(pos);
 		}
-	}
-
-	// block entities
-
-	/**
-	 * Get the block entity of the expected type. If the type does not match, this fails the test.
-	 */
-	public <T extends BlockEntity> T getBlockEntity(BlockEntityType<T> type, BlockPos pos) {
-		BlockEntity be = getBlockEntity(pos);
-		BlockEntityType<?> actualType = be == null ? null : be.getType();
-		if (actualType != type) {
-			String actualId = actualType == null ? "null" : BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(actualType).toString();
-			String error = "Expected block entity at pos [%s] with type [%s], got [%s]".formatted(
-					pos, BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(type), actualId
-			);
-			fail(error);
-		}
-		return (T) be;
 	}
 
 	// entities
