@@ -2,6 +2,7 @@ package io.github.fabricators_of_create.porting_lib.blocks.mixin.common;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -12,6 +13,7 @@ import io.github.fabricators_of_create.porting_lib.blocks.extensions.CustomLandi
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.CustomScaffoldingBlock;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.SupportsClimbableOpenTrapdoorBlock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
@@ -19,14 +21,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.Slice;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
@@ -34,23 +33,17 @@ public abstract class LivingEntityMixin extends Entity {
 		super(entityType, level);
 	}
 
-	@SuppressWarnings("InvalidInjectorMethodSignature")
-	@Inject(
+	@WrapWithCondition(
 			method = "checkFallDamage",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/server/level/ServerLevel;sendParticles(Lnet/minecraft/core/particles/ParticleOptions;DDDIDDDD)I",
-					shift = At.Shift.BEFORE
-			),
-			cancellable = true
+					target = "Lnet/minecraft/server/level/ServerLevel;sendParticles(Lnet/minecraft/core/particles/ParticleOptions;DDDIDDDD)I"
+			)
 	)
-	protected void updateFallState(double y, boolean onGround, BlockState state, BlockPos pos,
-								   CallbackInfo ci, @Local(index = 19) int count) {
-		if (state.getBlock() instanceof CustomLandingEffectsBlock custom &&
-				custom.addLandingEffects(state, (ServerLevel) level(), pos, state, (LivingEntity) (Object) this, count)) {
-			super.checkFallDamage(y, onGround, state, pos);
-			ci.cancel();
-		}
+	protected <T extends ParticleOptions> boolean updateFallState(ServerLevel instance, T type, double posX, double posY, double posZ, int particleCount, double xOffset, double yOffset, double zOffset, double speed, @Local(argsOnly = true) BlockState state, @Local(argsOnly = true) BlockPos pos) {
+		if (state.getBlock() instanceof CustomLandingEffectsBlock custom)
+			return !custom.addLandingEffects(state, instance, pos, state, (LivingEntity) (Object) this, particleCount);
+		return true;
 	}
 
 	@ModifyExpressionValue(
@@ -67,19 +60,13 @@ public abstract class LivingEntityMixin extends Entity {
 		return original;
 	}
 
-	@SuppressWarnings("InvalidInjectorMethodSignature")
-	@ModifyVariable(
-			method = "travel",
-			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getBlockPosBelowThatAffectsMyMovement()Lnet/minecraft/core/BlockPos;")),
-			at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/block/Block;getFriction()F")
-	)
-	public float port_lib$setSlipperiness(float p) {
-		BlockPos pos = getBlockPosBelowThatAffectsMyMovement();
-		BlockState state = level().getBlockState(pos);
-		if (state.getBlock() instanceof CustomFrictionBlock custom) {
+	@WrapOperation(method = "travelInAir", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;getFriction()F"))
+	public float getCustomFriction(Block instance, Operation<Float> original, @Local BlockPos pos) {
+		if (instance instanceof CustomFrictionBlock custom) {
+			BlockState state = level().getBlockState(pos);
 			return custom.getFriction(state, level(), pos, (LivingEntity) (Object) this);
 		}
-		return p;
+		return original.call(instance);
 	}
 
 	@WrapOperation(method = "onClimbable", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/tags/TagKey;)Z", ordinal = 0))

@@ -5,7 +5,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
 public interface LightEmissiveBlock {
-	default int getLightEmission(BlockState state, BlockGetter world, BlockPos pos) {
+	default int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
 		return state.getLightEmission();
 	}
 }

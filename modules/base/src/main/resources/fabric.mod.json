@@ -16,7 +16,6 @@
     "loom:injected_interfaces": {
       "net/minecraft/class_276": ["io/github/fabricators_of_create/porting_lib/client/injects/RenderTargetExtension"],
       "net/minecraft/class_1058": ["io/github/fabricators_of_create/porting_lib/client/injects/TextureAtlasSpriteExtension"],
-      "net/minecraft/class_1044": ["io/github/fabricators_of_create/porting_lib/client/injects/AbstractTextureExtension"],
       "net/minecraft/class_1735": ["io/github/fabricators_of_create/porting_lib/extensions/common/SlotExtension"],
       "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/extensions/common/LevelExtensions"],
       "net/minecraft/class_2960": ["io/github/fabricators_of_create/porting_lib/extensions/common/ResourceLocationExtension"],

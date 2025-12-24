@@ -21,43 +21,38 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(TntBlock.class)
 public class TntBlockMixin {
-	@WrapOperation(method = "onPlace", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/TntBlock;explode(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"))
-	private void onPlaceExplode(Level level, BlockPos pos, Operation<Void> original, BlockState state) {
+	@WrapOperation(method = "onPlace", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/TntBlock;prime(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Z"))
+	private boolean onPlaceExplode(Level level, BlockPos pos, Operation<Boolean> original, BlockState state) {
 		if (state.getBlock() instanceof FlammableBlock block)
-			block.onCaughtFire(state, level, pos, null, null);
-		else
-			original.call(level, pos);
+			return block.onCaughtFire(state, level, pos, null, null);
+		return original.call(level, pos);
 	}
 
-	@WrapOperation(method = "neighborChanged", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/TntBlock;explode(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"))
-	private void neighborChangedExplode(Level level, BlockPos pos, Operation<Void> original, BlockState state) {
+	@WrapOperation(method = "neighborChanged", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/TntBlock;prime(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Z"))
+	private boolean neighborChangedExplode(Level level, BlockPos pos, Operation<Boolean> original, BlockState state) {
 		if (state.getBlock() instanceof FlammableBlock block)
-			block.onCaughtFire(state, level, pos, null, null);
-		else
-			original.call(level, pos);
+			return block.onCaughtFire(state, level, pos, null, null);
+		return original.call(level, pos);
 	}
 
-	@WrapOperation(method = "playerWillDestroy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/TntBlock;explode(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"))
-	private void playerWillDestroyExplode(Level level, BlockPos pos, Operation<Void> original, @Local(argsOnly = true) BlockState state) {
+	@WrapOperation(method = "playerWillDestroy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/TntBlock;prime(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Z"))
+	private boolean playerWillDestroyExplode(Level level, BlockPos pos, Operation<Boolean> original, @Local(argsOnly = true) BlockState state) {
 		if (state.getBlock() instanceof FlammableBlock block)
-			block.onCaughtFire(state, level, pos, null, null);
-		else
-			original.call(level, pos);
+			return block.onCaughtFire(state, level, pos, null, null);
+		return original.call(level, pos);
 	}
 
-	@WrapOperation(method = "useItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/TntBlock;explode(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/LivingEntity;)V"))
-	private void useItemOnExplode(Level level, BlockPos pos, LivingEntity entity, Operation<Void> original, @Local(argsOnly = true) BlockState state, @Local(argsOnly = true) Player player, @Local(argsOnly = true) BlockHitResult hitResult) {
+	@WrapOperation(method = "useItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/TntBlock;prime(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/LivingEntity;)Z"))
+	private boolean useItemOnExplode(Level level, BlockPos pos, LivingEntity entity, Operation<Boolean> original, @Local(argsOnly = true) BlockState state, @Local(argsOnly = true) Player player, @Local(argsOnly = true) BlockHitResult hitResult) {
 		if (state.getBlock() instanceof FlammableBlock block)
-			block.onCaughtFire(state, level, pos, hitResult.getDirection(), player);
-		else
-			original.call(level, pos, entity);
+			return block.onCaughtFire(state, level, pos, hitResult.getDirection(), player);
+		return original.call(level, pos, entity);
 	}
 
-	@WrapOperation(method = "onProjectileHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/TntBlock;explode(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/LivingEntity;)V"))
-	private void onProjectileHitExplode(Level level, BlockPos pos, LivingEntity entity, Operation<Void> original, @Local(argsOnly = true) BlockState state) {
+	@WrapOperation(method = "onProjectileHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/TntBlock;prime(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/LivingEntity;)Z"))
+	private boolean onProjectileHitExplode(Level level, BlockPos pos, LivingEntity entity, Operation<Boolean> original, @Local(argsOnly = true) BlockState state) {
 		if (state.getBlock() instanceof FlammableBlock block)
-			block.onCaughtFire(state, level, pos, null, entity);
-		else
-			original.call(level, pos, entity);
+			return block.onCaughtFire(state, level, pos, null, entity);
+		return original.call(level, pos, entity);
 	}
 }

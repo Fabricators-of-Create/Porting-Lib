@@ -1,4 +1,4 @@
-package io.github.fabricators_of_create.porting_lib.client.event;
+package io.github.fabricators_of_create.porting_lib.client_events.event.client;
 
 import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
 import io.github.fabricators_of_create.porting_lib.core.event.CancellableEvent;
@@ -39,8 +39,9 @@ public class TextureAtlasStitchedEvent extends BaseEvent {
 	}
 
 	@Override
-	public void sendEvent() {
+	public TextureAtlasStitchedEvent sendEvent() {
 		EVENT.invoker().onStitched(this);
+		return this;
 	}
 
 	public interface Callback {

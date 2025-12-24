@@ -23,6 +23,6 @@ public abstract class TextureAtlasSpriteMixin implements TextureAtlasSpriteExten
 			y += ((TextureAtlasSprite$AnimatedTextureAccessor) this.contents.animatedTexture).port_lib$getFrameY(frameIndex) * this.contents.height();
 		}
 
-		return this.contents.originalImage.getPixelRGBA(x, y);
+		return this.contents.originalImage.getPixel(x, y);
 	}
 }

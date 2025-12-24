@@ -18,15 +18,15 @@ public abstract class BlockMixin extends BlockBehaviour {
 	private BlockMixin(BlockBehaviour.Properties properties) {
 		super(properties);
 	}
-
-	@ModifyExpressionValue(
-			method = "shouldRenderFace",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/block/state/BlockState;skipRendering(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;)Z"
-			)
-	)
-	private static boolean customFaceHiding(boolean orignial, BlockState pState, BlockGetter pLevel, BlockPos pOffset, Direction pFace, BlockPos pPos) {
-		return orignial || (pState.port_lib$supportsExternalFaceHiding() && pLevel.getBlockState(pPos).port_lib$hidesNeighborFace(pLevel, pPos, pState, pFace.getOpposite()));
-	}
+//  This isn't feasible to support anymore in 1.21.11
+//	@ModifyExpressionValue(
+//			method = "shouldRenderFace",
+//			at = @At(
+//					value = "INVOKE",
+//					target = "Lnet/minecraft/world/level/block/state/BlockState;skipRendering(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;)Z"
+//			)
+//	)
+//	private static boolean customFaceHiding(boolean original) {
+//		return orignial || (pLevel.getBlockState(pPos).port_lib$hidesNeighborFace(pLevel, pPos, pState, pFace.getOpposite()) && pState.port_lib$supportsExternalFaceHiding());
+//	}
 }

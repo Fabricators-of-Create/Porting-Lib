@@ -1,33 +1,35 @@
 package io.github.fabricators_of_create.porting_lib.client_events.mixin.client;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import com.llamalad7.mixinextras.sugar.Local;
-
-import com.llamalad7.mixinextras.sugar.Share;
-
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-
-import io.github.fabricators_of_create.porting_lib.client_events.event.client.InputEvent;
-import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
-
-import net.minecraft.client.Options;
-import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.phys.BlockHitResult;
-
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import com.llamalad7.mixinextras.expression.Definition;
+import com.llamalad7.mixinextras.expression.Expression;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+
+import io.github.fabricators_of_create.porting_lib.client_events.ClientEventHooks;
+import io.github.fabricators_of_create.porting_lib.client_events.event.client.InputEvent;
+import io.github.fabricators_of_create.porting_lib.client_events.event.client.InputEvent.InteractionKeyMappingTriggered;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 
 @Mixin(Minecraft.class)
 public abstract class MinecraftMixin {
@@ -36,75 +38,66 @@ public abstract class MinecraftMixin {
 	public Options options;
 
 	@Shadow
-	@Final
-	public ParticleEngine particleEngine;
-
-	@Shadow
 	@Nullable
 	public LocalPlayer player;
 
-	@Unique
-	private InputEvent.InteractionKeyMappingTriggered port_lib$onClickInput(int button, KeyMapping keyMapping, InteractionHand hand) {
-		InputEvent.InteractionKeyMappingTriggered event = new InputEvent.InteractionKeyMappingTriggered(button, keyMapping, hand);
-		event.sendEvent();
-		return event;
-	}
-
-	@Inject(method = "continueAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/BlockHitResult;getDirection()Lnet/minecraft/core/Direction;"), cancellable = true)
-	private void port_lib$onClickInputEvent(boolean leftClick, CallbackInfo ci, @Local BlockHitResult blockHitResult, @Local BlockPos blockPos, @Share("event") LocalRef<InputEvent.InteractionKeyMappingTriggered> eventRef) {
-		InputEvent.InteractionKeyMappingTriggered inputEvent = port_lib$onClickInput(0, this.options.keyAttack, InteractionHand.MAIN_HAND);
-		eventRef.set(inputEvent);
-		if (inputEvent.isCanceled()) {
-			if (inputEvent.shouldSwingHand()) {
-				this.particleEngine.crack(blockPos, blockHitResult.getDirection());
-				this.player.swing(InteractionHand.MAIN_HAND);
-			}
-			ci.cancel();
+	@WrapOperation(method = "continueAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;continueDestroyBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)Z"))
+	private boolean onInteractionAttackTriggered(MultiPlayerGameMode instance, BlockPos posBlock, Direction directionFacing, Operation<Boolean> original) {
+		InteractionKeyMappingTriggered event = ClientEventHooks.onClickInput(0, this.options.keyAttack, InteractionHand.MAIN_HAND);
+		if (event.isCanceled()) {
+			return event.shouldSwingHand();
 		}
+		return original.call(instance, posBlock, directionFacing) && event.shouldSwingHand();
 	}
 
-	@ModifyExpressionValue(method = "continueAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;continueDestroyBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)Z"))
-	private boolean port_lib$checkHandSwing(boolean original, @Share("event") LocalRef<InputEvent.InteractionKeyMappingTriggered> eventRef) {
-		return original && eventRef.get().shouldSwingHand();
-	}
-
-	@Inject(method = "startAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/HitResult;getType()Lnet/minecraft/world/phys/HitResult$Type;"), cancellable = true)
-	private void port_lib$onAttackClickInputEvent(CallbackInfoReturnable<Boolean> cir, @Share("inputEvent") LocalRef<InputEvent.InteractionKeyMappingTriggered> inputEvent, @Local boolean flag) {
-		inputEvent.set(port_lib$onClickInput(0, this.options.keyAttack, InteractionHand.MAIN_HAND));
-
-		if (inputEvent.get().isCanceled()) {
-			if (inputEvent.get().shouldSwingHand())
+	@Inject(method = "startAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;", ordinal = 0), cancellable = true)
+	private void onInteractionAttackTriggered(CallbackInfoReturnable<Boolean> cir, @Share("input") LocalRef<InteractionKeyMappingTriggered> eventRef, @Local boolean flag) {
+		InteractionKeyMappingTriggered event = ClientEventHooks.onClickInput(0, this.options.keyAttack, InteractionHand.MAIN_HAND);
+		eventRef.set(event);
+		if (event.isCanceled()) {
+			if (event.shouldSwingHand())
 				this.player.swing(InteractionHand.MAIN_HAND);
-
 			cir.setReturnValue(flag);
 		}
 	}
 
 	@WrapWithCondition(method = "startAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;swing(Lnet/minecraft/world/InteractionHand;)V"))
-	private boolean port_lib$swingHandIfEventPermits(LocalPlayer instance, InteractionHand interactionHand, @Share("inputEvent") LocalRef<InputEvent.InteractionKeyMappingTriggered> inputEvent) {
+	private boolean swingHandIfEventPermitsAttack(LocalPlayer instance, InteractionHand interactionHand, @Share("input") LocalRef<InteractionKeyMappingTriggered> inputEvent) {
 		return inputEvent.get() == null || inputEvent.get().shouldSwingHand();
 	}
 
 	@Inject(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;", ordinal = 0), cancellable = true)
-	private void port_lib$callForgeUseInputEvent(CallbackInfo ci, @Share("inputEvent") LocalRef<InputEvent.InteractionKeyMappingTriggered> inputEvent, @Local InteractionHand hand) {
-		inputEvent.set(port_lib$onClickInput(1, this.options.keyUse, hand));
+	private void callUseInputEvent(CallbackInfo ci, @Share("input") LocalRef<InputEvent.InteractionKeyMappingTriggered> eventRef, @Local InteractionHand hand) {
+		InteractionKeyMappingTriggered event = ClientEventHooks.onClickInput(1, this.options.keyUse, hand);
 
-		if (inputEvent.get().isCanceled()) {
-			if (inputEvent.get().shouldSwingHand())
+		eventRef.set(event);
+
+		if (event.isCanceled()) {
+			if (event.shouldSwingHand())
 				this.player.swing(hand);
 
 			ci.cancel();
 		}
 	}
 
-	@ModifyExpressionValue(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/InteractionResult;shouldSwing()Z"))
-	private boolean port_lib$onlySwingHandIfNeeded(boolean original, @Share("inputEvent") LocalRef<InputEvent.InteractionKeyMappingTriggered> inputEvent) {
-		return original && (inputEvent.get() == null || inputEvent.get().shouldSwingHand());
+	@WrapWithCondition(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;swing(Lnet/minecraft/world/InteractionHand;)V", ordinal = 0))
+	private boolean swingHandIfEventPermitsUse(LocalPlayer instance, InteractionHand interactionHand, @Share("input") LocalRef<InteractionKeyMappingTriggered> inputEvent) {
+		return inputEvent.get() == null || inputEvent.get().shouldSwingHand();
 	}
 
-	@Inject(method = "pickBlock", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Abilities;instabuild:Z", ordinal = 0), cancellable = true)
-	private void port_lib$callInteractionPickInput(CallbackInfo ci) {
-		if (port_lib$onClickInput(2, this.options.keyPickItem, InteractionHand.MAIN_HAND).isCanceled())
+
+	@Inject(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;swing(Lnet/minecraft/world/InteractionHand;)V", ordinal = 1), cancellable = true)
+	private void onlySwingHandIfNeeded1(CallbackInfo ci, @Share("eventRef") LocalRef<InteractionKeyMappingTriggered> inputEvent) {
+		InteractionKeyMappingTriggered event = inputEvent.get();
+		if (event != null) {
+			if (!event.shouldSwingHand())
+				ci.cancel();
+		}
+	}
+
+	@Inject(method = "pickBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;hasControlDown()Z", shift = At.Shift.BEFORE), cancellable = true)
+	private void callInteractionPickInput(CallbackInfo ci) {
+		if (ClientEventHooks.onClickInput(2, this.options.keyPickItem, InteractionHand.MAIN_HAND).isCanceled())
 			ci.cancel();
 	}
 }

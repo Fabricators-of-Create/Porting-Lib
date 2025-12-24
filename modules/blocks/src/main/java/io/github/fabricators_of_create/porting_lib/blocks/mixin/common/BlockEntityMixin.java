@@ -1,7 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.blocks.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.blocks.util.BlockEntityDataKeys;
-import net.minecraft.core.HolderLookup;
+
+import net.minecraft.world.level.storage.ValueInput;
+
+import net.minecraft.world.level.storage.ValueOutput;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -18,18 +21,15 @@ public abstract class BlockEntityMixin implements BlockEntityInjection {
 	@Unique
 	private CompoundTag port_lib$extraData = null;
 
-	@Inject(at = @At("RETURN"), method = "saveMetadata")
-	private void port_lib$saveMetadata(CompoundTag nbt, CallbackInfo ci) {
-		if (port_lib$extraData != null && !port_lib$extraData.isEmpty()) {
-			nbt.put(BlockEntityDataKeys.EXTRA_DATA_KEY, port_lib$extraData);
-		}
+	@Inject(at = @At("HEAD"), method = "saveMetadata")
+	private void saveExtraData(ValueOutput output, CallbackInfo ci) {
+		if (this.port_lib$extraData != null)
+			output.store(BlockEntityDataKeys.EXTRA_DATA_KEY, CompoundTag.CODEC, this.port_lib$extraData.copy());
 	}
 
-	@Inject(at = @At("RETURN"), method = "loadWithComponents")
-	private void port_lib$load(CompoundTag tag, HolderLookup.Provider provider, CallbackInfo ci) {
-		if (tag.contains(BlockEntityDataKeys.EXTRA_DATA_KEY)) {
-			port_lib$extraData = tag.getCompound(BlockEntityDataKeys.EXTRA_DATA_KEY);
-		}
+	@Inject(at = @At("HEAD"), method = "loadAdditional")
+	private void loadExtraData(ValueInput input, CallbackInfo ci) {
+		input.read(BlockEntityDataKeys.EXTRA_DATA_KEY, CompoundTag.CODEC).ifPresent(compoundTag -> this.port_lib$extraData = compoundTag);
 	}
 
 	@Override

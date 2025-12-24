@@ -1,11 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.client_events.event.client;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+
 import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
 import io.github.fabricators_of_create.porting_lib.core.event.CancellableEvent;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
@@ -21,16 +22,40 @@ import org.jetbrains.annotations.ApiStatus;
  * @see ViewportEvent.ComputeFov
  */
 public class ComputeFovModifierEvent extends BaseEvent {
+	public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+		for (Callback callback : callbacks) {
+			callback.onComputeFovModifier(event);
+		}
+	});
+
 	private final Player player;
 	private final float fovModifier;
+	private final float fovScale;
 	private float newFovModifier;
 
 	@ApiStatus.Internal
-	public ComputeFovModifierEvent(Player player, float fovModifier) {
+	public ComputeFovModifierEvent(Player player, float fovModifier, float fovScale) {
 		this.player = player;
 		this.fovModifier = fovModifier;
-		this.setNewFovModifier((float) Mth.lerp(Minecraft.getInstance().options.fovEffectScale().get(), 1.0F, fovModifier));
+		this.fovScale = fovScale;
+		this.setNewFovModifier(Mth.lerp(fovScale, 1.0F, fovModifier));
 	}
+
+	@ApiStatus.Internal
+	public ComputeFovModifierEvent(Player player, float fovModifier, float fovScale, float start, Operation<Float> operation) {
+		this.player = player;
+		this.fovModifier = fovModifier;
+		this.fovScale = fovScale;
+		this.setNewFovModifier(operation.call(fovScale, start, fovModifier));
+	}
+
+//	@ApiStatus.Internal
+//	public ComputeFovModifierEvent(Player player, float fovModifier, float fovScale) {
+//		this.player = player;
+//		this.fovModifier = fovModifier;
+//		this.fovScale = fovScale;
+//		this.setNewFovModifier(Mth.lerp(fovScale, 1.0F, fovModifier));
+//	}
 
 	/**
 	 * {@return the player affected by this event}
@@ -44,6 +69,13 @@ public class ComputeFovModifierEvent extends BaseEvent {
 	 */
 	public float getFovModifier() {
 		return fovModifier;
+	}
+
+	/**
+	 * {@return the FOV scale to use for interpolating the final FOV modifier}
+	 */
+	public float getFovScale() {
+		return fovScale;
 	}
 
 	/**
@@ -62,15 +94,10 @@ public class ComputeFovModifierEvent extends BaseEvent {
 		this.newFovModifier = newFovModifier;
 	}
 
-	public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
-		for (Callback callback : callbacks) {
-			callback.onComputeFovModifier(event);
-		}
-	});
-
 	@Override
-	public void sendEvent() {
+	public ComputeFovModifierEvent sendEvent() {
 		EVENT.invoker().onComputeFovModifier(this);
+		return this;
 	}
 
 	public interface Callback {

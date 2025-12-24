@@ -1,6 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.item.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.item.extensions.BlockUseBypassingItem;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.item.ItemStack;
 

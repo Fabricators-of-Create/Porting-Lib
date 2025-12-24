@@ -1,9 +1,11 @@
 package io.github.fabricators_of_create.porting_lib.client_events.mixin.client;
 
-import io.github.fabricators_of_create.porting_lib.client_events.event.client.InputEvent;
+import io.github.fabricators_of_create.porting_lib.client_events.ClientEventHooks;
 import net.minecraft.client.KeyboardHandler;
 
 import net.minecraft.client.Minecraft;
+
+import net.minecraft.client.input.KeyEvent;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,9 +21,8 @@ public class KeyboardHandlerMixin {
 	private Minecraft minecraft;
 
 	@Inject(method = "keyPress", at = @At("TAIL"))
-	private void port_lib$onKeyPressEvent(long windowPointer, int key, int scanCode, int action, int modifiers, CallbackInfo ci) {
-		if (windowPointer == minecraft.getWindow().getWindow()) {
-			new InputEvent.Key(key, scanCode, action, modifiers).sendEvent();
-		}
+	private void onKeyPressEvent(long window, int action, KeyEvent event, CallbackInfo ci) {
+		if (window == minecraft.getWindow().handle())
+			ClientEventHooks.onKeyInput(event, action);
 	}
 }

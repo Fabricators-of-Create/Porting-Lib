@@ -48,8 +48,4 @@ public class ClientHooks {
 	public static void setRenderType(RenderType renderType) {
 		RENDER_TYPE = renderType;
 	}
-
-	public static void onTextureAtlasStitched(TextureAtlas atlas) {
-		new TextureAtlasStitchedEvent(atlas).sendEvent();
-	}
 }

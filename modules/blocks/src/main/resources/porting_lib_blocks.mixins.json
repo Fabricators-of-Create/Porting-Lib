@@ -8,7 +8,6 @@
   },
   "mixins": [
     "common.AABBMixin",
-    "common.AbstractMinecartAccessor",
     "common.AbstractMinecartMixin",
     "common.BaseRailBlockMixin",
     "common.BeaconBlockEntityMixin",
@@ -30,6 +29,7 @@
     "common.ExplosionDamageCalculatorMixin",
     "common.FireBlockAccessor",
     "common.FireBlockMixin",
+    "common.ItemEntityMixin",
     "common.LevelChunkMixin",
     "common.LevelMixin",
     "common.LightEngineMixin",
@@ -46,6 +46,7 @@
     "common.RailStateMixin",
     "common.RedStoneOreBlockMixin",
     "common.RedStoneWireBlockMixin",
+    "common.RemoveBlockGoalMixin",
     "common.SculkCatalystBlockMixin",
     "common.SculkSensorBlockMixin",
     "common.SculkShriekerBlockMixin",

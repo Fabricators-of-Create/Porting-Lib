@@ -18,10 +18,14 @@
     "MinecraftMixin",
     "MouseHandlerMixin",
     "MusicManagerMixin",
-    "PlayerRendererMixin",
+    "AvatarRendererMixin",
     "SkullBlockRendererMixin",
-    "SoundEngineMixin"
+    "SoundEngineMixin",
+    "TextureAtlasMixin"
   ],
+  "mixinextras": {
+    "minVersion": "0.5.0"
+  },
   "injectors": {
     "defaultRequire": 1,
     "maxShiftBy": 5

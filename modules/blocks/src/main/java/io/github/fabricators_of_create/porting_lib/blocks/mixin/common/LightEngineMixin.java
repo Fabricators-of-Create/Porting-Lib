@@ -14,10 +14,11 @@ import net.minecraft.world.level.lighting.LightEngine;
 
 @Mixin(LightEngine.class)
 public class LightEngineMixin {
-	@WrapOperation(method = "hasDifferentLightProperties", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getLightEmission()I"))
-	private static int customLightEmissionBlock(BlockState state, Operation<Integer> operation, BlockGetter world, BlockPos pos) {
-		if (state.getBlock() instanceof LightEmissiveBlock lightEmissiveBlock)
-			return lightEmissiveBlock.getLightEmission(state, world, pos);
-		return operation.call(state);
-	}
+//	TODO: PORT this method no longer passes the level or pos
+//	@WrapOperation(method = "hasDifferentLightProperties", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getLightEmission()I"))
+//	private static int customLightEmissionBlock(BlockState state, Operation<Integer> operation, BlockGetter world, BlockPos pos) {
+//		if (state.getBlock() instanceof LightEmissiveBlock lightEmissiveBlock)
+//			return lightEmissiveBlock.getLightEmission(state, world, pos);
+//		return operation.call(state);
+//	}
 }

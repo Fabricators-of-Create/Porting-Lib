@@ -1,8 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.blocks.extensions;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,8 +17,8 @@ public interface OnExplodedBlock {
 	 * @param pos       Block position in level
 	 * @param explosion The explosion instance affecting the block
 	 */
-	default void onBlockExploded(BlockState state, Level level, BlockPos pos, Explosion explosion) {
-		level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+	default void onBlockExploded(BlockState state, ServerLevel level, BlockPos pos, Explosion explosion) {
+		level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
 		((Block) this).wasExploded(level, pos, explosion);
 	}
 }

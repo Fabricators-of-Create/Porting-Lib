@@ -1,28 +1,28 @@
 package io.github.fabricators_of_create.porting_lib.blocks.mixin.common;
 
-import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.ChunkUnloadListeningBlockEntity;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.CustomUpdateTagHandlingBlockEntity;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.OnLoadBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Registry;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelHeightAccessor;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 
 import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.world.level.chunk.PalettedContainerFactory;
 import net.minecraft.world.level.chunk.UpgradeData;
 import net.minecraft.world.level.levelgen.blending.BlendingData;
 
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.storage.ValueInput;
+
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -36,15 +36,15 @@ public abstract class LevelChunkMixin extends ChunkAccess {
 	@Final
 	Level level;
 
+	public LevelChunkMixin(ChunkPos chunkPos, UpgradeData upgradeData, LevelHeightAccessor levelHeightAccessor, PalettedContainerFactory palettedContainerFactory, long inhabitedTime, LevelChunkSection @Nullable [] sections, @Nullable BlendingData blendingData) {
+		super(chunkPos, upgradeData, levelHeightAccessor, palettedContainerFactory, inhabitedTime, sections, blendingData);
+	}
+
 	@Shadow
 	public abstract BlockState getBlockState(BlockPos pos);
 
 	@Shadow
 	public abstract Level getLevel();
-
-	public LevelChunkMixin(ChunkPos chunkPos, UpgradeData upgradeData, LevelHeightAccessor levelHeightAccessor, Registry<Biome> registry, long l, @Nullable LevelChunkSection[] levelChunkSections, @Nullable BlendingData blendingData) {
-		super(chunkPos, upgradeData, levelHeightAccessor, registry, l, levelChunkSections, blendingData);
-	}
 
 	@Inject(method = "clearAllBlockEntities", at = @At("HEAD"))
 	private void port_lib$blockEntityClear(CallbackInfo ci) {
@@ -55,15 +55,15 @@ public abstract class LevelChunkMixin extends ChunkAccess {
 		});
 	}
 
-	@WrapWithCondition(method = "method_31716",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;loadWithComponents(Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/core/HolderLookup$Provider;)V")
+	@WrapOperation(method = "method_31716",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;loadWithComponents(Lnet/minecraft/world/level/storage/ValueInput;)V")
 	)
-	private boolean handleBlockEntityUpdateTag(BlockEntity instance, CompoundTag tag, HolderLookup.Provider provider) {
+	private void handleBlockEntityUpdateTag(BlockEntity instance, ValueInput input, Operation<Void> original) {
 		if (instance instanceof CustomUpdateTagHandlingBlockEntity handler) {
-			handler.handleUpdateTag(tag, provider);
-			return false;
+			handler.handleUpdateTag(input);
+			return;
 		}
-		return true;
+		original.call(instance, input);
 	}
 
 	@Inject(method = "addAndRegisterBlockEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/chunk/LevelChunk;updateBlockEntityTicker(Lnet/minecraft/world/level/block/entity/BlockEntity;)V", shift = At.Shift.AFTER))

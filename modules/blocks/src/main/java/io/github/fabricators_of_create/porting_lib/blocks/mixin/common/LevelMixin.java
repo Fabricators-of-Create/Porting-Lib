@@ -31,7 +31,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelInjection {
 	private final ArrayList<BlockEntity> port_lib$freshBlockEntities = new ArrayList<>();
 	private final ArrayList<BlockEntity> port_lib$pendingFreshBlockEntities = new ArrayList<>();
 
-	@Inject(method = "tickBlockEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;push(Ljava/lang/String;)V", shift = At.Shift.AFTER))
+	@Inject(method = "tickBlockEntities", at = @At("HEAD"))
 	public void port_lib$pendingBlockEntities(CallbackInfo ci) {
 		if (!this.port_lib$pendingFreshBlockEntities.isEmpty()) {
 			this.port_lib$freshBlockEntities.addAll(this.port_lib$pendingFreshBlockEntities);
@@ -39,11 +39,13 @@ public abstract class LevelMixin implements LevelAccessor, LevelInjection {
 		}
 	}
 
-	@Inject(method = "tickBlockEntities", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z"))
+	@Inject(method = "tickBlockEntities", at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/Level;tickingBlockEntities:Z", ordinal = 0, shift = At.Shift.AFTER))
 	public void port_lib$onBlockEntitiesLoad(CallbackInfo ci) {
 		if (!this.port_lib$freshBlockEntities.isEmpty()) {
 			this.port_lib$freshBlockEntities.forEach(blockEntity -> {
-				if (blockEntity instanceof OnLoadBlockEntity be) be.onLoad();
+				// Only call onLoad() on BEs which have been fully added to the level, prevents crashes with BEs that
+				// were discarded due to incompatibility with the BlockState at their position
+				if (!blockEntity.isRemoved() && blockEntity.hasLevel() && blockEntity instanceof OnLoadBlockEntity be) be.onLoad();
 			});
 			this.port_lib$freshBlockEntities.clear();
 		}

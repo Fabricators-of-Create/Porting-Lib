@@ -5,9 +5,7 @@
   "package": "io.github.fabricators_of_create.porting_lib.client_extensions.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "ItemRendererAccessor",
-    "MinecraftMixin",
-    "ParticleEngineMixin"
+    "ClientLevelMixin"
   ],
   "injectors": {
     "defaultRequire": 1,

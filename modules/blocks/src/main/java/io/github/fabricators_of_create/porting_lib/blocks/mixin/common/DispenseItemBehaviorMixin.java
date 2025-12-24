@@ -22,7 +22,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.world.level.block.TntBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-@Mixin(targets = "net/minecraft/core/dispenser/DispenseItemBehavior$8")
+// Targets DispenserBlock.registerBehavior(Items.FLINT_AND_STEEL, new OptionalDispenseItemBehavior() { inner class
+@Mixin(targets = "net/minecraft/core/dispenser/DispenseItemBehavior$6")
 public class DispenseItemBehaviorMixin {
 	@Definition(id = "TntBlock", type = TntBlock.class)
 	@Definition(id = "blockState", local = @Local(type = BlockState.class))
@@ -35,11 +36,12 @@ public class DispenseItemBehaviorMixin {
 		return original.call(object);
 	}
 
-	@WrapOperation(method = "execute", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/TntBlock;explode(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"))
-	private void onCaughtFire(Level level, BlockPos pos, Operation<Void> original, BlockSource source, @Local BlockState blockState) {
+	@WrapOperation(method = "execute", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/TntBlock;prime(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Z"))
+	private boolean onCaughtFire(Level level, BlockPos pos, Operation<Void> original, BlockSource source, @Local BlockState blockState) {
 		if (blockState.getBlock() instanceof FlammableBlock block)
 			block.onCaughtFire(blockState, level, pos, source.state().getValue(DispenserBlock.FACING).getOpposite(), null);
 		else
 			original.call(level, pos);
+		return false;
 	}
 }

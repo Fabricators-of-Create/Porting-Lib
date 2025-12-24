@@ -1,5 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.blocks.client.mixin;
 
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
 import net.minecraft.world.level.block.state.BlockState;
@@ -13,7 +14,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import io.github.fabricators_of_create.porting_lib.blocks.injects.CameraInjection;
 import net.minecraft.client.Camera;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockGetter;
 
 @Mixin(Camera.class)
 public abstract class CameraMixin implements CameraInjection {
@@ -22,7 +22,7 @@ public abstract class CameraMixin implements CameraInjection {
 	private boolean initialized;
 
 	@Shadow
-	private BlockGetter level;
+	private Level level;
 
 	@Shadow
 	@Final

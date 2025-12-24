@@ -9,6 +9,8 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.KeyMapping;
 
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.world.InteractionHand;
 
 import org.jetbrains.annotations.ApiStatus;
@@ -37,15 +39,17 @@ public abstract class InputEvent extends BaseEvent {
 	 * @see Post
 	 */
 	public static abstract class MouseButton extends InputEvent {
-		private final int button;
+		private final MouseButtonInfo mouseButtonInfo;
 		private final int action;
-		private final int modifiers;
 
 		@ApiStatus.Internal
-		protected MouseButton(int button, int action, int modifiers) {
-			this.button = button;
+		protected MouseButton(MouseButtonInfo mouseButtonInfo, int action) {
+			this.mouseButtonInfo = mouseButtonInfo;
 			this.action = action;
-			this.modifiers = modifiers;
+		}
+
+		public MouseButtonInfo getMouseButtonInfo() {
+			return mouseButtonInfo;
 		}
 
 		/**
@@ -55,7 +59,7 @@ public abstract class InputEvent extends BaseEvent {
 		 * @see <a href="https://www.glfw.org/docs/latest/group__buttons.html" target="_top">the online GLFW documentation</a>
 		 */
 		public int getButton() {
-			return this.button;
+			return this.mouseButtonInfo.button();
 		}
 
 		/**
@@ -80,7 +84,7 @@ public abstract class InputEvent extends BaseEvent {
 		 * @see <a href="https://www.glfw.org/docs/latest/group__mods.html" target="_top">the online GLFW documentation</a>
 		 */
 		public int getModifiers() {
-			return this.modifiers;
+			return this.mouseButtonInfo.modifiers();
 		}
 
 		/**
@@ -94,20 +98,21 @@ public abstract class InputEvent extends BaseEvent {
 		 * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
 		 */
 		public static class Pre extends MouseButton implements CancellableEvent {
-			@ApiStatus.Internal
-			public Pre(int button, int action, int modifiers) {
-				super(button, action, modifiers);
-			}
-
 			public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
 				for (Callback callback : callbacks) {
 					callback.onMouseButtonPre(event);
 				}
 			});
 
+			@ApiStatus.Internal
+			public Pre(MouseButtonInfo mouseButtonInfo, int action) {
+				super(mouseButtonInfo, action);
+			}
+
 			@Override
-			public void sendEvent() {
+			public Pre sendEvent() {
 				EVENT.invoker().onMouseButtonPre(this);
+				return this;
 			}
 
 			public interface Callback {
@@ -125,20 +130,21 @@ public abstract class InputEvent extends BaseEvent {
 		 * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
 		 */
 		public static class Post extends MouseButton {
-			@ApiStatus.Internal
-			public Post(int button, int action, int modifiers) {
-				super(button, action, modifiers);
-			}
-
 			public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
 				for (Callback callback : callbacks) {
 					callback.onMouseButtonPost(event);
 				}
 			});
 
+			@ApiStatus.Internal
+			public Post(MouseButtonInfo mouseButtonInfo, int action) {
+				super(mouseButtonInfo, action);
+			}
+
 			@Override
-			public void sendEvent() {
+			public Post sendEvent() {
 				EVENT.invoker().onMouseButtonPost(this);
+				return this;
 			}
 
 			public interface Callback {
@@ -234,8 +240,9 @@ public abstract class InputEvent extends BaseEvent {
 		});
 
 		@Override
-		public void sendEvent() {
+		public MouseScrollingEvent sendEvent() {
 			EVENT.invoker().onMouseScroll(this);
+			return this;
 		}
 
 		public interface Callback {
@@ -251,17 +258,23 @@ public abstract class InputEvent extends BaseEvent {
 	 * <p>This event is fired only on the {@linkplain EnvType#CLIENT logical client}.</p>
 	 */
 	public static class Key extends InputEvent {
-		private final int key;
-		private final int scanCode;
+		public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+			for (Callback callback : callbacks) {
+				callback.onKeyInput(event);
+			}
+		});
+
+		private final KeyEvent keyEvent;
 		private final int action;
-		private final int modifiers;
 
 		@ApiStatus.Internal
-		public Key(int key, int scanCode, int action, int modifiers) {
-			this.key = key;
-			this.scanCode = scanCode;
+		public Key(KeyEvent keyEvent, int action) {
+			this.keyEvent = keyEvent;
 			this.action = action;
-			this.modifiers = modifiers;
+		}
+
+		public KeyEvent getKeyEvent() {
+			return keyEvent;
 		}
 
 		/**
@@ -272,7 +285,7 @@ public abstract class InputEvent extends BaseEvent {
 		 * @see <a href="https://www.glfw.org/docs/latest/group__keys.html" target="_top">the online GLFW documentation</a>
 		 */
 		public int getKey() {
-			return this.key;
+			return this.keyEvent.key();
 		}
 
 		/**
@@ -282,10 +295,10 @@ public abstract class InputEvent extends BaseEvent {
 		 * Scan codes are platform-specific but consistent over time, so keys will have different scan codes depending
 		 * on the platform but they are safe to save to disk as custom key bindings.
 		 *
-		 * @see InputConstants#getKey(int, int)
+		 * @see InputConstants#getKey(KeyEvent)
 		 */
 		public int getScanCode() {
-			return this.scanCode;
+			return this.keyEvent.scancode();
 		}
 
 		/**
@@ -311,18 +324,13 @@ public abstract class InputEvent extends BaseEvent {
 		 * @see <a href="https://www.glfw.org/docs/latest/group__mods.html" target="_top">the online GLFW documentation</a>
 		 */
 		public int getModifiers() {
-			return this.modifiers;
+			return this.keyEvent.modifiers();
 		}
 
-		public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
-			for (Callback callback : callbacks) {
-				callback.onKeyInput(event);
-			}
-		});
-
 		@Override
-		public void sendEvent() {
+		public Key sendEvent() {
 			EVENT.invoker().onKeyInput(this);
+			return this;
 		}
 
 		public interface Callback {
@@ -421,8 +429,9 @@ public abstract class InputEvent extends BaseEvent {
 		});
 
 		@Override
-		public void sendEvent() {
+		public InteractionKeyMappingTriggered sendEvent() {
 			EVENT.invoker().onInteractionKeyMappingTriggered(this);
+			return this;
 		}
 
 		public interface Callback {

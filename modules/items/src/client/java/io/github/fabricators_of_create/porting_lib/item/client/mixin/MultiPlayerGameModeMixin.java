@@ -8,7 +8,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import io.github.fabricators_of_create.porting_lib.item.extensions.BlockBreakResetItem;
-import io.github.fabricators_of_create.porting_lib.item.extensions.BlockUseBypassingItem;
 import io.github.fabricators_of_create.porting_lib.item.extensions.SneakBypassUseItem;
 import io.github.fabricators_of_create.porting_lib.item.extensions.UseFirstBehaviorItem;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
@@ -44,18 +43,6 @@ public class MultiPlayerGameModeMixin {
 		}
 
 		return original.call(stack, other);
-	}
-
-	@ModifyReceiver(method = "performUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;useItemOn(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/ItemInteractionResult;"))
-	public BlockState bypassBlockUse(BlockState instance, ItemStack itemStack, Level level, Player player, InteractionHand hand, BlockHitResult blockHitResult) {
-		Item held = player.getItemInHand(hand).getItem();
-		if (held instanceof BlockUseBypassingItem bypassing) {
-			if (bypassing.shouldBypass(level.getBlockState(blockHitResult.getBlockPos()), blockHitResult.getBlockPos(), level, player, hand))
-				return Blocks.BARRIER.defaultBlockState();
-		} else if (held instanceof BlockItem blockItem && blockItem.getBlock() instanceof BlockUseBypassingItem bypassing) {
-			if (bypassing.shouldBypass(level.getBlockState(blockHitResult.getBlockPos()), blockHitResult.getBlockPos(), level, player, hand)) return Blocks.BARRIER.defaultBlockState();
-		}
-		return instance;
 	}
 
 	@Inject(method = "performUseItemOn",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getMainHandItem()Lnet/minecraft/world/item/ItemStack;"), cancellable = true)

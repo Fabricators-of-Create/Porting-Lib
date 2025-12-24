@@ -1,7 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.client_extensions;
 
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
-import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
@@ -67,11 +66,11 @@ public class ClientExtensionsRegistry {
 		register(extensions, ITEM_EXTENSIONS, items);
 
 		// Register the item renderers directly to Fabric's item renderer registry.
-		for (Item item : items) {
-			BuiltinItemRendererRegistry.INSTANCE.register(item, (stack, mode, matrices, vertexConsumers, light, overlay) -> {
-				extensions.getCustomRenderer().renderByItem(stack, mode, matrices, vertexConsumers, light, overlay);
-			});
-		}
+//		for (Item item : items) {
+//			BuiltinItemRendererRegistry.INSTANCE.register(item, (stack, mode, matrices, vertexConsumers, light, overlay) -> {
+//				extensions.getCustomRenderer().renderByItem(stack, mode, matrices, vertexConsumers, light, overlay);
+//			});
+//		}
 	}
 
 	/**

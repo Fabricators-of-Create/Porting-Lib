@@ -1,6 +1,6 @@
-package io.github.fabricators_of_create.porting_lib.client.mixin;
+package io.github.fabricators_of_create.porting_lib.client_events.mixin.client;
 
-import io.github.fabricators_of_create.porting_lib.client.util.ClientHooks;
+import io.github.fabricators_of_create.porting_lib.client_events.ClientEventHooks;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,8 +12,8 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 
 @Mixin(TextureAtlas.class)
 public abstract class TextureAtlasMixin {
-	@Inject(method = "upload", at = @At("RETURN"))
+	@Inject(method = "upload", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/TextureAtlas;uploadInitialContents()V", shift = At.Shift.AFTER))
 	private void postStitch(SpriteLoader.Preparations preparations, CallbackInfo ci) {
-		ClientHooks.onTextureAtlasStitched((TextureAtlas) (Object) this);
+		ClientEventHooks.onTextureAtlasStitched((TextureAtlas) (Object) this);
 	}
 }

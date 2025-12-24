@@ -3,7 +3,6 @@ package io.github.fabricators_of_create.porting_lib.blocks.injects;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.BeaconColorMultiplierBlock;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.CustomSlimeBlock;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.EntityDestroyBlock;
-import io.github.fabricators_of_create.porting_lib.blocks.extensions.FaceHidingBlock;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.OnTreeGrowBlock;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.PlayerDestroyBlock;
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.StateViewpointBlock;
@@ -17,7 +16,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.WitherSkull;
+import net.minecraft.world.entity.projectile.hurtingprojectile.WitherSkull;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -47,41 +47,45 @@ public interface BlockStateInjection {
 	 * @return An int RGB to be averaged with a beacon's existing beam color, or original to do nothing to the beam
 	 */
 
-	default int port_lib$getBeaconColorMultiplier(LevelReader level, BlockPos pos, BlockPos beacon, int original) {
+	default Integer port_lib$getBeaconColorMultiplier(LevelReader level, BlockPos pos, BlockPos beacon) {
 		Block block = ((BlockState) this).getBlock();
 		if (block instanceof BeaconColorMultiplierBlock beaconColorMultiplierBlock)
-			return beaconColorMultiplierBlock.getBeaconColorMultiplier((BlockState) this, level, pos, beacon, original);
+			return beaconColorMultiplierBlock.getBeaconColorMultiplier((BlockState) this, level, pos, beacon);
 		if (block instanceof BeaconBeamBlock beamBlock)
 			return beamBlock.getColor().getTextureDiffuseColor();
-		return original;
+		return null;
 	}
 
 	/**
-	 * Called when a player removes a block.  This is responsible for
+	 * Called when a player removes a block. This is responsible for
 	 * actually destroying the block, and the block is intact at time of call.
 	 * This is called regardless of whether the player can harvest the block or
 	 * not.
-	 * <p>
+	 *
 	 * Return true if the block is actually destroyed.
-	 * <p>
-	 * Note: When used in multiplayer, this is called on both client and
-	 * server sides!
+	 *
+	 * This function is called on both the logical client and logical server.
 	 *
 	 * @param level       The current level
-	 * @param player      The player damaging the block, may be null
 	 * @param pos         Block position in level
-	 * @param willHarvest True if Block.harvestBlock will be called after this, if the return in true.
-	 *                    Can be useful to delay the destruction of tile entities till after harvestBlock
+	 * @param player      The player damaging the block, may be null
+	 * @param toolStack   The players main-hand prior to destroying the block and applying damage to the tool.
+	 * @param willHarvest The result of {@link #canHarvestBlock}, if called on the server by a non-creative player, otherwise always false.
 	 * @param fluid       The current fluid and block state for the position in the level.
 	 * @return True if the block is actually destroyed.
 	 */
-	default boolean port_lib$onDestroyedByPlayer(Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+	default boolean port_lib$onDestroyedByPlayer(Level level, BlockPos pos, Player player, ItemStack toolStack, boolean willHarvest, FluidState fluid) {
 		Block block = ((BlockState) this).getBlock();
 		if (block instanceof PlayerDestroyBlock destroyBlock)
-			return destroyBlock.onDestroyedByPlayer((BlockState) this, level, pos, player, willHarvest, fluid);
+			return destroyBlock.onDestroyedByPlayer((BlockState) this, level, pos, player, toolStack, willHarvest, fluid);
 
-		block.playerWillDestroy(level, pos, (BlockState) this, player);
-		return level.setBlock(pos, fluid.createLegacyBlock(), level.isClientSide ? 11 : 3);
+		if (level.isClientSide()) {
+			// On the client, vanilla calls Level#setBlock, per MultiPlayerGameMode#destroyBlock
+			return level.setBlock(pos, fluid.createLegacyBlock(), Block.UPDATE_ALL_IMMEDIATE);
+		} else {
+			// On the server, vanilla calls Level#removeBlock, per ServerPlayerGameMode#destroyBlock
+			return level.removeBlock(pos, false);
+		}
 	}
 
 	/**
@@ -193,8 +197,8 @@ public interface BlockStateInjection {
 	 * @param dir The direction towards the neighboring block
 	 */
 	default boolean port_lib$hidesNeighborFace(BlockGetter level, BlockPos pos, BlockState neighborState, Direction dir) {
-		if (((BlockState) this).getBlock() instanceof FaceHidingBlock block)
-			return block.hidesNeighborFace(level, pos, ((BlockState)this), neighborState, dir);
+//		if (((BlockState) this).getBlock() instanceof FaceHidingBlock block)
+//			return block.hidesNeighborFace(level, pos, ((BlockState)this), neighborState, dir);
 		return false;
 	}
 
@@ -204,8 +208,8 @@ public interface BlockStateInjection {
 	 * will be called on the neighboring block.
 	 */
 	default boolean port_lib$supportsExternalFaceHiding() {
-		if (((BlockState)this).getBlock() instanceof FaceHidingBlock block)
-			return block.supportsExternalFaceHiding((BlockState) this);
-		return false;
+//		if (((BlockState)this).getBlock() instanceof FaceHidingBlock block)
+//			return block.supportsExternalFaceHiding((BlockState) this);
+		return true;
 	}
 }

@@ -9,7 +9,7 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.world.entity.HumanoidArm;
 
 import org.jetbrains.annotations.ApiStatus;
@@ -31,15 +31,15 @@ public class RenderArmEvent extends BaseEvent implements CancellableEvent {
 	});
 
 	private final PoseStack poseStack;
-	private final MultiBufferSource multiBufferSource;
+	private final SubmitNodeCollector submitNodeCollector;
 	private final int packedLight;
 	private final AbstractClientPlayer player;
 	private final HumanoidArm arm;
 
 	@ApiStatus.Internal
-	public RenderArmEvent(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, AbstractClientPlayer player, HumanoidArm arm) {
+	public RenderArmEvent(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int packedLight, AbstractClientPlayer player, HumanoidArm arm) {
 		this.poseStack = poseStack;
-		this.multiBufferSource = multiBufferSource;
+		this.submitNodeCollector = submitNodeCollector;
 		this.packedLight = packedLight;
 		this.player = player;
 		this.arm = arm;
@@ -60,10 +60,10 @@ public class RenderArmEvent extends BaseEvent implements CancellableEvent {
 	}
 
 	/**
-	 * {@return the source of rendering buffers}
+	 * {@return the submit node collector}
 	 */
-	public MultiBufferSource getMultiBufferSource() {
-		return multiBufferSource;
+	public SubmitNodeCollector getSubmitNodeCollector() {
+		return submitNodeCollector;
 	}
 
 	/**
@@ -84,8 +84,9 @@ public class RenderArmEvent extends BaseEvent implements CancellableEvent {
 	}
 
 	@Override
-	public void sendEvent() {
+	public RenderArmEvent sendEvent() {
 		EVENT.invoker().onRenderArm(this);
+		return this;
 	}
 
 	public interface Callback {

@@ -8,7 +8,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 
@@ -32,7 +32,7 @@ public class RenderHandEvent extends BaseEvent implements CancellableEvent {
 
 	private final InteractionHand hand;
 	private final PoseStack poseStack;
-	private final MultiBufferSource multiBufferSource;
+	private final SubmitNodeCollector submitNodeCollector;
 	private final int packedLight;
 	private final float partialTick;
 	private final float interpolatedPitch;
@@ -41,12 +41,12 @@ public class RenderHandEvent extends BaseEvent implements CancellableEvent {
 	private final ItemStack stack;
 
 	@ApiStatus.Internal
-	public RenderHandEvent(InteractionHand hand, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight,
+	public RenderHandEvent(InteractionHand hand, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int packedLight,
 						   float partialTick, float interpolatedPitch,
 						   float swingProgress, float equipProgress, ItemStack stack) {
 		this.hand = hand;
 		this.poseStack = poseStack;
-		this.multiBufferSource = multiBufferSource;
+		this.submitNodeCollector = submitNodeCollector;
 		this.packedLight = packedLight;
 		this.partialTick = partialTick;
 		this.interpolatedPitch = interpolatedPitch;
@@ -70,10 +70,10 @@ public class RenderHandEvent extends BaseEvent implements CancellableEvent {
 	}
 
 	/**
-	 * {@return the source of rendering buffers}
+	 * {@return the submit node collector}
 	 */
-	public MultiBufferSource getMultiBufferSource() {
-		return multiBufferSource;
+	public SubmitNodeCollector getSubmitNodeCollector() {
+		return submitNodeCollector;
 	}
 
 	/**
@@ -121,8 +121,9 @@ public class RenderHandEvent extends BaseEvent implements CancellableEvent {
 	}
 
 	@Override
-	public void sendEvent() {
+	public RenderHandEvent sendEvent() {
 		EVENT.invoker().onRenderHand(this);
+		return this;
 	}
 
 	public interface Callback {

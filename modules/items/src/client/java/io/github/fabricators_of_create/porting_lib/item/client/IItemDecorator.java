@@ -1,14 +1,18 @@
 package io.github.fabricators_of_create.porting_lib.item.client;
 
+import io.github.fabricators_of_create.porting_lib.item.client.callbacks.RegisterItemDecorationsEvent;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 
 /**
  * An ItemDecorator that is used to render something on specific items, when the DurabilityBar and StackCount is rendered.
- * Add it to an item using {@linkplain io.github.fabricators_of_create.porting_lib.item.client.callbacks.ItemDecorationsCallback}.
+ * Add it to an item using {@linkplain RegisterItemDecorationsEvent}.
  */
 public interface IItemDecorator {
+	static void register(IItemDecorator decorator) {
+
+	}
 	/**
 	 * Is called after {@linkplain GuiGraphics#renderItemDecorations(Font, ItemStack, int, int, String)} is done rendering.
 	 * The StackCount is rendered at blitOffset+200 so use the blitOffset with caution.

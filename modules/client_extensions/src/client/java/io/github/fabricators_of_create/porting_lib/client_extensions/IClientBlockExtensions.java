@@ -1,5 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.client_extensions;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+
 import net.fabricmc.api.EnvType;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.BlockPos;
@@ -7,6 +9,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
+
+import org.jspecify.annotations.Nullable;
 
 /**
  * {@linkplain EnvType#CLIENT Client-only} extensions to {@link Block}.
@@ -38,12 +42,13 @@ public interface IClientBlockExtensions {
 	 *
 	 * @param state   The current state
 	 * @param level   The current level
-	 * @param target  The target the player is looking at {x/y/z/side/sub}
+	 * @param target  The target the player is looking at {x/y/z/side/sub}, if available
 	 * @param manager A reference to the current particle manager.
+	 * @param operation The original vanilla logic
 	 * @return True to prevent vanilla digging particles form spawning.
 	 */
-	default boolean addHitEffects(BlockState state, Level level, HitResult target, ParticleEngine manager) {
-		return false;
+	default boolean addHitEffects(BlockState state, Level level, @Nullable HitResult target, ParticleEngine manager, Operation<Boolean> operation) {
+		return !operation.call(state);
 	}
 
 	/**

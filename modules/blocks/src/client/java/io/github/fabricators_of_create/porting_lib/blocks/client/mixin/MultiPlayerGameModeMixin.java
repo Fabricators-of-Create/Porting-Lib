@@ -27,7 +27,7 @@ public class MultiPlayerGameModeMixin {
 	@WrapOperation(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
 	public boolean playerDestroyBlock(Level instance, BlockPos pos, BlockState state, int flags, Operation<Boolean> original, @Local FluidState fluidstate) {
 		if (state.getBlock() instanceof PlayerDestroyBlock destroyBlock) {
-			return destroyBlock.onDestroyedByPlayer(state, instance, pos, minecraft.player, false, fluidstate);
+			return destroyBlock.onDestroyedByPlayer(state, instance, pos, minecraft.player, minecraft.player.getMainHandItem().copy(), false, fluidstate);
 		}
 		return original.call(instance, pos, state, flags);
 	}

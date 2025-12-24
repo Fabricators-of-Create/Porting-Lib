@@ -1,20 +1,20 @@
 package io.github.fabricators_of_create.porting_lib.client_events.mixin.client;
 
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
-import io.github.fabricators_of_create.porting_lib.client_events.event.client.ComputeFovModifierEvent;
+import io.github.fabricators_of_create.porting_lib.client_events.ClientEventHooks;
 import net.minecraft.client.player.AbstractClientPlayer;
+
+import net.minecraft.world.entity.player.Player;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(AbstractClientPlayer.class)
 public abstract class AbstractClientPlayerMixin {
-	@ModifyReturnValue(method = "getFieldOfViewModifier", at = @At("RETURN"))
-	private float port_lib$modifyFovModifier(float original) {
-		var event = new ComputeFovModifierEvent((AbstractClientPlayer) (Object) this, original);
-		event.sendEvent();
-
-		return event.getNewFovModifier();
+	@WrapOperation(method = "getFieldOfViewModifier", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;lerp(FFF)F"))
+	private float modifyFovModifier(float delta, float start, float end, Operation<Float> original) {
+		return ClientEventHooks.getFieldOfViewModifier((Player) (Object) this, end, delta, start, original);
 	}
 }

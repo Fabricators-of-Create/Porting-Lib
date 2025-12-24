@@ -5,9 +5,6 @@
   "name": "Porting Lib Blocks",
   "description": "Adds extra block extensions.",
   "entrypoints": {
-    "client": [
-      "io.github.fabricators_of_create.porting_lib.blocks.client.PortingLibBlocksClient"
-    ]
   },
   "custom": {
     "loom:injected_interfaces": {

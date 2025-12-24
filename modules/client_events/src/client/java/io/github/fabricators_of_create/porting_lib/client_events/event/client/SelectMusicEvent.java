@@ -86,8 +86,9 @@ public class SelectMusicEvent extends BaseEvent implements CancellableEvent {
 	}
 
 	@Override
-	public void sendEvent() {
+	public SelectMusicEvent sendEvent() {
 		EVENT.invoker().onSelectMusic(this);
+		return this;
 	}
 
 	public interface SelectMusicCallback {

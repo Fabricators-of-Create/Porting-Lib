@@ -55,7 +55,7 @@ public class CullingBlockEntityIterator implements Iterator<BlockEntity> {
 		while (true) {
 			if (wrapped.hasNext()) {
 				BlockEntity next = wrapped.next();
-				BlockEntityRenderer<?> renderer = dispatcher.getRenderer(next);
+				BlockEntityRenderer<?, ?> renderer = dispatcher.getRenderer(next);
 				if (renderer instanceof CustomRenderBoundingBoxBlockEntityRenderer cullable) {
 					if (frustum.isVisible(cullable.getRenderBoundingBox(next))) {
 						return next;
