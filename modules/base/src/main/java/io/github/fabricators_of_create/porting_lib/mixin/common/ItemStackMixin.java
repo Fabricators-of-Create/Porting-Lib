@@ -6,6 +6,9 @@ import io.github.fabricators_of_create.porting_lib.entity.extensions.VanillaIShe
 import io.github.fabricators_of_create.porting_lib.item.DamageableItem;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,8 +17,8 @@ import net.minecraft.world.item.Item;
 
 import net.minecraft.world.level.gameevent.GameEvent;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -26,9 +29,24 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 
 @Mixin(ItemStack.class)
-public abstract class ItemStackMixin implements MutableDataComponentHolder {
+@Implements(@Interface(iface = MutableDataComponentHolder.class, prefix = "port_lib$i$", remap = Interface.Remap.NONE))
+public abstract class ItemStackMixin {
 	@Shadow
 	public abstract Item getItem();
+
+	@Shadow
+	public abstract void applyComponents(DataComponentPatch components);
+
+	@Shadow
+	public abstract void applyComponents(DataComponentMap components);
+
+	@Shadow
+	@Nullable
+	public abstract <T> T set(DataComponentType<? super T> component, @Nullable T value);
+
+	@Shadow
+	@Nullable
+	public abstract <T> T remove(DataComponentType<? extends T> component);
 
 	@Inject(method = "setDamageValue", at = @At("HEAD"), cancellable = true)
 	public void port_lib$itemSetDamage(int damage, CallbackInfo ci) {
@@ -80,4 +98,24 @@ public abstract class ItemStackMixin implements MutableDataComponentHolder {
 		}
 	}
 
+	@Intrinsic(displace = true)
+	@Nullable
+	public <T> T port_lib$i$set(DataComponentType<? super T> componentType, @Nullable T value) {
+		return this.set(componentType, value);
+	}
+
+	@Intrinsic(displace = true)
+	public <T> T port_lib$i$remove(DataComponentType<? extends T> componentType) {
+		return this.remove(componentType);
+	}
+
+	@Intrinsic(displace = true)
+	public void port_lib$i$applyComponents(DataComponentPatch patch) {
+		this.applyComponents(patch);
+	}
+
+	@Intrinsic(displace = true)
+	public void port_lib$i$applyComponents(DataComponentMap components) {
+		this.applyComponents(components);
+	}
 }
