@@ -2,30 +2,22 @@ package io.github.fabricators_of_create.porting_lib.brewing.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
-import com.llamalad7.mixinextras.sugar.Local;
-
 import io.github.fabricators_of_create.porting_lib.brewing.BrewingRecipe;
 import io.github.fabricators_of_create.porting_lib.brewing.BrewingRecipeRegistry;
 import io.github.fabricators_of_create.porting_lib.brewing.IBrewingRecipe;
-import io.github.fabricators_of_create.porting_lib.brewing.RegisterBrewingRecipesEvent;
 import io.github.fabricators_of_create.porting_lib.brewing.ext.PotionBrewingBuilderExt;
 import io.github.fabricators_of_create.porting_lib.brewing.ext.PotionBrewingExt;
-import net.minecraft.world.flag.FeatureFlagSet;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 
 import net.minecraft.world.item.crafting.Ingredient;
 
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,15 +61,6 @@ public abstract class PotionBrewingMixin implements PotionBrewingExt {
 	private void doMix(ItemStack itemStack, ItemStack itemStack2, CallbackInfoReturnable<ItemStack> cir) {
 		var customMix = porting_lib$registry.getOutput(itemStack2, itemStack); // Parameters are swapped compared to what vanilla passes!
 		if (!customMix.isEmpty()) cir.setReturnValue(customMix);
-	}
-
-	@Inject(method = "bootstrap", at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/world/item/alchemy/PotionBrewing;addVanillaMixes(Lnet/minecraft/world/item/alchemy/PotionBrewing$Builder;)V",
-			shift = At.Shift.AFTER
-	))
-	private static void fireRegisterEvent(FeatureFlagSet featureFlagSet, CallbackInfoReturnable<PotionBrewing> cir, @Local PotionBrewing.Builder builder) {
-		new RegisterBrewingRecipesEvent(builder).sendEvent();
 	}
 
 	@Inject(method = "isIngredient", at = @At("HEAD"), cancellable = true)

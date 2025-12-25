@@ -1,6 +1,8 @@
 package io.github.fabricators_of_create.porting_lib.brewing;
 
 import java.util.List;
+
+import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import org.jetbrains.annotations.ApiStatus;
@@ -8,7 +10,7 @@ import org.jetbrains.annotations.ApiStatus;
 /**
  * Starting from 1.20.5 this is used to hold {@link IBrewingRecipe}s inside of {@link PotionBrewing}.
  * For queries, use the vanilla {@link PotionBrewing}.
- * For registration, use {@link RegisterBrewingRecipesEvent}.
+ * For registration, use {@link FabricBrewingRecipeRegistryBuilder#BUILD}.
  */
 @ApiStatus.Internal
 public record BrewingRecipeRegistry(List<IBrewingRecipe> recipes) {

@@ -1,12 +1,13 @@
 package io.github.fabricators_of_create.porting_lib.brewing;
 
 import io.github.fabricators_of_create.porting_lib.brewing.ext.PotionBrewingBuilderExt;
+import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
 import net.minecraft.world.item.ItemStack;
 
 /**
  * Interface for more flexible brewing recipes.
  *
- * <p>Register using {@link RegisterBrewingRecipesEvent} and {@link PotionBrewingBuilderExt#addRecipe(IBrewingRecipe)}.
+ * <p>Register using {@link FabricBrewingRecipeRegistryBuilder#BUILD} and {@link PotionBrewingBuilderExt#addRecipe(IBrewingRecipe)}.
  */
 public interface IBrewingRecipe {
 	/**
