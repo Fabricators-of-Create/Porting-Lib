@@ -21,3 +21,6 @@ accessible class com/mojang/blaze3d/platform/GlStateManager$BooleanState
 accessible field com/mojang/blaze3d/platform/GlStateManager$BooleanState enabled Z
 
 accessible class com/mojang/blaze3d/platform/GlStateManager$StencilFunc
+
+accessible field net/minecraft/world/item/CreativeModeTab DEFAULT_BACKGROUND Lnet/minecraft/resources/Identifier;
+accessible field net/minecraft/world/item/CreativeModeTab$Builder backgroundTexture Lnet/minecraft/resources/Identifier;
