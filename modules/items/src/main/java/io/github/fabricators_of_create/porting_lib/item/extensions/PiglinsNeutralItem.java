@@ -1,8 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.item.extensions;
 
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.ItemStack;
 
 public interface PiglinsNeutralItem {
@@ -15,6 +14,6 @@ public interface PiglinsNeutralItem {
 	 * @return True if piglins are neutral to players wearing this item in an armor slot
 	 */
 	default boolean makesPiglinsNeutral(ItemStack stack, LivingEntity wearer) {
-		return stack.getItem() instanceof ArmorItem && ((ArmorItem) stack.getItem()).getMaterial() == ArmorMaterials.GOLD;
+		return stack.is(ItemTags.PIGLIN_SAFE_ARMOR);
 	}
 }

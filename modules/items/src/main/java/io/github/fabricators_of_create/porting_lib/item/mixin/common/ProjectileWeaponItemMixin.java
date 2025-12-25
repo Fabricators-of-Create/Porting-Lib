@@ -7,8 +7,8 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import io.github.fabricators_of_create.porting_lib.item.extensions.CustomArrowItem;
 import io.github.fabricators_of_create.porting_lib.item.extensions.InfiniteArrowItem;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
 
@@ -25,9 +25,9 @@ public class ProjectileWeaponItemMixin {
 	}
 
 	@ModifyReturnValue(method = "createProjectile", at = @At("RETURN"))
-	private Projectile customArrow(Projectile original, Level level, LivingEntity livingEntity, ItemStack itemStack, ItemStack itemStack2) {
+	private Projectile customArrow(Projectile original, Level level, LivingEntity shooter, ItemStack weapon, ItemStack ammo2) {
 		if (this instanceof CustomArrowItem arrowItem && original instanceof AbstractArrow arrow)
-			return arrowItem.customArrow(arrow, itemStack, itemStack2);
+			return arrowItem.customArrow(arrow, ammo2, weapon);
 		return original;
 	}
 }

@@ -4,6 +4,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 
+// TODO: PORT
 public interface UseFirstBehaviorItem {
 	/**
 	 * This is called when the item is used, before the block is activated.

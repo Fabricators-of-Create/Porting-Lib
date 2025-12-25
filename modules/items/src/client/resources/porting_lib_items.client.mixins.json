@@ -9,9 +9,6 @@
   "client": [
     "CreativeModeInventoryScreenMixin",
     "GuiGraphicsMixin",
-    "HumanoidArmorLayerMixin",
-    "ItemFrameRendererMixin",
-    "ItemInHandRendererMixin",
     "MultiPlayerGameModeMixin"
   ],
   "mixins": [

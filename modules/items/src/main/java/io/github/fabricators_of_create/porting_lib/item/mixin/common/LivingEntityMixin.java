@@ -1,13 +1,10 @@
 package io.github.fabricators_of_create.porting_lib.item.mixin.common;
 
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-
 import io.github.fabricators_of_create.porting_lib.item.extensions.ContinueUsingItem;
 import io.github.fabricators_of_create.porting_lib.item.extensions.EntitySwingListenerItem;
 
 import io.github.fabricators_of_create.porting_lib.item.extensions.EquipmentItem;
 
-import io.github.fabricators_of_create.porting_lib.item.extensions.ShieldBlockItem;
 import io.github.fabricators_of_create.porting_lib.item.extensions.UsingTickItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -89,16 +86,6 @@ public abstract class LivingEntityMixin extends Entity {
 				return continueUsingItem.canContinueUsing(useItem, to);
 			}
 			return false;
-		}
-		return original;
-	}
-
-	@ModifyReturnValue(method = "canDisableShield", at = @At("RETURN"))
-	private boolean canDisableShieldItem(boolean original) {
-		if (!original) {
-			ItemStack weapon = getWeaponItem();
-			if (weapon.getItem() instanceof ShieldBlockItem shieldBlockItem)
-				return shieldBlockItem.canDisableShield(weapon, this.useItem, (LivingEntity) (Object) this, (LivingEntity) (Object) this);
 		}
 		return original;
 	}

@@ -6,6 +6,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
+import org.jspecify.annotations.Nullable;
+
 public interface EquipmentItem {
 	/**
 	 * Override this to set a non-default armor slot for an ItemStack, but <em>do
@@ -19,6 +21,7 @@ public interface EquipmentItem {
 	 * @apiNote Try to use {@link FabricItem.Settings#equipmentSlot(EquipmentSlotProvider)} for acquiring an equipment slot instead,
 	 * 			as it also provides entity information.
 	 */
+	@Nullable
 	default EquipmentSlot getEquipmentSlot(ItemStack stack) {
 		return null;
 	}
@@ -33,6 +36,6 @@ public interface EquipmentItem {
 	 * @return True if the given ItemStack can be inserted in the slot
 	 */
 	default boolean canEquip(ItemStack stack, EquipmentSlot armorType, LivingEntity entity) {
-		return entity.getEquipmentSlotForItem(stack) == armorType;
+		return entity.isEquippableInSlot(stack, armorType);
 	}
 }

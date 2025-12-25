@@ -5,9 +5,9 @@ import net.minecraft.world.item.ItemStack;
 public interface XpRepairItem {
 	/**
 	 * Determines the amount of durability the mending enchantment
-	 * will repair, on average, per point of experience.
+	 * will repair, on average, per 0.5 points of experience.
 	 */
 	default float getXpRepairRatio(ItemStack stack) {
-		return 2f;
+		return 1f;
 	}
 }

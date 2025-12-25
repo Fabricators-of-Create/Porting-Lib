@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class GuiGraphicsMixin {
 	@Inject(
 			method = "renderItemDecorations(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;IILjava/lang/String;)V",
-			at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V", shift = At.Shift.AFTER)
+			at = @At(value = "INVOKE", target = "Lorg/joml/Matrix3x2fStack;popMatrix()Lorg/joml/Matrix3x2fStack;", shift = At.Shift.AFTER)
 	)
 	private void renderCustomItemDecorations(Font textRenderer, ItemStack stack, int x, int y, String countOverride, CallbackInfo ci) {
 		ItemDecoratorHandler.of(stack).render((GuiGraphics) (Object) this, textRenderer, stack, x, y);
