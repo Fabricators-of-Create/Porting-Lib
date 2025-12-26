@@ -2,9 +2,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
-import io.github.fabricators_of_create.porting_lib.util.DeferredSpawnEggItem;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.SpawnEggItem;
 
 import org.spongepowered.asm.mixin.Mixin;

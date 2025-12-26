@@ -2,10 +2,13 @@ package io.github.fabricators_of_create.porting_lib.client.mixin;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.mojang.blaze3d.buffers.GpuBufferSlice;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import io.github.fabricators_of_create.porting_lib.client.dimesnion.DimensionSpecialEffectsRenderer;
+import io.github.fabricators_of_create.porting_lib.client.environment.CustomSkyboxRenderer;
 import io.github.fabricators_of_create.porting_lib.client.event.DrawSelectionEvents;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
@@ -14,6 +17,9 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderBuffers;
+import net.minecraft.client.renderer.SkyRenderer;
+import net.minecraft.client.renderer.state.LevelRenderState;
+import net.minecraft.client.renderer.state.SkyRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -50,6 +56,18 @@ public abstract class LevelRendererMixin {
 
 	@Shadow
 	private int ticks;
+
+	@Shadow
+	@Final
+	private LevelRenderState levelRenderState;
+
+	@Inject(method = "method_62215", at = @At("HEAD"), cancellable = true)
+	private static void customSkyPass(GpuBufferSlice gpuBufferSlice, SkyRenderState skyRenderState, SkyRenderer skyRenderer, CallbackInfo ci) {
+		CustomSkyboxRenderer customSkyboxRenderer = skyRenderState.getData(CustomSkyboxRenderer.KEY);
+		if (customSkyboxRenderer == null || !customSkyboxRenderer.renderSky(Minecraft.getInstance().levelRenderer.levelRenderState, skyRenderState, modelViewMatrix, () -> RenderSystem.setShaderFog(p_418294_))) {
+
+		}
+	}
 
 	@WrapWithCondition(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;renderHitOutline(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/world/entity/Entity;DDDLnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V"))
 	private boolean renderBlockOutline(LevelRenderer self, PoseStack poseStack, VertexConsumer vertexConsumer, Entity entity, double camX, double camY, double camZ, BlockPos blockPos, BlockState blockState,

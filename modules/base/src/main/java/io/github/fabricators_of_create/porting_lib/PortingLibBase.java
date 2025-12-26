@@ -3,9 +3,9 @@ package io.github.fabricators_of_create.porting_lib;
 import io.github.fabricators_of_create.porting_lib.command.ConfigCommand;
 import io.github.fabricators_of_create.porting_lib.command.EnumArgument;
 import io.github.fabricators_of_create.porting_lib.event.common.ModsLoadedCallback;
-import io.github.fabricators_of_create.porting_lib.util.DeferredSpawnEggItem;
 import io.github.fabricators_of_create.porting_lib.util.UsernameCache;
 
+import io.github.fabricators_of_create.porting_lib.world.PortingLibAttributeTypes;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -23,6 +23,7 @@ public class PortingLibBase implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		UsernameCache.load();
+		PortingLibAttributeTypes.init();
 		// can be used to force all mixins to apply
 		// MixinEnvironment.getCurrentEnvironment().audit();
 

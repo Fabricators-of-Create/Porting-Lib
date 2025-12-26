@@ -7,7 +7,7 @@ import com.google.common.math.LongMath;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.Unit;
@@ -22,7 +22,7 @@ public class FluidTextUtil {
 	public static final Format NUMBER_FORMAT = new Format();
 
 	public static class Format extends SimplePreparableReloadListener<Unit> implements IdentifiableResourceReloadListener {
-		public static final ResourceLocation ID = PortingLib.id("format_reload_listener");
+		public static final Identifier ID = PortingLib.id("format_reload_listener");
 		private NumberFormat format = NumberFormat.getNumberInstance(Locale.ROOT);
 
 		private Format() {}
@@ -49,7 +49,7 @@ public class FluidTextUtil {
 		}
 
 		@Override
-		public ResourceLocation getFabricId() {
+		public Identifier getFabricId() {
 			return ID;
 		}
 	}

@@ -57,9 +57,9 @@ public class MultiPlayerGameModeMixin {
 			} else {
 				Item item = heldItem.getItem();
 				InteractionResult result = useFirst.onItemUseFirst(heldItem, ctx);
-//				if (result.indicateItemUse()) {
-//					player.awardStat(Stats.ITEM_USED.get(item));
-//				}
+				if (result.indicateItemUse()) {
+					player.awardStat(Stats.ITEM_USED.get(item));
+				}
 
 				if (result != InteractionResult.PASS) {
 					cir.setReturnValue(result);
