@@ -6,7 +6,7 @@ import io.github.fabricators_of_create.porting_lib.resources.data_maps.DataMapTy
 
 import io.github.fabricators_of_create.porting_lib.resources.data_maps.IWithData;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface HolderInjection<T> extends IWithData<T> {
 	@Nullable

@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.resources.data_maps;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a registry object (usually a {@link net.minecraft.core.Holder}) that has data maps.

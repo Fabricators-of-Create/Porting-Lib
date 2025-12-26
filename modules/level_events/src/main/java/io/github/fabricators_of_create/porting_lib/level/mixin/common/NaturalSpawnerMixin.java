@@ -16,7 +16,7 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
 
 import net.minecraft.world.level.chunk.ChunkGenerator;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 

@@ -1,7 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.core.util;
 
 import java.util.function.Supplier;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Proxy object for a value that is calculated on first access, and can be refreshed as well.

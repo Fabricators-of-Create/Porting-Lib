@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.models;
 import net.fabricmc.fabric.api.renderer.v1.model.WrapperBakedModel;
 
 import org.jetbrains.annotations.ApiStatus.OverrideOnly;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 

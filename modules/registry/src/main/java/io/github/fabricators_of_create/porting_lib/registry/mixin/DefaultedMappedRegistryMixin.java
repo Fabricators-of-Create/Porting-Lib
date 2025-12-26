@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceKey;
 
 import net.minecraft.resources.ResourceLocation;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(DefaultedMappedRegistry.class)

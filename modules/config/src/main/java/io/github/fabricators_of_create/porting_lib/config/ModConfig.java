@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 import net.fabricmc.loader.api.ModContainer;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public final class ModConfig {
 	private final Type type;

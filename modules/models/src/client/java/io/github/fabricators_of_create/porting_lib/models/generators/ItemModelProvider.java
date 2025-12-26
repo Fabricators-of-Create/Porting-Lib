@@ -5,7 +5,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -31,7 +30,6 @@ public abstract class ItemModelProvider extends ModelProvider<ItemModelBuilder> 
 				.texture("layer0", ResourceLocation.fromNamespaceAndPath(item.getNamespace(), "item/" + item.getPath()));
 	}
 
-	@NotNull
 	@Override
 	public String getName() {
 		return "Item Models: " + modid;

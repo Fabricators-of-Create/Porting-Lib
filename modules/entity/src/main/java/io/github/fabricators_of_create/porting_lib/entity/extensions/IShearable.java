@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.Block;
 
 import net.minecraft.world.phys.Vec3;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This interfaces allows shears (modded & vanilla) and {@linkplain Entity entities} (modded & vanilla) to cooperate

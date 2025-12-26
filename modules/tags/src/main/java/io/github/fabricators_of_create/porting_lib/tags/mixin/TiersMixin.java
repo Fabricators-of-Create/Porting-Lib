@@ -7,7 +7,7 @@ import net.minecraft.world.item.Tiers;
 
 import net.minecraft.world.level.block.Block;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(Tiers.class)

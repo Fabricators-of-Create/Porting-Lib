@@ -1,12 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.item.extensions;
 
-import io.github.fabricators_of_create.porting_lib.item.itemgroup.PortingLibCreativeTab;
+import io.github.fabricators_of_create.porting_lib.item.itemgroup.PortingLibCreativeTab.TabData;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface CreativeModeTabExt {
-	void setPortingData(PortingLibCreativeTab.TabData data);
+	void setPortingData(TabData data);
 
 	@Nullable
-	PortingLibCreativeTab.TabData getPortingTabData();
+	TabData getPortingTabData();
 }

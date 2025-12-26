@@ -1,7 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.models.mixin.client;
 
-import javax.annotation.Nullable;
-
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -10,6 +8,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import net.fabricmc.fabric.api.renderer.v1.model.WrapperBakedModel;
 
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;

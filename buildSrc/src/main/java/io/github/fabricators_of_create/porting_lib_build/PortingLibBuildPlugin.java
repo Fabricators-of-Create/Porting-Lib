@@ -10,7 +10,6 @@ import io.github.fabricators_of_create.porting_lib_build.tasks.SortAccessWidener
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -26,12 +25,12 @@ public class PortingLibBuildPlugin implements Plugin<Project> {
 	);
 
 	@Override
-	public void apply(@NotNull Project project) {
+	public void apply(Project project) {
 		project.getExtensions().create("portingLib", PortingLibExtension.class);
 		project.getTasks().register("sortAccessWidener", SortAccessWidenerTask.class);
 
 		this.processors.forEach(processor -> processor.apply(project));
-		
+
 		project.afterEvaluate(p -> this.lateProcessors.forEach(processor -> processor.apply(p)));
 	}
 }

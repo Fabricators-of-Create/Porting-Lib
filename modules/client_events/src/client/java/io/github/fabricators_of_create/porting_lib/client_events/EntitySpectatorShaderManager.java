@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.client_events;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -65,7 +65,7 @@ import net.minecraft.world.level.storage.loot.predicates.CompositeLootItemCondit
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Currently used only for replacing shears item to shears_dig item ability

@@ -15,7 +15,7 @@ import io.github.fabricators_of_create.porting_lib.models.generators.VariantBloc
 import io.github.fabricators_of_create.porting_lib.models.generators.MultiPartBlockStateBuilder.PartBuilder;
 
 import net.minecraft.client.resources.model.BlockModelRotation;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a model with blockstate configurations, e.g. rotation, uvlock, and

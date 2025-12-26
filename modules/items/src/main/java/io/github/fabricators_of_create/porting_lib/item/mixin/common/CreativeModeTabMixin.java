@@ -1,25 +1,23 @@
 package io.github.fabricators_of_create.porting_lib.item.mixin.common;
 
-import javax.annotation.Nullable;
-
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 
 import io.github.fabricators_of_create.porting_lib.item.extensions.CreativeModeTabExt;
-import io.github.fabricators_of_create.porting_lib.item.itemgroup.PortingLibCreativeTab;
+import io.github.fabricators_of_create.porting_lib.item.itemgroup.PortingLibCreativeTab.TabData;
 import net.minecraft.world.item.CreativeModeTab;
 
 @Mixin(CreativeModeTab.class)
 public class CreativeModeTabMixin implements CreativeModeTabExt {
-	@Nullable
-	private PortingLibCreativeTab.TabData porting$data;
+	private @Nullable TabData porting$data;
 
 	@Override
-	public void setPortingData(PortingLibCreativeTab.TabData data) {
+	public void setPortingData(TabData data) {
 		this.porting$data = data;
 	}
 
 	@Override
-	public PortingLibCreativeTab.TabData getPortingTabData() {
+	public TabData getPortingTabData() {
 		return this.porting$data;
 	}
 }

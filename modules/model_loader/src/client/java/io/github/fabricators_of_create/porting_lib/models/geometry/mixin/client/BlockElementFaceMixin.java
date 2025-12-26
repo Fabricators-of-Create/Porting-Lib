@@ -10,10 +10,9 @@ import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockElementFace;
 
 import org.apache.commons.lang3.mutable.MutableObject;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-
-import javax.annotation.Nullable;
 
 @Mixin(BlockElementFace.class)
 public class BlockElementFaceMixin implements BlockElementFaceExtension {

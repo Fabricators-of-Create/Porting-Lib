@@ -1,7 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.blocks.util;
 
-import javax.annotation.Nullable;
-
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.CustomRailDirectionBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -13,6 +11,8 @@ import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
+
+import org.jspecify.annotations.Nullable;
 
 public class MinecartAndRailUtil {
 

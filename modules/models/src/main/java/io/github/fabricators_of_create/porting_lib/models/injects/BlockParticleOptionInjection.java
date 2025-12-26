@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.models.injects;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;

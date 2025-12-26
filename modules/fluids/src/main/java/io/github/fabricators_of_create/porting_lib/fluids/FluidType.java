@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.fluids;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 

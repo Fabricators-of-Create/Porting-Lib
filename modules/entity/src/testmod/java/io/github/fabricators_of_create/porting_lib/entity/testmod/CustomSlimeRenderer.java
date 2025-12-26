@@ -1,7 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.entity.testmod;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import io.github.fabricators_of_create.porting_lib.entity.testmod.CustomSlime.OrbitingItem;
@@ -24,7 +22,7 @@ public class CustomSlimeRenderer extends SlimeRenderer {
 	}
 
 	@Override
-	public void render(@NotNull Slime slime, float yaw, float tickDelta, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffers, int light) {
+	public void render(Slime slime, float yaw, float tickDelta, PoseStack poseStack, MultiBufferSource buffers, int light) {
 		super.render(slime, yaw, tickDelta, poseStack, buffers, light);
 		if (!(slime instanceof CustomSlime custom))
 			return;

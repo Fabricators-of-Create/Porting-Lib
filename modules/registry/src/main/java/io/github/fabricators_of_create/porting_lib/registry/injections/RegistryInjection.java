@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.registry.injections;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface RegistryInjection<T> {
 	/**

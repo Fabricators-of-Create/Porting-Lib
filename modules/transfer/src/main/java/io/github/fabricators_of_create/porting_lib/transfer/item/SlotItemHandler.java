@@ -1,7 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.transfer.item;
 
-import org.jetbrains.annotations.NotNull;
-
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.SlottedStorage;
@@ -39,7 +37,6 @@ public class SlotItemHandler extends Slot {
 	}
 
 	@Override
-	@NotNull
 	public ItemStack getItem() {
 		if (storage instanceof SlottedStackStorage slottedStorage)
 			return slottedStorage.getStackInSlot(index);
@@ -49,7 +46,7 @@ public class SlotItemHandler extends Slot {
 
 	// Override if your IItemHandler does not implement IItemHandlerModifiable
 	@Override
-	public void set(@NotNull ItemStack stack) {
+	public void set(ItemStack stack) {
 		if (storage instanceof SlottedStackStorage slottedStorage)
 			slottedStorage.setStackInSlot(index, stack);
 		else {
@@ -72,7 +69,7 @@ public class SlotItemHandler extends Slot {
 	}
 
 	@Override
-	public void onQuickCraft(@NotNull ItemStack oldStackIn, @NotNull ItemStack newStackIn) {
+	public void onQuickCraft(ItemStack oldStackIn, ItemStack newStackIn) {
 	}
 
 	@Override
@@ -83,21 +80,20 @@ public class SlotItemHandler extends Slot {
 	}
 
 	@Override
-	public int getMaxStackSize(@NotNull ItemStack stack) {
+	public int getMaxStackSize(ItemStack stack) {
 		if (storage instanceof SlottedStackStorage slottedStorage)
 			return slottedStorage.getSlotLimit(index);
 		return (int) storage.getSlot(index).getCapacity();
 	}
 
 	@Override
-	public boolean mayPickup(@NotNull Player playerIn) {
+	public boolean mayPickup(Player playerIn) {
 		if (storage instanceof SlottedStackStorage slottedStorage)
 			return !slottedStorage.getStackInSlot(index).isEmpty();
 		return !storage.getSlot(index).isResourceBlank();
 	}
 
 	@Override
-	@NotNull
 	public ItemStack remove(int amount) {
 		if (storage instanceof SlottedStackStorage slottedStorage) {
 			ItemStack held = slottedStorage.getStackInSlot(index).copy();

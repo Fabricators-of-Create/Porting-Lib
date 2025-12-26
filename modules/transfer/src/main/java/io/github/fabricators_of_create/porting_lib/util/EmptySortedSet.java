@@ -7,8 +7,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public enum EmptySortedSet implements SortedSet<Object> {
 	INSTANCE;
@@ -24,19 +23,16 @@ public enum EmptySortedSet implements SortedSet<Object> {
 		return null;
 	}
 
-	@NotNull
 	@Override
 	public SortedSet<Object> subSet(Object fromElement, Object toElement) {
 		throw new UnsupportedOperationException();
 	}
 
-	@NotNull
 	@Override
 	public SortedSet<Object> headSet(Object toElement) {
 		throw new UnsupportedOperationException();
 	}
 
-	@NotNull
 	@Override
 	public SortedSet<Object> tailSet(Object fromElement) {
 		throw new UnsupportedOperationException();
@@ -67,7 +63,6 @@ public enum EmptySortedSet implements SortedSet<Object> {
 		return false;
 	}
 
-	@NotNull
 	@Override
 	public Iterator<Object> iterator() {
 		return Collections.emptyIterator();
@@ -78,9 +73,8 @@ public enum EmptySortedSet implements SortedSet<Object> {
 		return new Object[0];
 	}
 
-	@NotNull
 	@Override
-	public <T> T[] toArray(@NotNull T[] a) {
+	public <T> T[] toArray(T[] a) {
 		return a;
 	}
 
@@ -95,22 +89,22 @@ public enum EmptySortedSet implements SortedSet<Object> {
 	}
 
 	@Override
-	public boolean containsAll(@NotNull Collection<?> c) {
+	public boolean containsAll(Collection<?> c) {
 		return false;
 	}
 
 	@Override
-	public boolean addAll(@NotNull Collection<?> c) {
+	public boolean addAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean retainAll(@NotNull Collection<?> c) {
+	public boolean retainAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean removeAll(@NotNull Collection<?> c) {
+	public boolean removeAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 

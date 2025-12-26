@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.resources.injections;
 import io.github.fabricators_of_create.porting_lib.resources.data_maps.DataMapType;
 import net.minecraft.resources.ResourceKey;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface RegistryLookupInjection<T> {
 	@Nullable

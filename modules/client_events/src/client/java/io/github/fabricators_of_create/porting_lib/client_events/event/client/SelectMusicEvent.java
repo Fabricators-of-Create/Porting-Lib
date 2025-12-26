@@ -8,7 +8,7 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.sounds.Music;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Fired when the {@link net.minecraft.client.sounds.MusicManager} checks what situational music should be used. This fires before the music begins playing.<br>

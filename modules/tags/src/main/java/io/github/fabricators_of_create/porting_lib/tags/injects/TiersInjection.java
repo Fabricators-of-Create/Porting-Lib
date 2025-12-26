@@ -4,7 +4,7 @@ import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface TiersInjection {
 	@Nullable

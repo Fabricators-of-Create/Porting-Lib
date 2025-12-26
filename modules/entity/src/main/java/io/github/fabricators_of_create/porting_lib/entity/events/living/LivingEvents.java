@@ -1,7 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.entity.events.living;
 
-import javax.annotation.Nullable;
-
 import io.github.fabricators_of_create.porting_lib.core.event.CancellableEvent;
 import io.github.fabricators_of_create.porting_lib.core.event.entity.living.LivingEvent;
 import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
@@ -9,6 +7,8 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+
+import org.jspecify.annotations.Nullable;
 
 /**
  * All Living entity related events

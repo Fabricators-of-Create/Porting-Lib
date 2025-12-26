@@ -32,8 +32,6 @@ import net.minecraft.world.level.material.FluidState;
 
 import net.minecraft.world.phys.Vec3;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.function.BiConsumer;
 
 /**
@@ -135,7 +133,7 @@ public interface BlockStateInjection {
 	 * @param other Other block
 	 * @return True to link blocks
 	 */
-	default boolean port_lib$canStickTo(@NotNull BlockState other) {
+	default boolean port_lib$canStickTo(BlockState other) {
 		Block block = ((BlockState) this).getBlock();
 		if (block instanceof StickToBlock stickTo)
 			return stickTo.canStickTo((BlockState) this, other);

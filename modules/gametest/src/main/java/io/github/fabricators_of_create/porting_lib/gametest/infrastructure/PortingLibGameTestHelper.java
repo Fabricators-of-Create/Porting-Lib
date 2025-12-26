@@ -6,7 +6,6 @@ import java.util.List;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 import it.unimi.dsi.fastutil.objects.Object2LongArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
@@ -30,8 +29,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeverBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -212,7 +209,7 @@ public class PortingLibGameTestHelper extends GameTestHelper {
 	 * Assert that the given inventory holds no items.
 	 */
 	@Override
-	public void assertContainerEmpty(@NotNull BlockPos pos) {
+	public void assertContainerEmpty(BlockPos pos) {
 		Storage<ItemVariant> storage = getItemStorage(pos);
 		for (StorageView<ItemVariant> ignored : storage.nonEmptyViews())
 			fail("Storage not empty");
@@ -225,7 +222,7 @@ public class PortingLibGameTestHelper extends GameTestHelper {
 
 	/** @see PortingLibGameTestHelper#assertContainerContains(BlockPos, ItemStack) */
 	@Override
-	public void assertContainerContains(@NotNull BlockPos pos, @NotNull Item item) {
+	public void assertContainerContains(BlockPos pos, Item item) {
 		assertContainerContains(pos, new ItemStack(item));
 	}
 
@@ -282,7 +279,7 @@ public class PortingLibGameTestHelper extends GameTestHelper {
 
 	@Contract("_->fail") // make IDEA happier
 	@Override
-	public void fail(@NotNull String exceptionMessage) {
+	public void fail(String exceptionMessage) {
 		super.fail(exceptionMessage);
 	}
 }

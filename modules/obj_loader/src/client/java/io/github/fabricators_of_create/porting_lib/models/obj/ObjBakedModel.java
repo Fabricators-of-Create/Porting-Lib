@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
 import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
@@ -53,8 +52,7 @@ public class ObjBakedModel implements BakedModel {
 	}
 
 	@Override
-	@NotNull
-	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction direction, @NotNull RandomSource random) {
+	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction direction, RandomSource random) {
 		ArrayList<BakedQuad> quads = new ArrayList<>();
 		meshes.forEach(mesh -> quads.addAll(ModelHelper.toQuadLists(mesh)[ModelHelper.toFaceIndex(direction)]));
 		return quads;
@@ -86,19 +84,16 @@ public class ObjBakedModel implements BakedModel {
 	}
 
 	@Override
-	@NotNull
 	public TextureAtlasSprite getParticleIcon() {
 		return particle;
 	}
 
 	@Override
-	@NotNull
 	public ItemTransforms getTransforms() {
 		return transforms;
 	}
 
 	@Override
-	@NotNull
 	public ItemOverrides getOverrides() {
 		return overrides;
 	}

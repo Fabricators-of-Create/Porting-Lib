@@ -23,8 +23,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Supplier;
 
@@ -127,7 +126,6 @@ public abstract class BaseFlowingFluid extends FlowingFluid implements ConvertTo
 		return fluidIn == still.get() || fluidIn == flowing.get();
 	}
 
-	@NotNull
 	@Override
 	public Optional<SoundEvent> getPickupSound() {
 		return Optional.ofNullable(getFluidType().getSound(SoundActions.BUCKET_FILL));

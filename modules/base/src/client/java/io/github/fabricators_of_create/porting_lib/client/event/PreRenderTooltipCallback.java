@@ -8,8 +8,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.world.item.ItemStack;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 
 /**
@@ -31,5 +29,5 @@ public interface PreRenderTooltipCallback {
 	/**
 	 * @return true to cancel rendering, false otherwise
 	 */
-	boolean onPreRenderTooltip(@NotNull ItemStack stack, PoseStack poseStack, int x, int y, int screenWidth, int screenHeight, @NotNull Font font, @NotNull List<ClientTooltipComponent> components);
+	boolean onPreRenderTooltip(ItemStack stack, PoseStack poseStack, int x, int y, int screenWidth, int screenHeight, Font font, List<ClientTooltipComponent> components);
 }

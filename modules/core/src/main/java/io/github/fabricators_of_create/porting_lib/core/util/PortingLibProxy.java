@@ -8,7 +8,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.world.item.TooltipFlag;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class PortingLibProxy {
 	// I don't like this solution, but I'm too lazy to rewrite it

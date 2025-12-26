@@ -4,7 +4,7 @@ import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingChangeTargetEvent;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

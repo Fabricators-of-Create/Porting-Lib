@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.config;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.Config;
 import com.electronwill.nightconfig.core.UnmodifiableCommentedConfig;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A config spec is responsible for interpreting (loading, correcting) raw {@link CommentedConfig}s from NightConfig.

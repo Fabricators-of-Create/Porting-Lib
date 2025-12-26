@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.core.util;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.BitSet;

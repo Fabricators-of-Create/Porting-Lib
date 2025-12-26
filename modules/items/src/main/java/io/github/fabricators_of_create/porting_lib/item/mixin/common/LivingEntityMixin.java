@@ -7,7 +7,6 @@ import io.github.fabricators_of_create.porting_lib.item.extensions.EquipmentItem
 
 import io.github.fabricators_of_create.porting_lib.item.extensions.UsingTickItem;
 
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -42,7 +41,6 @@ public abstract class LivingEntityMixin extends Entity {
 	public abstract InteractionHand getUsedItemHand();
 
 	@Shadow
-	@NotNull
 	public abstract ItemStack getWeaponItem();
 
 	public LivingEntityMixin(EntityType<?> entityType, Level world) {

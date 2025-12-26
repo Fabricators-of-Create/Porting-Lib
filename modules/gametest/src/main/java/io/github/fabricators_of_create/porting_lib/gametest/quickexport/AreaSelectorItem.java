@@ -2,8 +2,7 @@ package io.github.fabricators_of_create.porting_lib.gametest.quickexport;
 
 import io.github.fabricators_of_create.porting_lib.gametest.PortingLibGameTest;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -32,8 +31,7 @@ public class AreaSelectorItem extends Item {
 	}
 
 	@Override
-	@NotNull
-	public InteractionResult use(@NotNull Level world, @NotNull Player user, @NotNull InteractionHand hand) {
+	public InteractionResult use(Level world, Player user, InteractionHand hand) {
 		ItemStack held = user.getItemInHand(hand);
 		if (!(user instanceof ServerPlayer player))
 			return InteractionResult.SUCCESS;
@@ -45,8 +43,7 @@ public class AreaSelectorItem extends Item {
 	}
 
 	@Override
-	@NotNull
-	public InteractionResult useOn(@NotNull UseOnContext context) {
+	public InteractionResult useOn(UseOnContext context) {
 		if (!(context.getPlayer() instanceof ServerPlayer player))
 			return InteractionResult.SUCCESS;
 		ItemStack held = context.getItemInHand();
@@ -93,7 +90,7 @@ public class AreaSelectorItem extends Item {
 	}
 
 	@Override
-	public boolean isFoil(@NotNull ItemStack stack) {
+	public boolean isFoil(ItemStack stack) {
 		return true;
 	}
 

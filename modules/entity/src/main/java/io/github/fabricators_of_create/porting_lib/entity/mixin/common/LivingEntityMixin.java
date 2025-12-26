@@ -33,7 +33,7 @@ import net.minecraft.world.effect.MobEffect;
 
 import net.minecraft.world.effect.MobEffectInstance;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -203,7 +203,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
 	}
 
 	@ModifyReturnValue(method = "getVisibilityPercent", at = @At("RETURN"))
-	private double modifyVisibility(double original, @javax.annotation.Nullable Entity pLookingEntity) {
+	private double modifyVisibility(double original, @Nullable Entity pLookingEntity) {
 		return EntityHooks.getEntityVisibilityMultiplier((LivingEntity) (Object) this, pLookingEntity, original);
 	}
 

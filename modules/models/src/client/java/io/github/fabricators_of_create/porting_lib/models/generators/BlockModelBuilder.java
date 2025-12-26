@@ -8,8 +8,8 @@ import com.mojang.math.Transformation;
 import io.github.fabricators_of_create.porting_lib.data.ExistingFileHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import org.jspecify.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -313,7 +313,6 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder> {
 			}
 
 			@Override
-			@NotNull
 			public String getSerializedName() {
 				return name;
 			}

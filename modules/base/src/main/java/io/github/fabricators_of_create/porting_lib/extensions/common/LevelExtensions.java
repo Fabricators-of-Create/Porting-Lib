@@ -9,7 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 // allows block modification to be done in transactions easily.
 // this only modifies set/getBlockState.

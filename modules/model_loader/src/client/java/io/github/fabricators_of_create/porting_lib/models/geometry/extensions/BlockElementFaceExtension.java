@@ -5,8 +5,7 @@ import io.github.fabricators_of_create.porting_lib.models.ExtraFaceData;
 import net.minecraft.client.renderer.block.model.BlockElement;
 
 import org.apache.commons.lang3.mutable.MutableObject;
-
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface BlockElementFaceExtension {
 	default void port_lib$setFaceData(@Nullable ExtraFaceData faceData, MutableObject<BlockElement> parent) {

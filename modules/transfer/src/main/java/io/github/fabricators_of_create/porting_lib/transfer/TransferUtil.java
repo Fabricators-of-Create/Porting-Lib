@@ -19,8 +19,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 
 import net.fabricmc.fabric.api.transfer.v1.storage.TransferVariant;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
@@ -410,7 +409,7 @@ public class TransferUtil {
 	}
 
 	/** Less clunky way of simulating extraction on a {@link StorageView<T>} */
-	public static <T> long simulateExtractView(@NotNull StorageView<T> view, T variant, long amount) {
+	public static <T> long simulateExtractView(StorageView<T> view, T variant, long amount) {
 		try (Transaction t = getTransaction()) {
 			return view.extract(variant, amount, t);
 		}

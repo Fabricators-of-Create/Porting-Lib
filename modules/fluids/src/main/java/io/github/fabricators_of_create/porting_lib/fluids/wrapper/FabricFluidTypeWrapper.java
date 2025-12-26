@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import net.minecraft.world.level.material.Fluid;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import io.github.fabricators_of_create.porting_lib.fluids.FluidStack;
 import io.github.fabricators_of_create.porting_lib.fluids.FluidType;

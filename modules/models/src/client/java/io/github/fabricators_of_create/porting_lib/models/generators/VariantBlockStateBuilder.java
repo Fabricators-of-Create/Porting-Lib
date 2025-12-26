@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import io.github.fabricators_of_create.porting_lib.models.generators.BlockStateProvider.ConfiguredModelList;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Builder for variant-type blockstates, i.e. non-multipart blockstates. Should

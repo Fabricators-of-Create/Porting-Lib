@@ -3,7 +3,7 @@ package io.github.fabricators_of_create.porting_lib.mixin.common;
 import io.github.fabricators_of_create.porting_lib.core.util.ValueIOSerializable;
 import net.minecraft.core.HolderLookup;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 

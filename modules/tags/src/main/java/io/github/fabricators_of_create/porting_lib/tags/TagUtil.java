@@ -8,8 +8,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.Block;
 
-import javax.annotation.Nullable;
-
 public class TagUtil {
 	@Nullable
 	public static DyeColor getColor(ItemStack stack) {

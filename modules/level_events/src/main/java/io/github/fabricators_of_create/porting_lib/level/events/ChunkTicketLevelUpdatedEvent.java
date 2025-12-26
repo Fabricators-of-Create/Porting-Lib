@@ -8,7 +8,7 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerLevel;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This event is fired whenever a chunk has its ticket level changed via the server's ChunkMap.

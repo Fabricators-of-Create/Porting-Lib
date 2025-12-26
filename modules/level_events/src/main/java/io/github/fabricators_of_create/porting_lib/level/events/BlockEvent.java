@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.GameMasterBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.PortalShape;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public abstract class BlockEvent extends BaseEvent {
 	private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("porting-lib.debugBlockEvent", "false"));

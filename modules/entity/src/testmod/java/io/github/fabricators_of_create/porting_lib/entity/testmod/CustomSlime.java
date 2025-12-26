@@ -1,21 +1,14 @@
 package io.github.fabricators_of_create.porting_lib.entity.testmod;
 
-import io.github.fabricators_of_create.porting_lib.entity.EntityHooks;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerEntity;
-
-import org.jetbrains.annotations.NotNull;
 
 import io.github.fabricators_of_create.porting_lib.entity.IEntityWithComplexSpawn;
 import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Slime;
@@ -94,11 +87,11 @@ public class CustomSlime extends Slime implements IEntityWithComplexSpawn, Multi
 		}
 
 		@Override
-		protected void readAdditionalSaveData(@NotNull CompoundTag nbt) {
+		protected void readAdditionalSaveData(CompoundTag nbt) {
 		}
 
 		@Override
-		protected void addAdditionalSaveData(@NotNull CompoundTag nbt) {
+		protected void addAdditionalSaveData(CompoundTag nbt) {
 		}
 
 		public Vec3 getOffset(float tickDelta) {

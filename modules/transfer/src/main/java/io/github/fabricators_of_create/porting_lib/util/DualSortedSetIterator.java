@@ -6,7 +6,7 @@ import java.util.SortedSet;
 
 import com.google.common.collect.AbstractIterator;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class DualSortedSetIterator<T> extends AbstractIterator<T> {
 	private final Comparator<T> comparator;

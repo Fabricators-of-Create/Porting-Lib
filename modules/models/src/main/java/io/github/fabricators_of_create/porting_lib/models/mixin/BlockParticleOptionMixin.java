@@ -4,7 +4,7 @@ import io.github.fabricators_of_create.porting_lib.models.injects.BlockParticleO
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
