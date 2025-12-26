@@ -9,7 +9,6 @@
   "mixins": [
     "common.BlockItemMixin",
     "common.ChunkMapMixin",
-    "common.ChunkSerializerMixin",
     "common.DiodeBlockMixin",
     "common.LavaFluidMixin",
     "common.LevelMixin",

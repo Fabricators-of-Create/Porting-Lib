@@ -37,8 +37,9 @@ public class ChunkTicketLevelUpdatedEvent extends BaseEvent {
 	}
 
 	@Override
-	public void sendEvent() {
+	public ChunkTicketLevelUpdatedEvent sendEvent() {
 		EVENT.invoker().onChunkTicketLevelUpdated(this);
+		return this;
 	}
 
 	private final ServerLevel level;

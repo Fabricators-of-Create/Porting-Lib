@@ -4,10 +4,13 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 
 import io.github.fabricators_of_create.porting_lib.blocks.extensions.CustomExpBlock;
 import io.github.fabricators_of_create.porting_lib.level.events.BlockEvent;
+import io.github.fabricators_of_create.porting_lib.level.events.ChunkTicketLevelUpdatedEvent;
 import io.github.fabricators_of_create.porting_lib.level.events.LevelEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.entity.Entity;
@@ -25,7 +28,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ServerLevelData;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -123,5 +126,10 @@ public class LevelHooks {
 		if (block instanceof CustomExpBlock customExpBlock)
 			return customExpBlock.getExpDrop(state, level, pos, blockEntity, breaker, tool);
 		return 0; // Ignore Vanilla exp because vanilla blocks already handle that
+	}
+
+	public static void fireChunkTicketLevelUpdated(ServerLevel level, long chunkPos, int oldTicketLevel, int newTicketLevel, @Nullable ChunkHolder chunkHolder) {
+		if (oldTicketLevel != newTicketLevel)
+			new ChunkTicketLevelUpdatedEvent(level, chunkPos, oldTicketLevel, newTicketLevel, chunkHolder).sendEvent();
 	}
 }
