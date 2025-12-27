@@ -1,7 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.registry.injections;
 
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import org.jspecify.annotations.Nullable;
 
@@ -13,7 +13,7 @@ public interface RegistryInjection<T> {
 	 *          {@link net.minecraft.core.DefaultedRegistry defaulted registries}
 	 */
 	@Nullable
-	default ResourceLocation port_lib$getKeyOrNull(T element) {
+	default Identifier port_lib$getKeyOrNull(T element) {
 		//Note: We override the cases when getKey would return the default rather than just going via getResourceKey to find it
 		return ((Registry<T>) this).getKey(element);
 	}

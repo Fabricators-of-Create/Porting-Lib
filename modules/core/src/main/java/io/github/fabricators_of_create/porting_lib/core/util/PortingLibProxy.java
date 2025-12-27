@@ -35,8 +35,7 @@ public class PortingLibProxy {
 		return TooltipFlag.NORMAL;
 	}
 
-	@Nullable
-	public <T> HolderLookup.RegistryLookup<T> resolveLookup(ResourceKey<? extends Registry<T>> key) {
+	public <T> HolderLookup.@Nullable RegistryLookup<T> resolveLookup(ResourceKey<? extends Registry<T>> key) {
 		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
 		if (server != null) {
 			return server.registryAccess().lookup(key).orElse(null);

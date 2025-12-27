@@ -23,8 +23,7 @@ public class PortingLibClientProxy extends PortingLibProxy {
 	}
 
 	@Override
-	@Nullable
-	public <T> HolderLookup.RegistryLookup<T> resolveLookup(ResourceKey<? extends Registry<T>> key) {
+	public <T> HolderLookup.@Nullable RegistryLookup<T> resolveLookup(ResourceKey<? extends Registry<T>> key) {
 		var lookup = super.resolveLookup(key);
 		if (lookup == null) {
 			ClientLevel level = Minecraft.getInstance().level;

@@ -31,8 +31,7 @@ public interface DelegatedHolder<T> extends HolderInjection<T> {
 	 * <p>
 	 * This will only succeed if the underlying holder is a {@link Holder.Reference}.
 	 */
-	@Nullable
-	default HolderLookup.RegistryLookup<T> unwrapLookup() {
+	default HolderLookup.@Nullable RegistryLookup<T> unwrapLookup() {
 		return null;
 	}
 

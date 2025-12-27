@@ -7,9 +7,8 @@ import net.minecraft.core.DefaultedMappedRegistry;
 import net.minecraft.core.MappedRegistry;
 
 import net.minecraft.core.Registry;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-
-import net.minecraft.resources.ResourceLocation;
 
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,7 +21,7 @@ public abstract class DefaultedMappedRegistryMixin<T> extends MappedRegistry<T> 
 
 	@Nullable
 	@Override
-	public ResourceLocation port_lib$getKeyOrNull(T element) {
+	public Identifier port_lib$getKeyOrNull(T element) {
 		return super.getKey(element);
 	}
 }

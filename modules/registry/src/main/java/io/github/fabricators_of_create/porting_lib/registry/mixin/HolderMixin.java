@@ -24,9 +24,8 @@ public interface HolderMixin<T> extends HolderInjection<T> {
 		@Final
 		private HolderOwner<T> owner;
 
-		@Nullable
 		@Override
-		public HolderLookup.RegistryLookup<T> port_lib$unwrapLookup() {
+		public HolderLookup.@Nullable RegistryLookup<T> port_lib$unwrapLookup() {
 			return this.owner instanceof HolderLookup.RegistryLookup<T> rl ? rl : null;
 		}
 

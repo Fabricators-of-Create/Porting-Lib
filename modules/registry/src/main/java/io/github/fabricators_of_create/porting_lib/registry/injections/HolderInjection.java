@@ -12,8 +12,7 @@ public interface HolderInjection<T> {
 	 * <p>
 	 * This will only succeed if the underlying holder is a {@link Holder.Reference}.
 	 */
-	@Nullable
-	default HolderLookup.RegistryLookup<T> port_lib$unwrapLookup() {
+	default HolderLookup.@Nullable RegistryLookup<T> port_lib$unwrapLookup() {
 		return null;
 	}
 
