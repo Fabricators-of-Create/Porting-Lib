@@ -11,8 +11,5 @@
   "mixins": [
     "common.LevelReaderMixin",
     "common.MobEffectInstanceMixin"
-  ],
-  "client": [
-    "client.LanguageManagerMixin"
   ]
 }

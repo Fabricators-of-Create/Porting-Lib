@@ -1,14 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.util;
 
-import io.github.fabricators_of_create.porting_lib.core.util.ServerLifecycleHooks;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
+import io.github.fabricators_of_create.porting_lib.core.util.PortingLibProxy;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ExperienceOrb;
 
@@ -74,23 +69,6 @@ public class PortingHooks {
 	 */
 	@Nullable
 	public static <T> HolderLookup.RegistryLookup<T> resolveLookup(ResourceKey<? extends Registry<T>> key) {
-		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-		if (server != null) {
-			return server.registryAccess().lookup(key).orElse(null);
-		} else if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-			return resolveLookupClient(key);
-		}
-
-		return null;
-	}
-
-	@Nullable
-	public static <T> HolderLookup.RegistryLookup<T> resolveLookupClient(ResourceKey<? extends Registry<T>> key) {
-		ClientLevel level = Minecraft.getInstance().level;
-		if (level != null) {
-			return level.registryAccess().lookup(key).orElse(null);
-		}
-
-		return null;
+		return PortingLibProxy.INSTANCE.resolveLookup(key);
 	}
 }

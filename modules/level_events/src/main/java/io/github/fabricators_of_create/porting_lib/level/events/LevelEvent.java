@@ -9,10 +9,6 @@ import io.github.fabricators_of_create.porting_lib.core.event.CancellableEvent;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.ReceivingLevelScreen;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.MinecraftServer;
@@ -76,9 +72,9 @@ public abstract class LevelEvent extends BaseEvent {
 	/**
 	 * This event is fired whenever a level unloads.
 	 * This event is fired whenever a level unloads in
-	 * {@link Minecraft#setLevel(ClientLevel, ReceivingLevelScreen.Reason)},
+	 * {@link net.minecraft.client.Minecraft#setLevel(net.minecraft.client.multiplayer.ClientLevel, net.minecraft.client.gui.screens.ReceivingLevelScreen.Reason)},
 	 * {@link MinecraftServer#stopServer()},
-	 * {@link Minecraft#disconnect(Screen, boolean)}.
+	 * {@link net.minecraft.client.Minecraft#disconnect(net.minecraft.client.gui.screens.Screen, boolean)}.
 	 * <p>
 	 * This event is not {@linkplain CancellableEvent cancellable}.
 	 * <p>

@@ -6,7 +6,7 @@
   "description": "A small library that adds milk as an actual fluid",
   "entrypoints": {
     "fabric-datagen": [
-      "io.github.fabricators_of_create.porting_lib.milk.data.PortingLibMilkData"
+      "io.github.fabricators_of_create.porting_lib.milk.client.data.PortingLibMilkData"
     ]
   }
 }

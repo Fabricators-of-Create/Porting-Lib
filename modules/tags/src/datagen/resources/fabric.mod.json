@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_tags-datagen",
+  "version": "1.0.0",
+  "name": "Porting Lib Tags Data Gen",
+  "description": "Data Gen",
+  "authors": [
+    "AlphaMode"
+  ],
+  "entrypoints": {
+    "fabric-datagen": [
+      "io.github.fabricators_of_create.porting_lib.tags.data.PortingLibTagsData"
+    ]
+  }
+}

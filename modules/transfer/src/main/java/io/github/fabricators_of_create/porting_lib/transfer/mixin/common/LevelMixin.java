@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.transfer.mixin.common;
 
-import io.github.fabricators_of_create.porting_lib.transfer.internal.extensions.LevelExtensions;
+import io.github.fabricators_of_create.porting_lib.transfer.internal.injects.LevelInjection;
 import io.github.fabricators_of_create.porting_lib.transfer.internal.cache.EmptyFluidLookupCache;
 import io.github.fabricators_of_create.porting_lib.transfer.internal.cache.EmptyItemLookupCache;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(Level.class)
-public abstract class LevelMixin implements LevelExtensions {
+public abstract class LevelMixin implements LevelInjection {
 	@Override
 	public BlockApiCache<Storage<ItemVariant>, Direction> port_lib$getItemCache(BlockPos pos) {
 		// uh oh. Not a ClientLevel or ServerLevel!

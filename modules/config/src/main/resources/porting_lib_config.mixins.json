@@ -8,9 +8,6 @@
     "defaultRequire": 1,
     "maxShiftBy": 5
   },
-  "client": [
-    "client.MinecraftMixin"
-  ],
   "mixins": [
     "server.MainMixin"
   ]

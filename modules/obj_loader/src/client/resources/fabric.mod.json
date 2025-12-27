@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_obj_loader",
+  "version": "${version}",
+  "environment": "client",
+  "name": "Porting Lib Obj Loader",
+  "description": "Loads .obj models.",
+  "entrypoints": {
+    "client": [
+      "io.github.fabricators_of_create.porting_lib.PortingLibObjLoader"
+    ]
+  },
+  "custom": {
+    "loom:injected_interfaces": {}
+  }
+}

@@ -4,7 +4,6 @@ import io.github.fabricators_of_create.porting_lib.config.ConfigTracker;
 import io.github.fabricators_of_create.porting_lib.config.ModConfig;
 import io.github.fabricators_of_create.porting_lib.config.ModConfigs;
 import io.github.fabricators_of_create.porting_lib.config.network.payload.ConfigFilePayload;
-import net.minecraft.client.Minecraft;
 
 import org.jetbrains.annotations.ApiStatus;
 
@@ -33,8 +32,8 @@ public final class ConfigSync {
 				.toList();
 	}
 
-	public static void receiveSyncedConfig(final byte[] contents, final String fileName) {
-		if (!Minecraft.getInstance().isLocalServer()) {
+	public static void receiveSyncedConfig(boolean isLocalServer, final byte[] contents, final String fileName) {
+		if (!isLocalServer) {
 			Optional.ofNullable(ModConfigs.getFileMap().get(fileName)).ifPresent(mc -> ConfigTracker.INSTANCE.acceptSyncedConfig(mc, contents));
 		}
 	}

@@ -21,11 +21,5 @@
     "common.ServerPacksSourceMixin",
     "common.SimplePreparableReloadListenerMixin",
     "porting_lib.DeferredHolderMixin"
-  ],
-  "client": [
-    "client.ClientPacketListenerMixin",
-    "client.CreateWorldScreenMixin",
-    "client.MinecraftMixin",
-    "client.TagCollectorMixin"
   ]
 }

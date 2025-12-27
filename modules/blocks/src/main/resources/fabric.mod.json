@@ -4,8 +4,14 @@
   "version": "${version}",
   "name": "Porting Lib Blocks",
   "description": "Adds extra block extensions.",
+  "entrypoints": {
+    "client": [
+      "io.github.fabricators_of_create.porting_lib.blocks.client.PortingLibBlocksClient"
+    ]
+  },
   "custom": {
     "loom:injected_interfaces": {
+      "net/minecraft/class_238": ["io/github/fabricators_of_create/porting_lib/blocks/injects/AABBInjection"],
       "net/minecraft/class_1657": ["io/github/fabricators_of_create/porting_lib/blocks/injects/PlayerInjection"],
       "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/blocks/injects/LevelInjection"],
       "net/minecraft/class_2586": ["io/github/fabricators_of_create/porting_lib/blocks/injects/BlockEntityInjection"],

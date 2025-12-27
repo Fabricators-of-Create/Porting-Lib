@@ -1,0 +1,14 @@
+
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_render_types",
+  "version": "${version}",
+  "environment": "client",
+  "name": "Porting Lib Render Types",
+  "description": "Custom render types for models and entities.",
+  "entrypoints": {
+    "client": [
+      "io.github.fabricators_of_create.porting_lib.render_types.PortingLibRenderTypes::init"
+    ]
+  }
+}

@@ -19,12 +19,12 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class FmjExpander extends FilterReader {
 	public static final String RESOURCES = "src/main/resources";
+	public static final String CLIENT_RESOURCES = "src/client/resources";
 	public static final String FMJ = "fabric.mod.json";
 	public static final String TEMPLATE_FMJ = RESOURCES + "/template." + FMJ;
 
@@ -93,28 +93,48 @@ public class FmjExpander extends FilterReader {
 			tryMerge(template, key, value);
 		}
 
+		if (template.get("id").getAsString().endsWith("-datagen")) {
+			return template;
+		}
+
 		String name = "porting_lib_" + this.projectName;
 		Path resources = this.projectDirPath.resolve(RESOURCES);
+		Path clientResources = this.projectDirPath.resolve(CLIENT_RESOURCES);
 
 		// fill in mixins
-		String mixinsFileName = name + ".mixins.json";
-		Path mixins = resources.resolve(mixinsFileName);
-		if (Files.exists(mixins)) {
+		String commonMixinsFileName = name + ".mixins.json";
+		Path commonMixins = resources.resolve(commonMixinsFileName);
+		String clientMixinsFileName = name + ".client.mixins.json";
+		Path clientMixins = clientResources.resolve(clientMixinsFileName);
+		boolean hasCommon = Files.exists(commonMixins);
+		boolean hasClient = Files.exists(clientMixins);
+		if (hasCommon || hasClient) {
 			JsonArray array = new JsonArray();
-			array.add(mixinsFileName);
+			if (hasCommon) {
+				array.add(commonMixinsFileName);
+			}
+			if (hasClient) {
+				JsonObject clientConfig = new JsonObject();
+				clientConfig.addProperty("config", clientMixinsFileName);
+				clientConfig.addProperty("environment", "client");
+				array.add(clientConfig);
+			}
 			template.add("mixins", array);
 		}
+
 		// and AW
 		String awFileName = name + ".accesswidener";
-		Path aw = resources.resolve(awFileName);
-		if (Files.exists(aw)) {
+		if (Files.exists(resources.resolve(awFileName)) || Files.exists(clientResources.resolve(awFileName))) {
 			template.addProperty("accessWidener", awFileName);
 		}
+
 		// and modules
-		String[] modules = this.projectModules.split(",");
-		JsonObject depends = template.get("depends").getAsJsonObject();
-		for (String module : modules) {
-			depends.addProperty(module, "*");
+		if (!this.projectModules.isEmpty()) {
+			String[] modules = this.projectModules.split(",");
+			JsonObject depends = template.get("depends").getAsJsonObject();
+			for (String module : modules) {
+				depends.addProperty(module, "*");
+			}
 		}
 
 		return template;

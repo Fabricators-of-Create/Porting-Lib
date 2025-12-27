@@ -1,0 +1,18 @@
+
+{
+  "schemaVersion": 1,
+  "id": "porting_lib_model_loader",
+  "version": "${version}",
+  "environment": "client",
+  "name": "Porting Lib Model Loader",
+  "description": "Adds the framework for loading more types of models.",
+
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_783": ["io/github/fabricators_of_create/porting_lib/models/geometry/extensions/BlockElementFaceExtension"],
+      "net/minecraft/class_785": ["io/github/fabricators_of_create/porting_lib/models/geometry/extensions/BlockElementExtension"],
+      "net/minecraft/class_793": ["io/github/fabricators_of_create/porting_lib/models/geometry/extensions/BlockModelExtension"],
+      "net/minecraft/class_4590": ["io/github/fabricators_of_create/porting_lib/models/geometry/extensions/TransformationExtension"]
+    }
+  }
+}

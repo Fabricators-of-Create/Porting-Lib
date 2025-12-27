@@ -1,10 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.item.extensions;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -19,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface ArmorTextureItem {
 	/**
-	 * Called by {@link HumanoidArmorLayer#renderArmorPiece(PoseStack, MultiBufferSource, LivingEntity, EquipmentSlot, int, HumanoidModel)} to determine the armor texture that
+	 * Called by {@link net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer#renderArmorPiece(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.MultiBufferSource, LivingEntity, EquipmentSlot, int, net.minecraft.client.model.HumanoidModel)} to determine the armor texture that
 	 * should be use for the currently equipped item. This will only be called on
 	 * instances of ItemArmor.
 	 *

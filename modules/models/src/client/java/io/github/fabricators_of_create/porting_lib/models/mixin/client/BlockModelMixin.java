@@ -1,0 +1,45 @@
+package io.github.fabricators_of_create.porting_lib.models.mixin.client;
+
+import io.github.fabricators_of_create.porting_lib.models.CustomBlendModeModel;
+import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
+import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
+import io.github.fabricators_of_create.porting_lib.models.RenderMaterialModel;
+import io.github.fabricators_of_create.porting_lib.models.injects.BlockModelInjection;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.resources.model.BakedModel;
+
+@Mixin(BlockModel.class)
+public class BlockModelMixin implements BlockModelInjection {
+	@Unique
+	private RenderMaterial material;
+	@Unique
+	private BlendMode blendMode;
+
+	@Override
+	public void port_lib$setRenderMaterial(RenderMaterial material) {
+		this.material = material;
+	}
+
+	@Override
+	public void port_lib$setBlendMode(BlendMode blendMode) {
+		this.blendMode = blendMode;
+	}
+
+	@ModifyReturnValue(method = "bake(Lnet/minecraft/client/resources/model/ModelBaker;Lnet/minecraft/client/renderer/block/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/resources/model/ModelState;Z)Lnet/minecraft/client/resources/model/BakedModel;", at = @At("RETURN"))
+	private BakedModel useCustomRendering(BakedModel model) {
+		if (this.material != null) {
+			return new RenderMaterialModel(model, this.material);
+		} else if (blendMode != null) {
+			return new CustomBlendModeModel(model, blendMode);
+		} else {
+			return model;
+		}
+	}
+}
