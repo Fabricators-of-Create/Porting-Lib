@@ -47,8 +47,9 @@ public abstract class AdvancementEvent extends PlayerEvent {
 		}
 
 		@Override
-		public void sendEvent() {
+		public AdvancementEarnEvent sendEvent() {
 			EARN.invoker().onAdvancementEarn(this);
+			return this;
 		}
 	}
 
@@ -95,8 +96,9 @@ public abstract class AdvancementEvent extends PlayerEvent {
 		}
 
 		@Override
-		public void sendEvent() {
+		public AdvancementProgressEvent sendEvent() {
 			PROGRESS.invoker().onAdvancementProgress(this);
+			return this;
 		}
 
 		public enum ProgressType {

@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Main.class)
 public class MainMixin {
-	@Inject(method = "main", at = @At(value = "INVOKE", target = "Lnet/minecraft/Util;startTimerHackThread()V"))
+	@Inject(method = "main", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Util;startTimerHackThread()V"))
 	private static void port_lib$modsLoaded(CallbackInfo ci) {
 		ModsLoadedCallback.EVENT.invoker().onAllModsLoaded(EnvType.SERVER);
 	}

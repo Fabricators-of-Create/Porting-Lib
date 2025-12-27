@@ -18,7 +18,7 @@
       "net/minecraft/class_1058": ["io/github/fabricators_of_create/porting_lib/client/injects/TextureAtlasSpriteExtension"],
       "net/minecraft/class_1735": ["io/github/fabricators_of_create/porting_lib/extensions/common/SlotExtension"],
       "net/minecraft/class_1937": ["io/github/fabricators_of_create/porting_lib/extensions/common/LevelExtensions"],
-      "net/minecraft/class_2960": ["io/github/fabricators_of_create/porting_lib/extensions/common/ResourceLocationExtension"],
+      "net/minecraft/class_2960": ["io/github/fabricators_of_create/porting_lib/extensions/common/IdentifierExtension"],
       "net/minecraft/class_3491": ["io/github/fabricators_of_create/porting_lib/extensions/common/StructureProcessorExtension"],
       "net/minecraft/class_4587": ["io/github/fabricators_of_create/porting_lib/client/injects/PoseStackExtension"],
       "net/minecraft/class_2474$class_5124": ["io/github/fabricators_of_create/porting_lib/extensions/common/TagAppenderExtension"]

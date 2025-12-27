@@ -2,9 +2,11 @@ package io.github.fabricators_of_create.porting_lib.event.common;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerExplosion;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
@@ -22,13 +24,26 @@ public class ExplosionEvents {
 			event.onDetonate(world, explosion, list, diameter);
 	}));
 
+	public static Event<Knockback> KNOCKBACK = EventFactory.createArrayBacked(Knockback.class, callbacks -> ((world, explosion, entity, velocity, blocks) -> {
+		for (Knockback event : callbacks) {
+			velocity = event.updateExplosionKnockback(world, explosion, entity, velocity, blocks);
+		}
+
+		return velocity;
+	}));
+
 	@FunctionalInterface
 	public interface Start {
-		boolean onExplosionStart(Level world, Explosion explosion);
+		boolean onExplosionStart(Level world, ServerExplosion explosion);
 	}
 
 	@FunctionalInterface
 	public interface Detonate {
-		void onDetonate(Level world, Explosion explosion, List<Entity> list, double diameter);
+		void onDetonate(Level world, ServerExplosion explosion, List<Entity> entities, List<BlockPos> blocks);
+	}
+
+	@FunctionalInterface
+	public interface Knockback {
+		Vec3 updateExplosionKnockback(Level world, ServerExplosion explosion, Entity entity, Vec3 initialVelocity, List<BlockPos> blocks);
 	}
 }

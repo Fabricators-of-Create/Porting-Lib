@@ -16,6 +16,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.permissions.Permissions;
 
 public class ConfigCommand {
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess, Commands.CommandSelection environment) {
@@ -29,7 +30,7 @@ public class ConfigCommand {
 	public static class ShowFile {
 		static ArgumentBuilder<CommandSourceStack, ?> register() {
 			return Commands.literal("showfile").
-					requires(cs->cs.hasPermission(0)).
+					requires(Commands.hasPermission(Commands.LEVEL_ALL)).
 					then(Commands.argument("mod", ModIdArgument.modIdArgument()).
 							then(Commands.argument("type", EnumArgument.enumArgument(ModConfig.Type.class)).
 									executes(ShowFile::showFile)
@@ -44,7 +45,7 @@ public class ConfigCommand {
 			for (var configFileName : configFileNames) {
 				File f = new File(configFileName);
 				MutableComponent fileComponent = Component.literal(f.getName()).withStyle(ChatFormatting.UNDERLINE)
-						.withStyle((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, f.getAbsolutePath())));
+						.withStyle((style) -> style.withClickEvent(new ClickEvent.OpenFile(f.getAbsolutePath())));
 
 				context.getSource().sendSuccess(() -> Component.translatable("commands.config.getwithtype",
 						modId, type.toString(), fileComponent), true);

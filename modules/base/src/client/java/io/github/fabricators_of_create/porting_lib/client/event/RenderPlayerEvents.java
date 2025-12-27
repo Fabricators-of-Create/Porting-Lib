@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.world.entity.player.Player;
 
 public class RenderPlayerEvents {
@@ -43,10 +43,10 @@ public class RenderPlayerEvents {
 		 * @param packedLight
 		 * @return return true to cancel rendering
 		 */
-		boolean onPreRenderPlayer(Player player, PlayerRenderer renderer, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight);
+		boolean onPreRenderPlayer(Player player, AvatarRenderer<?> renderer, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight);
 	}
 
 	public interface Post {
-		void onPostRenderPlayer(Player player, PlayerRenderer renderer, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight);
+		void onPostRenderPlayer(Player player, AvatarRenderer<?> renderer, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight);
 	}
 }

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Transformation;
 
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 public interface PoseStackExtension {
 	/**
@@ -16,12 +17,12 @@ public interface PoseStackExtension {
 		final PoseStack self = (PoseStack) this;
 		self.pushPose();
 
-		Vector3f trans = transformation.getTranslation();
+		Vector3fc trans = transformation.getTranslation();
 		self.translate(trans.x(), trans.y(), trans.z());
 
 		self.mulPose(transformation.getLeftRotation());
 
-		Vector3f scale = transformation.getScale();
+		Vector3fc scale = transformation.getScale();
 		self.scale(scale.x(), scale.y(), scale.z());
 
 		self.mulPose(transformation.getRightRotation());

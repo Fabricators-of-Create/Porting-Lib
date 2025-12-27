@@ -67,8 +67,7 @@ public class PortingHooks {
 	 * @param key The resource key for the target registry
 	 * @return A registry access, if one was available.
 	 */
-	@Nullable
-	public static <T> HolderLookup.RegistryLookup<T> resolveLookup(ResourceKey<? extends Registry<T>> key) {
+	public static <T> HolderLookup.@Nullable RegistryLookup<T> resolveLookup(ResourceKey<? extends Registry<T>> key) {
 		return PortingLibProxy.INSTANCE.resolveLookup(key);
 	}
 }

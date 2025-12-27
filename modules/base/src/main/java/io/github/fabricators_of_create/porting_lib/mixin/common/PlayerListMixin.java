@@ -16,6 +16,6 @@ import net.minecraft.server.players.PlayerList;
 public abstract class PlayerListMixin {
 	@Inject(method = "placeNewPlayer", at = @At("TAIL"))
 	private void setPlayerUsername(Connection netManager, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo ci) {
-		UsernameCache.setUsername(player.getUUID(), player.getGameProfile().getName());
+		UsernameCache.setUsername(player.getUUID(), player.getGameProfile().name());
 	}
 }

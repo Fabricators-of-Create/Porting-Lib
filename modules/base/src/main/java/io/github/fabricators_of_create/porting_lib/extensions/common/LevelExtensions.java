@@ -14,12 +14,12 @@ import org.jspecify.annotations.Nullable;
 // allows block modification to be done in transactions easily.
 // this only modifies set/getBlockState.
 public interface LevelExtensions {
-	default SnapshotParticipant<LevelSnapshotData> snapshotParticipant() {
+	default SnapshotParticipant<LevelSnapshotData> port_lib$snapshotParticipant() {
 		throw new RuntimeException("this should be overridden via mixin. what?");
 	}
 
 	default void port_lib$updateSnapshots(TransactionContext ctx) {
-		snapshotParticipant().updateSnapshots(ctx);
+		port_lib$snapshotParticipant().updateSnapshots(ctx);
 	}
 
 	record LevelSnapshotData(List<ChangedPosData> changedStates) {

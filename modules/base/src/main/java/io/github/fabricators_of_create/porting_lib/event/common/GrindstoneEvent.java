@@ -106,8 +106,9 @@ public abstract class GrindstoneEvent extends BaseEvent {
 		}
 
 		@Override
-		public void sendEvent() {
+		public OnPlaceItem sendEvent() {
 			EVENT.invoker().onGrindstonePlaceItem(this);
+			return this;
 		}
 
 		public interface Callback {
@@ -177,8 +178,9 @@ public abstract class GrindstoneEvent extends BaseEvent {
 		}
 
 		@Override
-		public void sendEvent() {
+		public OnTakeItem sendEvent() {
 			EVENT.invoker().onGrindstoneTakeItem(this);
+			return this;
 		}
 
 		public interface Callback {

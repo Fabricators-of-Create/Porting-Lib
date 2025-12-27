@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.GameRenderer;
 public class FieldOfViewEvents {
 	/**
 	 * Allows the field of view to be modified. For example, slowness, sprinting, and flying all modify the FOV.
-	 * This is invoked by {@link AbstractClientPlayer#getFieldOfViewModifier()} after all vanilla effects have been applied.
+	 * This is invoked by {@link AbstractClientPlayer#getFieldOfViewModifier(boolean, float)} after all vanilla effects have been applied.
 	 * This event is chained and not cancelled - all listeners get a chance to modify the FOV.
 	 */
 	public static final Event<Modify> MODIFY = EventFactory.createArrayBacked(Modify.class, callbacks -> (player, fov) -> {
