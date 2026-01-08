@@ -8,15 +8,17 @@ import io.github.fabricators_of_create.porting_lib.blocks.extensions.CustomRailD
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 
+import net.minecraft.world.item.MinecartItem;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(targets = "net/minecraft/world/item/MinecartItem$1")
+@Mixin(MinecartItem.class)
 public class MinecartItemMixin {
-	@ModifyExpressionValue(method = "execute", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getValue(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;", ordinal = 1))
-	protected Comparable<?> getRailShape(Comparable original, @Local ServerLevel level, @Local BlockPos pos, @Local BlockState state) {
+	@ModifyExpressionValue(method = "useOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getValue(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;"))
+	protected Comparable<?> getRailShape(Comparable original, @Local Level level, @Local BlockPos pos, @Local BlockState state) {
 		if (state.getBlock() instanceof CustomRailDirectionBlock block) {
 			return block.getRailDirection(state, level, pos, null);
 		}

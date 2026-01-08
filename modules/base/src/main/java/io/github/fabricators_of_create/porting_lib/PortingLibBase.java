@@ -33,7 +33,5 @@ public class PortingLibBase implements ModInitializer {
 				new EnumArgument.Info());
 
 		CommandRegistrationCallback.EVENT.register(ConfigCommand::register);
-
-		ModsLoadedCallback.EVENT.register(envType -> DeferredSpawnEggItem.init());
 	}
 }

@@ -16,11 +16,11 @@ import net.minecraft.world.level.chunk.LevelChunk;
 public abstract class ChunkMapMixin {
 	@Inject(method = "markChunkPendingToSend(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/world/level/chunk/LevelChunk;)V", at = @At("TAIL"))
 	private static void watchChunk(ServerPlayer player, LevelChunk chunk, CallbackInfo ci) {
-		new ChunkWatchEvent.Watch(player, chunk, player.serverLevel()).sendEvent();
+		new ChunkWatchEvent.Watch(player, chunk, player.level()).sendEvent();
 	}
 
 	@Inject(method = "dropChunk", at = @At("HEAD"))
 	private static void unwatchChunk(ServerPlayer player, ChunkPos chunkPos, CallbackInfo ci) {
-		new ChunkWatchEvent.UnWatch(player, chunkPos, player.serverLevel()).sendEvent();
+		new ChunkWatchEvent.UnWatch(player, chunkPos, player.level()).sendEvent();
 	}
 }

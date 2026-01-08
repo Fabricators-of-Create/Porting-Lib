@@ -72,10 +72,10 @@ public abstract class ItemStackMixin implements MutableDataComponentHolder {
 				entity.gameEvent(GameEvent.SHEAR, player);
 				// Damage the shear item stack by 1 on the server side
 				if (!isClient) {
-					stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+					stack.hurtAndBreak(1, player, hand.asEquipmentSlot());
 				}
 				// Return sided success if the entity was shearable
-				cir.setReturnValue(InteractionResult.sidedSuccess(isClient));
+				cir.setReturnValue(InteractionResult.SUCCESS);
 			}
 		}
 	}

@@ -10,7 +10,7 @@ import net.minecraft.world.item.crafting.ShapelessRecipe;
 @Mixin(ShapelessRecipe.Serializer.class)
 public abstract class ShapelessRecipe$SerializerMixin {
 	@ModifyExpressionValue(
-			method = "method_53760", // flatXmap lambda in codec
+			method = "method_53759", // mapCodec lambda in codec
 			at = @At(value = "CONSTANT", args = "intValue=9")
 	)
 	private static int removeItemLimit(int original) {

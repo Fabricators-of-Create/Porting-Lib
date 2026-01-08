@@ -88,20 +88,20 @@ public abstract class AnvilMenuMixin {
 	@ModifyExpressionValue(
 			method = "createResult",
 			at = @At(
-					value = "FIELD",
-					target = "Lnet/minecraft/world/entity/player/Abilities;instabuild:Z",
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/entity/player/Player;hasInfiniteMaterials()Z",
 					ordinal = 1
 			)
 	)
-	private boolean port_lib$checkEnchantability$instabuild(boolean instabuild) {
-		// original: !instabuild
+	private boolean port_lib$checkEnchantability$hasInfiniteMaterials(boolean hasInfiniteMaterials) {
+		// original: !player.hasInfiniteMaterials()
 		// if we can enchant, let vanilla behavior run.
 		if (port_lib$canEnchant == TriState.FALSE) {
 			// can't enchant. We want to force true so the statement runs, but it's inverted, so  set it to false.
-			instabuild = false;
+			hasInfiniteMaterials = false;
 		}
 		// reset when done
 		port_lib$canEnchant = TriState.DEFAULT;
-		return instabuild;
+		return hasInfiniteMaterials;
 	}
 }

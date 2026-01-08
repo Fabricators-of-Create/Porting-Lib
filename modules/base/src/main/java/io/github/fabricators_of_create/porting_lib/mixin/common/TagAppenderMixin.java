@@ -1,33 +1,36 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
 import io.github.fabricators_of_create.porting_lib.extensions.common.TagAppenderExtension;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider.FabricTagBuilder;
-import net.minecraft.data.tags.TagsProvider;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricProvidedTagBuilder;
+import net.minecraft.data.tags.TagAppender;
 
-import net.minecraft.data.tags.TagsProvider.TagAppender;
 import net.minecraft.tags.TagKey;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 
-@Mixin(TagsProvider.TagAppender.class)
-public abstract class TagAppenderMixin<T> implements TagAppenderExtension {
+@SuppressWarnings({"NullableProblems", "unchecked"})
+@Mixin(TagAppender.class)
+@Implements(@Interface(iface = TagAppenderExtension.class, prefix = "port_lib$"))
+public interface TagAppenderMixin<E, T> extends FabricProvidedTagBuilder<E, T> {
 	@Shadow
-	public abstract TagAppender<T> addTag(TagKey<T> tag);
+	TagAppender<E, T> addOptionalTag(TagKey<T> tag);
 
 	// generics are a mess
-	@SuppressWarnings({"unchecked", "ConstantConditions", "rawtypes"})
-	@Override
-	public <E> TagAppender<E> addTags(TagKey<E>... values) {
-		if ((Object) this instanceof FabricTagBuilder fabricTagBuilder) {
-			for (TagKey<E> value : values) {
-				fabricTagBuilder.forceAddTag(value);
-			}
-		} else {
-			for (TagKey<E> value : values) {
-				addTag((TagKey) value);
-			}
+	@Intrinsic
+	default TagAppender<E, T> port_lib$addTags(TagKey<T>... values) {
+		for (TagKey<T> value : values) {
+			forceAddTag(value);
 		}
-		return (TagAppender<E>) (Object) this;
+
+		return (TagAppender<E, T>) this;
+	}
+
+	@Intrinsic
+	default TagAppender<E, T> port_lib$addOptionalTags(TagKey<T>... values) {
+		for (TagKey<T> value : values) {
+			addOptionalTag(value);
+		}
+
+		return (TagAppender<E, T>) this;
 	}
 }

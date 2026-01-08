@@ -79,8 +79,9 @@ public abstract class ChunkWatchEvent extends BaseEvent {
 		}
 
 		@Override
-		public void sendEvent() {
+		public Watch sendEvent() {
 			EVENT.invoker().onWatch(this);
+			return this;
 		}
 	}
 
@@ -111,8 +112,9 @@ public abstract class ChunkWatchEvent extends BaseEvent {
 		}
 
 		@Override
-		public void sendEvent() {
+		public Sent sendEvent() {
 			EVENT.invoker().onSent(this);
+			return this;
 		}
 	}
 
@@ -138,8 +140,9 @@ public abstract class ChunkWatchEvent extends BaseEvent {
 		}
 
 		@Override
-		public void sendEvent() {
+		public UnWatch sendEvent() {
 			EVENT.invoker().onUnWatch(this);
+			return this;
 		}
 	}
 

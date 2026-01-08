@@ -21,9 +21,7 @@ import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.chunk.LevelChunk;
 
 import org.jspecify.annotations.Nullable;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -83,10 +81,10 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 	public abstract void updateNeighbourForOutputSignal(BlockPos pos, Block block);
 
 	@Shadow
-	public abstract void onBlockStateChange(BlockPos pos, BlockState oldBlock, BlockState newBlock);
+	public abstract void updatePOIOnBlockStateChange(BlockPos pos, BlockState oldState, BlockState newState);
 
 	@Override
-	public SnapshotParticipant<LevelSnapshotData> snapshotParticipant() {
+	public SnapshotParticipant<LevelSnapshotData> port_lib$snapshotParticipant() {
 		return port_lib$snapshotParticipant;
 	}
 
@@ -123,20 +121,6 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 		}
 	}
 
-	@Inject(
-			method = "explode(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/level/ExplosionDamageCalculator;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;ZLnet/minecraft/core/particles/ParticleOptions;Lnet/minecraft/core/particles/ParticleOptions;Lnet/minecraft/core/Holder;)Lnet/minecraft/world/level/Explosion;",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/Explosion;explode()V"
-			),
-			cancellable = true
-	)
-	public void onStartExplosion(Entity source, DamageSource damageSource, ExplosionDamageCalculator damageCalculator, double x, double y, double z, float radius, boolean fire, Level.ExplosionInteraction explosionInteraction, boolean spawnParticles, ParticleOptions smallExplosionParticles, ParticleOptions largeExplosionParticles, Holder<SoundEvent> explosionSound, CallbackInfoReturnable<Explosion> cir, @Local(ordinal = 0) Explosion explosion) {
-		if (ExplosionEvents.START.invoker().onExplosionStart((Level) (Object) this, explosion)) {
-			cir.setReturnValue(explosion);
-		}
-	}
-
 	@Override
 	public void port_lib$markAndNotifyBlock(BlockPos pos, @Nullable LevelChunk levelchunk, BlockState oldState, BlockState newState, int flags, int recursionLeft) {
 		Block block = newState.getBlock();
@@ -148,13 +132,13 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 						this.setBlocksDirty(pos, oldState, blockstate1);
 					}
 
-					if ((flags & 2) != 0 && (!this.isClientSide || (flags & 4) == 0) && (this.isClientSide || levelchunk.getFullStatus() != null && levelchunk.getFullStatus().isOrAfter(FullChunkStatus.BLOCK_TICKING))) {
+					if ((flags & 2) != 0 && (!this.isClientSide() || (flags & 4) == 0) && (this.isClientSide() || levelchunk.getFullStatus() != null && levelchunk.getFullStatus().isOrAfter(FullChunkStatus.BLOCK_TICKING))) {
 						this.sendBlockUpdated(pos, oldState, newState, flags);
 					}
 
 					if ((flags & 1) != 0) {
-						this.blockUpdated(pos, oldState.getBlock());
-						if (!this.isClientSide && newState.hasAnalogOutputSignal()) {
+						this.updateNeighborsAt(pos, oldState.getBlock());
+						if (!this.isClientSide() && newState.hasAnalogOutputSignal()) {
 							this.updateNeighbourForOutputSignal(pos, block);
 						}
 					}
@@ -166,7 +150,7 @@ public abstract class LevelMixin implements LevelAccessor, LevelExtensions {
 						newState.updateIndirectNeighbourShapes(this, pos, i, recursionLeft - 1);
 					}
 
-					this.onBlockStateChange(pos, oldState, blockstate1);
+					this.updatePOIOnBlockStateChange(pos, oldState, blockstate1);
 				}
 			}
 		}

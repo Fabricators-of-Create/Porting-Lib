@@ -1,7 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.extensions.common;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.Slot;
 
 public interface SlotExtension {
@@ -12,7 +12,7 @@ public interface SlotExtension {
 	 * @param sprite The sprite located on that atlas.
 	 * @return this, to allow chaining.
 	 */
-	default Slot port_lib$setBackground(ResourceLocation atlas, ResourceLocation sprite) {
+	default Slot setBackground(Identifier atlas, Identifier sprite) {
 		throw PortingLib.createMixinException("SlotExtensions.setBackground(ResourceLocation, ResourceLocation)");
 	}
 
@@ -22,7 +22,7 @@ public interface SlotExtension {
 	 *
 	 * @return Index in associated inventory for this slot.
 	 */
-	default int port_lib$getSlotIndex() {
+	default int getSlotIndex() {
 		throw PortingLib.createMixinException("SlotExtensions.getSlotIndex()");
 	}
 
@@ -31,7 +31,7 @@ public interface SlotExtension {
 	 * @param other
 	 * @return true if the other slot is in the same inventory
 	 */
-	default boolean port_lib$isSameInventory(Slot other) {
+	default boolean isSameInventory(Slot other) {
 		throw PortingLib.createMixinException("SlotExtensions.isSameInventory(Slot)");
 	}
 }

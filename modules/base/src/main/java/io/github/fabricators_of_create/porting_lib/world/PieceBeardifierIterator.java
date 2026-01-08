@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.world;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import it.unimi.dsi.fastutil.objects.ObjectList;
@@ -10,12 +11,12 @@ import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
 
 public class PieceBeardifierIterator implements Iterator<StructurePiece> {
 	private final Iterator<? extends StructurePiece> wrapped;
-	private final ObjectList<Beardifier.Rigid> rigids;
+	private final List<Beardifier.Rigid> rigids;
 
 	private StructurePiece next;
 	private boolean nextChecked;
 
-	public PieceBeardifierIterator(Iterator<? extends StructurePiece> iterator, ObjectList<Beardifier.Rigid> rigids) {
+	public PieceBeardifierIterator(Iterator<? extends StructurePiece> iterator, List<Beardifier.Rigid> rigids) {
 		wrapped = iterator;
 		this.rigids = rigids;
 	}

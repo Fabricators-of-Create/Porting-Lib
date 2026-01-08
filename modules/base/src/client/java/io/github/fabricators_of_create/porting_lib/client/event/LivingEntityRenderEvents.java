@@ -25,11 +25,11 @@ public interface LivingEntityRenderEvents {
 
 	@FunctionalInterface
 	interface Pre {
-		boolean beforeRender(LivingEntity entity, LivingEntityRenderer<?, ?> renderer, float partialRenderTick, PoseStack matrixStack, MultiBufferSource buffers, int light);
+		boolean beforeRender(LivingEntity entity, LivingEntityRenderer<?, ?, ?> renderer, float partialRenderTick, PoseStack matrixStack, MultiBufferSource buffers, int light);
 	}
 
 	@FunctionalInterface
 	interface Post {
-		void afterRender(LivingEntity entity, LivingEntityRenderer<?, ?> renderer, float partialRenderTick, PoseStack matrixStack, MultiBufferSource buffers, int light);
+		void afterRender(LivingEntity entity, LivingEntityRenderer<?, ?, ?> renderer, float partialRenderTick, PoseStack matrixStack, MultiBufferSource buffers, int light);
 	}
 }
