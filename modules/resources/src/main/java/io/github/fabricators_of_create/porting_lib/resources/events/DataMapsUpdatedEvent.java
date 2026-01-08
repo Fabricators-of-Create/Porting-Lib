@@ -79,8 +79,9 @@ public class DataMapsUpdatedEvent extends BaseEvent {
 	}
 
 	@Override
-	public void sendEvent() {
+	public DataMapsUpdatedEvent sendEvent() {
 		EVENT.invoker().onDataMapsUpdated(this);
+		return this;
 	}
 
 	/**

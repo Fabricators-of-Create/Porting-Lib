@@ -19,6 +19,7 @@ import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.TagKey;
@@ -36,13 +37,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
-public class DataMapLoader implements IdentifiableResourceReloadListener {
+public class DataMapLoader implements PreparableReloadListener {
 	public static final ResourceLocation ID = PortingLib.id("data_maps");
-
-	@Override
-	public ResourceLocation getFabricId() {
-		return ID;
-	}
 
 	private static final Logger LOGGER = LogUtils.getLogger();
 	public static final String PATH = "data_maps";

@@ -2,12 +2,12 @@ package io.github.fabricators_of_create.porting_lib.resources.conditions;
 
 import com.mojang.serialization.MapCodec;
 
-public final class TrueCondition implements ICondition {
-	public static final TrueCondition INSTANCE = new TrueCondition();
+public final class AlwaysCondition implements ICondition {
+	public static final AlwaysCondition INSTANCE = new AlwaysCondition();
 
-	public static MapCodec<TrueCondition> CODEC = MapCodec.unit(INSTANCE).stable();
+	public static MapCodec<AlwaysCondition> CODEC = MapCodec.unit(INSTANCE).stable();
 
-	private TrueCondition() {}
+	private AlwaysCondition() {}
 
 	@Override
 	public boolean test(IContext context) {
@@ -21,6 +21,6 @@ public final class TrueCondition implements ICondition {
 
 	@Override
 	public String toString() {
-		return "true";
+		return "always";
 	}
 }

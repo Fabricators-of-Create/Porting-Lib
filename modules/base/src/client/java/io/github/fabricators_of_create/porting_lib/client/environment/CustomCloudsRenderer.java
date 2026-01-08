@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.client.environment;
 
-import io.github.fabricators_of_create.porting_lib.core.annotations.NotImplemented;
+import io.github.fabricators_of_create.porting_lib.core.annotations.Todo;
 import io.github.fabricators_of_create.porting_lib.world.PortingLibEnvironmentAttributes;
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
@@ -19,7 +19,7 @@ import org.joml.Matrix4f;
  *
  * @see PortingLibEnvironmentAttributes#CUSTOM_CLOUDS
  */
-@NotImplemented // Forge patches the levelRenderState and modelViewMatrix while vanilla doesn't
+@Todo // Forge patches the levelRenderState and modelViewMatrix while vanilla doesn't
 public interface CustomCloudsRenderer {
 	RenderStateDataKey<CustomCloudsRenderer> KEY = RenderStateDataKey.create(() -> "porting_lib:custom_clouds_renderer");
 

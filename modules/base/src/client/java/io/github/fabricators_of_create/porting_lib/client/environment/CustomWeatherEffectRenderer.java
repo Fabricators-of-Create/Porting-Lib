@@ -1,6 +1,6 @@
 package io.github.fabricators_of_create.porting_lib.client.environment;
 
-import io.github.fabricators_of_create.porting_lib.core.annotations.NotImplemented;
+import io.github.fabricators_of_create.porting_lib.core.annotations.Todo;
 import io.github.fabricators_of_create.porting_lib.world.PortingLibEnvironmentAttributes;
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
@@ -20,7 +20,7 @@ import net.minecraft.world.phys.Vec3;
  *
  * @see PortingLibEnvironmentAttributes#CUSTOM_WEATHER_EFFECTS
  */
-@NotImplemented
+@Todo
 public interface CustomWeatherEffectRenderer {
 	RenderStateDataKey<CustomWeatherEffectRenderer> KEY = RenderStateDataKey.create(() -> "porting_lib:custom_weather_effect");
 

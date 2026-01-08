@@ -1,9 +1,9 @@
 package io.github.fabricators_of_create.porting_lib.resources.events;
 
+import io.github.fabricators_of_create.porting_lib.core.annotations.Todo;
 import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
 import io.github.fabricators_of_create.porting_lib.core.event.CancellableEvent;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -17,6 +17,7 @@ import org.jetbrains.annotations.ApiStatus;
  *
  * <p>This event is fired only on the {@linkplain EnvType#CLIENT logical client}.</p>
  */
+@Todo(rename = "RecipesReceivedEvent", notImplemented = true)
 public class RecipesUpdatedEvent extends BaseEvent {
 	public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
 		for (Callback callback : callbacks) {
@@ -39,8 +40,9 @@ public class RecipesUpdatedEvent extends BaseEvent {
 	}
 
 	@Override
-	public void sendEvent() {
+	public RecipesUpdatedEvent sendEvent() {
 		EVENT.invoker().onRecipesUpdated(this);
+		return this;
 	}
 
 	public interface Callback {

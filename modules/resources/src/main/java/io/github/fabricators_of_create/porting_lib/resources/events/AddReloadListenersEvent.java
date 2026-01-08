@@ -11,7 +11,7 @@ import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -84,8 +84,9 @@ public class AddReloadListenersEvent extends BaseEvent {
 	}
 
 	@Override
-	public void sendEvent() {
+	public AddReloadListenersEvent sendEvent() {
 		EVENT.invoker().onAddReloadListeners(this);
+		return this;
 	}
 
 	@FunctionalInterface
@@ -101,12 +102,12 @@ public class AddReloadListenersEvent extends BaseEvent {
 		}
 
 		@Override
-		public ResourceLocation getFabricId() {
+		public Identifier getFabricId() {
 			return wrapped.getFabricId();
 		}
 
 		@Override
-		public Collection<ResourceLocation> getFabricDependencies() {
+		public Collection<Identifier> getFabricDependencies() {
 			return wrapped.getFabricDependencies();
 		}
 
@@ -115,6 +116,11 @@ public class AddReloadListenersEvent extends BaseEvent {
 			if (this.wrapped instanceof ContextAwareReloadListener contextAwareListener) {
 				contextAwareListener.injectContext(context, registryLookup);
 			}
+		}
+
+		@Override
+		public CompletableFuture<Void> reload(SharedState sharedState, Executor exectutor, PreparationBarrier barrier, Executor applyExectutor) {
+			return null;
 		}
 
 		@Override

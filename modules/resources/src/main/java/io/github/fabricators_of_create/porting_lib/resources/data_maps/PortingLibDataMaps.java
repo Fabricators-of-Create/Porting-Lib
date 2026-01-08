@@ -3,10 +3,16 @@ package io.github.fabricators_of_create.porting_lib.resources.data_maps;
 import io.github.fabricators_of_create.porting_lib.resources.events.AddReloadListenersEvent;
 import io.github.fabricators_of_create.porting_lib.resources.events.TagsUpdatedEvent;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.fabricmc.fabric.impl.resource.loader.ResourceManagerHelperImpl;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+
+import net.minecraft.server.packs.PackType;
+
+import net.minecraft.server.packs.resources.ResourceManager;
 
 import org.jspecify.annotations.Nullable;
 
@@ -19,9 +25,7 @@ public class PortingLibDataMaps {
 	private static DataMapLoader DATA_MAPS;
 
 	public static void init() {
-		AddReloadListenersEvent.EVENT.register(event -> {
-			event.addListener(DATA_MAPS = new DataMapLoader(event.getConditionContext(), event.getRegistryAccess()));
-		});
+		ResourceLoader.get(PackType.SERVER_DATA).registerReloader(DATA_MAPS = new DataMapLoader(event.getConditionContext(), event.getRegistryAccess()));
 
 		TagsUpdatedEvent.EVENT.register(event -> {
 			if (event.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD) {
