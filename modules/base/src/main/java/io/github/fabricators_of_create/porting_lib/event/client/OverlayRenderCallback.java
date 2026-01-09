@@ -35,6 +35,7 @@ public interface OverlayRenderCallback {
 	enum Types {
 		AIR,
 		CROSSHAIRS,
-		PLAYER_HEALTH
+		PLAYER_HEALTH,
+		HOTBAR
 	}
 }

@@ -1,0 +1,1 @@
+Add HOTBAR type to OverlayRenderCallback

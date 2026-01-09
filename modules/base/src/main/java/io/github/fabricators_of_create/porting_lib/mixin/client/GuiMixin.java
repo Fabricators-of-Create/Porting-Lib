@@ -1,7 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.mixin.client;
 
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+
+import com.llamalad7.mixinextras.sugar.Local;
+
 import io.github.fabricators_of_create.porting_lib.event.client.OverlayRenderCallback;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.spectator.SpectatorGui;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
@@ -77,5 +82,15 @@ public abstract class GuiMixin {
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderTexture(0, GUI_ICONS_LOCATION);
 		RenderSystem.enableBlend();
+	}
+
+	@WrapWithCondition(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/spectator/SpectatorGui;renderHotbar(Lnet/minecraft/client/gui/GuiGraphics;)V"))
+	private boolean renderSpectatorHotbar(SpectatorGui instance, GuiGraphics guiGraphics, @Local(argsOnly = true) float partialTicks) {
+		return !OverlayRenderCallback.EVENT.invoker().onOverlayRender(guiGraphics, partialTicks, minecraft.getWindow(), OverlayRenderCallback.Types.HOTBAR);
+	}
+
+	@WrapWithCondition(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;renderHotbar(FLnet/minecraft/client/gui/GuiGraphics;)V"))
+	private boolean renderHotbar(Gui instance, float partialTicks, GuiGraphics guiGraphics) {
+		return !OverlayRenderCallback.EVENT.invoker().onOverlayRender(guiGraphics, partialTicks, minecraft.getWindow(), OverlayRenderCallback.Types.HOTBAR);
 	}
 }
