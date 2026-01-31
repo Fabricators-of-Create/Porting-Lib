@@ -1,11 +1,12 @@
 package io.github.fabricators_of_create.porting_lib.extensions.common;
 
+import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.TagKey;
 
-public interface TagAppenderExtension {
+public interface TagAppenderExtension<T> {
 	@SuppressWarnings("unchecked")
-	default <E> TagsProvider.TagAppender<E> addTags(TagKey<E>... values) {
-		throw new RuntimeException("this should be overridden via mixin. what?");
+	default TagsProvider.TagAppender<T> addTags(TagKey<T>... values) {
+		throw PortingLib.createMixinException("TagAppenderExtension.addTags(TagKey<T>...)");
 	}
 }

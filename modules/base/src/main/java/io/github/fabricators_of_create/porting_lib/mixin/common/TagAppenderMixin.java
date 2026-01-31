@@ -11,23 +11,23 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(TagsProvider.TagAppender.class)
-public abstract class TagAppenderMixin<T> implements TagAppenderExtension {
+public abstract class TagAppenderMixin<T> implements TagAppenderExtension<T> {
 	@Shadow
 	public abstract TagAppender<T> addTag(TagKey<T> tag);
 
 	// generics are a mess
-	@SuppressWarnings({"unchecked", "ConstantConditions", "rawtypes"})
+	@SuppressWarnings({"unchecked", "ConstantConditions"})
 	@Override
-	public <E> TagAppender<E> addTags(TagKey<E>... values) {
+	public TagAppender<T> addTags(TagKey<T>... values) {
 		if ((Object) this instanceof FabricTagBuilder fabricTagBuilder) {
-			for (TagKey<E> value : values) {
+			for (TagKey<T> value : values) {
 				fabricTagBuilder.forceAddTag(value);
 			}
 		} else {
-			for (TagKey<E> value : values) {
-				addTag((TagKey) value);
+			for (TagKey<T> value : values) {
+				addTag(value);
 			}
 		}
-		return (TagAppender<E>) (Object) this;
+		return (TagAppender<T>) (Object) this;
 	}
 }
