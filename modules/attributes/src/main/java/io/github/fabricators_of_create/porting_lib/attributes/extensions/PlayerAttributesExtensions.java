@@ -1,6 +1,7 @@
 package io.github.fabricators_of_create.porting_lib.attributes.extensions;
 
-import io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes;
+import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -14,7 +15,7 @@ public interface PlayerAttributesExtensions {
 	}
 
 	default double getBlockReach() {
-		double reach = self().getAttributeValue(PortingLibAttributes.BLOCK_REACH);
+		double reach = ReachEntityAttributes.getReachDistance(self(), 4.5);
 		return reach == 0 ? 0 : reach + (self().isCreative() ? 0.5 : 0);
 	}
 
@@ -35,7 +36,7 @@ public interface PlayerAttributesExtensions {
 	 * @return The entity reach of this player.
 	 */
 	default double getEntityReach() {
-		double range = self().getAttributeValue(PortingLibAttributes.ENTITY_REACH);
+		double range = ReachEntityAttributes.getAttackRange(self(), 3.0);
 		return range == 0 ? 0 : range + (self().isCreative() ? 3 : 0);
 	}
 
