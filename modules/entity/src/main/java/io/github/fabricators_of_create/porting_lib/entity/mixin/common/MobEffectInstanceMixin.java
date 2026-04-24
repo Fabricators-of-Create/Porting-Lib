@@ -32,7 +32,7 @@ public class MobEffectInstanceMixin implements MobEffectInstanceInjection {
 	private Holder<MobEffect> effect;
 
 	@Unique
-	private final Supplier<Set<EffectCure>> porting_lib$cures = Suppliers.memoize(() -> {
+	private Supplier<Set<EffectCure>> porting_lib$cures = Suppliers.memoize(() -> {
 		var set = Sets.<EffectCure>newIdentityHashSet();
 		this.effect.value().fillEffectCures(set, MixinHelper.cast(this));
 		return set;
@@ -56,4 +56,14 @@ public class MobEffectInstanceMixin implements MobEffectInstanceInjection {
 		getCures().clear();
 		getCures().addAll(effectInstance.getCures());
 	}
+
+	@Inject(method = "<init>(Lnet/minecraft/core/Holder;Lnet/minecraft/world/effect/MobEffectInstance$Details;)V", at = @At("TAIL"))
+	private void loadEffects(Holder<MobEffect> effect, MobEffectInstance.Details details, CallbackInfo ci) {
+		var detailsCures = ((MobEffectInstance$DetailsInjection) (Object) details).port_lib$getCures();
+		detailsCures.ifPresent(set -> {
+			this.porting_lib$cures = () -> set;
+		});
+	}
+
+
 }
