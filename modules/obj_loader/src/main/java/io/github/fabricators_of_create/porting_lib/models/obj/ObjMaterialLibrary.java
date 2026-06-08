@@ -9,7 +9,6 @@ import org.joml.Vector4f;
 
 import com.google.common.collect.Maps;
 
-import joptsimple.internal.Strings;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.material.MaterialFinder;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
@@ -32,7 +31,7 @@ public class ObjMaterialLibrary {
 		while ((line = reader.readAndSplitLine(true)) != null) {
 			switch (line[0]) {
 				case "newmtl": {
-					String name = Strings.join(Arrays.copyOfRange(line, 1, line.length), " ");
+					String name = String.join(" ", Arrays.copyOfRange(line, 1, line.length));
 					currentMaterial = new Material(name);
 					materials.put(name, currentMaterial);
 					break;

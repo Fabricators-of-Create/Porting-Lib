@@ -4,15 +4,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+
+import com.google.common.base.Strings;
+
 import io.github.fabricators_of_create.porting_lib.models.obj.ObjModel.ModelGroup;
 import io.github.fabricators_of_create.porting_lib.models.obj.ObjModel.ModelMesh;
 import io.github.fabricators_of_create.porting_lib.models.obj.ObjModel.ModelObject;
 import io.github.fabricators_of_create.porting_lib.models.obj.ObjModel.ModelSettings;
-import joptsimple.internal.Strings;
-
-import org.joml.Vector3f;
-import org.joml.Vector4f;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
 
@@ -73,7 +73,7 @@ public class ObjParser {
 
 				case "usemtl": // Sets the current material (starts new mesh)
 				{
-					String mat = Strings.join(Arrays.copyOfRange(line, 1, line.length), " ");
+					String mat = String.join(" ", Arrays.copyOfRange(line, 1, line.length));
 					ObjMaterialLibrary.Material newMat = mtllib.getMaterial(mat);
 					if (!Objects.equals(newMat, currentMat)) {
 						currentMat = newMat;
