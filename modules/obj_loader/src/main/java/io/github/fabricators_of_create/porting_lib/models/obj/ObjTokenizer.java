@@ -11,8 +11,7 @@ import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Charsets;
-
-import joptsimple.internal.Strings;
+import com.google.common.base.Strings;
 
 /**
  * A tokenizer for OBJ and MTL files.

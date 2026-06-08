@@ -1,12 +1,13 @@
 package io.github.fabricators_of_create.porting_lib.models.obj;
 
-import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import joptsimple.internal.Strings;
+
 import org.joml.Vector4f;
+
+import com.google.common.collect.Maps;
 
 /**
  * An OBJ material library (MTL), composed of named {@link Material materials}.
@@ -24,7 +25,7 @@ public class ObjMaterialLibrary {
 		while ((line = reader.readAndSplitLine(true)) != null) {
 			switch (line[0]) {
 				case "newmtl": {
-					String name = Strings.join(Arrays.copyOfRange(line, 1, line.length), " ");
+					String name = String.join(" ", Arrays.copyOfRange(line, 1, line.length));
 					currentMaterial = new Material(name);
 					materials.put(name, currentMaterial);
 					break;

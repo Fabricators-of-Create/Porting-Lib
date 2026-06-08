@@ -1,11 +1,5 @@
 package io.github.fabricators_of_create.porting_lib.models.obj;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
-import com.google.common.collect.Sets;
-import com.mojang.math.Transformation;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,13 +7,24 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.Sets;
+import com.mojang.math.Transformation;
 
 import io.github.fabricators_of_create.porting_lib.core.PortingLib;
 import io.github.fabricators_of_create.porting_lib.models.IModelBuilder;
@@ -28,7 +33,6 @@ import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryBaki
 import io.github.fabricators_of_create.porting_lib.models.geometry.SimpleUnbakedGeometry;
 import io.github.fabricators_of_create.porting_lib.models.renderable.CompositeRenderable;
 import io.github.fabricators_of_create.porting_lib.textures.UnitTextureAtlasSprite;
-import joptsimple.internal.Strings;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
@@ -48,10 +52,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
-import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 /**
  * A model loaded from an OBJ file.
@@ -161,7 +161,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel> {
 
 				case "usemtl": // Sets the current material (starts new mesh)
 				{
-					String mat = Strings.join(Arrays.copyOfRange(line, 1, line.length), " ");
+					String mat = String.join(" ", Arrays.copyOfRange(line, 1, line.length));
 					ObjMaterialLibrary.Material newMat = mtllib.getMaterial(mat);
 					if (!Objects.equals(newMat, currentMat)) {
 						currentMat = newMat;
