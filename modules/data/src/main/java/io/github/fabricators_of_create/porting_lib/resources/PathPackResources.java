@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +23,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.AbstractPackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.IoSupplier;
-
-import javax.annotation.Nonnull;
 
 /**
  * Defines a resource pack from an arbitrary Path.
@@ -41,10 +38,10 @@ public class PathPackResources extends AbstractPackResources {
 	/**
 	 * Constructs a java.nio.Path-based resource pack.
 	 *
-	 * @param packId the identifier of the pack.
-	 * This identifier should be unique within the pack finder, preferably the name of the file or folder containing the resources.
+	 * @param packId    the identifier of the pack.
+	 *                  This identifier should be unique within the pack finder, preferably the name of the file or folder containing the resources.
 	 * @param isBuiltin whether this pack resources should be considered builtin
-	 * @param source the root path of the pack. This needs to point to the folder that contains "assets" and/or "data", not the asset folder itself!
+	 * @param source    the root path of the pack. This needs to point to the folder that contains "assets" and/or "data", not the asset folder itself!
 	 */
 	public PathPackResources(String packId, boolean isBuiltin, final Path source) {
 		super(packId, isBuiltin);
@@ -67,18 +64,21 @@ public class PathPackResources extends AbstractPackResources {
 	 * @param paths One or more path strings to resolve. Can include slash-separated paths.
 	 * @return the resulting path, which may not exist.
 	 */
+	@Nullable
 	protected Path resolve(String... paths) {
 		Path path = getSource();
 		for (String name : paths)
 			path = path.resolve(name);
-		return path;
+		if (Files.exists(path))
+			return path;
+		return null;
 	}
 
 	@Nullable
 	@Override
 	public IoSupplier<InputStream> getRootResource(String... paths) {
 		final Path path = resolve(paths);
-		if (!Files.exists(path))
+		if (path == null)
 			return null;
 
 		return IoSupplier.create(path);
@@ -86,8 +86,10 @@ public class PathPackResources extends AbstractPackResources {
 
 	@Override
 	public void listResources(PackType type, String namespace, String path, ResourceOutput resourceOutput) {
+		var resourcePath = resolve(type.getDirectory(), namespace);
+		if (resourcePath == null) return;
 		FileUtil.decomposePath(path).get()
-				.ifLeft(parts -> net.minecraft.server.packs.PathPackResources.listPath(namespace, resolve(type.getDirectory(), namespace).toAbsolutePath(), parts, resourceOutput))
+				.ifLeft(parts -> net.minecraft.server.packs.PathPackResources.listPath(namespace, resourcePath.toAbsolutePath(), parts, resourceOutput))
 				.ifRight(dataResult -> LOGGER.error("Invalid path {}: {}", path, dataResult.message()));
 	}
 
@@ -100,6 +102,7 @@ public class PathPackResources extends AbstractPackResources {
 	private Set<String> getNamespacesFromDisk(final PackType type) {
 		try {
 			Path root = resolve(type.getDirectory());
+			if (root == null) return Collections.emptySet();
 			try (Stream<Path> walker = Files.walk(root, 1)) {
 				return walker
 						.filter(Files::isDirectory)
@@ -133,32 +136,16 @@ public class PathPackResources extends AbstractPackResources {
 	}
 
 	@Override
-	public void close() {}
+	public void close() {
+	}
 
 	@Override
 	public String toString() {
 		return String.format(Locale.ROOT, "%s: %s (%s)", getClass().getName(), this.packId(), getSource());
 	}
 
-	@SuppressWarnings("deprecation")
 	@NotNull
 	public static PathPackResources createPackForMod(ModContainer mf) {
-		return new PathPackResources(mf.getMetadata().getName(), false, mf.getRootPath()){
-			@Nonnull
-			@Override
-			protected Path resolve(@Nonnull String... paths)
-			{
-				if (paths.length < 1) {
-					throw new IllegalArgumentException("Missing path");
-				}
-				String path = String.join("/", paths);
-				for (ModContainer modContainer : FabricLoader.getInstance().getAllMods()) {
-					if (modContainer.findPath(path).isPresent())
-						return modContainer.findPath(path).get();
-				}
-
-				return mf.findPath(path).orElseThrow();
-			}
-		};
+		return new ModPathPackResources(mf);
 	}
 }
