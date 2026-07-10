@@ -13,12 +13,19 @@ import io.github.fabricators_of_create.porting_lib.resources.conditions.PortingL
 import io.github.fabricators_of_create.porting_lib.resources.extensions.ContextAwareReloadListenerExtension;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ServerAdvancementManager;
+
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -38,5 +45,10 @@ public abstract class ServerAdvancementManagerMixin {
 		}
 
 		return original.call(instance, stringEFunction);
+	}
+
+	@Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap$Builder;buildOrThrow()Lcom/google/common/collect/ImmutableMap;"))
+	private void port_lib$clearConditionalOps(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfo ci) {
+		port_lib$conditionalOps.remove();
 	}
 }
