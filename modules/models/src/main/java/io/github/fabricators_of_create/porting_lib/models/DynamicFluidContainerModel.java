@@ -1,12 +1,16 @@
 package io.github.fabricators_of_create.porting_lib.models;
 
+import java.util.Map;
+import java.util.function.Function;
+
+import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
 import com.google.common.collect.Maps;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.math.Transformation;
-import java.util.Map;
-import java.util.function.Function;
-
 import com.mojang.serialization.JsonOps;
 
 import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryBakingContext;
@@ -14,10 +18,10 @@ import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryLoad
 import io.github.fabricators_of_create.porting_lib.models.geometry.IUnbakedGeometry;
 import io.github.fabricators_of_create.porting_lib.models.geometry.SimpleModelState;
 import io.github.fabricators_of_create.porting_lib.models.geometry.StandaloneGeometryBakingContext;
+import io.github.fabricators_of_create.porting_lib.models.util.FluidRenderHandlerUtil;
 import io.github.fabricators_of_create.porting_lib.render_types.PortingLibRenderTypes;
 import io.github.fabricators_of_create.porting_lib.render_types.RenderTypeGroup;
 import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
-import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.minecraft.client.color.item.ItemColor;
@@ -37,9 +41,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 /**
  * A dynamic fluid container model, capable of re-texturing itself at runtime to match the contained fluid.
@@ -96,7 +97,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 		Material coverLocation = context.hasMaterial("cover") ? context.getMaterial("cover") : null;
 
 		TextureAtlasSprite baseSprite = baseLocation != null ? spriteGetter.apply(baseLocation) : null;
-		TextureAtlasSprite fluidSprite = fluid != Fluids.EMPTY ? FluidVariantRendering.getSprite(fluid) : null;
+		TextureAtlasSprite fluidSprite = fluid != Fluids.EMPTY ? FluidRenderHandlerUtil.getSprite(fluid) : null;
 		TextureAtlasSprite coverSprite = (coverLocation != null && (!coverIsMask || baseLocation != null)) ? spriteGetter.apply(coverLocation) : null;
 
 		TextureAtlasSprite particleSprite = particleLocation != null ? spriteGetter.apply(particleLocation) : null;
@@ -229,7 +230,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 		public int getColor(ItemStack stack, int tintIndex) {
 			if (tintIndex != 1) return 0xFFFFFFFF;
 			return TransferUtil.getFluidContained(stack)
-					.map(fluidStack -> FluidVariantRendering.getColor(fluidStack.getVariant()))
+					.map(fluidStack -> FluidRenderHandlerUtil.getColor(fluidStack.getVariant()))
 					.orElse(0xFFFFFFFF);
 		}
 	}

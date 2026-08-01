@@ -1,5 +1,7 @@
 {
   "item.porting_lib.derp_helmet": "Derpy Helmet",
   "item.porting_lib.stone_2": "Stone 2",
-  "block.porting_lib.not_glass": "Not Glass"
+  "block.porting_lib.not_glass": "Not Glass",
+  "item.porting_lib.water_bucket": "Water Bucket",
+  "item.porting_lib.lava_bucket": "Lava Bucket"
 }
