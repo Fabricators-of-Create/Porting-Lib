@@ -20,7 +20,7 @@ public class ItemHandlerHelper {
 	 */
 	public static void giveItemToPlayer(Player player, @Nonnull ItemStack stack) {
 		try (Transaction tx = TransferUtil.getTransaction()) {
-			PlayerInventoryStorage.of(player).offerOrDrop(ItemVariant.of(stack.getItem()), stack.getCount(), tx);
+			PlayerInventoryStorage.of(player).offerOrDrop(ItemVariant.of(stack), stack.getCount(), tx);
 			tx.commit();
 		}
 	}
