@@ -8,7 +8,8 @@
     "client.BlockElementFaceMixin$DeserializerMixin",
     "client.BlockElementMixin",
     "client.BlockModelDeserializerMixin",
-    "client.BlockModelMixin"
+    "client.BlockModelMixin",
+    "client.FaceBakeryMixin"
   ],
   "injectors": {
     "defaultRequire": 1

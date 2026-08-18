@@ -22,6 +22,7 @@ public class PortingLibModelsTestmod implements ModInitializer {
 	public static final Block NOT_GLASS = new Block(BlockBehaviour. Properties. ofFullCopy(Blocks.GLASS));
 	public static final Item WATER_BUCKET = new Item(new Item.Properties());
 	public static final Item LAVA_BUCKET = new Item(new Item.Properties());
+	public static final Item ITEM_LAYERS = new Item(new Item.Properties());
 
 	@Override
 	public void onInitialize() {
@@ -30,6 +31,7 @@ public class PortingLibModelsTestmod implements ModInitializer {
 		Registry.register(BuiltInRegistries.BLOCK, PortingLib.id("not_glass"), NOT_GLASS);
 		Registry.register(BuiltInRegistries.ITEM, PortingLib.id("water_bucket"), WATER_BUCKET);
 		Registry.register(BuiltInRegistries.ITEM, PortingLib.id("lava_bucket"), LAVA_BUCKET);
+		Registry.register(BuiltInRegistries.ITEM, PortingLib.id("item_layers"), ITEM_LAYERS);
 
 		FluidStorage.ITEM.registerForItems((stack, context) -> new FullItemFluidStorage(context, Items.BUCKET, FluidVariant.of(Fluids.WATER), FluidConstants.BUCKET), WATER_BUCKET);
 		FluidStorage.ITEM.registerForItems((stack, context) -> new FullItemFluidStorage(context, Items.BUCKET, FluidVariant.of(Fluids.LAVA), FluidConstants.BUCKET), LAVA_BUCKET);

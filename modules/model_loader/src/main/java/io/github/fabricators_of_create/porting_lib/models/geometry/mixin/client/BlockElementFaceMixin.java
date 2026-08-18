@@ -1,5 +1,11 @@
 package io.github.fabricators_of_create.porting_lib.models.geometry.mixin.client;
 
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.mutable.MutableObject;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+
 import com.google.gson.JsonObject;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -8,12 +14,6 @@ import io.github.fabricators_of_create.porting_lib.models.ExtraFaceData;
 import io.github.fabricators_of_create.porting_lib.models.geometry.extensions.BlockElementFaceExtension;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockElementFace;
-
-import org.apache.commons.lang3.mutable.MutableObject;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-
-import javax.annotation.Nullable;
 
 @Mixin(BlockElementFace.class)
 public class BlockElementFaceMixin implements BlockElementFaceExtension {
@@ -34,6 +34,11 @@ public class BlockElementFaceMixin implements BlockElementFaceExtension {
 			return this.port_lib$parent.getValue().port_lib$getFaceData();
 		}
 		return ExtraFaceData.DEFAULT;
+	}
+
+	@Override
+	public MutableObject<BlockElement> port_lib$parent() {
+		return this.port_lib$parent;
 	}
 
 	@Mixin(BlockElementFace.Deserializer.class)
