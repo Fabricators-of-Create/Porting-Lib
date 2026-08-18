@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -53,17 +54,20 @@ public class MobEffectInstanceMixin implements MobEffectInstanceInjection {
 
 	@Inject(method = "setDetailsFrom", at = @At("TAIL"))
 	private void copyEffects(MobEffectInstance effectInstance, CallbackInfo ci) {
-		getCures().clear();
-		getCures().addAll(effectInstance.getCures());
+		// Replace the cures with a mutable copy of the source instance's cures instead of mutating this
+		// instance's set in place: when this instance was loaded from NBT, its cures are an ImmutableSet
+		// (PortingLibExtraCodecs.setOf decodes with ImmutableSet::copyOf), so clear() would throw
+		// UnsupportedOperationException.
+		this.porting_lib$cures = Suppliers.memoize(() -> new HashSet<>(effectInstance.getCures()));
 	}
 
 	@Inject(method = "<init>(Lnet/minecraft/core/Holder;Lnet/minecraft/world/effect/MobEffectInstance$Details;)V", at = @At("TAIL"))
 	private void loadEffects(Holder<MobEffect> effect, MobEffectInstance.Details details, CallbackInfo ci) {
 		var detailsCures = ((MobEffectInstance$DetailsInjection) (Object) details).port_lib$getCures();
 		detailsCures.ifPresent(set -> {
-			this.porting_lib$cures = () -> set;
+			// The set decoded from NBT/network is immutable (see PortingLibExtraCodecs.setOf), but getCures()
+			// is documented to be modifiable, so keep a mutable copy instead of aliasing the decoded set.
+			this.porting_lib$cures = Suppliers.memoize(() -> new HashSet<>(set));
 		});
 	}
-
-
 }
