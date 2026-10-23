@@ -1,10 +1,22 @@
 package io.github.fabricators_of_create.porting_lib.mixin.common;
 
+import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
 import io.github.fabricators_of_create.porting_lib.core.util.MutableDataComponentHolder;
 import io.github.fabricators_of_create.porting_lib.entity.extensions.IShearable;
 import io.github.fabricators_of_create.porting_lib.entity.extensions.VanillaIShearable;
 import io.github.fabricators_of_create.porting_lib.item.DamageableItem;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
@@ -14,19 +26,9 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-
-import net.minecraft.world.level.gameevent.GameEvent;
-
-import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.*;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import net.minecraft.world.item.ItemStack;
-
-import java.util.List;
+import net.minecraft.world.item.ShearsItem;
+import net.minecraft.world.level.gameevent.GameEvent;
 
 @Mixin(ItemStack.class)
 @Implements(@Interface(iface = MutableDataComponentHolder.class, prefix = "port_lib$i$", remap = Interface.Remap.NONE))
@@ -72,8 +74,8 @@ public abstract class ItemStackMixin {
 
 	@Inject(method = "interactLivingEntity", at = @At("HEAD"), cancellable = true)
 	private void checkCustomShearBehavior(Player player, LivingEntity entity, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
-		if (entity instanceof IShearable target && !(entity instanceof VanillaIShearable)) {
-			ItemStack stack = (ItemStack) (Object) this;
+		ItemStack stack = (ItemStack) (Object) this;
+		if (stack.getItem() instanceof ShearsItem && entity instanceof IShearable target && !(entity instanceof VanillaIShearable)) {
 			BlockPos pos = entity.blockPosition();
 			boolean isClient = entity.level().isClientSide();
 			// Check isShearable on both sides (mirrors vanilla readyForShearing())
