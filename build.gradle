@@ -235,3 +235,26 @@ subprojects {
 		}
 	}
 }
+
+publishing {
+	repositories {
+		maven {
+			name = "devOS"
+			String mavenType = System.getenv("RELEASE") == "true" ? "releases" : "snapshots"
+			url = "https://mvn.devos.one/$mavenType/"
+			credentials {
+				username = System.getenv("MAVEN_USER")
+				password = System.getenv("MAVEN_PASS")
+			}
+			authentication {
+				register("basic", BasicAuthentication)
+			}
+		}
+	}
+
+	publications {
+		register("mavenJava", MavenPublication) {
+			from((SoftwareComponent) components["java"])
+		}
+	}
+}
