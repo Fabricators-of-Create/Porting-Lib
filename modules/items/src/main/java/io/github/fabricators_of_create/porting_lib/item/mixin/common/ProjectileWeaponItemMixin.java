@@ -27,7 +27,7 @@ public class ProjectileWeaponItemMixin {
 	@ModifyReturnValue(method = "createProjectile", at = @At("RETURN"))
 	private Projectile customArrow(Projectile original, Level level, LivingEntity livingEntity, ItemStack itemStack, ItemStack itemStack2) {
 		if (this instanceof CustomArrowItem arrowItem && original instanceof AbstractArrow arrow)
-			return arrowItem.customArrow(arrow, itemStack, itemStack2);
+			return arrowItem.customArrow(arrow, itemStack2, itemStack);
 		return original;
 	}
 }
