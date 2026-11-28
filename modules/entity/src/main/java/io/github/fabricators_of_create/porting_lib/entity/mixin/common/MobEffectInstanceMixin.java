@@ -54,11 +54,13 @@ public class MobEffectInstanceMixin implements MobEffectInstanceInjection {
 
 	@Inject(method = "setDetailsFrom", at = @At("TAIL"))
 	private void copyEffects(MobEffectInstance effectInstance, CallbackInfo ci) {
-		// Replace the cures with a mutable copy of the source instance's cures instead of mutating this
-		// instance's set in place: when this instance was loaded from NBT, its cures are an ImmutableSet
-		// (PortingLibExtraCodecs.setOf decodes with ImmutableSet::copyOf), so clear() would throw
-		// UnsupportedOperationException.
-		this.porting_lib$cures = Suppliers.memoize(() -> new HashSet<>(effectInstance.getCures()));
+		// Copy the cures eagerly into a mutable set: a lazy reference back to the source instance can
+		// form a cycle when hidden effects are swapped around (each instance's cures reference the
+		// other), which causes a StackOverflowError once the cures are first read.
+		// Eager copying also keeps the set mutable: when loaded from NBT the cures are immutable
+		// (PortingLibExtraCodecs.setOf decodes with ImmutableSet::copyOf) and clear() would throw.
+		Set<EffectCure> cures = new HashSet<>(effectInstance.getCures());
+		this.porting_lib$cures = Suppliers.memoize(() -> cures);
 	}
 
 	@Inject(method = "<init>(Lnet/minecraft/core/Holder;Lnet/minecraft/world/effect/MobEffectInstance$Details;)V", at = @At("TAIL"))
